@@ -1,0 +1,65 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "PhoenixUptime Backend API",
+        "title": "PhoenixUptime API",
+        "contact": {},
+        "version": "1.0"
+    },
+    "host": "127.0.0.1:8484",
+    "basePath": "/",
+    "paths": {
+        "/health": {
+            "get": {
+                "description": "Check if the API is healthy",
+                "tags": [
+                    "Health"
+                ],
+                "summary": "Health check",
+                "responses": {
+                    "200": {
+                        "description": "status and message",
+                        "schema": {
+                            "$ref": "#/definitions/api.HealthCheckResponse"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "api.HealthCheckResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "ApiKeyHeader": {
+            "type": "apiKey",
+            "name": "x-api-key",
+            "in": "header"
+        },
+        "ApiKeyQuery": {
+            "type": "apiKey",
+            "name": "api_key",
+            "in": "query"
+        },
+        "SessionIDHeader": {
+            "type": "apiKey",
+            "name": "x-session-id",
+            "in": "header"
+        },
+        "SessionIDQuery": {
+            "type": "apiKey",
+            "name": "sid",
+            "in": "query"
+        }
+    }
+}

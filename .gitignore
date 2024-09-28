@@ -1,0 +1,64 @@
+# Binaries for programs and plugins
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Output of the go coverage tool
+*.out
+
+# Directories
+bin/
+build/
+tmp/
+vendor/
+dist/
+
+# Logs and temporary files
+*.log
+*.tmp
+*.swp
+*.bak
+*.old
+
+# Dependency directories (vendor/)
+vendor/
+
+# IDE and editor files
+.idea/
+.vscode/
+*.iml
+
+# MacOS files
+.DS_Store
+
+# Windows thumbnail cache files
+Thumbs.db
+
+# System files
+*.lock
+*.env
+.env.*
+*.key
+
+# BadgerDB database files
+badger/
+badgerdb/
+*.badger
+*.badgerlog
+
+# SQLite database files
+*.sqlite
+*.sqlite3
+*.db
+*.db-journal
+
+# Generated files
+*.generated.go
+
+# Coverage files
+coverage.out
+
+# Temporary Go build files
+*.test
+*.tmp

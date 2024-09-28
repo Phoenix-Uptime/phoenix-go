@@ -1,0 +1,45 @@
+basePath: /
+definitions:
+  api.HealthCheckResponse:
+    properties:
+      message:
+        type: string
+      status:
+        type: string
+    type: object
+host: 127.0.0.1:8484
+info:
+  contact: {}
+  description: PhoenixUptime Backend API
+  title: PhoenixUptime API
+  version: "1.0"
+paths:
+  /health:
+    get:
+      description: Check if the API is healthy
+      responses:
+        "200":
+          description: status and message
+          schema:
+            $ref: '#/definitions/api.HealthCheckResponse'
+      summary: Health check
+      tags:
+      - Health
+securityDefinitions:
+  ApiKeyHeader:
+    in: header
+    name: x-api-key
+    type: apiKey
+  ApiKeyQuery:
+    in: query
+    name: api_key
+    type: apiKey
+  SessionIDHeader:
+    in: header
+    name: x-session-id
+    type: apiKey
+  SessionIDQuery:
+    in: query
+    name: sid
+    type: apiKey
+swagger: "2.0"
