@@ -1,0 +1,48 @@
+# phoenix.yaml
+# Configuration file for Phoenix Uptime backend
+
+# Server configuration section
+server:
+  # Host address for the PhoenixUptime server. Defaults to "127.0.0.1" if not specified.
+  # Can be overridden by the 'PHOENIX_SERVER_HOST' environment variable.
+  host: "127.0.0.1"
+
+  # Port for the PhoenixUptime server. Defaults to "3031" if not specified.
+  # Can be overridden by the 'PHOENIX_SERVER_PORT' environment variable.
+  port: "3031"
+
+# Database configuration section
+database:
+  # The type of database to use, options are 'sqlite' and 'postgres'.
+  # If 'PHOENIX_DATABASE_DRIVER' environment variable is set, it will override this value.
+  driver: sqlite
+
+  # SQLite-specific configuration settings.
+  # These settings are only used if the 'driver' is set to 'sqlite'.
+  sqlite:
+    # Path to the SQLite database file.
+    # Can be overridden by the 'PHOENIX_DATABASE_SQLITE_PATH' environment variable.
+    path: "phoenix.db"
+
+  # PostgreSQL-specific configuration settings.
+  # These settings are only used if the 'driver' is set to 'postgres'.
+  postgres:
+    # Hostname or IP address of the PostgreSQL server.
+    # Can be overridden by the 'PHOENIX_DATABASE_POSTGRES_HOST' environment variable.
+    host: "localhost"
+
+    # Port number on which PostgreSQL is running.
+    # Can be overridden by the 'PHOENIX_DATABASE_POSTGRES_PORT' environment variable.
+    port: "5432"
+
+    # Username for connecting to the PostgreSQL database.
+    # Can be overridden by the 'PHOENIX_DATABASE_POSTGRES_USER' environment variable.
+    user: "postgres"
+
+    # Password for the PostgreSQL user.
+    # Can be overridden by the 'PHOENIX_DATABASE_POSTGRES_PASSWORD' environment variable.
+    password: "password"
+
+    # Name of the PostgreSQL database to connect to.
+    # Can be overridden by the 'PHOENIX_DATABASE_POSTGRES_DB' environment variable.
+    dbname: "phoenix"

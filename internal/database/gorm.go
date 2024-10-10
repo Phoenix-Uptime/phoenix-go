@@ -2,8 +2,8 @@ package database
 
 import (
 	"fmt"
-	"os"
 
+	"github.com/Phoenix-Uptime/phoenix-go/internal/config"
 	"github.com/glebarez/sqlite"
 	"github.com/rs/zerolog/log"
 	"gorm.io/driver/postgres"
@@ -13,18 +13,18 @@ import (
 
 var DB *gorm.DB
 
+// InitDB initializes the database connection based on the configured driver.
 func InitDB() error {
-	driver := os.Getenv("DB_DRIVER")
-	if driver == "" {
-		driver = "sqlite"
-	}
+	driver := config.GetDatabaseDriver()
 
 	var err error
 	switch driver {
 	case "postgres":
 		err = connectPostgres()
-	default:
+	case "sqlite":
 		err = connectSQLite()
+	default:
+		return fmt.Errorf("unsupported database driver: %s", driver)
 	}
 
 	if err != nil {
@@ -36,8 +36,8 @@ func InitDB() error {
 }
 
 func connectSQLite() error {
-	dsn := "phoenix.db"
-	db, err := gorm.Open(sqlite.Open(dsn), &gorm.Config{
+	path := config.GetSQLitePath()
+	db, err := gorm.Open(sqlite.Open(path), &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Error),
 	})
 	if err != nil {
@@ -46,16 +46,16 @@ func connectSQLite() error {
 	}
 
 	DB = db
-	log.Info().Msg("Connected to SQLite database")
+	log.Info().Msgf("Connected to SQLite database at %s", path)
 	return nil
 }
 
 func connectPostgres() error {
-	host := os.Getenv("POSTGRES_HOST")
-	port := os.Getenv("POSTGRES_PORT")
-	user := os.Getenv("POSTGRES_USER")
-	password := os.Getenv("POSTGRES_PASSWORD")
-	dbname := os.Getenv("POSTGRES_DB")
+	host, port, user, password, dbname := config.GetPostgresConfig()
+
+	if host == "" || port == "" || user == "" || password == "" || dbname == "" {
+		return fmt.Errorf("incomplete PostgreSQL configuration")
+	}
 
 	dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
 		host, port, user, password, dbname)

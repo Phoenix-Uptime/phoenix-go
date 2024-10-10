@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/Phoenix-Uptime/phoenix-go/internal/config"
 	"github.com/Phoenix-Uptime/phoenix-go/internal/database"
 	"github.com/Phoenix-Uptime/phoenix-go/internal/server"
 	"github.com/rs/zerolog"
@@ -14,7 +15,7 @@ import (
 // @version 1.0
 // @description PhoenixUptime Backend API
 
-// @host 127.0.0.1:8484
+// @host 127.0.0.1:3031
 // @BasePath /
 
 // @securityDefinitions.apikey ApiKeyHeader
@@ -41,19 +42,25 @@ func main() {
 	zerolog.SetGlobalLevel(zerolog.InfoLevel)
 	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
 
+	// Initialize the configuration
+	if err := config.InitConfig(); err != nil {
+		log.Fatal().Err(err).Msg("Failed to initialize configuration")
+	}
+
+	// Initialize the database connection
 	if err := database.InitDB(); err != nil {
 		log.Fatal().Err(err).Msg("Failed to initialize database")
 	}
 
+	// Initialize the server
 	app := server.New()
 
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "8484"
-	}
+	// Get host and port from the configuration
+	host, port := config.GetServerConfig()
+	address := fmt.Sprintf("%s:%s", host, port)
 
-	log.Info().Msgf("Starting server on :%s", port)
-	if err := app.Listen(fmt.Sprintf(":%s", port)); err != nil {
+	log.Info().Msgf("Starting server on %s", address)
+	if err := app.Listen(address); err != nil {
 		log.Fatal().Err(err).Msg("Server failed to start")
 	}
 }
