@@ -6,6 +6,7 @@ import (
 	"github.com/Phoenix-Uptime/phoenix-go/internal/api"
 	"github.com/Phoenix-Uptime/phoenix-go/internal/server/middleware"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/swagger"
 	"github.com/rs/zerolog/log"
 
@@ -14,6 +15,12 @@ import (
 
 func New() *fiber.App {
 	app := fiber.New()
+
+	// Set up CORS to allow all origins
+	app.Use(cors.New(cors.Config{
+		AllowOrigins:     "*",
+		AllowCredentials: false,
+	}))
 
 	// Zerolog middleware for request logging
 	app.Use(func(c *fiber.Ctx) error {
