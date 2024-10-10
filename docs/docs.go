@@ -38,18 +38,6 @@ const docTemplate = `{
                 "summary": "Change User Password",
                 "parameters": [
                     {
-                        "type": "string",
-                        "description": "API Key for user authentication (Header)",
-                        "name": "api_key",
-                        "in": "header"
-                    },
-                    {
-                        "type": "string",
-                        "description": "API Key for user authentication (Query)",
-                        "name": "api_key",
-                        "in": "query"
-                    },
-                    {
                         "description": "Password change data",
                         "name": "data",
                         "in": "body",
@@ -114,20 +102,6 @@ const docTemplate = `{
                     "Account"
                 ],
                 "summary": "Get User Information",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "API Key for user authentication (Header)",
-                        "name": "api_key",
-                        "in": "header"
-                    },
-                    {
-                        "type": "string",
-                        "description": "API Key for user authentication (Query)",
-                        "name": "api_key",
-                        "in": "query"
-                    }
-                ],
                 "responses": {
                     "200": {
                         "description": "user basic information",
@@ -165,20 +139,6 @@ const docTemplate = `{
                     "Account"
                 ],
                 "summary": "Reset API Key",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "API Key for user authentication (Header)",
-                        "name": "api_key",
-                        "in": "header"
-                    },
-                    {
-                        "type": "string",
-                        "description": "API Key for user authentication (Query)",
-                        "name": "api_key",
-                        "in": "query"
-                    }
-                ],
                 "responses": {
                     "200": {
                         "description": "new API key",
@@ -222,20 +182,6 @@ const docTemplate = `{
                     "Account"
                 ],
                 "summary": "Get User Settings",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "API Key for user authentication (Header)",
-                        "name": "api_key",
-                        "in": "header"
-                    },
-                    {
-                        "type": "string",
-                        "description": "API Key for user authentication (Query)",
-                        "name": "api_key",
-                        "in": "query"
-                    }
-                ],
                 "responses": {
                     "200": {
                         "description": "user settings",

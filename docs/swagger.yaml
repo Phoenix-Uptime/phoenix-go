@@ -137,14 +137,6 @@ paths:
       - application/json
       description: Allows an authenticated user to change their password.
       parameters:
-      - description: API Key for user authentication (Header)
-        in: header
-        name: api_key
-        type: string
-      - description: API Key for user authentication (Query)
-        in: query
-        name: api_key
-        type: string
       - description: Password change data
         in: body
         name: data
@@ -185,15 +177,6 @@ paths:
       consumes:
       - application/json
       description: Returns basic information about the authenticated user.
-      parameters:
-      - description: API Key for user authentication (Header)
-        in: header
-        name: api_key
-        type: string
-      - description: API Key for user authentication (Query)
-        in: query
-        name: api_key
-        type: string
       produces:
       - application/json
       responses:
@@ -217,15 +200,6 @@ paths:
       - application/json
       description: Resets the API key for the authenticated user and returns the new
         API key.
-      parameters:
-      - description: API Key for user authentication (Header)
-        in: header
-        name: api_key
-        type: string
-      - description: API Key for user authentication (Query)
-        in: query
-        name: api_key
-        type: string
       produces:
       - application/json
       responses:
@@ -252,15 +226,6 @@ paths:
       consumes:
       - application/json
       description: Returns SMTP and Telegram bot settings for the authenticated user.
-      parameters:
-      - description: API Key for user authentication (Header)
-        in: header
-        name: api_key
-        type: string
-      - description: API Key for user authentication (Query)
-        in: query
-        name: api_key
-        type: string
       produces:
       - application/json
       responses:

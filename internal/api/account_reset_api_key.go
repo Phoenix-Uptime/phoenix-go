@@ -17,8 +17,6 @@ type ResetAPIKeyResponse struct {
 // @Tags Account
 // @Accept json
 // @Produce json
-// @Param api_key header string false "API Key for user authentication (Header)"
-// @Param api_key query string false "API Key for user authentication (Query)"
 // @Security ApiKeyHeader
 // @Security ApiKeyQuery
 // @Success 200 {object} ResetAPIKeyResponse "new API key"
