@@ -23,19 +23,9 @@ import (
 // @name        x-api-key
 // @in          header
 
-// @securityDefinitions.apikey SessionIDHeader
-// @type        apiKey
-// @name        x-session-id
-// @in          header
-
 // @securityDefinitions.apikey ApiKeyQuery
 // @type        apiKey
 // @name        api_key
-// @in          query
-
-// @securityDefinitions.apikey SessionIDQuery
-// @type        apiKey
-// @name        sid
 // @in          query
 func main() {
 	zerolog.TimeFieldFormat = zerolog.TimeFormatUnix

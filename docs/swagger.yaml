@@ -14,6 +14,28 @@ definitions:
       status:
         type: string
     type: object
+  api.LoginRequest:
+    properties:
+      password:
+        minLength: 6
+        type: string
+      username:
+        maxLength: 20
+        minLength: 3
+        type: string
+    required:
+    - password
+    - username
+    type: object
+  api.LoginResponse:
+    properties:
+      api_key:
+        type: string
+      message:
+        type: string
+      status:
+        type: string
+    type: object
   api.SignupRequest:
     properties:
       email:
@@ -58,6 +80,41 @@ paths:
       summary: Health check
       tags:
       - Health
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: Logs in a user with username and password, returning an API key
+        if successful.
+      parameters:
+      - description: User login data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/api.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: user successfully logged in
+          schema:
+            $ref: '#/definitions/api.LoginResponse'
+        "400":
+          description: invalid login payload
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+        "401":
+          description: invalid credentials
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+        "500":
+          description: internal server error
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+      summary: User Login
+      tags:
+      - Auth
   /signup:
     post:
       consumes:
@@ -100,13 +157,5 @@ securityDefinitions:
   ApiKeyQuery:
     in: query
     name: api_key
-    type: apiKey
-  SessionIDHeader:
-    in: header
-    name: x-session-id
-    type: apiKey
-  SessionIDQuery:
-    in: query
-    name: sid
     type: apiKey
 swagger: "2.0"
