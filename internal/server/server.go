@@ -60,8 +60,8 @@ func New() *fiber.App {
 	account.Use(middleware.AuthMiddleware)
 	account.Get("/me", api.GetAccountMe)
 	account.Get("/settings", api.GetAccountSettings)
-	account.Post("/account/reset-api-key", api.ResetAPIKey)
-	account.Post("/account/change-password", api.ChangePassword)
+	account.Post("/reset-api-key", api.ResetAPIKey)
+	account.Post("/change-password", api.ChangePassword)
 
 	return app
 }
