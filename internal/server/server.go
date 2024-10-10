@@ -44,6 +44,7 @@ func New() *fiber.App {
 	app.Get("/health", api.HealthCheck)
 
 	// Auth routes
+	app.Post("/login", api.Login)
 	app.Post("/signup", api.Signup)
 
 	return app
