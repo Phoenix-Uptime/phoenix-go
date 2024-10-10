@@ -26,15 +26,16 @@ type User struct {
 }
 
 type SMTPSettings struct {
-	SMTPServer string `json:"smtp_server" swagger:"example=smtp.example.com"`
-	SMTPPort   int    `json:"smtp_port" swagger:"example=587"`
-	Username   string `json:"username" swagger:"example=user@example.com"`
-	Password   string `json:"password" swagger:"example=supersecret"`
+	SMTPServer  string `json:"smtp_server" swagger:"example=smtp.example.com"`
+	SMTPPort    int    `json:"smtp_port" swagger:"example=587"`
+	FromAddress string `json:"from_address" swagger:"example=noreply@example.com"`
+	Username    string `json:"username" swagger:"example=user@example.com"`
+	Password    string `json:"password" swagger:"example=supersecret"`
+	UseTLS      bool   `json:"use_tls" swagger:"example=true"`
 }
 
 type TelegramBot struct {
 	BotToken string `json:"bot_token" swagger:"example=123456789:ABCdefGHIjklMNOpqrSTUvwxyz"`
-	ChatID   string `json:"chat_id" swagger:"example=123456789"`
 }
 
 type Monitor struct {
