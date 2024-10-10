@@ -62,6 +62,8 @@ func New() *fiber.App {
 	account.Get("/settings", api.GetAccountSettings)
 	account.Post("/reset-api-key", api.ResetAPIKey)
 	account.Post("/change-password", api.ChangePassword)
+	account.Post("/settings/settings/telegram", api.UpdateTelegramBotSettings)
+	account.Post("/settings/settings/smtp", api.UpdateSMTPSettings)
 
 	return app
 }

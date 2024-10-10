@@ -95,6 +95,41 @@ definitions:
       status:
         type: string
     type: object
+  api.SuccessResponse:
+    properties:
+      message:
+        type: string
+      status:
+        type: string
+    type: object
+  api.UpdateSMTPSettingsRequest:
+    properties:
+      from_address:
+        type: string
+      password:
+        type: string
+      smtp_port:
+        type: integer
+      smtp_server:
+        type: string
+      use_tls:
+        type: boolean
+      username:
+        type: string
+    required:
+    - from_address
+    - password
+    - smtp_port
+    - smtp_server
+    - username
+    type: object
+  api.UpdateTelegramBotRequest:
+    properties:
+      bot_token:
+        type: string
+    required:
+    - bot_token
+    type: object
   api.UserResponse:
     properties:
       api_key:
@@ -245,6 +280,80 @@ paths:
       - ApiKeyHeader: []
       - ApiKeyQuery: []
       summary: Get User Settings
+      tags:
+      - Account
+  /account/settings/smtp:
+    post:
+      consumes:
+      - application/json
+      description: Updates the SMTP settings for the authenticated user.
+      parameters:
+      - description: SMTP settings
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/api.UpdateSMTPSettingsRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: settings updated
+          schema:
+            $ref: '#/definitions/api.SuccessResponse'
+        "400":
+          description: invalid input
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+        "401":
+          description: unauthorized - invalid or missing API key
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+        "500":
+          description: internal server error
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+      security:
+      - ApiKeyHeader: []
+      - ApiKeyQuery: []
+      summary: Update SMTP Settings
+      tags:
+      - Account
+  /account/settings/telegram:
+    post:
+      consumes:
+      - application/json
+      description: Updates the Telegram bot settings for the authenticated user.
+      parameters:
+      - description: Telegram bot settings
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/api.UpdateTelegramBotRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: settings updated
+          schema:
+            $ref: '#/definitions/api.SuccessResponse'
+        "400":
+          description: invalid input
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+        "401":
+          description: unauthorized - invalid or missing API key
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+        "500":
+          description: internal server error
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+      security:
+      - ApiKeyHeader: []
+      - ApiKeyQuery: []
+      summary: Update Telegram Bot Settings
       tags:
       - Account
   /health:

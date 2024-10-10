@@ -204,6 +204,126 @@ const docTemplate = `{
                 }
             }
         },
+        "/account/settings/smtp": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyHeader": []
+                    },
+                    {
+                        "ApiKeyQuery": []
+                    }
+                ],
+                "description": "Updates the SMTP settings for the authenticated user.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Account"
+                ],
+                "summary": "Update SMTP Settings",
+                "parameters": [
+                    {
+                        "description": "SMTP settings",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.UpdateSMTPSettingsRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "settings updated",
+                        "schema": {
+                            "$ref": "#/definitions/api.SuccessResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "invalid input",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "unauthorized - invalid or missing API key",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/account/settings/telegram": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyHeader": []
+                    },
+                    {
+                        "ApiKeyQuery": []
+                    }
+                ],
+                "description": "Updates the Telegram bot settings for the authenticated user.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Account"
+                ],
+                "summary": "Update Telegram Bot Settings",
+                "parameters": [
+                    {
+                        "description": "Telegram bot settings",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.UpdateTelegramBotRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "settings updated",
+                        "schema": {
+                            "$ref": "#/definitions/api.SuccessResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "invalid input",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "unauthorized - invalid or missing API key",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/health": {
             "get": {
                 "description": "Check if the API is healthy",
@@ -461,6 +581,58 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "api.SuccessResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "api.UpdateSMTPSettingsRequest": {
+            "type": "object",
+            "required": [
+                "from_address",
+                "password",
+                "smtp_port",
+                "smtp_server",
+                "username"
+            ],
+            "properties": {
+                "from_address": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "smtp_port": {
+                    "type": "integer"
+                },
+                "smtp_server": {
+                    "type": "string"
+                },
+                "use_tls": {
+                    "type": "boolean"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "api.UpdateTelegramBotRequest": {
+            "type": "object",
+            "required": [
+                "bot_token"
+            ],
+            "properties": {
+                "bot_token": {
                     "type": "string"
                 }
             }
