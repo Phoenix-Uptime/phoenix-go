@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/Phoenix-Uptime/phoenix-go/internal/api"
+	"github.com/Phoenix-Uptime/phoenix-go/internal/server/middleware"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/swagger"
 	"github.com/rs/zerolog/log"
@@ -46,6 +47,9 @@ func New() *fiber.App {
 	// Auth routes
 	app.Post("/login", api.Login)
 	app.Post("/signup", api.Signup)
+
+	// Account routes
+	app.Get("/account/me", middleware.AuthMiddleware, api.GetAccountInfo)
 
 	return app
 }

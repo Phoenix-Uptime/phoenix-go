@@ -15,6 +15,63 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/account/me": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyHeader": []
+                    },
+                    {
+                        "ApiKeyQuery": []
+                    }
+                ],
+                "description": "Returns information about the authenticated user, including their SMTP and Telegram bot settings.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Account"
+                ],
+                "summary": "Get User Information",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "API Key for user authentication (Header)",
+                        "name": "api_key",
+                        "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "API Key for user authentication (Query)",
+                        "name": "api_key",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "user information with settings",
+                        "schema": {
+                            "$ref": "#/definitions/api.UserResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "unauthorized - invalid or missing API key",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/health": {
             "get": {
                 "description": "Check if the API is healthy",
@@ -192,6 +249,20 @@ const docTemplate = `{
                 }
             }
         },
+        "api.SMTPSettingsResponse": {
+            "type": "object",
+            "properties": {
+                "smtp_port": {
+                    "type": "integer"
+                },
+                "smtp_server": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
         "api.SignupRequest": {
             "type": "object",
             "required": [
@@ -222,6 +293,37 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "api.UserResponse": {
+            "type": "object",
+            "properties": {
+                "api_key": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "smtp_settings": {
+                    "$ref": "#/definitions/api.SMTPSettingsResponse"
+                },
+                "telegram_bot": {
+                    "$ref": "#/definitions/models.TelegramBot"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.TelegramBot": {
+            "type": "object",
+            "properties": {
+                "bot_token": {
+                    "type": "string"
+                },
+                "chat_id": {
                     "type": "string"
                 }
             }
