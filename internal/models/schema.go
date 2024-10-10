@@ -44,7 +44,7 @@ type Monitor struct {
 	Name       string           `gorm:"not null" json:"name" swagger:"example=My URL Monitor"`
 	URL        string           `gorm:"not null" json:"url" swagger:"example=https://example.com"`
 	Interval   int              `gorm:"default:60" json:"interval" swagger:"example=60"` // Interval in seconds
-	Status     Status           `gorm:"type:enum('up','down','paused','unknown');default:'unknown'" json:"status" swagger:"example=up"`
+	Status     Status           `gorm:"default:unknown" json:"status" swagger:"example=up"`
 	Type       MonitorType      `gorm:"not null" json:"type" swagger:"example=url"`
 	Method     *string          `json:"method,omitempty" swagger:"example=GET"`                    // For URL monitors
 	Filters    *Filters         `gorm:"embedded;embeddedPrefix:filters_" json:"filters,omitempty"` // Optional filters

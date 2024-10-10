@@ -31,6 +31,18 @@ func InitDB() error {
 		return fmt.Errorf("failed to connect to database: %w", err)
 	}
 
+	// Auto-migrate schemas
+	err = DB.AutoMigrate(
+		&User{},
+		&Monitor{},
+		&MonitorHistory{},
+		&Tag{},
+	)
+	if err != nil {
+		log.Error().Err(err).Msg("Failed to migrate schemas")
+		return err
+	}
+
 	log.Info().Msg("Database connection established successfully")
 	return nil
 }
