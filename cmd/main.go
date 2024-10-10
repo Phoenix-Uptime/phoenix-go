@@ -5,7 +5,7 @@ import (
 	"os"
 
 	"github.com/Phoenix-Uptime/phoenix-go/internal/config"
-	"github.com/Phoenix-Uptime/phoenix-go/internal/database"
+	"github.com/Phoenix-Uptime/phoenix-go/internal/models"
 	"github.com/Phoenix-Uptime/phoenix-go/internal/server"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
@@ -48,7 +48,7 @@ func main() {
 	}
 
 	// Initialize the database connection
-	if err := database.InitDB(); err != nil {
+	if err := models.InitDB(); err != nil {
 		log.Fatal().Err(err).Msg("Failed to initialize database")
 	}
 

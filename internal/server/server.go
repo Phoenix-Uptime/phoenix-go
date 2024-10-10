@@ -43,5 +43,8 @@ func New() *fiber.App {
 	// Register health check route
 	app.Get("/health", api.HealthCheck)
 
+	// Auth routes
+	app.Post("/signup", api.Signup)
+
 	return app
 }
