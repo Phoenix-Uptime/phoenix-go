@@ -49,7 +49,10 @@ func New() *fiber.App {
 	app.Post("/signup", api.Signup)
 
 	// Account routes
-	app.Get("/account/me", middleware.AuthMiddleware, api.GetAccountInfo)
+	account := app.Group("/account")
+	account.Use(middleware.AuthMiddleware)
+	account.Get("/me", api.GetAccountMe)
+	account.Get("/settings", api.GetAccountSettings)
 
 	return app
 }
