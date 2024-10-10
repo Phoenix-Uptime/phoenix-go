@@ -6,7 +6,7 @@
         "contact": {},
         "version": "1.0"
     },
-    "host": "127.0.0.1:8484",
+    "host": "127.0.0.1:3031",
     "basePath": "/",
     "paths": {
         "/health": {
