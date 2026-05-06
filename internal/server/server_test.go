@@ -6,7 +6,6 @@ import (
 	stdsql "database/sql"
 	"encoding/json"
 	"net/http"
-	"path/filepath"
 	"testing"
 
 	"entgo.io/ent/dialect"
@@ -115,10 +114,11 @@ func TestSignupAndLoginWithEnt(t *testing.T) {
 func useTestDatabase(t *testing.T) func() {
 	t.Helper()
 
-	db, err := stdsql.Open("sqlite", filepath.Join(t.TempDir(), "phoenix-test.db"))
+	db, err := stdsql.Open("sqlite", "file:phoenix_test?mode=memory&cache=shared")
 	if err != nil {
 		t.Fatal(err)
 	}
+	db.SetMaxOpenConns(1)
 	if _, err := db.Exec("PRAGMA foreign_keys = ON"); err != nil {
 		t.Fatal(err)
 	}
