@@ -12,9 +12,13 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/incident"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/maintenancewindow"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/monitor"
-	"github.com/Phoenix-Uptime/phoenix-go/ent/monitorhistory"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/monitorcheck"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/notification"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/predicate"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/statuspagemonitor"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/tag"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/user"
 )
@@ -22,13 +26,17 @@ import (
 // MonitorQuery is the builder for querying Monitor entities.
 type MonitorQuery struct {
 	config
-	ctx         *QueryContext
-	order       []monitor.OrderOption
-	inters      []Interceptor
-	predicates  []predicate.Monitor
-	withUser    *UserQuery
-	withHistory *MonitorHistoryQuery
-	withTags    *TagQuery
+	ctx                    *QueryContext
+	order                  []monitor.OrderOption
+	inters                 []Interceptor
+	predicates             []predicate.Monitor
+	withUser               *UserQuery
+	withChecks             *MonitorCheckQuery
+	withTags               *TagQuery
+	withNotifications      *NotificationQuery
+	withStatusPageMonitors *StatusPageMonitorQuery
+	withMaintenanceWindows *MaintenanceWindowQuery
+	withIncidents          *IncidentQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -87,9 +95,9 @@ func (_q *MonitorQuery) QueryUser() *UserQuery {
 	return query
 }
 
-// QueryHistory chains the current query on the "history" edge.
-func (_q *MonitorQuery) QueryHistory() *MonitorHistoryQuery {
-	query := (&MonitorHistoryClient{config: _q.config}).Query()
+// QueryChecks chains the current query on the "checks" edge.
+func (_q *MonitorQuery) QueryChecks() *MonitorCheckQuery {
+	query := (&MonitorCheckClient{config: _q.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := _q.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -100,8 +108,8 @@ func (_q *MonitorQuery) QueryHistory() *MonitorHistoryQuery {
 		}
 		step := sqlgraph.NewStep(
 			sqlgraph.From(monitor.Table, monitor.FieldID, selector),
-			sqlgraph.To(monitorhistory.Table, monitorhistory.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, monitor.HistoryTable, monitor.HistoryColumn),
+			sqlgraph.To(monitorcheck.Table, monitorcheck.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, monitor.ChecksTable, monitor.ChecksColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -124,6 +132,94 @@ func (_q *MonitorQuery) QueryTags() *TagQuery {
 			sqlgraph.From(monitor.Table, monitor.FieldID, selector),
 			sqlgraph.To(tag.Table, tag.FieldID),
 			sqlgraph.Edge(sqlgraph.M2M, false, monitor.TagsTable, monitor.TagsPrimaryKey...),
+		)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryNotifications chains the current query on the "notifications" edge.
+func (_q *MonitorQuery) QueryNotifications() *NotificationQuery {
+	query := (&NotificationClient{config: _q.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := _q.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := _q.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(monitor.Table, monitor.FieldID, selector),
+			sqlgraph.To(notification.Table, notification.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, monitor.NotificationsTable, monitor.NotificationsPrimaryKey...),
+		)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryStatusPageMonitors chains the current query on the "status_page_monitors" edge.
+func (_q *MonitorQuery) QueryStatusPageMonitors() *StatusPageMonitorQuery {
+	query := (&StatusPageMonitorClient{config: _q.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := _q.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := _q.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(monitor.Table, monitor.FieldID, selector),
+			sqlgraph.To(statuspagemonitor.Table, statuspagemonitor.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, monitor.StatusPageMonitorsTable, monitor.StatusPageMonitorsColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryMaintenanceWindows chains the current query on the "maintenance_windows" edge.
+func (_q *MonitorQuery) QueryMaintenanceWindows() *MaintenanceWindowQuery {
+	query := (&MaintenanceWindowClient{config: _q.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := _q.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := _q.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(monitor.Table, monitor.FieldID, selector),
+			sqlgraph.To(maintenancewindow.Table, maintenancewindow.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, monitor.MaintenanceWindowsTable, monitor.MaintenanceWindowsPrimaryKey...),
+		)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryIncidents chains the current query on the "incidents" edge.
+func (_q *MonitorQuery) QueryIncidents() *IncidentQuery {
+	query := (&IncidentClient{config: _q.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := _q.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := _q.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(monitor.Table, monitor.FieldID, selector),
+			sqlgraph.To(incident.Table, incident.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, monitor.IncidentsTable, monitor.IncidentsColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -318,14 +414,18 @@ func (_q *MonitorQuery) Clone() *MonitorQuery {
 		return nil
 	}
 	return &MonitorQuery{
-		config:      _q.config,
-		ctx:         _q.ctx.Clone(),
-		order:       append([]monitor.OrderOption{}, _q.order...),
-		inters:      append([]Interceptor{}, _q.inters...),
-		predicates:  append([]predicate.Monitor{}, _q.predicates...),
-		withUser:    _q.withUser.Clone(),
-		withHistory: _q.withHistory.Clone(),
-		withTags:    _q.withTags.Clone(),
+		config:                 _q.config,
+		ctx:                    _q.ctx.Clone(),
+		order:                  append([]monitor.OrderOption{}, _q.order...),
+		inters:                 append([]Interceptor{}, _q.inters...),
+		predicates:             append([]predicate.Monitor{}, _q.predicates...),
+		withUser:               _q.withUser.Clone(),
+		withChecks:             _q.withChecks.Clone(),
+		withTags:               _q.withTags.Clone(),
+		withNotifications:      _q.withNotifications.Clone(),
+		withStatusPageMonitors: _q.withStatusPageMonitors.Clone(),
+		withMaintenanceWindows: _q.withMaintenanceWindows.Clone(),
+		withIncidents:          _q.withIncidents.Clone(),
 		// clone intermediate query.
 		sql:  _q.sql.Clone(),
 		path: _q.path,
@@ -343,14 +443,14 @@ func (_q *MonitorQuery) WithUser(opts ...func(*UserQuery)) *MonitorQuery {
 	return _q
 }
 
-// WithHistory tells the query-builder to eager-load the nodes that are connected to
-// the "history" edge. The optional arguments are used to configure the query builder of the edge.
-func (_q *MonitorQuery) WithHistory(opts ...func(*MonitorHistoryQuery)) *MonitorQuery {
-	query := (&MonitorHistoryClient{config: _q.config}).Query()
+// WithChecks tells the query-builder to eager-load the nodes that are connected to
+// the "checks" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *MonitorQuery) WithChecks(opts ...func(*MonitorCheckQuery)) *MonitorQuery {
+	query := (&MonitorCheckClient{config: _q.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
-	_q.withHistory = query
+	_q.withChecks = query
 	return _q
 }
 
@@ -362,6 +462,50 @@ func (_q *MonitorQuery) WithTags(opts ...func(*TagQuery)) *MonitorQuery {
 		opt(query)
 	}
 	_q.withTags = query
+	return _q
+}
+
+// WithNotifications tells the query-builder to eager-load the nodes that are connected to
+// the "notifications" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *MonitorQuery) WithNotifications(opts ...func(*NotificationQuery)) *MonitorQuery {
+	query := (&NotificationClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	_q.withNotifications = query
+	return _q
+}
+
+// WithStatusPageMonitors tells the query-builder to eager-load the nodes that are connected to
+// the "status_page_monitors" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *MonitorQuery) WithStatusPageMonitors(opts ...func(*StatusPageMonitorQuery)) *MonitorQuery {
+	query := (&StatusPageMonitorClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	_q.withStatusPageMonitors = query
+	return _q
+}
+
+// WithMaintenanceWindows tells the query-builder to eager-load the nodes that are connected to
+// the "maintenance_windows" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *MonitorQuery) WithMaintenanceWindows(opts ...func(*MaintenanceWindowQuery)) *MonitorQuery {
+	query := (&MaintenanceWindowClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	_q.withMaintenanceWindows = query
+	return _q
+}
+
+// WithIncidents tells the query-builder to eager-load the nodes that are connected to
+// the "incidents" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *MonitorQuery) WithIncidents(opts ...func(*IncidentQuery)) *MonitorQuery {
+	query := (&IncidentClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	_q.withIncidents = query
 	return _q
 }
 
@@ -443,10 +587,14 @@ func (_q *MonitorQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Moni
 	var (
 		nodes       = []*Monitor{}
 		_spec       = _q.querySpec()
-		loadedTypes = [3]bool{
+		loadedTypes = [7]bool{
 			_q.withUser != nil,
-			_q.withHistory != nil,
+			_q.withChecks != nil,
 			_q.withTags != nil,
+			_q.withNotifications != nil,
+			_q.withStatusPageMonitors != nil,
+			_q.withMaintenanceWindows != nil,
+			_q.withIncidents != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -473,10 +621,10 @@ func (_q *MonitorQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Moni
 			return nil, err
 		}
 	}
-	if query := _q.withHistory; query != nil {
-		if err := _q.loadHistory(ctx, query, nodes,
-			func(n *Monitor) { n.Edges.History = []*MonitorHistory{} },
-			func(n *Monitor, e *MonitorHistory) { n.Edges.History = append(n.Edges.History, e) }); err != nil {
+	if query := _q.withChecks; query != nil {
+		if err := _q.loadChecks(ctx, query, nodes,
+			func(n *Monitor) { n.Edges.Checks = []*MonitorCheck{} },
+			func(n *Monitor, e *MonitorCheck) { n.Edges.Checks = append(n.Edges.Checks, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -484,6 +632,38 @@ func (_q *MonitorQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Moni
 		if err := _q.loadTags(ctx, query, nodes,
 			func(n *Monitor) { n.Edges.Tags = []*Tag{} },
 			func(n *Monitor, e *Tag) { n.Edges.Tags = append(n.Edges.Tags, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := _q.withNotifications; query != nil {
+		if err := _q.loadNotifications(ctx, query, nodes,
+			func(n *Monitor) { n.Edges.Notifications = []*Notification{} },
+			func(n *Monitor, e *Notification) { n.Edges.Notifications = append(n.Edges.Notifications, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := _q.withStatusPageMonitors; query != nil {
+		if err := _q.loadStatusPageMonitors(ctx, query, nodes,
+			func(n *Monitor) { n.Edges.StatusPageMonitors = []*StatusPageMonitor{} },
+			func(n *Monitor, e *StatusPageMonitor) {
+				n.Edges.StatusPageMonitors = append(n.Edges.StatusPageMonitors, e)
+			}); err != nil {
+			return nil, err
+		}
+	}
+	if query := _q.withMaintenanceWindows; query != nil {
+		if err := _q.loadMaintenanceWindows(ctx, query, nodes,
+			func(n *Monitor) { n.Edges.MaintenanceWindows = []*MaintenanceWindow{} },
+			func(n *Monitor, e *MaintenanceWindow) {
+				n.Edges.MaintenanceWindows = append(n.Edges.MaintenanceWindows, e)
+			}); err != nil {
+			return nil, err
+		}
+	}
+	if query := _q.withIncidents; query != nil {
+		if err := _q.loadIncidents(ctx, query, nodes,
+			func(n *Monitor) { n.Edges.Incidents = []*Incident{} },
+			func(n *Monitor, e *Incident) { n.Edges.Incidents = append(n.Edges.Incidents, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -519,7 +699,7 @@ func (_q *MonitorQuery) loadUser(ctx context.Context, query *UserQuery, nodes []
 	}
 	return nil
 }
-func (_q *MonitorQuery) loadHistory(ctx context.Context, query *MonitorHistoryQuery, nodes []*Monitor, init func(*Monitor), assign func(*Monitor, *MonitorHistory)) error {
+func (_q *MonitorQuery) loadChecks(ctx context.Context, query *MonitorCheckQuery, nodes []*Monitor, init func(*Monitor), assign func(*Monitor, *MonitorCheck)) error {
 	fks := make([]driver.Value, 0, len(nodes))
 	nodeids := make(map[int]*Monitor)
 	for i := range nodes {
@@ -530,10 +710,10 @@ func (_q *MonitorQuery) loadHistory(ctx context.Context, query *MonitorHistoryQu
 		}
 	}
 	if len(query.ctx.Fields) > 0 {
-		query.ctx.AppendFieldOnce(monitorhistory.FieldMonitorID)
+		query.ctx.AppendFieldOnce(monitorcheck.FieldMonitorID)
 	}
-	query.Where(predicate.MonitorHistory(func(s *sql.Selector) {
-		s.Where(sql.InValues(s.C(monitor.HistoryColumn), fks...))
+	query.Where(predicate.MonitorCheck(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(monitor.ChecksColumn), fks...))
 	}))
 	neighbors, err := query.All(ctx)
 	if err != nil {
@@ -607,6 +787,188 @@ func (_q *MonitorQuery) loadTags(ctx context.Context, query *TagQuery, nodes []*
 		for kn := range nodes {
 			assign(kn, n)
 		}
+	}
+	return nil
+}
+func (_q *MonitorQuery) loadNotifications(ctx context.Context, query *NotificationQuery, nodes []*Monitor, init func(*Monitor), assign func(*Monitor, *Notification)) error {
+	edgeIDs := make([]driver.Value, len(nodes))
+	byID := make(map[int]*Monitor)
+	nids := make(map[int]map[*Monitor]struct{})
+	for i, node := range nodes {
+		edgeIDs[i] = node.ID
+		byID[node.ID] = node
+		if init != nil {
+			init(node)
+		}
+	}
+	query.Where(func(s *sql.Selector) {
+		joinT := sql.Table(monitor.NotificationsTable)
+		s.Join(joinT).On(s.C(notification.FieldID), joinT.C(monitor.NotificationsPrimaryKey[1]))
+		s.Where(sql.InValues(joinT.C(monitor.NotificationsPrimaryKey[0]), edgeIDs...))
+		columns := s.SelectedColumns()
+		s.Select(joinT.C(monitor.NotificationsPrimaryKey[0]))
+		s.AppendSelect(columns...)
+		s.SetDistinct(false)
+	})
+	if err := query.prepareQuery(ctx); err != nil {
+		return err
+	}
+	qr := QuerierFunc(func(ctx context.Context, q Query) (Value, error) {
+		return query.sqlAll(ctx, func(_ context.Context, spec *sqlgraph.QuerySpec) {
+			assign := spec.Assign
+			values := spec.ScanValues
+			spec.ScanValues = func(columns []string) ([]any, error) {
+				values, err := values(columns[1:])
+				if err != nil {
+					return nil, err
+				}
+				return append([]any{new(sql.NullInt64)}, values...), nil
+			}
+			spec.Assign = func(columns []string, values []any) error {
+				outValue := int(values[0].(*sql.NullInt64).Int64)
+				inValue := int(values[1].(*sql.NullInt64).Int64)
+				if nids[inValue] == nil {
+					nids[inValue] = map[*Monitor]struct{}{byID[outValue]: {}}
+					return assign(columns[1:], values[1:])
+				}
+				nids[inValue][byID[outValue]] = struct{}{}
+				return nil
+			}
+		})
+	})
+	neighbors, err := withInterceptors[[]*Notification](ctx, query, qr, query.inters)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected "notifications" node returned %v`, n.ID)
+		}
+		for kn := range nodes {
+			assign(kn, n)
+		}
+	}
+	return nil
+}
+func (_q *MonitorQuery) loadStatusPageMonitors(ctx context.Context, query *StatusPageMonitorQuery, nodes []*Monitor, init func(*Monitor), assign func(*Monitor, *StatusPageMonitor)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int]*Monitor)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(statuspagemonitor.FieldMonitorID)
+	}
+	query.Where(predicate.StatusPageMonitor(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(monitor.StatusPageMonitorsColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.MonitorID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "monitor_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (_q *MonitorQuery) loadMaintenanceWindows(ctx context.Context, query *MaintenanceWindowQuery, nodes []*Monitor, init func(*Monitor), assign func(*Monitor, *MaintenanceWindow)) error {
+	edgeIDs := make([]driver.Value, len(nodes))
+	byID := make(map[int]*Monitor)
+	nids := make(map[int]map[*Monitor]struct{})
+	for i, node := range nodes {
+		edgeIDs[i] = node.ID
+		byID[node.ID] = node
+		if init != nil {
+			init(node)
+		}
+	}
+	query.Where(func(s *sql.Selector) {
+		joinT := sql.Table(monitor.MaintenanceWindowsTable)
+		s.Join(joinT).On(s.C(maintenancewindow.FieldID), joinT.C(monitor.MaintenanceWindowsPrimaryKey[0]))
+		s.Where(sql.InValues(joinT.C(monitor.MaintenanceWindowsPrimaryKey[1]), edgeIDs...))
+		columns := s.SelectedColumns()
+		s.Select(joinT.C(monitor.MaintenanceWindowsPrimaryKey[1]))
+		s.AppendSelect(columns...)
+		s.SetDistinct(false)
+	})
+	if err := query.prepareQuery(ctx); err != nil {
+		return err
+	}
+	qr := QuerierFunc(func(ctx context.Context, q Query) (Value, error) {
+		return query.sqlAll(ctx, func(_ context.Context, spec *sqlgraph.QuerySpec) {
+			assign := spec.Assign
+			values := spec.ScanValues
+			spec.ScanValues = func(columns []string) ([]any, error) {
+				values, err := values(columns[1:])
+				if err != nil {
+					return nil, err
+				}
+				return append([]any{new(sql.NullInt64)}, values...), nil
+			}
+			spec.Assign = func(columns []string, values []any) error {
+				outValue := int(values[0].(*sql.NullInt64).Int64)
+				inValue := int(values[1].(*sql.NullInt64).Int64)
+				if nids[inValue] == nil {
+					nids[inValue] = map[*Monitor]struct{}{byID[outValue]: {}}
+					return assign(columns[1:], values[1:])
+				}
+				nids[inValue][byID[outValue]] = struct{}{}
+				return nil
+			}
+		})
+	})
+	neighbors, err := withInterceptors[[]*MaintenanceWindow](ctx, query, qr, query.inters)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected "maintenance_windows" node returned %v`, n.ID)
+		}
+		for kn := range nodes {
+			assign(kn, n)
+		}
+	}
+	return nil
+}
+func (_q *MonitorQuery) loadIncidents(ctx context.Context, query *IncidentQuery, nodes []*Monitor, init func(*Monitor), assign func(*Monitor, *Incident)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int]*Monitor)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(incident.FieldMonitorID)
+	}
+	query.Where(predicate.Incident(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(monitor.IncidentsColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.MonitorID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "monitor_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
 	}
 	return nil
 }

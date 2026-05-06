@@ -11,8 +11,8 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/monitor"
-	"github.com/Phoenix-Uptime/phoenix-go/ent/statuspage"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/tag"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/user"
 )
 
 // TagCreate is the builder for creating a Tag entity.
@@ -64,6 +64,12 @@ func (_c *TagCreate) SetNillableDeletedAt(v *time.Time) *TagCreate {
 	return _c
 }
 
+// SetUserID sets the "user_id" field.
+func (_c *TagCreate) SetUserID(v int) *TagCreate {
+	_c.mutation.SetUserID(v)
+	return _c
+}
+
 // SetName sets the "name" field.
 func (_c *TagCreate) SetName(v string) *TagCreate {
 	_c.mutation.SetName(v)
@@ -98,6 +104,11 @@ func (_c *TagCreate) SetNillableColor(v *string) *TagCreate {
 	return _c
 }
 
+// SetUser sets the "user" edge to the User entity.
+func (_c *TagCreate) SetUser(v *User) *TagCreate {
+	return _c.SetUserID(v.ID)
+}
+
 // AddMonitorIDs adds the "monitors" edge to the Monitor entity by IDs.
 func (_c *TagCreate) AddMonitorIDs(ids ...int) *TagCreate {
 	_c.mutation.AddMonitorIDs(ids...)
@@ -111,21 +122,6 @@ func (_c *TagCreate) AddMonitors(v ...*Monitor) *TagCreate {
 		ids[i] = v[i].ID
 	}
 	return _c.AddMonitorIDs(ids...)
-}
-
-// AddStatusPageIDs adds the "status_pages" edge to the StatusPage entity by IDs.
-func (_c *TagCreate) AddStatusPageIDs(ids ...int) *TagCreate {
-	_c.mutation.AddStatusPageIDs(ids...)
-	return _c
-}
-
-// AddStatusPages adds the "status_pages" edges to the StatusPage entity.
-func (_c *TagCreate) AddStatusPages(v ...*StatusPage) *TagCreate {
-	ids := make([]int, len(v))
-	for i := range v {
-		ids[i] = v[i].ID
-	}
-	return _c.AddStatusPageIDs(ids...)
 }
 
 // Mutation returns the TagMutation object of the builder.
@@ -181,6 +177,9 @@ func (_c *TagCreate) check() error {
 	if _, ok := _c.mutation.UpdatedAt(); !ok {
 		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "Tag.updated_at"`)}
 	}
+	if _, ok := _c.mutation.UserID(); !ok {
+		return &ValidationError{Name: "user_id", err: errors.New(`ent: missing required field "Tag.user_id"`)}
+	}
 	if _, ok := _c.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New(`ent: missing required field "Tag.name"`)}
 	}
@@ -188,6 +187,9 @@ func (_c *TagCreate) check() error {
 		if err := tag.NameValidator(v); err != nil {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "Tag.name": %w`, err)}
 		}
+	}
+	if len(_c.mutation.UserIDs()) == 0 {
+		return &ValidationError{Name: "user", err: errors.New(`ent: missing required edge "Tag.user"`)}
 	}
 	return nil
 }
@@ -233,11 +235,28 @@ func (_c *TagCreate) createSpec() (*Tag, *sqlgraph.CreateSpec) {
 	}
 	if value, ok := _c.mutation.Description(); ok {
 		_spec.SetField(tag.FieldDescription, field.TypeString, value)
-		_node.Description = value
+		_node.Description = &value
 	}
 	if value, ok := _c.mutation.Color(); ok {
 		_spec.SetField(tag.FieldColor, field.TypeString, value)
-		_node.Color = value
+		_node.Color = &value
+	}
+	if nodes := _c.mutation.UserIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   tag.UserTable,
+			Columns: []string{tag.UserColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.UserID = nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := _c.mutation.MonitorsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -248,22 +267,6 @@ func (_c *TagCreate) createSpec() (*Tag, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(monitor.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges = append(_spec.Edges, edge)
-	}
-	if nodes := _c.mutation.StatusPagesIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   tag.StatusPagesTable,
-			Columns: []string{tag.StatusPagesColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(statuspage.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

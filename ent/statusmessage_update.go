@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/incident"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/predicate"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/statusmessage"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/statuspage"
@@ -69,6 +70,26 @@ func (_u *StatusMessageUpdate) SetNillableStatusPageID(v *int) *StatusMessageUpd
 	return _u
 }
 
+// SetIncidentID sets the "incident_id" field.
+func (_u *StatusMessageUpdate) SetIncidentID(v int) *StatusMessageUpdate {
+	_u.mutation.SetIncidentID(v)
+	return _u
+}
+
+// SetNillableIncidentID sets the "incident_id" field if the given value is not nil.
+func (_u *StatusMessageUpdate) SetNillableIncidentID(v *int) *StatusMessageUpdate {
+	if v != nil {
+		_u.SetIncidentID(*v)
+	}
+	return _u
+}
+
+// ClearIncidentID clears the value of the "incident_id" field.
+func (_u *StatusMessageUpdate) ClearIncidentID() *StatusMessageUpdate {
+	_u.mutation.ClearIncidentID()
+	return _u
+}
+
 // SetParentID sets the "parent_id" field.
 func (_u *StatusMessageUpdate) SetParentID(v int) *StatusMessageUpdate {
 	_u.mutation.SetParentID(v)
@@ -103,6 +124,26 @@ func (_u *StatusMessageUpdate) SetNillableType(v *statusmessage.Type) *StatusMes
 	return _u
 }
 
+// SetTitle sets the "title" field.
+func (_u *StatusMessageUpdate) SetTitle(v string) *StatusMessageUpdate {
+	_u.mutation.SetTitle(v)
+	return _u
+}
+
+// SetNillableTitle sets the "title" field if the given value is not nil.
+func (_u *StatusMessageUpdate) SetNillableTitle(v *string) *StatusMessageUpdate {
+	if v != nil {
+		_u.SetTitle(*v)
+	}
+	return _u
+}
+
+// ClearTitle clears the value of the "title" field.
+func (_u *StatusMessageUpdate) ClearTitle() *StatusMessageUpdate {
+	_u.mutation.ClearTitle()
+	return _u
+}
+
 // SetContent sets the "content" field.
 func (_u *StatusMessageUpdate) SetContent(v string) *StatusMessageUpdate {
 	_u.mutation.SetContent(v)
@@ -120,6 +161,11 @@ func (_u *StatusMessageUpdate) SetNillableContent(v *string) *StatusMessageUpdat
 // SetStatusPage sets the "status_page" edge to the StatusPage entity.
 func (_u *StatusMessageUpdate) SetStatusPage(v *StatusPage) *StatusMessageUpdate {
 	return _u.SetStatusPageID(v.ID)
+}
+
+// SetIncident sets the "incident" edge to the Incident entity.
+func (_u *StatusMessageUpdate) SetIncident(v *Incident) *StatusMessageUpdate {
+	return _u.SetIncidentID(v.ID)
 }
 
 // SetParent sets the "parent" edge to the StatusMessage entity.
@@ -150,6 +196,12 @@ func (_u *StatusMessageUpdate) Mutation() *StatusMessageMutation {
 // ClearStatusPage clears the "status_page" edge to the StatusPage entity.
 func (_u *StatusMessageUpdate) ClearStatusPage() *StatusMessageUpdate {
 	_u.mutation.ClearStatusPage()
+	return _u
+}
+
+// ClearIncident clears the "incident" edge to the Incident entity.
+func (_u *StatusMessageUpdate) ClearIncident() *StatusMessageUpdate {
+	_u.mutation.ClearIncident()
 	return _u
 }
 
@@ -258,6 +310,12 @@ func (_u *StatusMessageUpdate) sqlSave(ctx context.Context) (_node int, err erro
 	if value, ok := _u.mutation.GetType(); ok {
 		_spec.SetField(statusmessage.FieldType, field.TypeEnum, value)
 	}
+	if value, ok := _u.mutation.Title(); ok {
+		_spec.SetField(statusmessage.FieldTitle, field.TypeString, value)
+	}
+	if _u.mutation.TitleCleared() {
+		_spec.ClearField(statusmessage.FieldTitle, field.TypeString)
+	}
 	if value, ok := _u.mutation.Content(); ok {
 		_spec.SetField(statusmessage.FieldContent, field.TypeString, value)
 	}
@@ -283,6 +341,35 @@ func (_u *StatusMessageUpdate) sqlSave(ctx context.Context) (_node int, err erro
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(statuspage.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.IncidentCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   statusmessage.IncidentTable,
+			Columns: []string{statusmessage.IncidentColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(incident.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.IncidentIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   statusmessage.IncidentTable,
+			Columns: []string{statusmessage.IncidentColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(incident.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -424,6 +511,26 @@ func (_u *StatusMessageUpdateOne) SetNillableStatusPageID(v *int) *StatusMessage
 	return _u
 }
 
+// SetIncidentID sets the "incident_id" field.
+func (_u *StatusMessageUpdateOne) SetIncidentID(v int) *StatusMessageUpdateOne {
+	_u.mutation.SetIncidentID(v)
+	return _u
+}
+
+// SetNillableIncidentID sets the "incident_id" field if the given value is not nil.
+func (_u *StatusMessageUpdateOne) SetNillableIncidentID(v *int) *StatusMessageUpdateOne {
+	if v != nil {
+		_u.SetIncidentID(*v)
+	}
+	return _u
+}
+
+// ClearIncidentID clears the value of the "incident_id" field.
+func (_u *StatusMessageUpdateOne) ClearIncidentID() *StatusMessageUpdateOne {
+	_u.mutation.ClearIncidentID()
+	return _u
+}
+
 // SetParentID sets the "parent_id" field.
 func (_u *StatusMessageUpdateOne) SetParentID(v int) *StatusMessageUpdateOne {
 	_u.mutation.SetParentID(v)
@@ -458,6 +565,26 @@ func (_u *StatusMessageUpdateOne) SetNillableType(v *statusmessage.Type) *Status
 	return _u
 }
 
+// SetTitle sets the "title" field.
+func (_u *StatusMessageUpdateOne) SetTitle(v string) *StatusMessageUpdateOne {
+	_u.mutation.SetTitle(v)
+	return _u
+}
+
+// SetNillableTitle sets the "title" field if the given value is not nil.
+func (_u *StatusMessageUpdateOne) SetNillableTitle(v *string) *StatusMessageUpdateOne {
+	if v != nil {
+		_u.SetTitle(*v)
+	}
+	return _u
+}
+
+// ClearTitle clears the value of the "title" field.
+func (_u *StatusMessageUpdateOne) ClearTitle() *StatusMessageUpdateOne {
+	_u.mutation.ClearTitle()
+	return _u
+}
+
 // SetContent sets the "content" field.
 func (_u *StatusMessageUpdateOne) SetContent(v string) *StatusMessageUpdateOne {
 	_u.mutation.SetContent(v)
@@ -475,6 +602,11 @@ func (_u *StatusMessageUpdateOne) SetNillableContent(v *string) *StatusMessageUp
 // SetStatusPage sets the "status_page" edge to the StatusPage entity.
 func (_u *StatusMessageUpdateOne) SetStatusPage(v *StatusPage) *StatusMessageUpdateOne {
 	return _u.SetStatusPageID(v.ID)
+}
+
+// SetIncident sets the "incident" edge to the Incident entity.
+func (_u *StatusMessageUpdateOne) SetIncident(v *Incident) *StatusMessageUpdateOne {
+	return _u.SetIncidentID(v.ID)
 }
 
 // SetParent sets the "parent" edge to the StatusMessage entity.
@@ -505,6 +637,12 @@ func (_u *StatusMessageUpdateOne) Mutation() *StatusMessageMutation {
 // ClearStatusPage clears the "status_page" edge to the StatusPage entity.
 func (_u *StatusMessageUpdateOne) ClearStatusPage() *StatusMessageUpdateOne {
 	_u.mutation.ClearStatusPage()
+	return _u
+}
+
+// ClearIncident clears the "incident" edge to the Incident entity.
+func (_u *StatusMessageUpdateOne) ClearIncident() *StatusMessageUpdateOne {
+	_u.mutation.ClearIncident()
 	return _u
 }
 
@@ -643,6 +781,12 @@ func (_u *StatusMessageUpdateOne) sqlSave(ctx context.Context) (_node *StatusMes
 	if value, ok := _u.mutation.GetType(); ok {
 		_spec.SetField(statusmessage.FieldType, field.TypeEnum, value)
 	}
+	if value, ok := _u.mutation.Title(); ok {
+		_spec.SetField(statusmessage.FieldTitle, field.TypeString, value)
+	}
+	if _u.mutation.TitleCleared() {
+		_spec.ClearField(statusmessage.FieldTitle, field.TypeString)
+	}
 	if value, ok := _u.mutation.Content(); ok {
 		_spec.SetField(statusmessage.FieldContent, field.TypeString, value)
 	}
@@ -668,6 +812,35 @@ func (_u *StatusMessageUpdateOne) sqlSave(ctx context.Context) (_node *StatusMes
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(statuspage.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.IncidentCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   statusmessage.IncidentTable,
+			Columns: []string{statusmessage.IncidentColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(incident.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.IncidentIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   statusmessage.IncidentTable,
+			Columns: []string{statusmessage.IncidentColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(incident.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

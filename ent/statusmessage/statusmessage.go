@@ -23,14 +23,20 @@ const (
 	FieldDeletedAt = "deleted_at"
 	// FieldStatusPageID holds the string denoting the status_page_id field in the database.
 	FieldStatusPageID = "status_page_id"
+	// FieldIncidentID holds the string denoting the incident_id field in the database.
+	FieldIncidentID = "incident_id"
 	// FieldParentID holds the string denoting the parent_id field in the database.
 	FieldParentID = "parent_id"
 	// FieldType holds the string denoting the type field in the database.
 	FieldType = "type"
+	// FieldTitle holds the string denoting the title field in the database.
+	FieldTitle = "title"
 	// FieldContent holds the string denoting the content field in the database.
 	FieldContent = "content"
 	// EdgeStatusPage holds the string denoting the status_page edge name in mutations.
 	EdgeStatusPage = "status_page"
+	// EdgeIncident holds the string denoting the incident edge name in mutations.
+	EdgeIncident = "incident"
 	// EdgeParent holds the string denoting the parent edge name in mutations.
 	EdgeParent = "parent"
 	// EdgeSubMessages holds the string denoting the sub_messages edge name in mutations.
@@ -44,6 +50,13 @@ const (
 	StatusPageInverseTable = "status_pages"
 	// StatusPageColumn is the table column denoting the status_page relation/edge.
 	StatusPageColumn = "status_page_id"
+	// IncidentTable is the table that holds the incident relation/edge.
+	IncidentTable = "status_messages"
+	// IncidentInverseTable is the table name for the Incident entity.
+	// It exists in this package in order to avoid circular dependency with the "incident" package.
+	IncidentInverseTable = "incidents"
+	// IncidentColumn is the table column denoting the incident relation/edge.
+	IncidentColumn = "incident_id"
 	// ParentTable is the table that holds the parent relation/edge.
 	ParentTable = "status_messages"
 	// ParentColumn is the table column denoting the parent relation/edge.
@@ -61,8 +74,10 @@ var Columns = []string{
 	FieldUpdatedAt,
 	FieldDeletedAt,
 	FieldStatusPageID,
+	FieldIncidentID,
 	FieldParentID,
 	FieldType,
+	FieldTitle,
 	FieldContent,
 }
 
@@ -92,9 +107,12 @@ type Type string
 
 // Type values.
 const (
-	TypeIssue       Type = "issue"
-	TypeInvestigate Type = "investigate"
-	TypeResolved    Type = "resolved"
+	TypeIssue         Type = "issue"
+	TypeInvestigating Type = "investigating"
+	TypeIdentified    Type = "identified"
+	TypeMonitoring    Type = "monitoring"
+	TypeResolved      Type = "resolved"
+	TypeMaintenance   Type = "maintenance"
 )
 
 func (_type Type) String() string {
@@ -104,7 +122,7 @@ func (_type Type) String() string {
 // TypeValidator is a validator for the "type" field enum values. It is called by the builders before save.
 func TypeValidator(_type Type) error {
 	switch _type {
-	case TypeIssue, TypeInvestigate, TypeResolved:
+	case TypeIssue, TypeInvestigating, TypeIdentified, TypeMonitoring, TypeResolved, TypeMaintenance:
 		return nil
 	default:
 		return fmt.Errorf("statusmessage: invalid enum value for type field: %q", _type)
@@ -139,6 +157,11 @@ func ByStatusPageID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldStatusPageID, opts...).ToFunc()
 }
 
+// ByIncidentID orders the results by the incident_id field.
+func ByIncidentID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldIncidentID, opts...).ToFunc()
+}
+
 // ByParentID orders the results by the parent_id field.
 func ByParentID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldParentID, opts...).ToFunc()
@@ -147,6 +170,11 @@ func ByParentID(opts ...sql.OrderTermOption) OrderOption {
 // ByType orders the results by the type field.
 func ByType(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldType, opts...).ToFunc()
+}
+
+// ByTitle orders the results by the title field.
+func ByTitle(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldTitle, opts...).ToFunc()
 }
 
 // ByContent orders the results by the content field.
@@ -158,6 +186,13 @@ func ByContent(opts ...sql.OrderTermOption) OrderOption {
 func ByStatusPageField(field string, opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
 		sqlgraph.OrderByNeighborTerms(s, newStatusPageStep(), sql.OrderByField(field, opts...))
+	}
+}
+
+// ByIncidentField orders the results by incident field.
+func ByIncidentField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newIncidentStep(), sql.OrderByField(field, opts...))
 	}
 }
 
@@ -186,6 +221,13 @@ func newStatusPageStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(StatusPageInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2O, true, StatusPageTable, StatusPageColumn),
+	)
+}
+func newIncidentStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(IncidentInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, true, IncidentTable, IncidentColumn),
 	)
 }
 func newParentStep() *sqlgraph.Step {

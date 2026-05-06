@@ -5,11 +5,16 @@ package ent
 import (
 	"time"
 
+	"github.com/Phoenix-Uptime/phoenix-go/ent/apikey"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/incident"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/maintenancewindow"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/monitor"
-	"github.com/Phoenix-Uptime/phoenix-go/ent/monitorhistory"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/monitorcheck"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/notification"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/schema"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/statusmessage"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/statuspage"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/statuspagemonitor"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/tag"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/user"
 )
@@ -18,6 +23,83 @@ import (
 // (default values, validators, hooks and policies) and stitches it
 // to their package variables.
 func init() {
+	apikeyMixin := schema.APIKey{}.Mixin()
+	apikeyMixinFields0 := apikeyMixin[0].Fields()
+	_ = apikeyMixinFields0
+	apikeyFields := schema.APIKey{}.Fields()
+	_ = apikeyFields
+	// apikeyDescCreatedAt is the schema descriptor for created_at field.
+	apikeyDescCreatedAt := apikeyMixinFields0[0].Descriptor()
+	// apikey.DefaultCreatedAt holds the default value on creation for the created_at field.
+	apikey.DefaultCreatedAt = apikeyDescCreatedAt.Default.(func() time.Time)
+	// apikeyDescUpdatedAt is the schema descriptor for updated_at field.
+	apikeyDescUpdatedAt := apikeyMixinFields0[1].Descriptor()
+	// apikey.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	apikey.DefaultUpdatedAt = apikeyDescUpdatedAt.Default.(func() time.Time)
+	// apikey.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	apikey.UpdateDefaultUpdatedAt = apikeyDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// apikeyDescName is the schema descriptor for name field.
+	apikeyDescName := apikeyFields[1].Descriptor()
+	// apikey.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	apikey.NameValidator = apikeyDescName.Validators[0].(func(string) error)
+	// apikeyDescKey is the schema descriptor for key field.
+	apikeyDescKey := apikeyFields[2].Descriptor()
+	// apikey.KeyValidator is a validator for the "key" field. It is called by the builders before save.
+	apikey.KeyValidator = apikeyDescKey.Validators[0].(func(string) error)
+	// apikeyDescIsActive is the schema descriptor for is_active field.
+	apikeyDescIsActive := apikeyFields[3].Descriptor()
+	// apikey.DefaultIsActive holds the default value on creation for the is_active field.
+	apikey.DefaultIsActive = apikeyDescIsActive.Default.(bool)
+	incidentMixin := schema.Incident{}.Mixin()
+	incidentMixinFields0 := incidentMixin[0].Fields()
+	_ = incidentMixinFields0
+	incidentFields := schema.Incident{}.Fields()
+	_ = incidentFields
+	// incidentDescCreatedAt is the schema descriptor for created_at field.
+	incidentDescCreatedAt := incidentMixinFields0[0].Descriptor()
+	// incident.DefaultCreatedAt holds the default value on creation for the created_at field.
+	incident.DefaultCreatedAt = incidentDescCreatedAt.Default.(func() time.Time)
+	// incidentDescUpdatedAt is the schema descriptor for updated_at field.
+	incidentDescUpdatedAt := incidentMixinFields0[1].Descriptor()
+	// incident.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	incident.DefaultUpdatedAt = incidentDescUpdatedAt.Default.(func() time.Time)
+	// incident.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	incident.UpdateDefaultUpdatedAt = incidentDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// incidentDescTitle is the schema descriptor for title field.
+	incidentDescTitle := incidentFields[3].Descriptor()
+	// incident.TitleValidator is a validator for the "title" field. It is called by the builders before save.
+	incident.TitleValidator = incidentDescTitle.Validators[0].(func(string) error)
+	// incidentDescStartedAt is the schema descriptor for started_at field.
+	incidentDescStartedAt := incidentFields[7].Descriptor()
+	// incident.DefaultStartedAt holds the default value on creation for the started_at field.
+	incident.DefaultStartedAt = incidentDescStartedAt.Default.(func() time.Time)
+	// incidentDescIsPinned is the schema descriptor for is_pinned field.
+	incidentDescIsPinned := incidentFields[9].Descriptor()
+	// incident.DefaultIsPinned holds the default value on creation for the is_pinned field.
+	incident.DefaultIsPinned = incidentDescIsPinned.Default.(bool)
+	maintenancewindowMixin := schema.MaintenanceWindow{}.Mixin()
+	maintenancewindowMixinFields0 := maintenancewindowMixin[0].Fields()
+	_ = maintenancewindowMixinFields0
+	maintenancewindowFields := schema.MaintenanceWindow{}.Fields()
+	_ = maintenancewindowFields
+	// maintenancewindowDescCreatedAt is the schema descriptor for created_at field.
+	maintenancewindowDescCreatedAt := maintenancewindowMixinFields0[0].Descriptor()
+	// maintenancewindow.DefaultCreatedAt holds the default value on creation for the created_at field.
+	maintenancewindow.DefaultCreatedAt = maintenancewindowDescCreatedAt.Default.(func() time.Time)
+	// maintenancewindowDescUpdatedAt is the schema descriptor for updated_at field.
+	maintenancewindowDescUpdatedAt := maintenancewindowMixinFields0[1].Descriptor()
+	// maintenancewindow.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	maintenancewindow.DefaultUpdatedAt = maintenancewindowDescUpdatedAt.Default.(func() time.Time)
+	// maintenancewindow.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	maintenancewindow.UpdateDefaultUpdatedAt = maintenancewindowDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// maintenancewindowDescTitle is the schema descriptor for title field.
+	maintenancewindowDescTitle := maintenancewindowFields[1].Descriptor()
+	// maintenancewindow.TitleValidator is a validator for the "title" field. It is called by the builders before save.
+	maintenancewindow.TitleValidator = maintenancewindowDescTitle.Validators[0].(func(string) error)
+	// maintenancewindowDescIsActive is the schema descriptor for is_active field.
+	maintenancewindowDescIsActive := maintenancewindowFields[3].Descriptor()
+	// maintenancewindow.DefaultIsActive holds the default value on creation for the is_active field.
+	maintenancewindow.DefaultIsActive = maintenancewindowDescIsActive.Default.(bool)
 	monitorMixin := schema.Monitor{}.Mixin()
 	monitorMixinFields0 := monitorMixin[0].Fields()
 	_ = monitorMixinFields0
@@ -38,40 +120,103 @@ func init() {
 	// monitor.NameValidator is a validator for the "name" field. It is called by the builders before save.
 	monitor.NameValidator = monitorDescName.Validators[0].(func(string) error)
 	// monitorDescURL is the schema descriptor for url field.
-	monitorDescURL := monitorFields[2].Descriptor()
+	monitorDescURL := monitorFields[3].Descriptor()
 	// monitor.URLValidator is a validator for the "url" field. It is called by the builders before save.
 	monitor.URLValidator = monitorDescURL.Validators[0].(func(string) error)
 	// monitorDescInterval is the schema descriptor for interval field.
-	monitorDescInterval := monitorFields[3].Descriptor()
+	monitorDescInterval := monitorFields[4].Descriptor()
 	// monitor.DefaultInterval holds the default value on creation for the interval field.
 	monitor.DefaultInterval = monitorDescInterval.Default.(int)
+	// monitorDescTimeout is the schema descriptor for timeout field.
+	monitorDescTimeout := monitorFields[5].Descriptor()
+	// monitor.DefaultTimeout holds the default value on creation for the timeout field.
+	monitor.DefaultTimeout = monitorDescTimeout.Default.(int)
+	// monitorDescIsActive is the schema descriptor for is_active field.
+	monitorDescIsActive := monitorFields[8].Descriptor()
+	// monitor.DefaultIsActive holds the default value on creation for the is_active field.
+	monitor.DefaultIsActive = monitorDescIsActive.Default.(bool)
+	// monitorDescMethod is the schema descriptor for method field.
+	monitorDescMethod := monitorFields[9].Descriptor()
+	// monitor.DefaultMethod holds the default value on creation for the method field.
+	monitor.DefaultMethod = monitorDescMethod.Default.(string)
+	// monitorDescIgnoreTLSErrors is the schema descriptor for ignore_tls_errors field.
+	monitorDescIgnoreTLSErrors := monitorFields[19].Descriptor()
+	// monitor.DefaultIgnoreTLSErrors holds the default value on creation for the ignore_tls_errors field.
+	monitor.DefaultIgnoreTLSErrors = monitorDescIgnoreTLSErrors.Default.(bool)
+	// monitorDescMaxRedirects is the schema descriptor for max_redirects field.
+	monitorDescMaxRedirects := monitorFields[20].Descriptor()
+	// monitor.DefaultMaxRedirects holds the default value on creation for the max_redirects field.
+	monitor.DefaultMaxRedirects = monitorDescMaxRedirects.Default.(int)
 	// monitorDescRetry is the schema descriptor for retry field.
-	monitorDescRetry := monitorFields[9].Descriptor()
+	monitorDescRetry := monitorFields[21].Descriptor()
 	// monitor.DefaultRetry holds the default value on creation for the retry field.
 	monitor.DefaultRetry = monitorDescRetry.Default.(int)
 	// monitorDescRetryAfter is the schema descriptor for retry_after field.
-	monitorDescRetryAfter := monitorFields[10].Descriptor()
+	monitorDescRetryAfter := monitorFields[22].Descriptor()
 	// monitor.DefaultRetryAfter holds the default value on creation for the retry_after field.
 	monitor.DefaultRetryAfter = monitorDescRetryAfter.Default.(int)
-	monitorhistoryMixin := schema.MonitorHistory{}.Mixin()
-	monitorhistoryMixinFields0 := monitorhistoryMixin[0].Fields()
-	_ = monitorhistoryMixinFields0
-	monitorhistoryFields := schema.MonitorHistory{}.Fields()
-	_ = monitorhistoryFields
-	// monitorhistoryDescCreatedAt is the schema descriptor for created_at field.
-	monitorhistoryDescCreatedAt := monitorhistoryMixinFields0[0].Descriptor()
-	// monitorhistory.DefaultCreatedAt holds the default value on creation for the created_at field.
-	monitorhistory.DefaultCreatedAt = monitorhistoryDescCreatedAt.Default.(func() time.Time)
-	// monitorhistoryDescUpdatedAt is the schema descriptor for updated_at field.
-	monitorhistoryDescUpdatedAt := monitorhistoryMixinFields0[1].Descriptor()
-	// monitorhistory.DefaultUpdatedAt holds the default value on creation for the updated_at field.
-	monitorhistory.DefaultUpdatedAt = monitorhistoryDescUpdatedAt.Default.(func() time.Time)
-	// monitorhistory.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
-	monitorhistory.UpdateDefaultUpdatedAt = monitorhistoryDescUpdatedAt.UpdateDefault.(func() time.Time)
-	// monitorhistoryDescStatus is the schema descriptor for status field.
-	monitorhistoryDescStatus := monitorhistoryFields[1].Descriptor()
-	// monitorhistory.StatusValidator is a validator for the "status" field. It is called by the builders before save.
-	monitorhistory.StatusValidator = monitorhistoryDescStatus.Validators[0].(func(string) error)
+	monitorcheckMixin := schema.MonitorCheck{}.Mixin()
+	monitorcheckMixinFields0 := monitorcheckMixin[0].Fields()
+	_ = monitorcheckMixinFields0
+	monitorcheckFields := schema.MonitorCheck{}.Fields()
+	_ = monitorcheckFields
+	// monitorcheckDescCreatedAt is the schema descriptor for created_at field.
+	monitorcheckDescCreatedAt := monitorcheckMixinFields0[0].Descriptor()
+	// monitorcheck.DefaultCreatedAt holds the default value on creation for the created_at field.
+	monitorcheck.DefaultCreatedAt = monitorcheckDescCreatedAt.Default.(func() time.Time)
+	// monitorcheckDescUpdatedAt is the schema descriptor for updated_at field.
+	monitorcheckDescUpdatedAt := monitorcheckMixinFields0[1].Descriptor()
+	// monitorcheck.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	monitorcheck.DefaultUpdatedAt = monitorcheckDescUpdatedAt.Default.(func() time.Time)
+	// monitorcheck.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	monitorcheck.UpdateDefaultUpdatedAt = monitorcheckDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// monitorcheckDescCheckedAt is the schema descriptor for checked_at field.
+	monitorcheckDescCheckedAt := monitorcheckFields[2].Descriptor()
+	// monitorcheck.DefaultCheckedAt holds the default value on creation for the checked_at field.
+	monitorcheck.DefaultCheckedAt = monitorcheckDescCheckedAt.Default.(func() time.Time)
+	// monitorcheckDescResponseTimeMs is the schema descriptor for response_time_ms field.
+	monitorcheckDescResponseTimeMs := monitorcheckFields[3].Descriptor()
+	// monitorcheck.DefaultResponseTimeMs holds the default value on creation for the response_time_ms field.
+	monitorcheck.DefaultResponseTimeMs = monitorcheckDescResponseTimeMs.Default.(int)
+	// monitorcheckDescRetryCount is the schema descriptor for retry_count field.
+	monitorcheckDescRetryCount := monitorcheckFields[7].Descriptor()
+	// monitorcheck.DefaultRetryCount holds the default value on creation for the retry_count field.
+	monitorcheck.DefaultRetryCount = monitorcheckDescRetryCount.Default.(int)
+	// monitorcheckDescDurationSeconds is the schema descriptor for duration_seconds field.
+	monitorcheckDescDurationSeconds := monitorcheckFields[8].Descriptor()
+	// monitorcheck.DefaultDurationSeconds holds the default value on creation for the duration_seconds field.
+	monitorcheck.DefaultDurationSeconds = monitorcheckDescDurationSeconds.Default.(int)
+	// monitorcheckDescImportant is the schema descriptor for important field.
+	monitorcheckDescImportant := monitorcheckFields[9].Descriptor()
+	// monitorcheck.DefaultImportant holds the default value on creation for the important field.
+	monitorcheck.DefaultImportant = monitorcheckDescImportant.Default.(bool)
+	notificationMixin := schema.Notification{}.Mixin()
+	notificationMixinFields0 := notificationMixin[0].Fields()
+	_ = notificationMixinFields0
+	notificationFields := schema.Notification{}.Fields()
+	_ = notificationFields
+	// notificationDescCreatedAt is the schema descriptor for created_at field.
+	notificationDescCreatedAt := notificationMixinFields0[0].Descriptor()
+	// notification.DefaultCreatedAt holds the default value on creation for the created_at field.
+	notification.DefaultCreatedAt = notificationDescCreatedAt.Default.(func() time.Time)
+	// notificationDescUpdatedAt is the schema descriptor for updated_at field.
+	notificationDescUpdatedAt := notificationMixinFields0[1].Descriptor()
+	// notification.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	notification.DefaultUpdatedAt = notificationDescUpdatedAt.Default.(func() time.Time)
+	// notification.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	notification.UpdateDefaultUpdatedAt = notificationDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// notificationDescName is the schema descriptor for name field.
+	notificationDescName := notificationFields[1].Descriptor()
+	// notification.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	notification.NameValidator = notificationDescName.Validators[0].(func(string) error)
+	// notificationDescIsActive is the schema descriptor for is_active field.
+	notificationDescIsActive := notificationFields[3].Descriptor()
+	// notification.DefaultIsActive holds the default value on creation for the is_active field.
+	notification.DefaultIsActive = notificationDescIsActive.Default.(bool)
+	// notificationDescIsDefault is the schema descriptor for is_default field.
+	notificationDescIsDefault := notificationFields[4].Descriptor()
+	// notification.DefaultIsDefault holds the default value on creation for the is_default field.
+	notification.DefaultIsDefault = notificationDescIsDefault.Default.(bool)
 	statusmessageMixin := schema.StatusMessage{}.Mixin()
 	statusmessageMixinFields0 := statusmessageMixin[0].Fields()
 	_ = statusmessageMixinFields0
@@ -88,7 +233,7 @@ func init() {
 	// statusmessage.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	statusmessage.UpdateDefaultUpdatedAt = statusmessageDescUpdatedAt.UpdateDefault.(func() time.Time)
 	// statusmessageDescContent is the schema descriptor for content field.
-	statusmessageDescContent := statusmessageFields[3].Descriptor()
+	statusmessageDescContent := statusmessageFields[5].Descriptor()
 	// statusmessage.ContentValidator is a validator for the "content" field. It is called by the builders before save.
 	statusmessage.ContentValidator = statusmessageDescContent.Validators[0].(func(string) error)
 	statuspageMixin := schema.StatusPage{}.Mixin()
@@ -106,14 +251,65 @@ func init() {
 	statuspage.DefaultUpdatedAt = statuspageDescUpdatedAt.Default.(func() time.Time)
 	// statuspage.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	statuspage.UpdateDefaultUpdatedAt = statuspageDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// statuspageDescSlug is the schema descriptor for slug field.
+	statuspageDescSlug := statuspageFields[1].Descriptor()
+	// statuspage.SlugValidator is a validator for the "slug" field. It is called by the builders before save.
+	statuspage.SlugValidator = statuspageDescSlug.Validators[0].(func(string) error)
 	// statuspageDescName is the schema descriptor for name field.
-	statuspageDescName := statuspageFields[1].Descriptor()
+	statuspageDescName := statuspageFields[2].Descriptor()
 	// statuspage.NameValidator is a validator for the "name" field. It is called by the builders before save.
 	statuspage.NameValidator = statuspageDescName.Validators[0].(func(string) error)
 	// statuspageDescIsPublic is the schema descriptor for is_public field.
-	statuspageDescIsPublic := statuspageFields[2].Descriptor()
+	statuspageDescIsPublic := statuspageFields[4].Descriptor()
 	// statuspage.DefaultIsPublic holds the default value on creation for the is_public field.
 	statuspage.DefaultIsPublic = statuspageDescIsPublic.Default.(bool)
+	// statuspageDescTheme is the schema descriptor for theme field.
+	statuspageDescTheme := statuspageFields[6].Descriptor()
+	// statuspage.DefaultTheme holds the default value on creation for the theme field.
+	statuspage.DefaultTheme = statuspageDescTheme.Default.(string)
+	// statuspageDescShowTags is the schema descriptor for show_tags field.
+	statuspageDescShowTags := statuspageFields[9].Descriptor()
+	// statuspage.DefaultShowTags holds the default value on creation for the show_tags field.
+	statuspage.DefaultShowTags = statuspageDescShowTags.Default.(bool)
+	// statuspageDescShowCharts is the schema descriptor for show_charts field.
+	statuspageDescShowCharts := statuspageFields[10].Descriptor()
+	// statuspage.DefaultShowCharts holds the default value on creation for the show_charts field.
+	statuspage.DefaultShowCharts = statuspageDescShowCharts.Default.(bool)
+	// statuspageDescShowUptimePercentage is the schema descriptor for show_uptime_percentage field.
+	statuspageDescShowUptimePercentage := statuspageFields[11].Descriptor()
+	// statuspage.DefaultShowUptimePercentage holds the default value on creation for the show_uptime_percentage field.
+	statuspage.DefaultShowUptimePercentage = statuspageDescShowUptimePercentage.Default.(bool)
+	// statuspageDescShowPoweredBy is the schema descriptor for show_powered_by field.
+	statuspageDescShowPoweredBy := statuspageFields[12].Descriptor()
+	// statuspage.DefaultShowPoweredBy holds the default value on creation for the show_powered_by field.
+	statuspage.DefaultShowPoweredBy = statuspageDescShowPoweredBy.Default.(bool)
+	// statuspageDescAutoRefreshInterval is the schema descriptor for auto_refresh_interval field.
+	statuspageDescAutoRefreshInterval := statuspageFields[13].Descriptor()
+	// statuspage.DefaultAutoRefreshInterval holds the default value on creation for the auto_refresh_interval field.
+	statuspage.DefaultAutoRefreshInterval = statuspageDescAutoRefreshInterval.Default.(int)
+	statuspagemonitorMixin := schema.StatusPageMonitor{}.Mixin()
+	statuspagemonitorMixinFields0 := statuspagemonitorMixin[0].Fields()
+	_ = statuspagemonitorMixinFields0
+	statuspagemonitorFields := schema.StatusPageMonitor{}.Fields()
+	_ = statuspagemonitorFields
+	// statuspagemonitorDescCreatedAt is the schema descriptor for created_at field.
+	statuspagemonitorDescCreatedAt := statuspagemonitorMixinFields0[0].Descriptor()
+	// statuspagemonitor.DefaultCreatedAt holds the default value on creation for the created_at field.
+	statuspagemonitor.DefaultCreatedAt = statuspagemonitorDescCreatedAt.Default.(func() time.Time)
+	// statuspagemonitorDescUpdatedAt is the schema descriptor for updated_at field.
+	statuspagemonitorDescUpdatedAt := statuspagemonitorMixinFields0[1].Descriptor()
+	// statuspagemonitor.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	statuspagemonitor.DefaultUpdatedAt = statuspagemonitorDescUpdatedAt.Default.(func() time.Time)
+	// statuspagemonitor.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	statuspagemonitor.UpdateDefaultUpdatedAt = statuspagemonitorDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// statuspagemonitorDescWeight is the schema descriptor for weight field.
+	statuspagemonitorDescWeight := statuspagemonitorFields[3].Descriptor()
+	// statuspagemonitor.DefaultWeight holds the default value on creation for the weight field.
+	statuspagemonitor.DefaultWeight = statuspagemonitorDescWeight.Default.(int)
+	// statuspagemonitorDescSendURL is the schema descriptor for send_url field.
+	statuspagemonitorDescSendURL := statuspagemonitorFields[4].Descriptor()
+	// statuspagemonitor.DefaultSendURL holds the default value on creation for the send_url field.
+	statuspagemonitor.DefaultSendURL = statuspagemonitorDescSendURL.Default.(bool)
 	tagMixin := schema.Tag{}.Mixin()
 	tagMixinFields0 := tagMixin[0].Fields()
 	_ = tagMixinFields0
@@ -130,7 +326,7 @@ func init() {
 	// tag.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	tag.UpdateDefaultUpdatedAt = tagDescUpdatedAt.UpdateDefault.(func() time.Time)
 	// tagDescName is the schema descriptor for name field.
-	tagDescName := tagFields[0].Descriptor()
+	tagDescName := tagFields[1].Descriptor()
 	// tag.NameValidator is a validator for the "name" field. It is called by the builders before save.
 	tag.NameValidator = tagDescName.Validators[0].(func(string) error)
 	userMixin := schema.User{}.Mixin()

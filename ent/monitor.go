@@ -29,26 +29,52 @@ type Monitor struct {
 	UserID int `json:"user_id,omitempty"`
 	// Name holds the value of the "name" field.
 	Name string `json:"name,omitempty"`
+	// Description holds the value of the "description" field.
+	Description *string `json:"description,omitempty"`
 	// URL holds the value of the "url" field.
 	URL string `json:"url,omitempty"`
 	// Interval holds the value of the "interval" field.
 	Interval int `json:"interval,omitempty"`
+	// Timeout holds the value of the "timeout" field.
+	Timeout int `json:"timeout,omitempty"`
 	// Status holds the value of the "status" field.
 	Status monitor.Status `json:"status,omitempty"`
 	// Type holds the value of the "type" field.
 	Type monitor.Type `json:"type,omitempty"`
+	// IsActive holds the value of the "is_active" field.
+	IsActive bool `json:"is_active,omitempty"`
 	// Method holds the value of the "method" field.
-	Method *string `json:"method,omitempty"`
+	Method string `json:"method,omitempty"`
+	// AcceptedStatusCodes holds the value of the "accepted_status_codes" field.
+	AcceptedStatusCodes []string `json:"accepted_status_codes,omitempty"`
+	// Headers holds the value of the "headers" field.
+	Headers map[string]string `json:"headers,omitempty"`
+	// Body holds the value of the "body" field.
+	Body *string `json:"body,omitempty"`
+	// AuthUsername holds the value of the "auth_username" field.
+	AuthUsername *string `json:"auth_username,omitempty"`
+	// AuthPassword holds the value of the "auth_password" field.
+	AuthPassword *string `json:"-"`
 	// FiltersContains holds the value of the "filters_contains" field.
-	FiltersContains string `json:"filters_contains,omitempty"`
+	FiltersContains *string `json:"filters_contains,omitempty"`
 	// FiltersNotContains holds the value of the "filters_not_contains" field.
-	FiltersNotContains string `json:"filters_not_contains,omitempty"`
+	FiltersNotContains *string `json:"filters_not_contains,omitempty"`
+	// JSONPath holds the value of the "json_path" field.
+	JSONPath *string `json:"json_path,omitempty"`
+	// ExpectedValue holds the value of the "expected_value" field.
+	ExpectedValue *string `json:"expected_value,omitempty"`
+	// IgnoreTLSErrors holds the value of the "ignore_tls_errors" field.
+	IgnoreTLSErrors bool `json:"ignore_tls_errors,omitempty"`
+	// MaxRedirects holds the value of the "max_redirects" field.
+	MaxRedirects int `json:"max_redirects,omitempty"`
 	// Retry holds the value of the "retry" field.
 	Retry int `json:"retry,omitempty"`
 	// RetryAfter holds the value of the "retry_after" field.
 	RetryAfter int `json:"retry_after,omitempty"`
-	// AlertTypes holds the value of the "alert_types" field.
-	AlertTypes []string `json:"alert_types,omitempty"`
+	// PushToken holds the value of the "push_token" field.
+	PushToken *string `json:"push_token,omitempty"`
+	// Config holds the value of the "config" field.
+	Config map[string]interface{} `json:"config,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the MonitorQuery when eager-loading is set.
 	Edges        MonitorEdges `json:"edges"`
@@ -59,13 +85,21 @@ type Monitor struct {
 type MonitorEdges struct {
 	// User holds the value of the user edge.
 	User *User `json:"user,omitempty"`
-	// History holds the value of the history edge.
-	History []*MonitorHistory `json:"history,omitempty"`
+	// Checks holds the value of the checks edge.
+	Checks []*MonitorCheck `json:"checks,omitempty"`
 	// Tags holds the value of the tags edge.
 	Tags []*Tag `json:"tags,omitempty"`
+	// Notifications holds the value of the notifications edge.
+	Notifications []*Notification `json:"notifications,omitempty"`
+	// StatusPageMonitors holds the value of the status_page_monitors edge.
+	StatusPageMonitors []*StatusPageMonitor `json:"status_page_monitors,omitempty"`
+	// MaintenanceWindows holds the value of the maintenance_windows edge.
+	MaintenanceWindows []*MaintenanceWindow `json:"maintenance_windows,omitempty"`
+	// Incidents holds the value of the incidents edge.
+	Incidents []*Incident `json:"incidents,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [3]bool
+	loadedTypes [7]bool
 }
 
 // UserOrErr returns the User value or an error if the edge
@@ -79,13 +113,13 @@ func (e MonitorEdges) UserOrErr() (*User, error) {
 	return nil, &NotLoadedError{edge: "user"}
 }
 
-// HistoryOrErr returns the History value or an error if the edge
+// ChecksOrErr returns the Checks value or an error if the edge
 // was not loaded in eager-loading.
-func (e MonitorEdges) HistoryOrErr() ([]*MonitorHistory, error) {
+func (e MonitorEdges) ChecksOrErr() ([]*MonitorCheck, error) {
 	if e.loadedTypes[1] {
-		return e.History, nil
+		return e.Checks, nil
 	}
-	return nil, &NotLoadedError{edge: "history"}
+	return nil, &NotLoadedError{edge: "checks"}
 }
 
 // TagsOrErr returns the Tags value or an error if the edge
@@ -97,16 +131,54 @@ func (e MonitorEdges) TagsOrErr() ([]*Tag, error) {
 	return nil, &NotLoadedError{edge: "tags"}
 }
 
+// NotificationsOrErr returns the Notifications value or an error if the edge
+// was not loaded in eager-loading.
+func (e MonitorEdges) NotificationsOrErr() ([]*Notification, error) {
+	if e.loadedTypes[3] {
+		return e.Notifications, nil
+	}
+	return nil, &NotLoadedError{edge: "notifications"}
+}
+
+// StatusPageMonitorsOrErr returns the StatusPageMonitors value or an error if the edge
+// was not loaded in eager-loading.
+func (e MonitorEdges) StatusPageMonitorsOrErr() ([]*StatusPageMonitor, error) {
+	if e.loadedTypes[4] {
+		return e.StatusPageMonitors, nil
+	}
+	return nil, &NotLoadedError{edge: "status_page_monitors"}
+}
+
+// MaintenanceWindowsOrErr returns the MaintenanceWindows value or an error if the edge
+// was not loaded in eager-loading.
+func (e MonitorEdges) MaintenanceWindowsOrErr() ([]*MaintenanceWindow, error) {
+	if e.loadedTypes[5] {
+		return e.MaintenanceWindows, nil
+	}
+	return nil, &NotLoadedError{edge: "maintenance_windows"}
+}
+
+// IncidentsOrErr returns the Incidents value or an error if the edge
+// was not loaded in eager-loading.
+func (e MonitorEdges) IncidentsOrErr() ([]*Incident, error) {
+	if e.loadedTypes[6] {
+		return e.Incidents, nil
+	}
+	return nil, &NotLoadedError{edge: "incidents"}
+}
+
 // scanValues returns the types for scanning values from sql.Rows.
 func (*Monitor) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case monitor.FieldAlertTypes:
+		case monitor.FieldAcceptedStatusCodes, monitor.FieldHeaders, monitor.FieldConfig:
 			values[i] = new([]byte)
-		case monitor.FieldID, monitor.FieldUserID, monitor.FieldInterval, monitor.FieldRetry, monitor.FieldRetryAfter:
+		case monitor.FieldIsActive, monitor.FieldIgnoreTLSErrors:
+			values[i] = new(sql.NullBool)
+		case monitor.FieldID, monitor.FieldUserID, monitor.FieldInterval, monitor.FieldTimeout, monitor.FieldMaxRedirects, monitor.FieldRetry, monitor.FieldRetryAfter:
 			values[i] = new(sql.NullInt64)
-		case monitor.FieldName, monitor.FieldURL, monitor.FieldStatus, monitor.FieldType, monitor.FieldMethod, monitor.FieldFiltersContains, monitor.FieldFiltersNotContains:
+		case monitor.FieldName, monitor.FieldDescription, monitor.FieldURL, monitor.FieldStatus, monitor.FieldType, monitor.FieldMethod, monitor.FieldBody, monitor.FieldAuthUsername, monitor.FieldAuthPassword, monitor.FieldFiltersContains, monitor.FieldFiltersNotContains, monitor.FieldJSONPath, monitor.FieldExpectedValue, monitor.FieldPushToken:
 			values[i] = new(sql.NullString)
 		case monitor.FieldCreatedAt, monitor.FieldUpdatedAt, monitor.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -162,6 +234,13 @@ func (_m *Monitor) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.Name = value.String
 			}
+		case monitor.FieldDescription:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field description", values[i])
+			} else if value.Valid {
+				_m.Description = new(string)
+				*_m.Description = value.String
+			}
 		case monitor.FieldURL:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field url", values[i])
@@ -173,6 +252,12 @@ func (_m *Monitor) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field interval", values[i])
 			} else if value.Valid {
 				_m.Interval = int(value.Int64)
+			}
+		case monitor.FieldTimeout:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field timeout", values[i])
+			} else if value.Valid {
+				_m.Timeout = int(value.Int64)
 			}
 		case monitor.FieldStatus:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -186,24 +271,94 @@ func (_m *Monitor) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.Type = monitor.Type(value.String)
 			}
+		case monitor.FieldIsActive:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field is_active", values[i])
+			} else if value.Valid {
+				_m.IsActive = value.Bool
+			}
 		case monitor.FieldMethod:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field method", values[i])
 			} else if value.Valid {
-				_m.Method = new(string)
-				*_m.Method = value.String
+				_m.Method = value.String
+			}
+		case monitor.FieldAcceptedStatusCodes:
+			if value, ok := values[i].(*[]byte); !ok {
+				return fmt.Errorf("unexpected type %T for field accepted_status_codes", values[i])
+			} else if value != nil && len(*value) > 0 {
+				if err := json.Unmarshal(*value, &_m.AcceptedStatusCodes); err != nil {
+					return fmt.Errorf("unmarshal field accepted_status_codes: %w", err)
+				}
+			}
+		case monitor.FieldHeaders:
+			if value, ok := values[i].(*[]byte); !ok {
+				return fmt.Errorf("unexpected type %T for field headers", values[i])
+			} else if value != nil && len(*value) > 0 {
+				if err := json.Unmarshal(*value, &_m.Headers); err != nil {
+					return fmt.Errorf("unmarshal field headers: %w", err)
+				}
+			}
+		case monitor.FieldBody:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field body", values[i])
+			} else if value.Valid {
+				_m.Body = new(string)
+				*_m.Body = value.String
+			}
+		case monitor.FieldAuthUsername:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field auth_username", values[i])
+			} else if value.Valid {
+				_m.AuthUsername = new(string)
+				*_m.AuthUsername = value.String
+			}
+		case monitor.FieldAuthPassword:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field auth_password", values[i])
+			} else if value.Valid {
+				_m.AuthPassword = new(string)
+				*_m.AuthPassword = value.String
 			}
 		case monitor.FieldFiltersContains:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field filters_contains", values[i])
 			} else if value.Valid {
-				_m.FiltersContains = value.String
+				_m.FiltersContains = new(string)
+				*_m.FiltersContains = value.String
 			}
 		case monitor.FieldFiltersNotContains:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field filters_not_contains", values[i])
 			} else if value.Valid {
-				_m.FiltersNotContains = value.String
+				_m.FiltersNotContains = new(string)
+				*_m.FiltersNotContains = value.String
+			}
+		case monitor.FieldJSONPath:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field json_path", values[i])
+			} else if value.Valid {
+				_m.JSONPath = new(string)
+				*_m.JSONPath = value.String
+			}
+		case monitor.FieldExpectedValue:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field expected_value", values[i])
+			} else if value.Valid {
+				_m.ExpectedValue = new(string)
+				*_m.ExpectedValue = value.String
+			}
+		case monitor.FieldIgnoreTLSErrors:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field ignore_tls_errors", values[i])
+			} else if value.Valid {
+				_m.IgnoreTLSErrors = value.Bool
+			}
+		case monitor.FieldMaxRedirects:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field max_redirects", values[i])
+			} else if value.Valid {
+				_m.MaxRedirects = int(value.Int64)
 			}
 		case monitor.FieldRetry:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -217,12 +372,19 @@ func (_m *Monitor) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.RetryAfter = int(value.Int64)
 			}
-		case monitor.FieldAlertTypes:
+		case monitor.FieldPushToken:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field push_token", values[i])
+			} else if value.Valid {
+				_m.PushToken = new(string)
+				*_m.PushToken = value.String
+			}
+		case monitor.FieldConfig:
 			if value, ok := values[i].(*[]byte); !ok {
-				return fmt.Errorf("unexpected type %T for field alert_types", values[i])
+				return fmt.Errorf("unexpected type %T for field config", values[i])
 			} else if value != nil && len(*value) > 0 {
-				if err := json.Unmarshal(*value, &_m.AlertTypes); err != nil {
-					return fmt.Errorf("unmarshal field alert_types: %w", err)
+				if err := json.Unmarshal(*value, &_m.Config); err != nil {
+					return fmt.Errorf("unmarshal field config: %w", err)
 				}
 			}
 		default:
@@ -243,14 +405,34 @@ func (_m *Monitor) QueryUser() *UserQuery {
 	return NewMonitorClient(_m.config).QueryUser(_m)
 }
 
-// QueryHistory queries the "history" edge of the Monitor entity.
-func (_m *Monitor) QueryHistory() *MonitorHistoryQuery {
-	return NewMonitorClient(_m.config).QueryHistory(_m)
+// QueryChecks queries the "checks" edge of the Monitor entity.
+func (_m *Monitor) QueryChecks() *MonitorCheckQuery {
+	return NewMonitorClient(_m.config).QueryChecks(_m)
 }
 
 // QueryTags queries the "tags" edge of the Monitor entity.
 func (_m *Monitor) QueryTags() *TagQuery {
 	return NewMonitorClient(_m.config).QueryTags(_m)
+}
+
+// QueryNotifications queries the "notifications" edge of the Monitor entity.
+func (_m *Monitor) QueryNotifications() *NotificationQuery {
+	return NewMonitorClient(_m.config).QueryNotifications(_m)
+}
+
+// QueryStatusPageMonitors queries the "status_page_monitors" edge of the Monitor entity.
+func (_m *Monitor) QueryStatusPageMonitors() *StatusPageMonitorQuery {
+	return NewMonitorClient(_m.config).QueryStatusPageMonitors(_m)
+}
+
+// QueryMaintenanceWindows queries the "maintenance_windows" edge of the Monitor entity.
+func (_m *Monitor) QueryMaintenanceWindows() *MaintenanceWindowQuery {
+	return NewMonitorClient(_m.config).QueryMaintenanceWindows(_m)
+}
+
+// QueryIncidents queries the "incidents" edge of the Monitor entity.
+func (_m *Monitor) QueryIncidents() *IncidentQuery {
+	return NewMonitorClient(_m.config).QueryIncidents(_m)
 }
 
 // Update returns a builder for updating this Monitor.
@@ -293,11 +475,19 @@ func (_m *Monitor) String() string {
 	builder.WriteString("name=")
 	builder.WriteString(_m.Name)
 	builder.WriteString(", ")
+	if v := _m.Description; v != nil {
+		builder.WriteString("description=")
+		builder.WriteString(*v)
+	}
+	builder.WriteString(", ")
 	builder.WriteString("url=")
 	builder.WriteString(_m.URL)
 	builder.WriteString(", ")
 	builder.WriteString("interval=")
 	builder.WriteString(fmt.Sprintf("%v", _m.Interval))
+	builder.WriteString(", ")
+	builder.WriteString("timeout=")
+	builder.WriteString(fmt.Sprintf("%v", _m.Timeout))
 	builder.WriteString(", ")
 	builder.WriteString("status=")
 	builder.WriteString(fmt.Sprintf("%v", _m.Status))
@@ -305,16 +495,55 @@ func (_m *Monitor) String() string {
 	builder.WriteString("type=")
 	builder.WriteString(fmt.Sprintf("%v", _m.Type))
 	builder.WriteString(", ")
-	if v := _m.Method; v != nil {
-		builder.WriteString("method=")
+	builder.WriteString("is_active=")
+	builder.WriteString(fmt.Sprintf("%v", _m.IsActive))
+	builder.WriteString(", ")
+	builder.WriteString("method=")
+	builder.WriteString(_m.Method)
+	builder.WriteString(", ")
+	builder.WriteString("accepted_status_codes=")
+	builder.WriteString(fmt.Sprintf("%v", _m.AcceptedStatusCodes))
+	builder.WriteString(", ")
+	builder.WriteString("headers=")
+	builder.WriteString(fmt.Sprintf("%v", _m.Headers))
+	builder.WriteString(", ")
+	if v := _m.Body; v != nil {
+		builder.WriteString("body=")
 		builder.WriteString(*v)
 	}
 	builder.WriteString(", ")
-	builder.WriteString("filters_contains=")
-	builder.WriteString(_m.FiltersContains)
+	if v := _m.AuthUsername; v != nil {
+		builder.WriteString("auth_username=")
+		builder.WriteString(*v)
+	}
 	builder.WriteString(", ")
-	builder.WriteString("filters_not_contains=")
-	builder.WriteString(_m.FiltersNotContains)
+	builder.WriteString("auth_password=<sensitive>")
+	builder.WriteString(", ")
+	if v := _m.FiltersContains; v != nil {
+		builder.WriteString("filters_contains=")
+		builder.WriteString(*v)
+	}
+	builder.WriteString(", ")
+	if v := _m.FiltersNotContains; v != nil {
+		builder.WriteString("filters_not_contains=")
+		builder.WriteString(*v)
+	}
+	builder.WriteString(", ")
+	if v := _m.JSONPath; v != nil {
+		builder.WriteString("json_path=")
+		builder.WriteString(*v)
+	}
+	builder.WriteString(", ")
+	if v := _m.ExpectedValue; v != nil {
+		builder.WriteString("expected_value=")
+		builder.WriteString(*v)
+	}
+	builder.WriteString(", ")
+	builder.WriteString("ignore_tls_errors=")
+	builder.WriteString(fmt.Sprintf("%v", _m.IgnoreTLSErrors))
+	builder.WriteString(", ")
+	builder.WriteString("max_redirects=")
+	builder.WriteString(fmt.Sprintf("%v", _m.MaxRedirects))
 	builder.WriteString(", ")
 	builder.WriteString("retry=")
 	builder.WriteString(fmt.Sprintf("%v", _m.Retry))
@@ -322,8 +551,13 @@ func (_m *Monitor) String() string {
 	builder.WriteString("retry_after=")
 	builder.WriteString(fmt.Sprintf("%v", _m.RetryAfter))
 	builder.WriteString(", ")
-	builder.WriteString("alert_types=")
-	builder.WriteString(fmt.Sprintf("%v", _m.AlertTypes))
+	if v := _m.PushToken; v != nil {
+		builder.WriteString("push_token=")
+		builder.WriteString(*v)
+	}
+	builder.WriteString(", ")
+	builder.WriteString("config=")
+	builder.WriteString(fmt.Sprintf("%v", _m.Config))
 	builder.WriteByte(')')
 	return builder.String()
 }

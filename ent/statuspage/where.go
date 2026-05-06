@@ -70,9 +70,14 @@ func DeletedAt(v time.Time) predicate.StatusPage {
 	return predicate.StatusPage(sql.FieldEQ(FieldDeletedAt, v))
 }
 
-// TagID applies equality check predicate on the "tag_id" field. It's identical to TagIDEQ.
-func TagID(v int) predicate.StatusPage {
-	return predicate.StatusPage(sql.FieldEQ(FieldTagID, v))
+// UserID applies equality check predicate on the "user_id" field. It's identical to UserIDEQ.
+func UserID(v int) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldEQ(FieldUserID, v))
+}
+
+// Slug applies equality check predicate on the "slug" field. It's identical to SlugEQ.
+func Slug(v string) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldEQ(FieldSlug, v))
 }
 
 // Name applies equality check predicate on the "name" field. It's identical to NameEQ.
@@ -80,9 +85,59 @@ func Name(v string) predicate.StatusPage {
 	return predicate.StatusPage(sql.FieldEQ(FieldName, v))
 }
 
+// Description applies equality check predicate on the "description" field. It's identical to DescriptionEQ.
+func Description(v string) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldEQ(FieldDescription, v))
+}
+
 // IsPublic applies equality check predicate on the "is_public" field. It's identical to IsPublicEQ.
 func IsPublic(v bool) predicate.StatusPage {
 	return predicate.StatusPage(sql.FieldEQ(FieldIsPublic, v))
+}
+
+// Password applies equality check predicate on the "password" field. It's identical to PasswordEQ.
+func Password(v string) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldEQ(FieldPassword, v))
+}
+
+// Theme applies equality check predicate on the "theme" field. It's identical to ThemeEQ.
+func Theme(v string) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldEQ(FieldTheme, v))
+}
+
+// CustomCSS applies equality check predicate on the "custom_css" field. It's identical to CustomCSSEQ.
+func CustomCSS(v string) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldEQ(FieldCustomCSS, v))
+}
+
+// FooterText applies equality check predicate on the "footer_text" field. It's identical to FooterTextEQ.
+func FooterText(v string) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldEQ(FieldFooterText, v))
+}
+
+// ShowTags applies equality check predicate on the "show_tags" field. It's identical to ShowTagsEQ.
+func ShowTags(v bool) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldEQ(FieldShowTags, v))
+}
+
+// ShowCharts applies equality check predicate on the "show_charts" field. It's identical to ShowChartsEQ.
+func ShowCharts(v bool) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldEQ(FieldShowCharts, v))
+}
+
+// ShowUptimePercentage applies equality check predicate on the "show_uptime_percentage" field. It's identical to ShowUptimePercentageEQ.
+func ShowUptimePercentage(v bool) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldEQ(FieldShowUptimePercentage, v))
+}
+
+// ShowPoweredBy applies equality check predicate on the "show_powered_by" field. It's identical to ShowPoweredByEQ.
+func ShowPoweredBy(v bool) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldEQ(FieldShowPoweredBy, v))
+}
+
+// AutoRefreshInterval applies equality check predicate on the "auto_refresh_interval" field. It's identical to AutoRefreshIntervalEQ.
+func AutoRefreshInterval(v int) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldEQ(FieldAutoRefreshInterval, v))
 }
 
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
@@ -215,24 +270,89 @@ func DeletedAtNotNil() predicate.StatusPage {
 	return predicate.StatusPage(sql.FieldNotNull(FieldDeletedAt))
 }
 
-// TagIDEQ applies the EQ predicate on the "tag_id" field.
-func TagIDEQ(v int) predicate.StatusPage {
-	return predicate.StatusPage(sql.FieldEQ(FieldTagID, v))
+// UserIDEQ applies the EQ predicate on the "user_id" field.
+func UserIDEQ(v int) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldEQ(FieldUserID, v))
 }
 
-// TagIDNEQ applies the NEQ predicate on the "tag_id" field.
-func TagIDNEQ(v int) predicate.StatusPage {
-	return predicate.StatusPage(sql.FieldNEQ(FieldTagID, v))
+// UserIDNEQ applies the NEQ predicate on the "user_id" field.
+func UserIDNEQ(v int) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldNEQ(FieldUserID, v))
 }
 
-// TagIDIn applies the In predicate on the "tag_id" field.
-func TagIDIn(vs ...int) predicate.StatusPage {
-	return predicate.StatusPage(sql.FieldIn(FieldTagID, vs...))
+// UserIDIn applies the In predicate on the "user_id" field.
+func UserIDIn(vs ...int) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldIn(FieldUserID, vs...))
 }
 
-// TagIDNotIn applies the NotIn predicate on the "tag_id" field.
-func TagIDNotIn(vs ...int) predicate.StatusPage {
-	return predicate.StatusPage(sql.FieldNotIn(FieldTagID, vs...))
+// UserIDNotIn applies the NotIn predicate on the "user_id" field.
+func UserIDNotIn(vs ...int) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldNotIn(FieldUserID, vs...))
+}
+
+// SlugEQ applies the EQ predicate on the "slug" field.
+func SlugEQ(v string) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldEQ(FieldSlug, v))
+}
+
+// SlugNEQ applies the NEQ predicate on the "slug" field.
+func SlugNEQ(v string) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldNEQ(FieldSlug, v))
+}
+
+// SlugIn applies the In predicate on the "slug" field.
+func SlugIn(vs ...string) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldIn(FieldSlug, vs...))
+}
+
+// SlugNotIn applies the NotIn predicate on the "slug" field.
+func SlugNotIn(vs ...string) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldNotIn(FieldSlug, vs...))
+}
+
+// SlugGT applies the GT predicate on the "slug" field.
+func SlugGT(v string) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldGT(FieldSlug, v))
+}
+
+// SlugGTE applies the GTE predicate on the "slug" field.
+func SlugGTE(v string) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldGTE(FieldSlug, v))
+}
+
+// SlugLT applies the LT predicate on the "slug" field.
+func SlugLT(v string) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldLT(FieldSlug, v))
+}
+
+// SlugLTE applies the LTE predicate on the "slug" field.
+func SlugLTE(v string) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldLTE(FieldSlug, v))
+}
+
+// SlugContains applies the Contains predicate on the "slug" field.
+func SlugContains(v string) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldContains(FieldSlug, v))
+}
+
+// SlugHasPrefix applies the HasPrefix predicate on the "slug" field.
+func SlugHasPrefix(v string) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldHasPrefix(FieldSlug, v))
+}
+
+// SlugHasSuffix applies the HasSuffix predicate on the "slug" field.
+func SlugHasSuffix(v string) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldHasSuffix(FieldSlug, v))
+}
+
+// SlugEqualFold applies the EqualFold predicate on the "slug" field.
+func SlugEqualFold(v string) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldEqualFold(FieldSlug, v))
+}
+
+// SlugContainsFold applies the ContainsFold predicate on the "slug" field.
+func SlugContainsFold(v string) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldContainsFold(FieldSlug, v))
 }
 
 // NameEQ applies the EQ predicate on the "name" field.
@@ -300,6 +420,81 @@ func NameContainsFold(v string) predicate.StatusPage {
 	return predicate.StatusPage(sql.FieldContainsFold(FieldName, v))
 }
 
+// DescriptionEQ applies the EQ predicate on the "description" field.
+func DescriptionEQ(v string) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldEQ(FieldDescription, v))
+}
+
+// DescriptionNEQ applies the NEQ predicate on the "description" field.
+func DescriptionNEQ(v string) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldNEQ(FieldDescription, v))
+}
+
+// DescriptionIn applies the In predicate on the "description" field.
+func DescriptionIn(vs ...string) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldIn(FieldDescription, vs...))
+}
+
+// DescriptionNotIn applies the NotIn predicate on the "description" field.
+func DescriptionNotIn(vs ...string) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldNotIn(FieldDescription, vs...))
+}
+
+// DescriptionGT applies the GT predicate on the "description" field.
+func DescriptionGT(v string) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldGT(FieldDescription, v))
+}
+
+// DescriptionGTE applies the GTE predicate on the "description" field.
+func DescriptionGTE(v string) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldGTE(FieldDescription, v))
+}
+
+// DescriptionLT applies the LT predicate on the "description" field.
+func DescriptionLT(v string) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldLT(FieldDescription, v))
+}
+
+// DescriptionLTE applies the LTE predicate on the "description" field.
+func DescriptionLTE(v string) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldLTE(FieldDescription, v))
+}
+
+// DescriptionContains applies the Contains predicate on the "description" field.
+func DescriptionContains(v string) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldContains(FieldDescription, v))
+}
+
+// DescriptionHasPrefix applies the HasPrefix predicate on the "description" field.
+func DescriptionHasPrefix(v string) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldHasPrefix(FieldDescription, v))
+}
+
+// DescriptionHasSuffix applies the HasSuffix predicate on the "description" field.
+func DescriptionHasSuffix(v string) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldHasSuffix(FieldDescription, v))
+}
+
+// DescriptionIsNil applies the IsNil predicate on the "description" field.
+func DescriptionIsNil() predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldIsNull(FieldDescription))
+}
+
+// DescriptionNotNil applies the NotNil predicate on the "description" field.
+func DescriptionNotNil() predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldNotNull(FieldDescription))
+}
+
+// DescriptionEqualFold applies the EqualFold predicate on the "description" field.
+func DescriptionEqualFold(v string) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldEqualFold(FieldDescription, v))
+}
+
+// DescriptionContainsFold applies the ContainsFold predicate on the "description" field.
+func DescriptionContainsFold(v string) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldContainsFold(FieldDescription, v))
+}
+
 // IsPublicEQ applies the EQ predicate on the "is_public" field.
 func IsPublicEQ(v bool) predicate.StatusPage {
 	return predicate.StatusPage(sql.FieldEQ(FieldIsPublic, v))
@@ -310,21 +505,414 @@ func IsPublicNEQ(v bool) predicate.StatusPage {
 	return predicate.StatusPage(sql.FieldNEQ(FieldIsPublic, v))
 }
 
-// HasTag applies the HasEdge predicate on the "tag" edge.
-func HasTag() predicate.StatusPage {
+// PasswordEQ applies the EQ predicate on the "password" field.
+func PasswordEQ(v string) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldEQ(FieldPassword, v))
+}
+
+// PasswordNEQ applies the NEQ predicate on the "password" field.
+func PasswordNEQ(v string) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldNEQ(FieldPassword, v))
+}
+
+// PasswordIn applies the In predicate on the "password" field.
+func PasswordIn(vs ...string) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldIn(FieldPassword, vs...))
+}
+
+// PasswordNotIn applies the NotIn predicate on the "password" field.
+func PasswordNotIn(vs ...string) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldNotIn(FieldPassword, vs...))
+}
+
+// PasswordGT applies the GT predicate on the "password" field.
+func PasswordGT(v string) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldGT(FieldPassword, v))
+}
+
+// PasswordGTE applies the GTE predicate on the "password" field.
+func PasswordGTE(v string) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldGTE(FieldPassword, v))
+}
+
+// PasswordLT applies the LT predicate on the "password" field.
+func PasswordLT(v string) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldLT(FieldPassword, v))
+}
+
+// PasswordLTE applies the LTE predicate on the "password" field.
+func PasswordLTE(v string) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldLTE(FieldPassword, v))
+}
+
+// PasswordContains applies the Contains predicate on the "password" field.
+func PasswordContains(v string) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldContains(FieldPassword, v))
+}
+
+// PasswordHasPrefix applies the HasPrefix predicate on the "password" field.
+func PasswordHasPrefix(v string) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldHasPrefix(FieldPassword, v))
+}
+
+// PasswordHasSuffix applies the HasSuffix predicate on the "password" field.
+func PasswordHasSuffix(v string) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldHasSuffix(FieldPassword, v))
+}
+
+// PasswordIsNil applies the IsNil predicate on the "password" field.
+func PasswordIsNil() predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldIsNull(FieldPassword))
+}
+
+// PasswordNotNil applies the NotNil predicate on the "password" field.
+func PasswordNotNil() predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldNotNull(FieldPassword))
+}
+
+// PasswordEqualFold applies the EqualFold predicate on the "password" field.
+func PasswordEqualFold(v string) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldEqualFold(FieldPassword, v))
+}
+
+// PasswordContainsFold applies the ContainsFold predicate on the "password" field.
+func PasswordContainsFold(v string) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldContainsFold(FieldPassword, v))
+}
+
+// ThemeEQ applies the EQ predicate on the "theme" field.
+func ThemeEQ(v string) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldEQ(FieldTheme, v))
+}
+
+// ThemeNEQ applies the NEQ predicate on the "theme" field.
+func ThemeNEQ(v string) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldNEQ(FieldTheme, v))
+}
+
+// ThemeIn applies the In predicate on the "theme" field.
+func ThemeIn(vs ...string) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldIn(FieldTheme, vs...))
+}
+
+// ThemeNotIn applies the NotIn predicate on the "theme" field.
+func ThemeNotIn(vs ...string) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldNotIn(FieldTheme, vs...))
+}
+
+// ThemeGT applies the GT predicate on the "theme" field.
+func ThemeGT(v string) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldGT(FieldTheme, v))
+}
+
+// ThemeGTE applies the GTE predicate on the "theme" field.
+func ThemeGTE(v string) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldGTE(FieldTheme, v))
+}
+
+// ThemeLT applies the LT predicate on the "theme" field.
+func ThemeLT(v string) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldLT(FieldTheme, v))
+}
+
+// ThemeLTE applies the LTE predicate on the "theme" field.
+func ThemeLTE(v string) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldLTE(FieldTheme, v))
+}
+
+// ThemeContains applies the Contains predicate on the "theme" field.
+func ThemeContains(v string) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldContains(FieldTheme, v))
+}
+
+// ThemeHasPrefix applies the HasPrefix predicate on the "theme" field.
+func ThemeHasPrefix(v string) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldHasPrefix(FieldTheme, v))
+}
+
+// ThemeHasSuffix applies the HasSuffix predicate on the "theme" field.
+func ThemeHasSuffix(v string) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldHasSuffix(FieldTheme, v))
+}
+
+// ThemeEqualFold applies the EqualFold predicate on the "theme" field.
+func ThemeEqualFold(v string) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldEqualFold(FieldTheme, v))
+}
+
+// ThemeContainsFold applies the ContainsFold predicate on the "theme" field.
+func ThemeContainsFold(v string) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldContainsFold(FieldTheme, v))
+}
+
+// CustomCSSEQ applies the EQ predicate on the "custom_css" field.
+func CustomCSSEQ(v string) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldEQ(FieldCustomCSS, v))
+}
+
+// CustomCSSNEQ applies the NEQ predicate on the "custom_css" field.
+func CustomCSSNEQ(v string) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldNEQ(FieldCustomCSS, v))
+}
+
+// CustomCSSIn applies the In predicate on the "custom_css" field.
+func CustomCSSIn(vs ...string) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldIn(FieldCustomCSS, vs...))
+}
+
+// CustomCSSNotIn applies the NotIn predicate on the "custom_css" field.
+func CustomCSSNotIn(vs ...string) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldNotIn(FieldCustomCSS, vs...))
+}
+
+// CustomCSSGT applies the GT predicate on the "custom_css" field.
+func CustomCSSGT(v string) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldGT(FieldCustomCSS, v))
+}
+
+// CustomCSSGTE applies the GTE predicate on the "custom_css" field.
+func CustomCSSGTE(v string) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldGTE(FieldCustomCSS, v))
+}
+
+// CustomCSSLT applies the LT predicate on the "custom_css" field.
+func CustomCSSLT(v string) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldLT(FieldCustomCSS, v))
+}
+
+// CustomCSSLTE applies the LTE predicate on the "custom_css" field.
+func CustomCSSLTE(v string) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldLTE(FieldCustomCSS, v))
+}
+
+// CustomCSSContains applies the Contains predicate on the "custom_css" field.
+func CustomCSSContains(v string) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldContains(FieldCustomCSS, v))
+}
+
+// CustomCSSHasPrefix applies the HasPrefix predicate on the "custom_css" field.
+func CustomCSSHasPrefix(v string) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldHasPrefix(FieldCustomCSS, v))
+}
+
+// CustomCSSHasSuffix applies the HasSuffix predicate on the "custom_css" field.
+func CustomCSSHasSuffix(v string) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldHasSuffix(FieldCustomCSS, v))
+}
+
+// CustomCSSIsNil applies the IsNil predicate on the "custom_css" field.
+func CustomCSSIsNil() predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldIsNull(FieldCustomCSS))
+}
+
+// CustomCSSNotNil applies the NotNil predicate on the "custom_css" field.
+func CustomCSSNotNil() predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldNotNull(FieldCustomCSS))
+}
+
+// CustomCSSEqualFold applies the EqualFold predicate on the "custom_css" field.
+func CustomCSSEqualFold(v string) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldEqualFold(FieldCustomCSS, v))
+}
+
+// CustomCSSContainsFold applies the ContainsFold predicate on the "custom_css" field.
+func CustomCSSContainsFold(v string) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldContainsFold(FieldCustomCSS, v))
+}
+
+// FooterTextEQ applies the EQ predicate on the "footer_text" field.
+func FooterTextEQ(v string) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldEQ(FieldFooterText, v))
+}
+
+// FooterTextNEQ applies the NEQ predicate on the "footer_text" field.
+func FooterTextNEQ(v string) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldNEQ(FieldFooterText, v))
+}
+
+// FooterTextIn applies the In predicate on the "footer_text" field.
+func FooterTextIn(vs ...string) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldIn(FieldFooterText, vs...))
+}
+
+// FooterTextNotIn applies the NotIn predicate on the "footer_text" field.
+func FooterTextNotIn(vs ...string) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldNotIn(FieldFooterText, vs...))
+}
+
+// FooterTextGT applies the GT predicate on the "footer_text" field.
+func FooterTextGT(v string) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldGT(FieldFooterText, v))
+}
+
+// FooterTextGTE applies the GTE predicate on the "footer_text" field.
+func FooterTextGTE(v string) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldGTE(FieldFooterText, v))
+}
+
+// FooterTextLT applies the LT predicate on the "footer_text" field.
+func FooterTextLT(v string) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldLT(FieldFooterText, v))
+}
+
+// FooterTextLTE applies the LTE predicate on the "footer_text" field.
+func FooterTextLTE(v string) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldLTE(FieldFooterText, v))
+}
+
+// FooterTextContains applies the Contains predicate on the "footer_text" field.
+func FooterTextContains(v string) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldContains(FieldFooterText, v))
+}
+
+// FooterTextHasPrefix applies the HasPrefix predicate on the "footer_text" field.
+func FooterTextHasPrefix(v string) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldHasPrefix(FieldFooterText, v))
+}
+
+// FooterTextHasSuffix applies the HasSuffix predicate on the "footer_text" field.
+func FooterTextHasSuffix(v string) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldHasSuffix(FieldFooterText, v))
+}
+
+// FooterTextIsNil applies the IsNil predicate on the "footer_text" field.
+func FooterTextIsNil() predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldIsNull(FieldFooterText))
+}
+
+// FooterTextNotNil applies the NotNil predicate on the "footer_text" field.
+func FooterTextNotNil() predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldNotNull(FieldFooterText))
+}
+
+// FooterTextEqualFold applies the EqualFold predicate on the "footer_text" field.
+func FooterTextEqualFold(v string) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldEqualFold(FieldFooterText, v))
+}
+
+// FooterTextContainsFold applies the ContainsFold predicate on the "footer_text" field.
+func FooterTextContainsFold(v string) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldContainsFold(FieldFooterText, v))
+}
+
+// ShowTagsEQ applies the EQ predicate on the "show_tags" field.
+func ShowTagsEQ(v bool) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldEQ(FieldShowTags, v))
+}
+
+// ShowTagsNEQ applies the NEQ predicate on the "show_tags" field.
+func ShowTagsNEQ(v bool) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldNEQ(FieldShowTags, v))
+}
+
+// ShowChartsEQ applies the EQ predicate on the "show_charts" field.
+func ShowChartsEQ(v bool) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldEQ(FieldShowCharts, v))
+}
+
+// ShowChartsNEQ applies the NEQ predicate on the "show_charts" field.
+func ShowChartsNEQ(v bool) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldNEQ(FieldShowCharts, v))
+}
+
+// ShowUptimePercentageEQ applies the EQ predicate on the "show_uptime_percentage" field.
+func ShowUptimePercentageEQ(v bool) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldEQ(FieldShowUptimePercentage, v))
+}
+
+// ShowUptimePercentageNEQ applies the NEQ predicate on the "show_uptime_percentage" field.
+func ShowUptimePercentageNEQ(v bool) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldNEQ(FieldShowUptimePercentage, v))
+}
+
+// ShowPoweredByEQ applies the EQ predicate on the "show_powered_by" field.
+func ShowPoweredByEQ(v bool) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldEQ(FieldShowPoweredBy, v))
+}
+
+// ShowPoweredByNEQ applies the NEQ predicate on the "show_powered_by" field.
+func ShowPoweredByNEQ(v bool) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldNEQ(FieldShowPoweredBy, v))
+}
+
+// AutoRefreshIntervalEQ applies the EQ predicate on the "auto_refresh_interval" field.
+func AutoRefreshIntervalEQ(v int) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldEQ(FieldAutoRefreshInterval, v))
+}
+
+// AutoRefreshIntervalNEQ applies the NEQ predicate on the "auto_refresh_interval" field.
+func AutoRefreshIntervalNEQ(v int) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldNEQ(FieldAutoRefreshInterval, v))
+}
+
+// AutoRefreshIntervalIn applies the In predicate on the "auto_refresh_interval" field.
+func AutoRefreshIntervalIn(vs ...int) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldIn(FieldAutoRefreshInterval, vs...))
+}
+
+// AutoRefreshIntervalNotIn applies the NotIn predicate on the "auto_refresh_interval" field.
+func AutoRefreshIntervalNotIn(vs ...int) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldNotIn(FieldAutoRefreshInterval, vs...))
+}
+
+// AutoRefreshIntervalGT applies the GT predicate on the "auto_refresh_interval" field.
+func AutoRefreshIntervalGT(v int) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldGT(FieldAutoRefreshInterval, v))
+}
+
+// AutoRefreshIntervalGTE applies the GTE predicate on the "auto_refresh_interval" field.
+func AutoRefreshIntervalGTE(v int) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldGTE(FieldAutoRefreshInterval, v))
+}
+
+// AutoRefreshIntervalLT applies the LT predicate on the "auto_refresh_interval" field.
+func AutoRefreshIntervalLT(v int) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldLT(FieldAutoRefreshInterval, v))
+}
+
+// AutoRefreshIntervalLTE applies the LTE predicate on the "auto_refresh_interval" field.
+func AutoRefreshIntervalLTE(v int) predicate.StatusPage {
+	return predicate.StatusPage(sql.FieldLTE(FieldAutoRefreshInterval, v))
+}
+
+// HasUser applies the HasEdge predicate on the "user" edge.
+func HasUser() predicate.StatusPage {
 	return predicate.StatusPage(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, TagTable, TagColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, UserTable, UserColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
-// HasTagWith applies the HasEdge predicate on the "tag" edge with a given conditions (other predicates).
-func HasTagWith(preds ...predicate.Tag) predicate.StatusPage {
+// HasUserWith applies the HasEdge predicate on the "user" edge with a given conditions (other predicates).
+func HasUserWith(preds ...predicate.User) predicate.StatusPage {
 	return predicate.StatusPage(func(s *sql.Selector) {
-		step := newTagStep()
+		step := newUserStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasStatusPageMonitors applies the HasEdge predicate on the "status_page_monitors" edge.
+func HasStatusPageMonitors() predicate.StatusPage {
+	return predicate.StatusPage(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, StatusPageMonitorsTable, StatusPageMonitorsColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasStatusPageMonitorsWith applies the HasEdge predicate on the "status_page_monitors" edge with a given conditions (other predicates).
+func HasStatusPageMonitorsWith(preds ...predicate.StatusPageMonitor) predicate.StatusPage {
+	return predicate.StatusPage(func(s *sql.Selector) {
+		step := newStatusPageMonitorsStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)
@@ -348,6 +936,29 @@ func HasMessages() predicate.StatusPage {
 func HasMessagesWith(preds ...predicate.StatusMessage) predicate.StatusPage {
 	return predicate.StatusPage(func(s *sql.Selector) {
 		step := newMessagesStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasIncidents applies the HasEdge predicate on the "incidents" edge.
+func HasIncidents() predicate.StatusPage {
+	return predicate.StatusPage(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, IncidentsTable, IncidentsColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasIncidentsWith applies the HasEdge predicate on the "incidents" edge with a given conditions (other predicates).
+func HasIncidentsWith(preds ...predicate.Incident) predicate.StatusPage {
+	return predicate.StatusPage(func(s *sql.Selector) {
+		step := newIncidentsStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

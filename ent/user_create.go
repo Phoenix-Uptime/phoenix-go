@@ -10,7 +10,13 @@ import (
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/apikey"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/incident"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/maintenancewindow"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/monitor"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/notification"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/statuspage"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/tag"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/user"
 )
 
@@ -200,6 +206,96 @@ func (_c *UserCreate) AddMonitors(v ...*Monitor) *UserCreate {
 	return _c.AddMonitorIDs(ids...)
 }
 
+// AddTagIDs adds the "tags" edge to the Tag entity by IDs.
+func (_c *UserCreate) AddTagIDs(ids ...int) *UserCreate {
+	_c.mutation.AddTagIDs(ids...)
+	return _c
+}
+
+// AddTags adds the "tags" edges to the Tag entity.
+func (_c *UserCreate) AddTags(v ...*Tag) *UserCreate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _c.AddTagIDs(ids...)
+}
+
+// AddAPIKeyIDs adds the "api_keys" edge to the APIKey entity by IDs.
+func (_c *UserCreate) AddAPIKeyIDs(ids ...int) *UserCreate {
+	_c.mutation.AddAPIKeyIDs(ids...)
+	return _c
+}
+
+// AddAPIKeys adds the "api_keys" edges to the APIKey entity.
+func (_c *UserCreate) AddAPIKeys(v ...*APIKey) *UserCreate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _c.AddAPIKeyIDs(ids...)
+}
+
+// AddNotificationIDs adds the "notifications" edge to the Notification entity by IDs.
+func (_c *UserCreate) AddNotificationIDs(ids ...int) *UserCreate {
+	_c.mutation.AddNotificationIDs(ids...)
+	return _c
+}
+
+// AddNotifications adds the "notifications" edges to the Notification entity.
+func (_c *UserCreate) AddNotifications(v ...*Notification) *UserCreate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _c.AddNotificationIDs(ids...)
+}
+
+// AddStatusPageIDs adds the "status_pages" edge to the StatusPage entity by IDs.
+func (_c *UserCreate) AddStatusPageIDs(ids ...int) *UserCreate {
+	_c.mutation.AddStatusPageIDs(ids...)
+	return _c
+}
+
+// AddStatusPages adds the "status_pages" edges to the StatusPage entity.
+func (_c *UserCreate) AddStatusPages(v ...*StatusPage) *UserCreate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _c.AddStatusPageIDs(ids...)
+}
+
+// AddMaintenanceWindowIDs adds the "maintenance_windows" edge to the MaintenanceWindow entity by IDs.
+func (_c *UserCreate) AddMaintenanceWindowIDs(ids ...int) *UserCreate {
+	_c.mutation.AddMaintenanceWindowIDs(ids...)
+	return _c
+}
+
+// AddMaintenanceWindows adds the "maintenance_windows" edges to the MaintenanceWindow entity.
+func (_c *UserCreate) AddMaintenanceWindows(v ...*MaintenanceWindow) *UserCreate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _c.AddMaintenanceWindowIDs(ids...)
+}
+
+// AddResolvedIncidentIDs adds the "resolved_incidents" edge to the Incident entity by IDs.
+func (_c *UserCreate) AddResolvedIncidentIDs(ids ...int) *UserCreate {
+	_c.mutation.AddResolvedIncidentIDs(ids...)
+	return _c
+}
+
+// AddResolvedIncidents adds the "resolved_incidents" edges to the Incident entity.
+func (_c *UserCreate) AddResolvedIncidents(v ...*Incident) *UserCreate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _c.AddResolvedIncidentIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (_c *UserCreate) Mutation() *UserMutation {
 	return _c.mutation
@@ -376,6 +472,102 @@ func (_c *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(monitor.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.TagsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.TagsTable,
+			Columns: []string{user.TagsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(tag.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.APIKeysIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.APIKeysTable,
+			Columns: []string{user.APIKeysColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(apikey.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.NotificationsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.NotificationsTable,
+			Columns: []string{user.NotificationsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(notification.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.StatusPagesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.StatusPagesTable,
+			Columns: []string{user.StatusPagesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(statuspage.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.MaintenanceWindowsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.MaintenanceWindowsTable,
+			Columns: []string{user.MaintenanceWindowsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(maintenancewindow.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.ResolvedIncidentsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ResolvedIncidentsTable,
+			Columns: []string{user.ResolvedIncidentsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(incident.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

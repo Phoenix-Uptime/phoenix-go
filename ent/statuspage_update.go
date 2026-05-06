@@ -11,10 +11,12 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/incident"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/predicate"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/statusmessage"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/statuspage"
-	"github.com/Phoenix-Uptime/phoenix-go/ent/tag"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/statuspagemonitor"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/user"
 )
 
 // StatusPageUpdate is the builder for updating StatusPage entities.
@@ -56,16 +58,30 @@ func (_u *StatusPageUpdate) ClearDeletedAt() *StatusPageUpdate {
 	return _u
 }
 
-// SetTagID sets the "tag_id" field.
-func (_u *StatusPageUpdate) SetTagID(v int) *StatusPageUpdate {
-	_u.mutation.SetTagID(v)
+// SetUserID sets the "user_id" field.
+func (_u *StatusPageUpdate) SetUserID(v int) *StatusPageUpdate {
+	_u.mutation.SetUserID(v)
 	return _u
 }
 
-// SetNillableTagID sets the "tag_id" field if the given value is not nil.
-func (_u *StatusPageUpdate) SetNillableTagID(v *int) *StatusPageUpdate {
+// SetNillableUserID sets the "user_id" field if the given value is not nil.
+func (_u *StatusPageUpdate) SetNillableUserID(v *int) *StatusPageUpdate {
 	if v != nil {
-		_u.SetTagID(*v)
+		_u.SetUserID(*v)
+	}
+	return _u
+}
+
+// SetSlug sets the "slug" field.
+func (_u *StatusPageUpdate) SetSlug(v string) *StatusPageUpdate {
+	_u.mutation.SetSlug(v)
+	return _u
+}
+
+// SetNillableSlug sets the "slug" field if the given value is not nil.
+func (_u *StatusPageUpdate) SetNillableSlug(v *string) *StatusPageUpdate {
+	if v != nil {
+		_u.SetSlug(*v)
 	}
 	return _u
 }
@@ -84,6 +100,26 @@ func (_u *StatusPageUpdate) SetNillableName(v *string) *StatusPageUpdate {
 	return _u
 }
 
+// SetDescription sets the "description" field.
+func (_u *StatusPageUpdate) SetDescription(v string) *StatusPageUpdate {
+	_u.mutation.SetDescription(v)
+	return _u
+}
+
+// SetNillableDescription sets the "description" field if the given value is not nil.
+func (_u *StatusPageUpdate) SetNillableDescription(v *string) *StatusPageUpdate {
+	if v != nil {
+		_u.SetDescription(*v)
+	}
+	return _u
+}
+
+// ClearDescription clears the value of the "description" field.
+func (_u *StatusPageUpdate) ClearDescription() *StatusPageUpdate {
+	_u.mutation.ClearDescription()
+	return _u
+}
+
 // SetIsPublic sets the "is_public" field.
 func (_u *StatusPageUpdate) SetIsPublic(v bool) *StatusPageUpdate {
 	_u.mutation.SetIsPublic(v)
@@ -98,9 +134,175 @@ func (_u *StatusPageUpdate) SetNillableIsPublic(v *bool) *StatusPageUpdate {
 	return _u
 }
 
-// SetTag sets the "tag" edge to the Tag entity.
-func (_u *StatusPageUpdate) SetTag(v *Tag) *StatusPageUpdate {
-	return _u.SetTagID(v.ID)
+// SetPassword sets the "password" field.
+func (_u *StatusPageUpdate) SetPassword(v string) *StatusPageUpdate {
+	_u.mutation.SetPassword(v)
+	return _u
+}
+
+// SetNillablePassword sets the "password" field if the given value is not nil.
+func (_u *StatusPageUpdate) SetNillablePassword(v *string) *StatusPageUpdate {
+	if v != nil {
+		_u.SetPassword(*v)
+	}
+	return _u
+}
+
+// ClearPassword clears the value of the "password" field.
+func (_u *StatusPageUpdate) ClearPassword() *StatusPageUpdate {
+	_u.mutation.ClearPassword()
+	return _u
+}
+
+// SetTheme sets the "theme" field.
+func (_u *StatusPageUpdate) SetTheme(v string) *StatusPageUpdate {
+	_u.mutation.SetTheme(v)
+	return _u
+}
+
+// SetNillableTheme sets the "theme" field if the given value is not nil.
+func (_u *StatusPageUpdate) SetNillableTheme(v *string) *StatusPageUpdate {
+	if v != nil {
+		_u.SetTheme(*v)
+	}
+	return _u
+}
+
+// SetCustomCSS sets the "custom_css" field.
+func (_u *StatusPageUpdate) SetCustomCSS(v string) *StatusPageUpdate {
+	_u.mutation.SetCustomCSS(v)
+	return _u
+}
+
+// SetNillableCustomCSS sets the "custom_css" field if the given value is not nil.
+func (_u *StatusPageUpdate) SetNillableCustomCSS(v *string) *StatusPageUpdate {
+	if v != nil {
+		_u.SetCustomCSS(*v)
+	}
+	return _u
+}
+
+// ClearCustomCSS clears the value of the "custom_css" field.
+func (_u *StatusPageUpdate) ClearCustomCSS() *StatusPageUpdate {
+	_u.mutation.ClearCustomCSS()
+	return _u
+}
+
+// SetFooterText sets the "footer_text" field.
+func (_u *StatusPageUpdate) SetFooterText(v string) *StatusPageUpdate {
+	_u.mutation.SetFooterText(v)
+	return _u
+}
+
+// SetNillableFooterText sets the "footer_text" field if the given value is not nil.
+func (_u *StatusPageUpdate) SetNillableFooterText(v *string) *StatusPageUpdate {
+	if v != nil {
+		_u.SetFooterText(*v)
+	}
+	return _u
+}
+
+// ClearFooterText clears the value of the "footer_text" field.
+func (_u *StatusPageUpdate) ClearFooterText() *StatusPageUpdate {
+	_u.mutation.ClearFooterText()
+	return _u
+}
+
+// SetShowTags sets the "show_tags" field.
+func (_u *StatusPageUpdate) SetShowTags(v bool) *StatusPageUpdate {
+	_u.mutation.SetShowTags(v)
+	return _u
+}
+
+// SetNillableShowTags sets the "show_tags" field if the given value is not nil.
+func (_u *StatusPageUpdate) SetNillableShowTags(v *bool) *StatusPageUpdate {
+	if v != nil {
+		_u.SetShowTags(*v)
+	}
+	return _u
+}
+
+// SetShowCharts sets the "show_charts" field.
+func (_u *StatusPageUpdate) SetShowCharts(v bool) *StatusPageUpdate {
+	_u.mutation.SetShowCharts(v)
+	return _u
+}
+
+// SetNillableShowCharts sets the "show_charts" field if the given value is not nil.
+func (_u *StatusPageUpdate) SetNillableShowCharts(v *bool) *StatusPageUpdate {
+	if v != nil {
+		_u.SetShowCharts(*v)
+	}
+	return _u
+}
+
+// SetShowUptimePercentage sets the "show_uptime_percentage" field.
+func (_u *StatusPageUpdate) SetShowUptimePercentage(v bool) *StatusPageUpdate {
+	_u.mutation.SetShowUptimePercentage(v)
+	return _u
+}
+
+// SetNillableShowUptimePercentage sets the "show_uptime_percentage" field if the given value is not nil.
+func (_u *StatusPageUpdate) SetNillableShowUptimePercentage(v *bool) *StatusPageUpdate {
+	if v != nil {
+		_u.SetShowUptimePercentage(*v)
+	}
+	return _u
+}
+
+// SetShowPoweredBy sets the "show_powered_by" field.
+func (_u *StatusPageUpdate) SetShowPoweredBy(v bool) *StatusPageUpdate {
+	_u.mutation.SetShowPoweredBy(v)
+	return _u
+}
+
+// SetNillableShowPoweredBy sets the "show_powered_by" field if the given value is not nil.
+func (_u *StatusPageUpdate) SetNillableShowPoweredBy(v *bool) *StatusPageUpdate {
+	if v != nil {
+		_u.SetShowPoweredBy(*v)
+	}
+	return _u
+}
+
+// SetAutoRefreshInterval sets the "auto_refresh_interval" field.
+func (_u *StatusPageUpdate) SetAutoRefreshInterval(v int) *StatusPageUpdate {
+	_u.mutation.ResetAutoRefreshInterval()
+	_u.mutation.SetAutoRefreshInterval(v)
+	return _u
+}
+
+// SetNillableAutoRefreshInterval sets the "auto_refresh_interval" field if the given value is not nil.
+func (_u *StatusPageUpdate) SetNillableAutoRefreshInterval(v *int) *StatusPageUpdate {
+	if v != nil {
+		_u.SetAutoRefreshInterval(*v)
+	}
+	return _u
+}
+
+// AddAutoRefreshInterval adds value to the "auto_refresh_interval" field.
+func (_u *StatusPageUpdate) AddAutoRefreshInterval(v int) *StatusPageUpdate {
+	_u.mutation.AddAutoRefreshInterval(v)
+	return _u
+}
+
+// SetUser sets the "user" edge to the User entity.
+func (_u *StatusPageUpdate) SetUser(v *User) *StatusPageUpdate {
+	return _u.SetUserID(v.ID)
+}
+
+// AddStatusPageMonitorIDs adds the "status_page_monitors" edge to the StatusPageMonitor entity by IDs.
+func (_u *StatusPageUpdate) AddStatusPageMonitorIDs(ids ...int) *StatusPageUpdate {
+	_u.mutation.AddStatusPageMonitorIDs(ids...)
+	return _u
+}
+
+// AddStatusPageMonitors adds the "status_page_monitors" edges to the StatusPageMonitor entity.
+func (_u *StatusPageUpdate) AddStatusPageMonitors(v ...*StatusPageMonitor) *StatusPageUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddStatusPageMonitorIDs(ids...)
 }
 
 // AddMessageIDs adds the "messages" edge to the StatusMessage entity by IDs.
@@ -118,15 +320,51 @@ func (_u *StatusPageUpdate) AddMessages(v ...*StatusMessage) *StatusPageUpdate {
 	return _u.AddMessageIDs(ids...)
 }
 
+// AddIncidentIDs adds the "incidents" edge to the Incident entity by IDs.
+func (_u *StatusPageUpdate) AddIncidentIDs(ids ...int) *StatusPageUpdate {
+	_u.mutation.AddIncidentIDs(ids...)
+	return _u
+}
+
+// AddIncidents adds the "incidents" edges to the Incident entity.
+func (_u *StatusPageUpdate) AddIncidents(v ...*Incident) *StatusPageUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddIncidentIDs(ids...)
+}
+
 // Mutation returns the StatusPageMutation object of the builder.
 func (_u *StatusPageUpdate) Mutation() *StatusPageMutation {
 	return _u.mutation
 }
 
-// ClearTag clears the "tag" edge to the Tag entity.
-func (_u *StatusPageUpdate) ClearTag() *StatusPageUpdate {
-	_u.mutation.ClearTag()
+// ClearUser clears the "user" edge to the User entity.
+func (_u *StatusPageUpdate) ClearUser() *StatusPageUpdate {
+	_u.mutation.ClearUser()
 	return _u
+}
+
+// ClearStatusPageMonitors clears all "status_page_monitors" edges to the StatusPageMonitor entity.
+func (_u *StatusPageUpdate) ClearStatusPageMonitors() *StatusPageUpdate {
+	_u.mutation.ClearStatusPageMonitors()
+	return _u
+}
+
+// RemoveStatusPageMonitorIDs removes the "status_page_monitors" edge to StatusPageMonitor entities by IDs.
+func (_u *StatusPageUpdate) RemoveStatusPageMonitorIDs(ids ...int) *StatusPageUpdate {
+	_u.mutation.RemoveStatusPageMonitorIDs(ids...)
+	return _u
+}
+
+// RemoveStatusPageMonitors removes "status_page_monitors" edges to StatusPageMonitor entities.
+func (_u *StatusPageUpdate) RemoveStatusPageMonitors(v ...*StatusPageMonitor) *StatusPageUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveStatusPageMonitorIDs(ids...)
 }
 
 // ClearMessages clears all "messages" edges to the StatusMessage entity.
@@ -148,6 +386,27 @@ func (_u *StatusPageUpdate) RemoveMessages(v ...*StatusMessage) *StatusPageUpdat
 		ids[i] = v[i].ID
 	}
 	return _u.RemoveMessageIDs(ids...)
+}
+
+// ClearIncidents clears all "incidents" edges to the Incident entity.
+func (_u *StatusPageUpdate) ClearIncidents() *StatusPageUpdate {
+	_u.mutation.ClearIncidents()
+	return _u
+}
+
+// RemoveIncidentIDs removes the "incidents" edge to Incident entities by IDs.
+func (_u *StatusPageUpdate) RemoveIncidentIDs(ids ...int) *StatusPageUpdate {
+	_u.mutation.RemoveIncidentIDs(ids...)
+	return _u
+}
+
+// RemoveIncidents removes "incidents" edges to Incident entities.
+func (_u *StatusPageUpdate) RemoveIncidents(v ...*Incident) *StatusPageUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveIncidentIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -188,13 +447,18 @@ func (_u *StatusPageUpdate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (_u *StatusPageUpdate) check() error {
+	if v, ok := _u.mutation.Slug(); ok {
+		if err := statuspage.SlugValidator(v); err != nil {
+			return &ValidationError{Name: "slug", err: fmt.Errorf(`ent: validator failed for field "StatusPage.slug": %w`, err)}
+		}
+	}
 	if v, ok := _u.mutation.Name(); ok {
 		if err := statuspage.NameValidator(v); err != nil {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "StatusPage.name": %w`, err)}
 		}
 	}
-	if _u.mutation.TagCleared() && len(_u.mutation.TagIDs()) > 0 {
-		return errors.New(`ent: clearing a required unique edge "StatusPage.tag"`)
+	if _u.mutation.UserCleared() && len(_u.mutation.UserIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "StatusPage.user"`)
 	}
 	return nil
 }
@@ -220,34 +484,127 @@ func (_u *StatusPageUpdate) sqlSave(ctx context.Context) (_node int, err error) 
 	if _u.mutation.DeletedAtCleared() {
 		_spec.ClearField(statuspage.FieldDeletedAt, field.TypeTime)
 	}
+	if value, ok := _u.mutation.Slug(); ok {
+		_spec.SetField(statuspage.FieldSlug, field.TypeString, value)
+	}
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(statuspage.FieldName, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.Description(); ok {
+		_spec.SetField(statuspage.FieldDescription, field.TypeString, value)
+	}
+	if _u.mutation.DescriptionCleared() {
+		_spec.ClearField(statuspage.FieldDescription, field.TypeString)
 	}
 	if value, ok := _u.mutation.IsPublic(); ok {
 		_spec.SetField(statuspage.FieldIsPublic, field.TypeBool, value)
 	}
-	if _u.mutation.TagCleared() {
+	if value, ok := _u.mutation.Password(); ok {
+		_spec.SetField(statuspage.FieldPassword, field.TypeString, value)
+	}
+	if _u.mutation.PasswordCleared() {
+		_spec.ClearField(statuspage.FieldPassword, field.TypeString)
+	}
+	if value, ok := _u.mutation.Theme(); ok {
+		_spec.SetField(statuspage.FieldTheme, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.CustomCSS(); ok {
+		_spec.SetField(statuspage.FieldCustomCSS, field.TypeString, value)
+	}
+	if _u.mutation.CustomCSSCleared() {
+		_spec.ClearField(statuspage.FieldCustomCSS, field.TypeString)
+	}
+	if value, ok := _u.mutation.FooterText(); ok {
+		_spec.SetField(statuspage.FieldFooterText, field.TypeString, value)
+	}
+	if _u.mutation.FooterTextCleared() {
+		_spec.ClearField(statuspage.FieldFooterText, field.TypeString)
+	}
+	if value, ok := _u.mutation.ShowTags(); ok {
+		_spec.SetField(statuspage.FieldShowTags, field.TypeBool, value)
+	}
+	if value, ok := _u.mutation.ShowCharts(); ok {
+		_spec.SetField(statuspage.FieldShowCharts, field.TypeBool, value)
+	}
+	if value, ok := _u.mutation.ShowUptimePercentage(); ok {
+		_spec.SetField(statuspage.FieldShowUptimePercentage, field.TypeBool, value)
+	}
+	if value, ok := _u.mutation.ShowPoweredBy(); ok {
+		_spec.SetField(statuspage.FieldShowPoweredBy, field.TypeBool, value)
+	}
+	if value, ok := _u.mutation.AutoRefreshInterval(); ok {
+		_spec.SetField(statuspage.FieldAutoRefreshInterval, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedAutoRefreshInterval(); ok {
+		_spec.AddField(statuspage.FieldAutoRefreshInterval, field.TypeInt, value)
+	}
+	if _u.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   statuspage.TagTable,
-			Columns: []string{statuspage.TagColumn},
+			Table:   statuspage.UserTable,
+			Columns: []string{statuspage.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(tag.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := _u.mutation.TagIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   statuspage.TagTable,
-			Columns: []string{statuspage.TagColumn},
+			Table:   statuspage.UserTable,
+			Columns: []string{statuspage.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(tag.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.StatusPageMonitorsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   statuspage.StatusPageMonitorsTable,
+			Columns: []string{statuspage.StatusPageMonitorsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(statuspagemonitor.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedStatusPageMonitorsIDs(); len(nodes) > 0 && !_u.mutation.StatusPageMonitorsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   statuspage.StatusPageMonitorsTable,
+			Columns: []string{statuspage.StatusPageMonitorsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(statuspagemonitor.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.StatusPageMonitorsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   statuspage.StatusPageMonitorsTable,
+			Columns: []string{statuspage.StatusPageMonitorsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(statuspagemonitor.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -293,6 +650,51 @@ func (_u *StatusPageUpdate) sqlSave(ctx context.Context) (_node int, err error) 
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(statusmessage.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.IncidentsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   statuspage.IncidentsTable,
+			Columns: []string{statuspage.IncidentsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(incident.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedIncidentsIDs(); len(nodes) > 0 && !_u.mutation.IncidentsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   statuspage.IncidentsTable,
+			Columns: []string{statuspage.IncidentsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(incident.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.IncidentsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   statuspage.IncidentsTable,
+			Columns: []string{statuspage.IncidentsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(incident.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -346,16 +748,30 @@ func (_u *StatusPageUpdateOne) ClearDeletedAt() *StatusPageUpdateOne {
 	return _u
 }
 
-// SetTagID sets the "tag_id" field.
-func (_u *StatusPageUpdateOne) SetTagID(v int) *StatusPageUpdateOne {
-	_u.mutation.SetTagID(v)
+// SetUserID sets the "user_id" field.
+func (_u *StatusPageUpdateOne) SetUserID(v int) *StatusPageUpdateOne {
+	_u.mutation.SetUserID(v)
 	return _u
 }
 
-// SetNillableTagID sets the "tag_id" field if the given value is not nil.
-func (_u *StatusPageUpdateOne) SetNillableTagID(v *int) *StatusPageUpdateOne {
+// SetNillableUserID sets the "user_id" field if the given value is not nil.
+func (_u *StatusPageUpdateOne) SetNillableUserID(v *int) *StatusPageUpdateOne {
 	if v != nil {
-		_u.SetTagID(*v)
+		_u.SetUserID(*v)
+	}
+	return _u
+}
+
+// SetSlug sets the "slug" field.
+func (_u *StatusPageUpdateOne) SetSlug(v string) *StatusPageUpdateOne {
+	_u.mutation.SetSlug(v)
+	return _u
+}
+
+// SetNillableSlug sets the "slug" field if the given value is not nil.
+func (_u *StatusPageUpdateOne) SetNillableSlug(v *string) *StatusPageUpdateOne {
+	if v != nil {
+		_u.SetSlug(*v)
 	}
 	return _u
 }
@@ -374,6 +790,26 @@ func (_u *StatusPageUpdateOne) SetNillableName(v *string) *StatusPageUpdateOne {
 	return _u
 }
 
+// SetDescription sets the "description" field.
+func (_u *StatusPageUpdateOne) SetDescription(v string) *StatusPageUpdateOne {
+	_u.mutation.SetDescription(v)
+	return _u
+}
+
+// SetNillableDescription sets the "description" field if the given value is not nil.
+func (_u *StatusPageUpdateOne) SetNillableDescription(v *string) *StatusPageUpdateOne {
+	if v != nil {
+		_u.SetDescription(*v)
+	}
+	return _u
+}
+
+// ClearDescription clears the value of the "description" field.
+func (_u *StatusPageUpdateOne) ClearDescription() *StatusPageUpdateOne {
+	_u.mutation.ClearDescription()
+	return _u
+}
+
 // SetIsPublic sets the "is_public" field.
 func (_u *StatusPageUpdateOne) SetIsPublic(v bool) *StatusPageUpdateOne {
 	_u.mutation.SetIsPublic(v)
@@ -388,9 +824,175 @@ func (_u *StatusPageUpdateOne) SetNillableIsPublic(v *bool) *StatusPageUpdateOne
 	return _u
 }
 
-// SetTag sets the "tag" edge to the Tag entity.
-func (_u *StatusPageUpdateOne) SetTag(v *Tag) *StatusPageUpdateOne {
-	return _u.SetTagID(v.ID)
+// SetPassword sets the "password" field.
+func (_u *StatusPageUpdateOne) SetPassword(v string) *StatusPageUpdateOne {
+	_u.mutation.SetPassword(v)
+	return _u
+}
+
+// SetNillablePassword sets the "password" field if the given value is not nil.
+func (_u *StatusPageUpdateOne) SetNillablePassword(v *string) *StatusPageUpdateOne {
+	if v != nil {
+		_u.SetPassword(*v)
+	}
+	return _u
+}
+
+// ClearPassword clears the value of the "password" field.
+func (_u *StatusPageUpdateOne) ClearPassword() *StatusPageUpdateOne {
+	_u.mutation.ClearPassword()
+	return _u
+}
+
+// SetTheme sets the "theme" field.
+func (_u *StatusPageUpdateOne) SetTheme(v string) *StatusPageUpdateOne {
+	_u.mutation.SetTheme(v)
+	return _u
+}
+
+// SetNillableTheme sets the "theme" field if the given value is not nil.
+func (_u *StatusPageUpdateOne) SetNillableTheme(v *string) *StatusPageUpdateOne {
+	if v != nil {
+		_u.SetTheme(*v)
+	}
+	return _u
+}
+
+// SetCustomCSS sets the "custom_css" field.
+func (_u *StatusPageUpdateOne) SetCustomCSS(v string) *StatusPageUpdateOne {
+	_u.mutation.SetCustomCSS(v)
+	return _u
+}
+
+// SetNillableCustomCSS sets the "custom_css" field if the given value is not nil.
+func (_u *StatusPageUpdateOne) SetNillableCustomCSS(v *string) *StatusPageUpdateOne {
+	if v != nil {
+		_u.SetCustomCSS(*v)
+	}
+	return _u
+}
+
+// ClearCustomCSS clears the value of the "custom_css" field.
+func (_u *StatusPageUpdateOne) ClearCustomCSS() *StatusPageUpdateOne {
+	_u.mutation.ClearCustomCSS()
+	return _u
+}
+
+// SetFooterText sets the "footer_text" field.
+func (_u *StatusPageUpdateOne) SetFooterText(v string) *StatusPageUpdateOne {
+	_u.mutation.SetFooterText(v)
+	return _u
+}
+
+// SetNillableFooterText sets the "footer_text" field if the given value is not nil.
+func (_u *StatusPageUpdateOne) SetNillableFooterText(v *string) *StatusPageUpdateOne {
+	if v != nil {
+		_u.SetFooterText(*v)
+	}
+	return _u
+}
+
+// ClearFooterText clears the value of the "footer_text" field.
+func (_u *StatusPageUpdateOne) ClearFooterText() *StatusPageUpdateOne {
+	_u.mutation.ClearFooterText()
+	return _u
+}
+
+// SetShowTags sets the "show_tags" field.
+func (_u *StatusPageUpdateOne) SetShowTags(v bool) *StatusPageUpdateOne {
+	_u.mutation.SetShowTags(v)
+	return _u
+}
+
+// SetNillableShowTags sets the "show_tags" field if the given value is not nil.
+func (_u *StatusPageUpdateOne) SetNillableShowTags(v *bool) *StatusPageUpdateOne {
+	if v != nil {
+		_u.SetShowTags(*v)
+	}
+	return _u
+}
+
+// SetShowCharts sets the "show_charts" field.
+func (_u *StatusPageUpdateOne) SetShowCharts(v bool) *StatusPageUpdateOne {
+	_u.mutation.SetShowCharts(v)
+	return _u
+}
+
+// SetNillableShowCharts sets the "show_charts" field if the given value is not nil.
+func (_u *StatusPageUpdateOne) SetNillableShowCharts(v *bool) *StatusPageUpdateOne {
+	if v != nil {
+		_u.SetShowCharts(*v)
+	}
+	return _u
+}
+
+// SetShowUptimePercentage sets the "show_uptime_percentage" field.
+func (_u *StatusPageUpdateOne) SetShowUptimePercentage(v bool) *StatusPageUpdateOne {
+	_u.mutation.SetShowUptimePercentage(v)
+	return _u
+}
+
+// SetNillableShowUptimePercentage sets the "show_uptime_percentage" field if the given value is not nil.
+func (_u *StatusPageUpdateOne) SetNillableShowUptimePercentage(v *bool) *StatusPageUpdateOne {
+	if v != nil {
+		_u.SetShowUptimePercentage(*v)
+	}
+	return _u
+}
+
+// SetShowPoweredBy sets the "show_powered_by" field.
+func (_u *StatusPageUpdateOne) SetShowPoweredBy(v bool) *StatusPageUpdateOne {
+	_u.mutation.SetShowPoweredBy(v)
+	return _u
+}
+
+// SetNillableShowPoweredBy sets the "show_powered_by" field if the given value is not nil.
+func (_u *StatusPageUpdateOne) SetNillableShowPoweredBy(v *bool) *StatusPageUpdateOne {
+	if v != nil {
+		_u.SetShowPoweredBy(*v)
+	}
+	return _u
+}
+
+// SetAutoRefreshInterval sets the "auto_refresh_interval" field.
+func (_u *StatusPageUpdateOne) SetAutoRefreshInterval(v int) *StatusPageUpdateOne {
+	_u.mutation.ResetAutoRefreshInterval()
+	_u.mutation.SetAutoRefreshInterval(v)
+	return _u
+}
+
+// SetNillableAutoRefreshInterval sets the "auto_refresh_interval" field if the given value is not nil.
+func (_u *StatusPageUpdateOne) SetNillableAutoRefreshInterval(v *int) *StatusPageUpdateOne {
+	if v != nil {
+		_u.SetAutoRefreshInterval(*v)
+	}
+	return _u
+}
+
+// AddAutoRefreshInterval adds value to the "auto_refresh_interval" field.
+func (_u *StatusPageUpdateOne) AddAutoRefreshInterval(v int) *StatusPageUpdateOne {
+	_u.mutation.AddAutoRefreshInterval(v)
+	return _u
+}
+
+// SetUser sets the "user" edge to the User entity.
+func (_u *StatusPageUpdateOne) SetUser(v *User) *StatusPageUpdateOne {
+	return _u.SetUserID(v.ID)
+}
+
+// AddStatusPageMonitorIDs adds the "status_page_monitors" edge to the StatusPageMonitor entity by IDs.
+func (_u *StatusPageUpdateOne) AddStatusPageMonitorIDs(ids ...int) *StatusPageUpdateOne {
+	_u.mutation.AddStatusPageMonitorIDs(ids...)
+	return _u
+}
+
+// AddStatusPageMonitors adds the "status_page_monitors" edges to the StatusPageMonitor entity.
+func (_u *StatusPageUpdateOne) AddStatusPageMonitors(v ...*StatusPageMonitor) *StatusPageUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddStatusPageMonitorIDs(ids...)
 }
 
 // AddMessageIDs adds the "messages" edge to the StatusMessage entity by IDs.
@@ -408,15 +1010,51 @@ func (_u *StatusPageUpdateOne) AddMessages(v ...*StatusMessage) *StatusPageUpdat
 	return _u.AddMessageIDs(ids...)
 }
 
+// AddIncidentIDs adds the "incidents" edge to the Incident entity by IDs.
+func (_u *StatusPageUpdateOne) AddIncidentIDs(ids ...int) *StatusPageUpdateOne {
+	_u.mutation.AddIncidentIDs(ids...)
+	return _u
+}
+
+// AddIncidents adds the "incidents" edges to the Incident entity.
+func (_u *StatusPageUpdateOne) AddIncidents(v ...*Incident) *StatusPageUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddIncidentIDs(ids...)
+}
+
 // Mutation returns the StatusPageMutation object of the builder.
 func (_u *StatusPageUpdateOne) Mutation() *StatusPageMutation {
 	return _u.mutation
 }
 
-// ClearTag clears the "tag" edge to the Tag entity.
-func (_u *StatusPageUpdateOne) ClearTag() *StatusPageUpdateOne {
-	_u.mutation.ClearTag()
+// ClearUser clears the "user" edge to the User entity.
+func (_u *StatusPageUpdateOne) ClearUser() *StatusPageUpdateOne {
+	_u.mutation.ClearUser()
 	return _u
+}
+
+// ClearStatusPageMonitors clears all "status_page_monitors" edges to the StatusPageMonitor entity.
+func (_u *StatusPageUpdateOne) ClearStatusPageMonitors() *StatusPageUpdateOne {
+	_u.mutation.ClearStatusPageMonitors()
+	return _u
+}
+
+// RemoveStatusPageMonitorIDs removes the "status_page_monitors" edge to StatusPageMonitor entities by IDs.
+func (_u *StatusPageUpdateOne) RemoveStatusPageMonitorIDs(ids ...int) *StatusPageUpdateOne {
+	_u.mutation.RemoveStatusPageMonitorIDs(ids...)
+	return _u
+}
+
+// RemoveStatusPageMonitors removes "status_page_monitors" edges to StatusPageMonitor entities.
+func (_u *StatusPageUpdateOne) RemoveStatusPageMonitors(v ...*StatusPageMonitor) *StatusPageUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveStatusPageMonitorIDs(ids...)
 }
 
 // ClearMessages clears all "messages" edges to the StatusMessage entity.
@@ -438,6 +1076,27 @@ func (_u *StatusPageUpdateOne) RemoveMessages(v ...*StatusMessage) *StatusPageUp
 		ids[i] = v[i].ID
 	}
 	return _u.RemoveMessageIDs(ids...)
+}
+
+// ClearIncidents clears all "incidents" edges to the Incident entity.
+func (_u *StatusPageUpdateOne) ClearIncidents() *StatusPageUpdateOne {
+	_u.mutation.ClearIncidents()
+	return _u
+}
+
+// RemoveIncidentIDs removes the "incidents" edge to Incident entities by IDs.
+func (_u *StatusPageUpdateOne) RemoveIncidentIDs(ids ...int) *StatusPageUpdateOne {
+	_u.mutation.RemoveIncidentIDs(ids...)
+	return _u
+}
+
+// RemoveIncidents removes "incidents" edges to Incident entities.
+func (_u *StatusPageUpdateOne) RemoveIncidents(v ...*Incident) *StatusPageUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveIncidentIDs(ids...)
 }
 
 // Where appends a list predicates to the StatusPageUpdate builder.
@@ -491,13 +1150,18 @@ func (_u *StatusPageUpdateOne) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (_u *StatusPageUpdateOne) check() error {
+	if v, ok := _u.mutation.Slug(); ok {
+		if err := statuspage.SlugValidator(v); err != nil {
+			return &ValidationError{Name: "slug", err: fmt.Errorf(`ent: validator failed for field "StatusPage.slug": %w`, err)}
+		}
+	}
 	if v, ok := _u.mutation.Name(); ok {
 		if err := statuspage.NameValidator(v); err != nil {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "StatusPage.name": %w`, err)}
 		}
 	}
-	if _u.mutation.TagCleared() && len(_u.mutation.TagIDs()) > 0 {
-		return errors.New(`ent: clearing a required unique edge "StatusPage.tag"`)
+	if _u.mutation.UserCleared() && len(_u.mutation.UserIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "StatusPage.user"`)
 	}
 	return nil
 }
@@ -540,34 +1204,127 @@ func (_u *StatusPageUpdateOne) sqlSave(ctx context.Context) (_node *StatusPage, 
 	if _u.mutation.DeletedAtCleared() {
 		_spec.ClearField(statuspage.FieldDeletedAt, field.TypeTime)
 	}
+	if value, ok := _u.mutation.Slug(); ok {
+		_spec.SetField(statuspage.FieldSlug, field.TypeString, value)
+	}
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(statuspage.FieldName, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.Description(); ok {
+		_spec.SetField(statuspage.FieldDescription, field.TypeString, value)
+	}
+	if _u.mutation.DescriptionCleared() {
+		_spec.ClearField(statuspage.FieldDescription, field.TypeString)
 	}
 	if value, ok := _u.mutation.IsPublic(); ok {
 		_spec.SetField(statuspage.FieldIsPublic, field.TypeBool, value)
 	}
-	if _u.mutation.TagCleared() {
+	if value, ok := _u.mutation.Password(); ok {
+		_spec.SetField(statuspage.FieldPassword, field.TypeString, value)
+	}
+	if _u.mutation.PasswordCleared() {
+		_spec.ClearField(statuspage.FieldPassword, field.TypeString)
+	}
+	if value, ok := _u.mutation.Theme(); ok {
+		_spec.SetField(statuspage.FieldTheme, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.CustomCSS(); ok {
+		_spec.SetField(statuspage.FieldCustomCSS, field.TypeString, value)
+	}
+	if _u.mutation.CustomCSSCleared() {
+		_spec.ClearField(statuspage.FieldCustomCSS, field.TypeString)
+	}
+	if value, ok := _u.mutation.FooterText(); ok {
+		_spec.SetField(statuspage.FieldFooterText, field.TypeString, value)
+	}
+	if _u.mutation.FooterTextCleared() {
+		_spec.ClearField(statuspage.FieldFooterText, field.TypeString)
+	}
+	if value, ok := _u.mutation.ShowTags(); ok {
+		_spec.SetField(statuspage.FieldShowTags, field.TypeBool, value)
+	}
+	if value, ok := _u.mutation.ShowCharts(); ok {
+		_spec.SetField(statuspage.FieldShowCharts, field.TypeBool, value)
+	}
+	if value, ok := _u.mutation.ShowUptimePercentage(); ok {
+		_spec.SetField(statuspage.FieldShowUptimePercentage, field.TypeBool, value)
+	}
+	if value, ok := _u.mutation.ShowPoweredBy(); ok {
+		_spec.SetField(statuspage.FieldShowPoweredBy, field.TypeBool, value)
+	}
+	if value, ok := _u.mutation.AutoRefreshInterval(); ok {
+		_spec.SetField(statuspage.FieldAutoRefreshInterval, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedAutoRefreshInterval(); ok {
+		_spec.AddField(statuspage.FieldAutoRefreshInterval, field.TypeInt, value)
+	}
+	if _u.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   statuspage.TagTable,
-			Columns: []string{statuspage.TagColumn},
+			Table:   statuspage.UserTable,
+			Columns: []string{statuspage.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(tag.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := _u.mutation.TagIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   statuspage.TagTable,
-			Columns: []string{statuspage.TagColumn},
+			Table:   statuspage.UserTable,
+			Columns: []string{statuspage.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(tag.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.StatusPageMonitorsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   statuspage.StatusPageMonitorsTable,
+			Columns: []string{statuspage.StatusPageMonitorsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(statuspagemonitor.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedStatusPageMonitorsIDs(); len(nodes) > 0 && !_u.mutation.StatusPageMonitorsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   statuspage.StatusPageMonitorsTable,
+			Columns: []string{statuspage.StatusPageMonitorsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(statuspagemonitor.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.StatusPageMonitorsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   statuspage.StatusPageMonitorsTable,
+			Columns: []string{statuspage.StatusPageMonitorsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(statuspagemonitor.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -613,6 +1370,51 @@ func (_u *StatusPageUpdateOne) sqlSave(ctx context.Context) (_node *StatusPage, 
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(statusmessage.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.IncidentsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   statuspage.IncidentsTable,
+			Columns: []string{statuspage.IncidentsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(incident.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedIncidentsIDs(); len(nodes) > 0 && !_u.mutation.IncidentsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   statuspage.IncidentsTable,
+			Columns: []string{statuspage.IncidentsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(incident.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.IncidentsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   statuspage.IncidentsTable,
+			Columns: []string{statuspage.IncidentsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(incident.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

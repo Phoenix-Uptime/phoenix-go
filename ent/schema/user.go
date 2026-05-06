@@ -53,6 +53,12 @@ func (User) Fields() []ent.Field {
 func (User) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.To("monitors", Monitor.Type),
+		edge.To("tags", Tag.Type),
+		edge.To("api_keys", APIKey.Type),
+		edge.To("notifications", Notification.Type),
+		edge.To("status_pages", StatusPage.Type),
+		edge.To("maintenance_windows", MaintenanceWindow.Type),
+		edge.To("resolved_incidents", Incident.Type),
 	}
 }
 

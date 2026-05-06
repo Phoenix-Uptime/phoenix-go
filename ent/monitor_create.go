@@ -10,8 +10,12 @@ import (
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/incident"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/maintenancewindow"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/monitor"
-	"github.com/Phoenix-Uptime/phoenix-go/ent/monitorhistory"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/monitorcheck"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/notification"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/statuspagemonitor"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/tag"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/user"
 )
@@ -77,6 +81,20 @@ func (_c *MonitorCreate) SetName(v string) *MonitorCreate {
 	return _c
 }
 
+// SetDescription sets the "description" field.
+func (_c *MonitorCreate) SetDescription(v string) *MonitorCreate {
+	_c.mutation.SetDescription(v)
+	return _c
+}
+
+// SetNillableDescription sets the "description" field if the given value is not nil.
+func (_c *MonitorCreate) SetNillableDescription(v *string) *MonitorCreate {
+	if v != nil {
+		_c.SetDescription(*v)
+	}
+	return _c
+}
+
 // SetURL sets the "url" field.
 func (_c *MonitorCreate) SetURL(v string) *MonitorCreate {
 	_c.mutation.SetURL(v)
@@ -93,6 +111,20 @@ func (_c *MonitorCreate) SetInterval(v int) *MonitorCreate {
 func (_c *MonitorCreate) SetNillableInterval(v *int) *MonitorCreate {
 	if v != nil {
 		_c.SetInterval(*v)
+	}
+	return _c
+}
+
+// SetTimeout sets the "timeout" field.
+func (_c *MonitorCreate) SetTimeout(v int) *MonitorCreate {
+	_c.mutation.SetTimeout(v)
+	return _c
+}
+
+// SetNillableTimeout sets the "timeout" field if the given value is not nil.
+func (_c *MonitorCreate) SetNillableTimeout(v *int) *MonitorCreate {
+	if v != nil {
+		_c.SetTimeout(*v)
 	}
 	return _c
 }
@@ -117,6 +149,20 @@ func (_c *MonitorCreate) SetType(v monitor.Type) *MonitorCreate {
 	return _c
 }
 
+// SetIsActive sets the "is_active" field.
+func (_c *MonitorCreate) SetIsActive(v bool) *MonitorCreate {
+	_c.mutation.SetIsActive(v)
+	return _c
+}
+
+// SetNillableIsActive sets the "is_active" field if the given value is not nil.
+func (_c *MonitorCreate) SetNillableIsActive(v *bool) *MonitorCreate {
+	if v != nil {
+		_c.SetIsActive(*v)
+	}
+	return _c
+}
+
 // SetMethod sets the "method" field.
 func (_c *MonitorCreate) SetMethod(v string) *MonitorCreate {
 	_c.mutation.SetMethod(v)
@@ -127,6 +173,60 @@ func (_c *MonitorCreate) SetMethod(v string) *MonitorCreate {
 func (_c *MonitorCreate) SetNillableMethod(v *string) *MonitorCreate {
 	if v != nil {
 		_c.SetMethod(*v)
+	}
+	return _c
+}
+
+// SetAcceptedStatusCodes sets the "accepted_status_codes" field.
+func (_c *MonitorCreate) SetAcceptedStatusCodes(v []string) *MonitorCreate {
+	_c.mutation.SetAcceptedStatusCodes(v)
+	return _c
+}
+
+// SetHeaders sets the "headers" field.
+func (_c *MonitorCreate) SetHeaders(v map[string]string) *MonitorCreate {
+	_c.mutation.SetHeaders(v)
+	return _c
+}
+
+// SetBody sets the "body" field.
+func (_c *MonitorCreate) SetBody(v string) *MonitorCreate {
+	_c.mutation.SetBody(v)
+	return _c
+}
+
+// SetNillableBody sets the "body" field if the given value is not nil.
+func (_c *MonitorCreate) SetNillableBody(v *string) *MonitorCreate {
+	if v != nil {
+		_c.SetBody(*v)
+	}
+	return _c
+}
+
+// SetAuthUsername sets the "auth_username" field.
+func (_c *MonitorCreate) SetAuthUsername(v string) *MonitorCreate {
+	_c.mutation.SetAuthUsername(v)
+	return _c
+}
+
+// SetNillableAuthUsername sets the "auth_username" field if the given value is not nil.
+func (_c *MonitorCreate) SetNillableAuthUsername(v *string) *MonitorCreate {
+	if v != nil {
+		_c.SetAuthUsername(*v)
+	}
+	return _c
+}
+
+// SetAuthPassword sets the "auth_password" field.
+func (_c *MonitorCreate) SetAuthPassword(v string) *MonitorCreate {
+	_c.mutation.SetAuthPassword(v)
+	return _c
+}
+
+// SetNillableAuthPassword sets the "auth_password" field if the given value is not nil.
+func (_c *MonitorCreate) SetNillableAuthPassword(v *string) *MonitorCreate {
+	if v != nil {
+		_c.SetAuthPassword(*v)
 	}
 	return _c
 }
@@ -159,6 +259,62 @@ func (_c *MonitorCreate) SetNillableFiltersNotContains(v *string) *MonitorCreate
 	return _c
 }
 
+// SetJSONPath sets the "json_path" field.
+func (_c *MonitorCreate) SetJSONPath(v string) *MonitorCreate {
+	_c.mutation.SetJSONPath(v)
+	return _c
+}
+
+// SetNillableJSONPath sets the "json_path" field if the given value is not nil.
+func (_c *MonitorCreate) SetNillableJSONPath(v *string) *MonitorCreate {
+	if v != nil {
+		_c.SetJSONPath(*v)
+	}
+	return _c
+}
+
+// SetExpectedValue sets the "expected_value" field.
+func (_c *MonitorCreate) SetExpectedValue(v string) *MonitorCreate {
+	_c.mutation.SetExpectedValue(v)
+	return _c
+}
+
+// SetNillableExpectedValue sets the "expected_value" field if the given value is not nil.
+func (_c *MonitorCreate) SetNillableExpectedValue(v *string) *MonitorCreate {
+	if v != nil {
+		_c.SetExpectedValue(*v)
+	}
+	return _c
+}
+
+// SetIgnoreTLSErrors sets the "ignore_tls_errors" field.
+func (_c *MonitorCreate) SetIgnoreTLSErrors(v bool) *MonitorCreate {
+	_c.mutation.SetIgnoreTLSErrors(v)
+	return _c
+}
+
+// SetNillableIgnoreTLSErrors sets the "ignore_tls_errors" field if the given value is not nil.
+func (_c *MonitorCreate) SetNillableIgnoreTLSErrors(v *bool) *MonitorCreate {
+	if v != nil {
+		_c.SetIgnoreTLSErrors(*v)
+	}
+	return _c
+}
+
+// SetMaxRedirects sets the "max_redirects" field.
+func (_c *MonitorCreate) SetMaxRedirects(v int) *MonitorCreate {
+	_c.mutation.SetMaxRedirects(v)
+	return _c
+}
+
+// SetNillableMaxRedirects sets the "max_redirects" field if the given value is not nil.
+func (_c *MonitorCreate) SetNillableMaxRedirects(v *int) *MonitorCreate {
+	if v != nil {
+		_c.SetMaxRedirects(*v)
+	}
+	return _c
+}
+
 // SetRetry sets the "retry" field.
 func (_c *MonitorCreate) SetRetry(v int) *MonitorCreate {
 	_c.mutation.SetRetry(v)
@@ -187,9 +343,23 @@ func (_c *MonitorCreate) SetNillableRetryAfter(v *int) *MonitorCreate {
 	return _c
 }
 
-// SetAlertTypes sets the "alert_types" field.
-func (_c *MonitorCreate) SetAlertTypes(v []string) *MonitorCreate {
-	_c.mutation.SetAlertTypes(v)
+// SetPushToken sets the "push_token" field.
+func (_c *MonitorCreate) SetPushToken(v string) *MonitorCreate {
+	_c.mutation.SetPushToken(v)
+	return _c
+}
+
+// SetNillablePushToken sets the "push_token" field if the given value is not nil.
+func (_c *MonitorCreate) SetNillablePushToken(v *string) *MonitorCreate {
+	if v != nil {
+		_c.SetPushToken(*v)
+	}
+	return _c
+}
+
+// SetConfig sets the "config" field.
+func (_c *MonitorCreate) SetConfig(v map[string]interface{}) *MonitorCreate {
+	_c.mutation.SetConfig(v)
 	return _c
 }
 
@@ -198,19 +368,19 @@ func (_c *MonitorCreate) SetUser(v *User) *MonitorCreate {
 	return _c.SetUserID(v.ID)
 }
 
-// AddHistoryIDs adds the "history" edge to the MonitorHistory entity by IDs.
-func (_c *MonitorCreate) AddHistoryIDs(ids ...int) *MonitorCreate {
-	_c.mutation.AddHistoryIDs(ids...)
+// AddCheckIDs adds the "checks" edge to the MonitorCheck entity by IDs.
+func (_c *MonitorCreate) AddCheckIDs(ids ...int) *MonitorCreate {
+	_c.mutation.AddCheckIDs(ids...)
 	return _c
 }
 
-// AddHistory adds the "history" edges to the MonitorHistory entity.
-func (_c *MonitorCreate) AddHistory(v ...*MonitorHistory) *MonitorCreate {
+// AddChecks adds the "checks" edges to the MonitorCheck entity.
+func (_c *MonitorCreate) AddChecks(v ...*MonitorCheck) *MonitorCreate {
 	ids := make([]int, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
-	return _c.AddHistoryIDs(ids...)
+	return _c.AddCheckIDs(ids...)
 }
 
 // AddTagIDs adds the "tags" edge to the Tag entity by IDs.
@@ -226,6 +396,66 @@ func (_c *MonitorCreate) AddTags(v ...*Tag) *MonitorCreate {
 		ids[i] = v[i].ID
 	}
 	return _c.AddTagIDs(ids...)
+}
+
+// AddNotificationIDs adds the "notifications" edge to the Notification entity by IDs.
+func (_c *MonitorCreate) AddNotificationIDs(ids ...int) *MonitorCreate {
+	_c.mutation.AddNotificationIDs(ids...)
+	return _c
+}
+
+// AddNotifications adds the "notifications" edges to the Notification entity.
+func (_c *MonitorCreate) AddNotifications(v ...*Notification) *MonitorCreate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _c.AddNotificationIDs(ids...)
+}
+
+// AddStatusPageMonitorIDs adds the "status_page_monitors" edge to the StatusPageMonitor entity by IDs.
+func (_c *MonitorCreate) AddStatusPageMonitorIDs(ids ...int) *MonitorCreate {
+	_c.mutation.AddStatusPageMonitorIDs(ids...)
+	return _c
+}
+
+// AddStatusPageMonitors adds the "status_page_monitors" edges to the StatusPageMonitor entity.
+func (_c *MonitorCreate) AddStatusPageMonitors(v ...*StatusPageMonitor) *MonitorCreate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _c.AddStatusPageMonitorIDs(ids...)
+}
+
+// AddMaintenanceWindowIDs adds the "maintenance_windows" edge to the MaintenanceWindow entity by IDs.
+func (_c *MonitorCreate) AddMaintenanceWindowIDs(ids ...int) *MonitorCreate {
+	_c.mutation.AddMaintenanceWindowIDs(ids...)
+	return _c
+}
+
+// AddMaintenanceWindows adds the "maintenance_windows" edges to the MaintenanceWindow entity.
+func (_c *MonitorCreate) AddMaintenanceWindows(v ...*MaintenanceWindow) *MonitorCreate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _c.AddMaintenanceWindowIDs(ids...)
+}
+
+// AddIncidentIDs adds the "incidents" edge to the Incident entity by IDs.
+func (_c *MonitorCreate) AddIncidentIDs(ids ...int) *MonitorCreate {
+	_c.mutation.AddIncidentIDs(ids...)
+	return _c
+}
+
+// AddIncidents adds the "incidents" edges to the Incident entity.
+func (_c *MonitorCreate) AddIncidents(v ...*Incident) *MonitorCreate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _c.AddIncidentIDs(ids...)
 }
 
 // Mutation returns the MonitorMutation object of the builder.
@@ -275,9 +505,29 @@ func (_c *MonitorCreate) defaults() {
 		v := monitor.DefaultInterval
 		_c.mutation.SetInterval(v)
 	}
+	if _, ok := _c.mutation.Timeout(); !ok {
+		v := monitor.DefaultTimeout
+		_c.mutation.SetTimeout(v)
+	}
 	if _, ok := _c.mutation.Status(); !ok {
 		v := monitor.DefaultStatus
 		_c.mutation.SetStatus(v)
+	}
+	if _, ok := _c.mutation.IsActive(); !ok {
+		v := monitor.DefaultIsActive
+		_c.mutation.SetIsActive(v)
+	}
+	if _, ok := _c.mutation.Method(); !ok {
+		v := monitor.DefaultMethod
+		_c.mutation.SetMethod(v)
+	}
+	if _, ok := _c.mutation.IgnoreTLSErrors(); !ok {
+		v := monitor.DefaultIgnoreTLSErrors
+		_c.mutation.SetIgnoreTLSErrors(v)
+	}
+	if _, ok := _c.mutation.MaxRedirects(); !ok {
+		v := monitor.DefaultMaxRedirects
+		_c.mutation.SetMaxRedirects(v)
 	}
 	if _, ok := _c.mutation.Retry(); !ok {
 		v := monitor.DefaultRetry
@@ -319,6 +569,9 @@ func (_c *MonitorCreate) check() error {
 	if _, ok := _c.mutation.Interval(); !ok {
 		return &ValidationError{Name: "interval", err: errors.New(`ent: missing required field "Monitor.interval"`)}
 	}
+	if _, ok := _c.mutation.Timeout(); !ok {
+		return &ValidationError{Name: "timeout", err: errors.New(`ent: missing required field "Monitor.timeout"`)}
+	}
 	if _, ok := _c.mutation.Status(); !ok {
 		return &ValidationError{Name: "status", err: errors.New(`ent: missing required field "Monitor.status"`)}
 	}
@@ -334,6 +587,18 @@ func (_c *MonitorCreate) check() error {
 		if err := monitor.TypeValidator(v); err != nil {
 			return &ValidationError{Name: "type", err: fmt.Errorf(`ent: validator failed for field "Monitor.type": %w`, err)}
 		}
+	}
+	if _, ok := _c.mutation.IsActive(); !ok {
+		return &ValidationError{Name: "is_active", err: errors.New(`ent: missing required field "Monitor.is_active"`)}
+	}
+	if _, ok := _c.mutation.Method(); !ok {
+		return &ValidationError{Name: "method", err: errors.New(`ent: missing required field "Monitor.method"`)}
+	}
+	if _, ok := _c.mutation.IgnoreTLSErrors(); !ok {
+		return &ValidationError{Name: "ignore_tls_errors", err: errors.New(`ent: missing required field "Monitor.ignore_tls_errors"`)}
+	}
+	if _, ok := _c.mutation.MaxRedirects(); !ok {
+		return &ValidationError{Name: "max_redirects", err: errors.New(`ent: missing required field "Monitor.max_redirects"`)}
 	}
 	if _, ok := _c.mutation.Retry(); !ok {
 		return &ValidationError{Name: "retry", err: errors.New(`ent: missing required field "Monitor.retry"`)}
@@ -386,6 +651,10 @@ func (_c *MonitorCreate) createSpec() (*Monitor, *sqlgraph.CreateSpec) {
 		_spec.SetField(monitor.FieldName, field.TypeString, value)
 		_node.Name = value
 	}
+	if value, ok := _c.mutation.Description(); ok {
+		_spec.SetField(monitor.FieldDescription, field.TypeString, value)
+		_node.Description = &value
+	}
 	if value, ok := _c.mutation.URL(); ok {
 		_spec.SetField(monitor.FieldURL, field.TypeString, value)
 		_node.URL = value
@@ -393,6 +662,10 @@ func (_c *MonitorCreate) createSpec() (*Monitor, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.Interval(); ok {
 		_spec.SetField(monitor.FieldInterval, field.TypeInt, value)
 		_node.Interval = value
+	}
+	if value, ok := _c.mutation.Timeout(); ok {
+		_spec.SetField(monitor.FieldTimeout, field.TypeInt, value)
+		_node.Timeout = value
 	}
 	if value, ok := _c.mutation.Status(); ok {
 		_spec.SetField(monitor.FieldStatus, field.TypeEnum, value)
@@ -402,17 +675,57 @@ func (_c *MonitorCreate) createSpec() (*Monitor, *sqlgraph.CreateSpec) {
 		_spec.SetField(monitor.FieldType, field.TypeEnum, value)
 		_node.Type = value
 	}
+	if value, ok := _c.mutation.IsActive(); ok {
+		_spec.SetField(monitor.FieldIsActive, field.TypeBool, value)
+		_node.IsActive = value
+	}
 	if value, ok := _c.mutation.Method(); ok {
 		_spec.SetField(monitor.FieldMethod, field.TypeString, value)
-		_node.Method = &value
+		_node.Method = value
+	}
+	if value, ok := _c.mutation.AcceptedStatusCodes(); ok {
+		_spec.SetField(monitor.FieldAcceptedStatusCodes, field.TypeJSON, value)
+		_node.AcceptedStatusCodes = value
+	}
+	if value, ok := _c.mutation.Headers(); ok {
+		_spec.SetField(monitor.FieldHeaders, field.TypeJSON, value)
+		_node.Headers = value
+	}
+	if value, ok := _c.mutation.Body(); ok {
+		_spec.SetField(monitor.FieldBody, field.TypeString, value)
+		_node.Body = &value
+	}
+	if value, ok := _c.mutation.AuthUsername(); ok {
+		_spec.SetField(monitor.FieldAuthUsername, field.TypeString, value)
+		_node.AuthUsername = &value
+	}
+	if value, ok := _c.mutation.AuthPassword(); ok {
+		_spec.SetField(monitor.FieldAuthPassword, field.TypeString, value)
+		_node.AuthPassword = &value
 	}
 	if value, ok := _c.mutation.FiltersContains(); ok {
 		_spec.SetField(monitor.FieldFiltersContains, field.TypeString, value)
-		_node.FiltersContains = value
+		_node.FiltersContains = &value
 	}
 	if value, ok := _c.mutation.FiltersNotContains(); ok {
 		_spec.SetField(monitor.FieldFiltersNotContains, field.TypeString, value)
-		_node.FiltersNotContains = value
+		_node.FiltersNotContains = &value
+	}
+	if value, ok := _c.mutation.JSONPath(); ok {
+		_spec.SetField(monitor.FieldJSONPath, field.TypeString, value)
+		_node.JSONPath = &value
+	}
+	if value, ok := _c.mutation.ExpectedValue(); ok {
+		_spec.SetField(monitor.FieldExpectedValue, field.TypeString, value)
+		_node.ExpectedValue = &value
+	}
+	if value, ok := _c.mutation.IgnoreTLSErrors(); ok {
+		_spec.SetField(monitor.FieldIgnoreTLSErrors, field.TypeBool, value)
+		_node.IgnoreTLSErrors = value
+	}
+	if value, ok := _c.mutation.MaxRedirects(); ok {
+		_spec.SetField(monitor.FieldMaxRedirects, field.TypeInt, value)
+		_node.MaxRedirects = value
 	}
 	if value, ok := _c.mutation.Retry(); ok {
 		_spec.SetField(monitor.FieldRetry, field.TypeInt, value)
@@ -422,9 +735,13 @@ func (_c *MonitorCreate) createSpec() (*Monitor, *sqlgraph.CreateSpec) {
 		_spec.SetField(monitor.FieldRetryAfter, field.TypeInt, value)
 		_node.RetryAfter = value
 	}
-	if value, ok := _c.mutation.AlertTypes(); ok {
-		_spec.SetField(monitor.FieldAlertTypes, field.TypeJSON, value)
-		_node.AlertTypes = value
+	if value, ok := _c.mutation.PushToken(); ok {
+		_spec.SetField(monitor.FieldPushToken, field.TypeString, value)
+		_node.PushToken = &value
+	}
+	if value, ok := _c.mutation.Config(); ok {
+		_spec.SetField(monitor.FieldConfig, field.TypeJSON, value)
+		_node.Config = value
 	}
 	if nodes := _c.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -443,15 +760,15 @@ func (_c *MonitorCreate) createSpec() (*Monitor, *sqlgraph.CreateSpec) {
 		_node.UserID = nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := _c.mutation.HistoryIDs(); len(nodes) > 0 {
+	if nodes := _c.mutation.ChecksIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   monitor.HistoryTable,
-			Columns: []string{monitor.HistoryColumn},
+			Table:   monitor.ChecksTable,
+			Columns: []string{monitor.ChecksColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(monitorhistory.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(monitorcheck.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -468,6 +785,70 @@ func (_c *MonitorCreate) createSpec() (*Monitor, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(tag.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.NotificationsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   monitor.NotificationsTable,
+			Columns: monitor.NotificationsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(notification.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.StatusPageMonitorsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   monitor.StatusPageMonitorsTable,
+			Columns: []string{monitor.StatusPageMonitorsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(statuspagemonitor.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.MaintenanceWindowsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   monitor.MaintenanceWindowsTable,
+			Columns: monitor.MaintenanceWindowsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(maintenancewindow.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.IncidentsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   monitor.IncidentsTable,
+			Columns: []string{monitor.IncidentsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(incident.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

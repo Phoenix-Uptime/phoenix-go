@@ -12,21 +12,25 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/incident"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/predicate"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/statusmessage"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/statuspage"
-	"github.com/Phoenix-Uptime/phoenix-go/ent/tag"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/statuspagemonitor"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/user"
 )
 
 // StatusPageQuery is the builder for querying StatusPage entities.
 type StatusPageQuery struct {
 	config
-	ctx          *QueryContext
-	order        []statuspage.OrderOption
-	inters       []Interceptor
-	predicates   []predicate.StatusPage
-	withTag      *TagQuery
-	withMessages *StatusMessageQuery
+	ctx                    *QueryContext
+	order                  []statuspage.OrderOption
+	inters                 []Interceptor
+	predicates             []predicate.StatusPage
+	withUser               *UserQuery
+	withStatusPageMonitors *StatusPageMonitorQuery
+	withMessages           *StatusMessageQuery
+	withIncidents          *IncidentQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -63,9 +67,9 @@ func (_q *StatusPageQuery) Order(o ...statuspage.OrderOption) *StatusPageQuery {
 	return _q
 }
 
-// QueryTag chains the current query on the "tag" edge.
-func (_q *StatusPageQuery) QueryTag() *TagQuery {
-	query := (&TagClient{config: _q.config}).Query()
+// QueryUser chains the current query on the "user" edge.
+func (_q *StatusPageQuery) QueryUser() *UserQuery {
+	query := (&UserClient{config: _q.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := _q.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -76,8 +80,30 @@ func (_q *StatusPageQuery) QueryTag() *TagQuery {
 		}
 		step := sqlgraph.NewStep(
 			sqlgraph.From(statuspage.Table, statuspage.FieldID, selector),
-			sqlgraph.To(tag.Table, tag.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, statuspage.TagTable, statuspage.TagColumn),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, statuspage.UserTable, statuspage.UserColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryStatusPageMonitors chains the current query on the "status_page_monitors" edge.
+func (_q *StatusPageQuery) QueryStatusPageMonitors() *StatusPageMonitorQuery {
+	query := (&StatusPageMonitorClient{config: _q.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := _q.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := _q.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(statuspage.Table, statuspage.FieldID, selector),
+			sqlgraph.To(statuspagemonitor.Table, statuspagemonitor.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, statuspage.StatusPageMonitorsTable, statuspage.StatusPageMonitorsColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -100,6 +126,28 @@ func (_q *StatusPageQuery) QueryMessages() *StatusMessageQuery {
 			sqlgraph.From(statuspage.Table, statuspage.FieldID, selector),
 			sqlgraph.To(statusmessage.Table, statusmessage.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, statuspage.MessagesTable, statuspage.MessagesColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryIncidents chains the current query on the "incidents" edge.
+func (_q *StatusPageQuery) QueryIncidents() *IncidentQuery {
+	query := (&IncidentClient{config: _q.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := _q.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := _q.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(statuspage.Table, statuspage.FieldID, selector),
+			sqlgraph.To(incident.Table, incident.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, statuspage.IncidentsTable, statuspage.IncidentsColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -294,27 +342,40 @@ func (_q *StatusPageQuery) Clone() *StatusPageQuery {
 		return nil
 	}
 	return &StatusPageQuery{
-		config:       _q.config,
-		ctx:          _q.ctx.Clone(),
-		order:        append([]statuspage.OrderOption{}, _q.order...),
-		inters:       append([]Interceptor{}, _q.inters...),
-		predicates:   append([]predicate.StatusPage{}, _q.predicates...),
-		withTag:      _q.withTag.Clone(),
-		withMessages: _q.withMessages.Clone(),
+		config:                 _q.config,
+		ctx:                    _q.ctx.Clone(),
+		order:                  append([]statuspage.OrderOption{}, _q.order...),
+		inters:                 append([]Interceptor{}, _q.inters...),
+		predicates:             append([]predicate.StatusPage{}, _q.predicates...),
+		withUser:               _q.withUser.Clone(),
+		withStatusPageMonitors: _q.withStatusPageMonitors.Clone(),
+		withMessages:           _q.withMessages.Clone(),
+		withIncidents:          _q.withIncidents.Clone(),
 		// clone intermediate query.
 		sql:  _q.sql.Clone(),
 		path: _q.path,
 	}
 }
 
-// WithTag tells the query-builder to eager-load the nodes that are connected to
-// the "tag" edge. The optional arguments are used to configure the query builder of the edge.
-func (_q *StatusPageQuery) WithTag(opts ...func(*TagQuery)) *StatusPageQuery {
-	query := (&TagClient{config: _q.config}).Query()
+// WithUser tells the query-builder to eager-load the nodes that are connected to
+// the "user" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *StatusPageQuery) WithUser(opts ...func(*UserQuery)) *StatusPageQuery {
+	query := (&UserClient{config: _q.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
-	_q.withTag = query
+	_q.withUser = query
+	return _q
+}
+
+// WithStatusPageMonitors tells the query-builder to eager-load the nodes that are connected to
+// the "status_page_monitors" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *StatusPageQuery) WithStatusPageMonitors(opts ...func(*StatusPageMonitorQuery)) *StatusPageQuery {
+	query := (&StatusPageMonitorClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	_q.withStatusPageMonitors = query
 	return _q
 }
 
@@ -326,6 +387,17 @@ func (_q *StatusPageQuery) WithMessages(opts ...func(*StatusMessageQuery)) *Stat
 		opt(query)
 	}
 	_q.withMessages = query
+	return _q
+}
+
+// WithIncidents tells the query-builder to eager-load the nodes that are connected to
+// the "incidents" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *StatusPageQuery) WithIncidents(opts ...func(*IncidentQuery)) *StatusPageQuery {
+	query := (&IncidentClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	_q.withIncidents = query
 	return _q
 }
 
@@ -407,9 +479,11 @@ func (_q *StatusPageQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*S
 	var (
 		nodes       = []*StatusPage{}
 		_spec       = _q.querySpec()
-		loadedTypes = [2]bool{
-			_q.withTag != nil,
+		loadedTypes = [4]bool{
+			_q.withUser != nil,
+			_q.withStatusPageMonitors != nil,
 			_q.withMessages != nil,
+			_q.withIncidents != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -430,9 +504,18 @@ func (_q *StatusPageQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*S
 	if len(nodes) == 0 {
 		return nodes, nil
 	}
-	if query := _q.withTag; query != nil {
-		if err := _q.loadTag(ctx, query, nodes, nil,
-			func(n *StatusPage, e *Tag) { n.Edges.Tag = e }); err != nil {
+	if query := _q.withUser; query != nil {
+		if err := _q.loadUser(ctx, query, nodes, nil,
+			func(n *StatusPage, e *User) { n.Edges.User = e }); err != nil {
+			return nil, err
+		}
+	}
+	if query := _q.withStatusPageMonitors; query != nil {
+		if err := _q.loadStatusPageMonitors(ctx, query, nodes,
+			func(n *StatusPage) { n.Edges.StatusPageMonitors = []*StatusPageMonitor{} },
+			func(n *StatusPage, e *StatusPageMonitor) {
+				n.Edges.StatusPageMonitors = append(n.Edges.StatusPageMonitors, e)
+			}); err != nil {
 			return nil, err
 		}
 	}
@@ -443,14 +526,21 @@ func (_q *StatusPageQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*S
 			return nil, err
 		}
 	}
+	if query := _q.withIncidents; query != nil {
+		if err := _q.loadIncidents(ctx, query, nodes,
+			func(n *StatusPage) { n.Edges.Incidents = []*Incident{} },
+			func(n *StatusPage, e *Incident) { n.Edges.Incidents = append(n.Edges.Incidents, e) }); err != nil {
+			return nil, err
+		}
+	}
 	return nodes, nil
 }
 
-func (_q *StatusPageQuery) loadTag(ctx context.Context, query *TagQuery, nodes []*StatusPage, init func(*StatusPage), assign func(*StatusPage, *Tag)) error {
+func (_q *StatusPageQuery) loadUser(ctx context.Context, query *UserQuery, nodes []*StatusPage, init func(*StatusPage), assign func(*StatusPage, *User)) error {
 	ids := make([]int, 0, len(nodes))
 	nodeids := make(map[int][]*StatusPage)
 	for i := range nodes {
-		fk := nodes[i].TagID
+		fk := nodes[i].UserID
 		if _, ok := nodeids[fk]; !ok {
 			ids = append(ids, fk)
 		}
@@ -459,7 +549,7 @@ func (_q *StatusPageQuery) loadTag(ctx context.Context, query *TagQuery, nodes [
 	if len(ids) == 0 {
 		return nil
 	}
-	query.Where(tag.IDIn(ids...))
+	query.Where(user.IDIn(ids...))
 	neighbors, err := query.All(ctx)
 	if err != nil {
 		return err
@@ -467,11 +557,41 @@ func (_q *StatusPageQuery) loadTag(ctx context.Context, query *TagQuery, nodes [
 	for _, n := range neighbors {
 		nodes, ok := nodeids[n.ID]
 		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "tag_id" returned %v`, n.ID)
+			return fmt.Errorf(`unexpected foreign-key "user_id" returned %v`, n.ID)
 		}
 		for i := range nodes {
 			assign(nodes[i], n)
 		}
+	}
+	return nil
+}
+func (_q *StatusPageQuery) loadStatusPageMonitors(ctx context.Context, query *StatusPageMonitorQuery, nodes []*StatusPage, init func(*StatusPage), assign func(*StatusPage, *StatusPageMonitor)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int]*StatusPage)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(statuspagemonitor.FieldStatusPageID)
+	}
+	query.Where(predicate.StatusPageMonitor(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(statuspage.StatusPageMonitorsColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.StatusPageID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "status_page_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
 	}
 	return nil
 }
@@ -505,6 +625,39 @@ func (_q *StatusPageQuery) loadMessages(ctx context.Context, query *StatusMessag
 	}
 	return nil
 }
+func (_q *StatusPageQuery) loadIncidents(ctx context.Context, query *IncidentQuery, nodes []*StatusPage, init func(*StatusPage), assign func(*StatusPage, *Incident)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int]*StatusPage)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(incident.FieldStatusPageID)
+	}
+	query.Where(predicate.Incident(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(statuspage.IncidentsColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.StatusPageID
+		if fk == nil {
+			return fmt.Errorf(`foreign-key "status_page_id" is nil for node %v`, n.ID)
+		}
+		node, ok := nodeids[*fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "status_page_id" returned %v for node %v`, *fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
 
 func (_q *StatusPageQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := _q.querySpec()
@@ -531,8 +684,8 @@ func (_q *StatusPageQuery) querySpec() *sqlgraph.QuerySpec {
 				_spec.Node.Columns = append(_spec.Node.Columns, fields[i])
 			}
 		}
-		if _q.withTag != nil {
-			_spec.Node.AddColumnOnce(statuspage.FieldTagID)
+		if _q.withUser != nil {
+			_spec.Node.AddColumnOnce(statuspage.FieldUserID)
 		}
 	}
 	if ps := _q.predicates; len(ps) > 0 {

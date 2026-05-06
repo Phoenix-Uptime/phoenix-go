@@ -8,6 +8,168 @@ import (
 )
 
 var (
+	// APIKeysColumns holds the columns for the "api_keys" table.
+	APIKeysColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
+		{Name: "name", Type: field.TypeString},
+		{Name: "key", Type: field.TypeString, Unique: true},
+		{Name: "is_active", Type: field.TypeBool, Default: true},
+		{Name: "expires_at", Type: field.TypeTime, Nullable: true},
+		{Name: "last_used_at", Type: field.TypeTime, Nullable: true},
+		{Name: "user_id", Type: field.TypeInt},
+	}
+	// APIKeysTable holds the schema information for the "api_keys" table.
+	APIKeysTable = &schema.Table{
+		Name:       "api_keys",
+		Columns:    APIKeysColumns,
+		PrimaryKey: []*schema.Column{APIKeysColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "api_keys_users_api_keys",
+				Columns:    []*schema.Column{APIKeysColumns[9]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "apikey_user_id",
+				Unique:  false,
+				Columns: []*schema.Column{APIKeysColumns[9]},
+			},
+			{
+				Name:    "apikey_user_id_is_active",
+				Unique:  false,
+				Columns: []*schema.Column{APIKeysColumns[9], APIKeysColumns[6]},
+			},
+		},
+	}
+	// IncidentsColumns holds the columns for the "incidents" table.
+	IncidentsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
+		{Name: "title", Type: field.TypeString},
+		{Name: "content", Type: field.TypeString, Nullable: true},
+		{Name: "status", Type: field.TypeEnum, Enums: []string{"open", "acknowledged", "resolved"}, Default: "open"},
+		{Name: "severity", Type: field.TypeEnum, Enums: []string{"info", "warning", "critical"}, Default: "warning"},
+		{Name: "started_at", Type: field.TypeTime},
+		{Name: "ended_at", Type: field.TypeTime, Nullable: true},
+		{Name: "is_pinned", Type: field.TypeBool, Default: true},
+		{Name: "monitor_id", Type: field.TypeInt},
+		{Name: "status_page_id", Type: field.TypeInt, Nullable: true},
+		{Name: "resolved_by_id", Type: field.TypeInt, Nullable: true},
+	}
+	// IncidentsTable holds the schema information for the "incidents" table.
+	IncidentsTable = &schema.Table{
+		Name:       "incidents",
+		Columns:    IncidentsColumns,
+		PrimaryKey: []*schema.Column{IncidentsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "incidents_monitors_incidents",
+				Columns:    []*schema.Column{IncidentsColumns[11]},
+				RefColumns: []*schema.Column{MonitorsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "incidents_status_pages_incidents",
+				Columns:    []*schema.Column{IncidentsColumns[12]},
+				RefColumns: []*schema.Column{StatusPagesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:     "incidents_users_resolved_incidents",
+				Columns:    []*schema.Column{IncidentsColumns[13]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "incident_monitor_id",
+				Unique:  false,
+				Columns: []*schema.Column{IncidentsColumns[11]},
+			},
+			{
+				Name:    "incident_monitor_id_status",
+				Unique:  false,
+				Columns: []*schema.Column{IncidentsColumns[11], IncidentsColumns[6]},
+			},
+			{
+				Name:    "incident_status_page_id_status",
+				Unique:  false,
+				Columns: []*schema.Column{IncidentsColumns[12], IncidentsColumns[6]},
+			},
+			{
+				Name:    "incident_status_started_at",
+				Unique:  false,
+				Columns: []*schema.Column{IncidentsColumns[6], IncidentsColumns[8]},
+			},
+			{
+				Name:    "incident_started_at",
+				Unique:  false,
+				Columns: []*schema.Column{IncidentsColumns[8]},
+			},
+		},
+	}
+	// MaintenanceWindowsColumns holds the columns for the "maintenance_windows" table.
+	MaintenanceWindowsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
+		{Name: "title", Type: field.TypeString},
+		{Name: "description", Type: field.TypeString, Nullable: true},
+		{Name: "is_active", Type: field.TypeBool, Default: true},
+		{Name: "strategy", Type: field.TypeEnum, Enums: []string{"manual", "single", "recurring", "cron"}, Default: "single"},
+		{Name: "start_at", Type: field.TypeTime, Nullable: true},
+		{Name: "end_at", Type: field.TypeTime, Nullable: true},
+		{Name: "cron", Type: field.TypeString, Nullable: true},
+		{Name: "timezone", Type: field.TypeString, Nullable: true},
+		{Name: "duration_seconds", Type: field.TypeInt, Nullable: true},
+		{Name: "user_id", Type: field.TypeInt},
+	}
+	// MaintenanceWindowsTable holds the schema information for the "maintenance_windows" table.
+	MaintenanceWindowsTable = &schema.Table{
+		Name:       "maintenance_windows",
+		Columns:    MaintenanceWindowsColumns,
+		PrimaryKey: []*schema.Column{MaintenanceWindowsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "maintenance_windows_users_maintenance_windows",
+				Columns:    []*schema.Column{MaintenanceWindowsColumns[13]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "maintenancewindow_user_id",
+				Unique:  false,
+				Columns: []*schema.Column{MaintenanceWindowsColumns[13]},
+			},
+			{
+				Name:    "maintenancewindow_user_id_is_active",
+				Unique:  false,
+				Columns: []*schema.Column{MaintenanceWindowsColumns[13], MaintenanceWindowsColumns[6]},
+			},
+			{
+				Name:    "maintenancewindow_strategy_is_active",
+				Unique:  false,
+				Columns: []*schema.Column{MaintenanceWindowsColumns[7], MaintenanceWindowsColumns[6]},
+			},
+			{
+				Name:    "maintenancewindow_start_at_end_at",
+				Unique:  false,
+				Columns: []*schema.Column{MaintenanceWindowsColumns[8], MaintenanceWindowsColumns[9]},
+			},
+		},
+	}
 	// MonitorsColumns holds the columns for the "monitors" table.
 	MonitorsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -15,16 +177,29 @@ var (
 		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
 		{Name: "name", Type: field.TypeString},
+		{Name: "description", Type: field.TypeString, Nullable: true},
 		{Name: "url", Type: field.TypeString},
 		{Name: "interval", Type: field.TypeInt, Default: 60},
-		{Name: "status", Type: field.TypeEnum, Enums: []string{"up", "down", "paused", "unknown"}, Default: "unknown"},
-		{Name: "type", Type: field.TypeEnum, Enums: []string{"url", "ping", "smtp"}},
-		{Name: "method", Type: field.TypeString, Nullable: true},
+		{Name: "timeout", Type: field.TypeInt, Default: 10},
+		{Name: "status", Type: field.TypeEnum, Enums: []string{"up", "down", "pending", "maintenance", "paused", "unknown"}, Default: "unknown"},
+		{Name: "type", Type: field.TypeEnum, Enums: []string{"http", "keyword", "json", "ping", "tcp", "smtp", "dns", "push", "grpc"}},
+		{Name: "is_active", Type: field.TypeBool, Default: true},
+		{Name: "method", Type: field.TypeString, Default: "GET"},
+		{Name: "accepted_status_codes", Type: field.TypeJSON, Nullable: true},
+		{Name: "headers", Type: field.TypeJSON, Nullable: true},
+		{Name: "body", Type: field.TypeString, Nullable: true},
+		{Name: "auth_username", Type: field.TypeString, Nullable: true},
+		{Name: "auth_password", Type: field.TypeString, Nullable: true},
 		{Name: "filters_contains", Type: field.TypeString, Nullable: true},
 		{Name: "filters_not_contains", Type: field.TypeString, Nullable: true},
+		{Name: "json_path", Type: field.TypeString, Nullable: true},
+		{Name: "expected_value", Type: field.TypeString, Nullable: true},
+		{Name: "ignore_tls_errors", Type: field.TypeBool, Default: false},
+		{Name: "max_redirects", Type: field.TypeInt, Default: 10},
 		{Name: "retry", Type: field.TypeInt, Default: 3},
 		{Name: "retry_after", Type: field.TypeInt, Default: 30},
-		{Name: "alert_types", Type: field.TypeJSON, Nullable: true},
+		{Name: "push_token", Type: field.TypeString, Unique: true, Nullable: true},
+		{Name: "config", Type: field.TypeJSON, Nullable: true},
 		{Name: "user_id", Type: field.TypeInt},
 	}
 	// MonitorsTable holds the schema information for the "monitors" table.
@@ -35,7 +210,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "monitors_users_monitors",
-				Columns:    []*schema.Column{MonitorsColumns[15]},
+				Columns:    []*schema.Column{MonitorsColumns[28]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -44,39 +219,120 @@ var (
 			{
 				Name:    "monitor_user_id",
 				Unique:  false,
-				Columns: []*schema.Column{MonitorsColumns[15]},
+				Columns: []*schema.Column{MonitorsColumns[28]},
+			},
+			{
+				Name:    "monitor_user_id_is_active",
+				Unique:  false,
+				Columns: []*schema.Column{MonitorsColumns[28], MonitorsColumns[11]},
+			},
+			{
+				Name:    "monitor_user_id_type",
+				Unique:  false,
+				Columns: []*schema.Column{MonitorsColumns[28], MonitorsColumns[10]},
+			},
+			{
+				Name:    "monitor_status",
+				Unique:  false,
+				Columns: []*schema.Column{MonitorsColumns[9]},
 			},
 		},
 	}
-	// MonitorHistoriesColumns holds the columns for the "monitor_histories" table.
-	MonitorHistoriesColumns = []*schema.Column{
+	// MonitorChecksColumns holds the columns for the "monitor_checks" table.
+	MonitorChecksColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
-		{Name: "status", Type: field.TypeString},
-		{Name: "response_time", Type: field.TypeInt},
-		{Name: "error_message", Type: field.TypeString, Nullable: true},
+		{Name: "status", Type: field.TypeEnum, Enums: []string{"up", "down", "pending", "maintenance"}, Default: "pending"},
+		{Name: "checked_at", Type: field.TypeTime},
+		{Name: "response_time_ms", Type: field.TypeInt, Default: 0},
+		{Name: "status_code", Type: field.TypeInt, Nullable: true},
+		{Name: "message", Type: field.TypeString, Nullable: true},
+		{Name: "error", Type: field.TypeString, Nullable: true},
+		{Name: "retry_count", Type: field.TypeInt, Default: 0},
+		{Name: "duration_seconds", Type: field.TypeInt, Default: 0},
+		{Name: "important", Type: field.TypeBool, Default: false},
+		{Name: "response", Type: field.TypeString, Nullable: true},
 		{Name: "monitor_id", Type: field.TypeInt},
 	}
-	// MonitorHistoriesTable holds the schema information for the "monitor_histories" table.
-	MonitorHistoriesTable = &schema.Table{
-		Name:       "monitor_histories",
-		Columns:    MonitorHistoriesColumns,
-		PrimaryKey: []*schema.Column{MonitorHistoriesColumns[0]},
+	// MonitorChecksTable holds the schema information for the "monitor_checks" table.
+	MonitorChecksTable = &schema.Table{
+		Name:       "monitor_checks",
+		Columns:    MonitorChecksColumns,
+		PrimaryKey: []*schema.Column{MonitorChecksColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:     "monitor_histories_monitors_history",
-				Columns:    []*schema.Column{MonitorHistoriesColumns[7]},
+				Symbol:     "monitor_checks_monitors_checks",
+				Columns:    []*schema.Column{MonitorChecksColumns[14]},
 				RefColumns: []*schema.Column{MonitorsColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 		},
 		Indexes: []*schema.Index{
 			{
-				Name:    "monitorhistory_monitor_id",
+				Name:    "monitorcheck_monitor_id",
 				Unique:  false,
-				Columns: []*schema.Column{MonitorHistoriesColumns[7]},
+				Columns: []*schema.Column{MonitorChecksColumns[14]},
+			},
+			{
+				Name:    "monitorcheck_monitor_id_checked_at",
+				Unique:  false,
+				Columns: []*schema.Column{MonitorChecksColumns[14], MonitorChecksColumns[5]},
+			},
+			{
+				Name:    "monitorcheck_monitor_id_important_checked_at",
+				Unique:  false,
+				Columns: []*schema.Column{MonitorChecksColumns[14], MonitorChecksColumns[12], MonitorChecksColumns[5]},
+			},
+			{
+				Name:    "monitorcheck_checked_at",
+				Unique:  false,
+				Columns: []*schema.Column{MonitorChecksColumns[5]},
+			},
+		},
+	}
+	// NotificationsColumns holds the columns for the "notifications" table.
+	NotificationsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
+		{Name: "name", Type: field.TypeString},
+		{Name: "type", Type: field.TypeEnum, Enums: []string{"smtp", "telegram", "webhook", "discord", "slack", "pagerduty", "pushover", "twilio"}},
+		{Name: "is_active", Type: field.TypeBool, Default: true},
+		{Name: "is_default", Type: field.TypeBool, Default: false},
+		{Name: "config", Type: field.TypeJSON, Nullable: true},
+		{Name: "user_id", Type: field.TypeInt},
+	}
+	// NotificationsTable holds the schema information for the "notifications" table.
+	NotificationsTable = &schema.Table{
+		Name:       "notifications",
+		Columns:    NotificationsColumns,
+		PrimaryKey: []*schema.Column{NotificationsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "notifications_users_notifications",
+				Columns:    []*schema.Column{NotificationsColumns[9]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "notification_user_id",
+				Unique:  false,
+				Columns: []*schema.Column{NotificationsColumns[9]},
+			},
+			{
+				Name:    "notification_user_id_type",
+				Unique:  false,
+				Columns: []*schema.Column{NotificationsColumns[9], NotificationsColumns[5]},
+			},
+			{
+				Name:    "notification_user_id_is_default",
+				Unique:  false,
+				Columns: []*schema.Column{NotificationsColumns[9], NotificationsColumns[7]},
 			},
 		},
 	}
@@ -86,8 +342,10 @@ var (
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
-		{Name: "type", Type: field.TypeEnum, Enums: []string{"issue", "investigate", "resolved"}},
+		{Name: "type", Type: field.TypeEnum, Enums: []string{"issue", "investigating", "identified", "monitoring", "resolved", "maintenance"}},
+		{Name: "title", Type: field.TypeString, Nullable: true},
 		{Name: "content", Type: field.TypeString},
+		{Name: "incident_id", Type: field.TypeInt, Nullable: true},
 		{Name: "parent_id", Type: field.TypeInt, Nullable: true},
 		{Name: "status_page_id", Type: field.TypeInt},
 	}
@@ -98,14 +356,20 @@ var (
 		PrimaryKey: []*schema.Column{StatusMessagesColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
+				Symbol:     "status_messages_incidents_messages",
+				Columns:    []*schema.Column{StatusMessagesColumns[7]},
+				RefColumns: []*schema.Column{IncidentsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
 				Symbol:     "status_messages_status_messages_sub_messages",
-				Columns:    []*schema.Column{StatusMessagesColumns[6]},
+				Columns:    []*schema.Column{StatusMessagesColumns[8]},
 				RefColumns: []*schema.Column{StatusMessagesColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:     "status_messages_status_pages_messages",
-				Columns:    []*schema.Column{StatusMessagesColumns[7]},
+				Columns:    []*schema.Column{StatusMessagesColumns[9]},
 				RefColumns: []*schema.Column{StatusPagesColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -114,12 +378,17 @@ var (
 			{
 				Name:    "statusmessage_status_page_id",
 				Unique:  false,
+				Columns: []*schema.Column{StatusMessagesColumns[9]},
+			},
+			{
+				Name:    "statusmessage_incident_id",
+				Unique:  false,
 				Columns: []*schema.Column{StatusMessagesColumns[7]},
 			},
 			{
 				Name:    "statusmessage_parent_id",
 				Unique:  false,
-				Columns: []*schema.Column{StatusMessagesColumns[6]},
+				Columns: []*schema.Column{StatusMessagesColumns[8]},
 			},
 		},
 	}
@@ -129,9 +398,20 @@ var (
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
+		{Name: "slug", Type: field.TypeString, Unique: true},
 		{Name: "name", Type: field.TypeString},
+		{Name: "description", Type: field.TypeString, Nullable: true},
 		{Name: "is_public", Type: field.TypeBool, Default: true},
-		{Name: "tag_id", Type: field.TypeInt},
+		{Name: "password", Type: field.TypeString, Nullable: true},
+		{Name: "theme", Type: field.TypeString, Default: "default"},
+		{Name: "custom_css", Type: field.TypeString, Nullable: true},
+		{Name: "footer_text", Type: field.TypeString, Nullable: true},
+		{Name: "show_tags", Type: field.TypeBool, Default: false},
+		{Name: "show_charts", Type: field.TypeBool, Default: true},
+		{Name: "show_uptime_percentage", Type: field.TypeBool, Default: true},
+		{Name: "show_powered_by", Type: field.TypeBool, Default: true},
+		{Name: "auto_refresh_interval", Type: field.TypeInt, Default: 300},
+		{Name: "user_id", Type: field.TypeInt},
 	}
 	// StatusPagesTable holds the schema information for the "status_pages" table.
 	StatusPagesTable = &schema.Table{
@@ -140,17 +420,76 @@ var (
 		PrimaryKey: []*schema.Column{StatusPagesColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:     "status_pages_tags_status_pages",
-				Columns:    []*schema.Column{StatusPagesColumns[6]},
-				RefColumns: []*schema.Column{TagsColumns[0]},
+				Symbol:     "status_pages_users_status_pages",
+				Columns:    []*schema.Column{StatusPagesColumns[17]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 		},
 		Indexes: []*schema.Index{
 			{
-				Name:    "statuspage_tag_id",
+				Name:    "statuspage_user_id",
 				Unique:  false,
-				Columns: []*schema.Column{StatusPagesColumns[6]},
+				Columns: []*schema.Column{StatusPagesColumns[17]},
+			},
+			{
+				Name:    "statuspage_user_id_slug",
+				Unique:  true,
+				Columns: []*schema.Column{StatusPagesColumns[17], StatusPagesColumns[4]},
+			},
+		},
+	}
+	// StatusPageMonitorsColumns holds the columns for the "status_page_monitors" table.
+	StatusPageMonitorsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
+		{Name: "display_name", Type: field.TypeString, Nullable: true},
+		{Name: "weight", Type: field.TypeInt, Default: 1000},
+		{Name: "send_url", Type: field.TypeBool, Default: false},
+		{Name: "monitor_id", Type: field.TypeInt},
+		{Name: "status_page_id", Type: field.TypeInt},
+	}
+	// StatusPageMonitorsTable holds the schema information for the "status_page_monitors" table.
+	StatusPageMonitorsTable = &schema.Table{
+		Name:       "status_page_monitors",
+		Columns:    StatusPageMonitorsColumns,
+		PrimaryKey: []*schema.Column{StatusPageMonitorsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "status_page_monitors_monitors_status_page_monitors",
+				Columns:    []*schema.Column{StatusPageMonitorsColumns[7]},
+				RefColumns: []*schema.Column{MonitorsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "status_page_monitors_status_pages_status_page_monitors",
+				Columns:    []*schema.Column{StatusPageMonitorsColumns[8]},
+				RefColumns: []*schema.Column{StatusPagesColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "statuspagemonitor_status_page_id",
+				Unique:  false,
+				Columns: []*schema.Column{StatusPageMonitorsColumns[8]},
+			},
+			{
+				Name:    "statuspagemonitor_monitor_id",
+				Unique:  false,
+				Columns: []*schema.Column{StatusPageMonitorsColumns[7]},
+			},
+			{
+				Name:    "statuspagemonitor_status_page_id_monitor_id",
+				Unique:  true,
+				Columns: []*schema.Column{StatusPageMonitorsColumns[8], StatusPageMonitorsColumns[7]},
+			},
+			{
+				Name:    "statuspagemonitor_status_page_id_weight",
+				Unique:  false,
+				Columns: []*schema.Column{StatusPageMonitorsColumns[8], StatusPageMonitorsColumns[5]},
 			},
 		},
 	}
@@ -160,15 +499,36 @@ var (
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
-		{Name: "name", Type: field.TypeString, Unique: true},
+		{Name: "name", Type: field.TypeString},
 		{Name: "description", Type: field.TypeString, Nullable: true},
 		{Name: "color", Type: field.TypeString, Nullable: true},
+		{Name: "user_id", Type: field.TypeInt},
 	}
 	// TagsTable holds the schema information for the "tags" table.
 	TagsTable = &schema.Table{
 		Name:       "tags",
 		Columns:    TagsColumns,
 		PrimaryKey: []*schema.Column{TagsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "tags_users_tags",
+				Columns:    []*schema.Column{TagsColumns[7]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "tag_user_id",
+				Unique:  false,
+				Columns: []*schema.Column{TagsColumns[7]},
+			},
+			{
+				Name:    "tag_user_id_name",
+				Unique:  true,
+				Columns: []*schema.Column{TagsColumns[7], TagsColumns[4]},
+			},
+		},
 	}
 	// UsersColumns holds the columns for the "users" table.
 	UsersColumns = []*schema.Column{
@@ -211,6 +571,31 @@ var (
 			},
 		},
 	}
+	// MonitorMaintenanceWindowsColumns holds the columns for the "monitor_maintenance_windows" table.
+	MonitorMaintenanceWindowsColumns = []*schema.Column{
+		{Name: "maintenance_window_id", Type: field.TypeInt},
+		{Name: "monitor_id", Type: field.TypeInt},
+	}
+	// MonitorMaintenanceWindowsTable holds the schema information for the "monitor_maintenance_windows" table.
+	MonitorMaintenanceWindowsTable = &schema.Table{
+		Name:       "monitor_maintenance_windows",
+		Columns:    MonitorMaintenanceWindowsColumns,
+		PrimaryKey: []*schema.Column{MonitorMaintenanceWindowsColumns[0], MonitorMaintenanceWindowsColumns[1]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "monitor_maintenance_windows_maintenance_window_id",
+				Columns:    []*schema.Column{MonitorMaintenanceWindowsColumns[0]},
+				RefColumns: []*schema.Column{MaintenanceWindowsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "monitor_maintenance_windows_monitor_id",
+				Columns:    []*schema.Column{MonitorMaintenanceWindowsColumns[1]},
+				RefColumns: []*schema.Column{MonitorsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
 	// MonitorTagsColumns holds the columns for the "monitor_tags" table.
 	MonitorTagsColumns = []*schema.Column{
 		{Name: "monitor_id", Type: field.TypeInt},
@@ -236,24 +621,70 @@ var (
 			},
 		},
 	}
+	// MonitorNotificationsColumns holds the columns for the "monitor_notifications" table.
+	MonitorNotificationsColumns = []*schema.Column{
+		{Name: "monitor_id", Type: field.TypeInt},
+		{Name: "notification_id", Type: field.TypeInt},
+	}
+	// MonitorNotificationsTable holds the schema information for the "monitor_notifications" table.
+	MonitorNotificationsTable = &schema.Table{
+		Name:       "monitor_notifications",
+		Columns:    MonitorNotificationsColumns,
+		PrimaryKey: []*schema.Column{MonitorNotificationsColumns[0], MonitorNotificationsColumns[1]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "monitor_notifications_monitor_id",
+				Columns:    []*schema.Column{MonitorNotificationsColumns[0]},
+				RefColumns: []*schema.Column{MonitorsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "monitor_notifications_notification_id",
+				Columns:    []*schema.Column{MonitorNotificationsColumns[1]},
+				RefColumns: []*schema.Column{NotificationsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
+		APIKeysTable,
+		IncidentsTable,
+		MaintenanceWindowsTable,
 		MonitorsTable,
-		MonitorHistoriesTable,
+		MonitorChecksTable,
+		NotificationsTable,
 		StatusMessagesTable,
 		StatusPagesTable,
+		StatusPageMonitorsTable,
 		TagsTable,
 		UsersTable,
+		MonitorMaintenanceWindowsTable,
 		MonitorTagsTable,
+		MonitorNotificationsTable,
 	}
 )
 
 func init() {
+	APIKeysTable.ForeignKeys[0].RefTable = UsersTable
+	IncidentsTable.ForeignKeys[0].RefTable = MonitorsTable
+	IncidentsTable.ForeignKeys[1].RefTable = StatusPagesTable
+	IncidentsTable.ForeignKeys[2].RefTable = UsersTable
+	MaintenanceWindowsTable.ForeignKeys[0].RefTable = UsersTable
 	MonitorsTable.ForeignKeys[0].RefTable = UsersTable
-	MonitorHistoriesTable.ForeignKeys[0].RefTable = MonitorsTable
-	StatusMessagesTable.ForeignKeys[0].RefTable = StatusMessagesTable
-	StatusMessagesTable.ForeignKeys[1].RefTable = StatusPagesTable
-	StatusPagesTable.ForeignKeys[0].RefTable = TagsTable
+	MonitorChecksTable.ForeignKeys[0].RefTable = MonitorsTable
+	NotificationsTable.ForeignKeys[0].RefTable = UsersTable
+	StatusMessagesTable.ForeignKeys[0].RefTable = IncidentsTable
+	StatusMessagesTable.ForeignKeys[1].RefTable = StatusMessagesTable
+	StatusMessagesTable.ForeignKeys[2].RefTable = StatusPagesTable
+	StatusPagesTable.ForeignKeys[0].RefTable = UsersTable
+	StatusPageMonitorsTable.ForeignKeys[0].RefTable = MonitorsTable
+	StatusPageMonitorsTable.ForeignKeys[1].RefTable = StatusPagesTable
+	TagsTable.ForeignKeys[0].RefTable = UsersTable
+	MonitorMaintenanceWindowsTable.ForeignKeys[0].RefTable = MaintenanceWindowsTable
+	MonitorMaintenanceWindowsTable.ForeignKeys[1].RefTable = MonitorsTable
 	MonitorTagsTable.ForeignKeys[0].RefTable = MonitorsTable
 	MonitorTagsTable.ForeignKeys[1].RefTable = TagsTable
+	MonitorNotificationsTable.ForeignKeys[0].RefTable = MonitorsTable
+	MonitorNotificationsTable.ForeignKeys[1].RefTable = NotificationsTable
 }

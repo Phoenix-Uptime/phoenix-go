@@ -20,30 +20,32 @@ const (
 	FieldUpdatedAt = "updated_at"
 	// FieldDeletedAt holds the string denoting the deleted_at field in the database.
 	FieldDeletedAt = "deleted_at"
+	// FieldUserID holds the string denoting the user_id field in the database.
+	FieldUserID = "user_id"
 	// FieldName holds the string denoting the name field in the database.
 	FieldName = "name"
 	// FieldDescription holds the string denoting the description field in the database.
 	FieldDescription = "description"
 	// FieldColor holds the string denoting the color field in the database.
 	FieldColor = "color"
+	// EdgeUser holds the string denoting the user edge name in mutations.
+	EdgeUser = "user"
 	// EdgeMonitors holds the string denoting the monitors edge name in mutations.
 	EdgeMonitors = "monitors"
-	// EdgeStatusPages holds the string denoting the status_pages edge name in mutations.
-	EdgeStatusPages = "status_pages"
 	// Table holds the table name of the tag in the database.
 	Table = "tags"
+	// UserTable is the table that holds the user relation/edge.
+	UserTable = "tags"
+	// UserInverseTable is the table name for the User entity.
+	// It exists in this package in order to avoid circular dependency with the "user" package.
+	UserInverseTable = "users"
+	// UserColumn is the table column denoting the user relation/edge.
+	UserColumn = "user_id"
 	// MonitorsTable is the table that holds the monitors relation/edge. The primary key declared below.
 	MonitorsTable = "monitor_tags"
 	// MonitorsInverseTable is the table name for the Monitor entity.
 	// It exists in this package in order to avoid circular dependency with the "monitor" package.
 	MonitorsInverseTable = "monitors"
-	// StatusPagesTable is the table that holds the status_pages relation/edge.
-	StatusPagesTable = "status_pages"
-	// StatusPagesInverseTable is the table name for the StatusPage entity.
-	// It exists in this package in order to avoid circular dependency with the "statuspage" package.
-	StatusPagesInverseTable = "status_pages"
-	// StatusPagesColumn is the table column denoting the status_pages relation/edge.
-	StatusPagesColumn = "tag_id"
 )
 
 // Columns holds all SQL columns for tag fields.
@@ -52,6 +54,7 @@ var Columns = []string{
 	FieldCreatedAt,
 	FieldUpdatedAt,
 	FieldDeletedAt,
+	FieldUserID,
 	FieldName,
 	FieldDescription,
 	FieldColor,
@@ -107,6 +110,11 @@ func ByDeletedAt(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldDeletedAt, opts...).ToFunc()
 }
 
+// ByUserID orders the results by the user_id field.
+func ByUserID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldUserID, opts...).ToFunc()
+}
+
 // ByName orders the results by the name field.
 func ByName(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldName, opts...).ToFunc()
@@ -122,6 +130,13 @@ func ByColor(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldColor, opts...).ToFunc()
 }
 
+// ByUserField orders the results by user field.
+func ByUserField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newUserStep(), sql.OrderByField(field, opts...))
+	}
+}
+
 // ByMonitorsCount orders the results by monitors count.
 func ByMonitorsCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
@@ -135,31 +150,17 @@ func ByMonitors(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newMonitorsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
-
-// ByStatusPagesCount orders the results by status_pages count.
-func ByStatusPagesCount(opts ...sql.OrderTermOption) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newStatusPagesStep(), opts...)
-	}
-}
-
-// ByStatusPages orders the results by status_pages terms.
-func ByStatusPages(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newStatusPagesStep(), append([]sql.OrderTerm{term}, terms...)...)
-	}
+func newUserStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(UserInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, true, UserTable, UserColumn),
+	)
 }
 func newMonitorsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(MonitorsInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2M, true, MonitorsTable, MonitorsPrimaryKey...),
-	)
-}
-func newStatusPagesStep() *sqlgraph.Step {
-	return sqlgraph.NewStep(
-		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(StatusPagesInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2M, false, StatusPagesTable, StatusPagesColumn),
 	)
 }

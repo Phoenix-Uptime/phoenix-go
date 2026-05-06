@@ -14,19 +14,19 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/monitor"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/predicate"
-	"github.com/Phoenix-Uptime/phoenix-go/ent/statuspage"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/tag"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/user"
 )
 
 // TagQuery is the builder for querying Tag entities.
 type TagQuery struct {
 	config
-	ctx             *QueryContext
-	order           []tag.OrderOption
-	inters          []Interceptor
-	predicates      []predicate.Tag
-	withMonitors    *MonitorQuery
-	withStatusPages *StatusPageQuery
+	ctx          *QueryContext
+	order        []tag.OrderOption
+	inters       []Interceptor
+	predicates   []predicate.Tag
+	withUser     *UserQuery
+	withMonitors *MonitorQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -63,6 +63,28 @@ func (_q *TagQuery) Order(o ...tag.OrderOption) *TagQuery {
 	return _q
 }
 
+// QueryUser chains the current query on the "user" edge.
+func (_q *TagQuery) QueryUser() *UserQuery {
+	query := (&UserClient{config: _q.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := _q.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := _q.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(tag.Table, tag.FieldID, selector),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, tag.UserTable, tag.UserColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
 // QueryMonitors chains the current query on the "monitors" edge.
 func (_q *TagQuery) QueryMonitors() *MonitorQuery {
 	query := (&MonitorClient{config: _q.config}).Query()
@@ -78,28 +100,6 @@ func (_q *TagQuery) QueryMonitors() *MonitorQuery {
 			sqlgraph.From(tag.Table, tag.FieldID, selector),
 			sqlgraph.To(monitor.Table, monitor.FieldID),
 			sqlgraph.Edge(sqlgraph.M2M, true, tag.MonitorsTable, tag.MonitorsPrimaryKey...),
-		)
-		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
-		return fromU, nil
-	}
-	return query
-}
-
-// QueryStatusPages chains the current query on the "status_pages" edge.
-func (_q *TagQuery) QueryStatusPages() *StatusPageQuery {
-	query := (&StatusPageClient{config: _q.config}).Query()
-	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
-		if err := _q.prepareQuery(ctx); err != nil {
-			return nil, err
-		}
-		selector := _q.sqlQuery(ctx)
-		if err := selector.Err(); err != nil {
-			return nil, err
-		}
-		step := sqlgraph.NewStep(
-			sqlgraph.From(tag.Table, tag.FieldID, selector),
-			sqlgraph.To(statuspage.Table, statuspage.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, tag.StatusPagesTable, tag.StatusPagesColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -294,17 +294,28 @@ func (_q *TagQuery) Clone() *TagQuery {
 		return nil
 	}
 	return &TagQuery{
-		config:          _q.config,
-		ctx:             _q.ctx.Clone(),
-		order:           append([]tag.OrderOption{}, _q.order...),
-		inters:          append([]Interceptor{}, _q.inters...),
-		predicates:      append([]predicate.Tag{}, _q.predicates...),
-		withMonitors:    _q.withMonitors.Clone(),
-		withStatusPages: _q.withStatusPages.Clone(),
+		config:       _q.config,
+		ctx:          _q.ctx.Clone(),
+		order:        append([]tag.OrderOption{}, _q.order...),
+		inters:       append([]Interceptor{}, _q.inters...),
+		predicates:   append([]predicate.Tag{}, _q.predicates...),
+		withUser:     _q.withUser.Clone(),
+		withMonitors: _q.withMonitors.Clone(),
 		// clone intermediate query.
 		sql:  _q.sql.Clone(),
 		path: _q.path,
 	}
+}
+
+// WithUser tells the query-builder to eager-load the nodes that are connected to
+// the "user" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *TagQuery) WithUser(opts ...func(*UserQuery)) *TagQuery {
+	query := (&UserClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	_q.withUser = query
+	return _q
 }
 
 // WithMonitors tells the query-builder to eager-load the nodes that are connected to
@@ -315,17 +326,6 @@ func (_q *TagQuery) WithMonitors(opts ...func(*MonitorQuery)) *TagQuery {
 		opt(query)
 	}
 	_q.withMonitors = query
-	return _q
-}
-
-// WithStatusPages tells the query-builder to eager-load the nodes that are connected to
-// the "status_pages" edge. The optional arguments are used to configure the query builder of the edge.
-func (_q *TagQuery) WithStatusPages(opts ...func(*StatusPageQuery)) *TagQuery {
-	query := (&StatusPageClient{config: _q.config}).Query()
-	for _, opt := range opts {
-		opt(query)
-	}
-	_q.withStatusPages = query
 	return _q
 }
 
@@ -408,8 +408,8 @@ func (_q *TagQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Tag, err
 		nodes       = []*Tag{}
 		_spec       = _q.querySpec()
 		loadedTypes = [2]bool{
+			_q.withUser != nil,
 			_q.withMonitors != nil,
-			_q.withStatusPages != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -430,6 +430,12 @@ func (_q *TagQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Tag, err
 	if len(nodes) == 0 {
 		return nodes, nil
 	}
+	if query := _q.withUser; query != nil {
+		if err := _q.loadUser(ctx, query, nodes, nil,
+			func(n *Tag, e *User) { n.Edges.User = e }); err != nil {
+			return nil, err
+		}
+	}
 	if query := _q.withMonitors; query != nil {
 		if err := _q.loadMonitors(ctx, query, nodes,
 			func(n *Tag) { n.Edges.Monitors = []*Monitor{} },
@@ -437,16 +443,38 @@ func (_q *TagQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Tag, err
 			return nil, err
 		}
 	}
-	if query := _q.withStatusPages; query != nil {
-		if err := _q.loadStatusPages(ctx, query, nodes,
-			func(n *Tag) { n.Edges.StatusPages = []*StatusPage{} },
-			func(n *Tag, e *StatusPage) { n.Edges.StatusPages = append(n.Edges.StatusPages, e) }); err != nil {
-			return nil, err
-		}
-	}
 	return nodes, nil
 }
 
+func (_q *TagQuery) loadUser(ctx context.Context, query *UserQuery, nodes []*Tag, init func(*Tag), assign func(*Tag, *User)) error {
+	ids := make([]int, 0, len(nodes))
+	nodeids := make(map[int][]*Tag)
+	for i := range nodes {
+		fk := nodes[i].UserID
+		if _, ok := nodeids[fk]; !ok {
+			ids = append(ids, fk)
+		}
+		nodeids[fk] = append(nodeids[fk], nodes[i])
+	}
+	if len(ids) == 0 {
+		return nil
+	}
+	query.Where(user.IDIn(ids...))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nodeids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected foreign-key "user_id" returned %v`, n.ID)
+		}
+		for i := range nodes {
+			assign(nodes[i], n)
+		}
+	}
+	return nil
+}
 func (_q *TagQuery) loadMonitors(ctx context.Context, query *MonitorQuery, nodes []*Tag, init func(*Tag), assign func(*Tag, *Monitor)) error {
 	edgeIDs := make([]driver.Value, len(nodes))
 	byID := make(map[int]*Tag)
@@ -508,36 +536,6 @@ func (_q *TagQuery) loadMonitors(ctx context.Context, query *MonitorQuery, nodes
 	}
 	return nil
 }
-func (_q *TagQuery) loadStatusPages(ctx context.Context, query *StatusPageQuery, nodes []*Tag, init func(*Tag), assign func(*Tag, *StatusPage)) error {
-	fks := make([]driver.Value, 0, len(nodes))
-	nodeids := make(map[int]*Tag)
-	for i := range nodes {
-		fks = append(fks, nodes[i].ID)
-		nodeids[nodes[i].ID] = nodes[i]
-		if init != nil {
-			init(nodes[i])
-		}
-	}
-	if len(query.ctx.Fields) > 0 {
-		query.ctx.AppendFieldOnce(statuspage.FieldTagID)
-	}
-	query.Where(predicate.StatusPage(func(s *sql.Selector) {
-		s.Where(sql.InValues(s.C(tag.StatusPagesColumn), fks...))
-	}))
-	neighbors, err := query.All(ctx)
-	if err != nil {
-		return err
-	}
-	for _, n := range neighbors {
-		fk := n.TagID
-		node, ok := nodeids[fk]
-		if !ok {
-			return fmt.Errorf(`unexpected referenced foreign-key "tag_id" returned %v for node %v`, fk, n.ID)
-		}
-		assign(node, n)
-	}
-	return nil
-}
 
 func (_q *TagQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := _q.querySpec()
@@ -563,6 +561,9 @@ func (_q *TagQuery) querySpec() *sqlgraph.QuerySpec {
 			if fields[i] != tag.FieldID {
 				_spec.Node.Columns = append(_spec.Node.Columns, fields[i])
 			}
+		}
+		if _q.withUser != nil {
+			_spec.Node.AddColumnOnce(tag.FieldUserID)
 		}
 	}
 	if ps := _q.predicates; len(ps) > 0 {

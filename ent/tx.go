@@ -12,14 +12,24 @@ import (
 // Tx is a transactional client that is created by calling Client.Tx().
 type Tx struct {
 	config
+	// APIKey is the client for interacting with the APIKey builders.
+	APIKey *APIKeyClient
+	// Incident is the client for interacting with the Incident builders.
+	Incident *IncidentClient
+	// MaintenanceWindow is the client for interacting with the MaintenanceWindow builders.
+	MaintenanceWindow *MaintenanceWindowClient
 	// Monitor is the client for interacting with the Monitor builders.
 	Monitor *MonitorClient
-	// MonitorHistory is the client for interacting with the MonitorHistory builders.
-	MonitorHistory *MonitorHistoryClient
+	// MonitorCheck is the client for interacting with the MonitorCheck builders.
+	MonitorCheck *MonitorCheckClient
+	// Notification is the client for interacting with the Notification builders.
+	Notification *NotificationClient
 	// StatusMessage is the client for interacting with the StatusMessage builders.
 	StatusMessage *StatusMessageClient
 	// StatusPage is the client for interacting with the StatusPage builders.
 	StatusPage *StatusPageClient
+	// StatusPageMonitor is the client for interacting with the StatusPageMonitor builders.
+	StatusPageMonitor *StatusPageMonitorClient
 	// Tag is the client for interacting with the Tag builders.
 	Tag *TagClient
 	// User is the client for interacting with the User builders.
@@ -155,10 +165,15 @@ func (tx *Tx) Client() *Client {
 }
 
 func (tx *Tx) init() {
+	tx.APIKey = NewAPIKeyClient(tx.config)
+	tx.Incident = NewIncidentClient(tx.config)
+	tx.MaintenanceWindow = NewMaintenanceWindowClient(tx.config)
 	tx.Monitor = NewMonitorClient(tx.config)
-	tx.MonitorHistory = NewMonitorHistoryClient(tx.config)
+	tx.MonitorCheck = NewMonitorCheckClient(tx.config)
+	tx.Notification = NewNotificationClient(tx.config)
 	tx.StatusMessage = NewStatusMessageClient(tx.config)
 	tx.StatusPage = NewStatusPageClient(tx.config)
+	tx.StatusPageMonitor = NewStatusPageMonitorClient(tx.config)
 	tx.Tag = NewTagClient(tx.config)
 	tx.User = NewUserClient(tx.config)
 }
@@ -170,7 +185,7 @@ func (tx *Tx) init() {
 // of them in order to commit or rollback the transaction.
 //
 // If a closed transaction is embedded in one of the generated entities, and the entity
-// applies a query, for example: Monitor.QueryXXX(), the query will be executed
+// applies a query, for example: APIKey.QueryXXX(), the query will be executed
 // through the driver which created this transaction.
 //
 // Note that txDriver is not goroutine safe.

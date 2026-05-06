@@ -70,6 +70,11 @@ func DeletedAt(v time.Time) predicate.Tag {
 	return predicate.Tag(sql.FieldEQ(FieldDeletedAt, v))
 }
 
+// UserID applies equality check predicate on the "user_id" field. It's identical to UserIDEQ.
+func UserID(v int) predicate.Tag {
+	return predicate.Tag(sql.FieldEQ(FieldUserID, v))
+}
+
 // Name applies equality check predicate on the "name" field. It's identical to NameEQ.
 func Name(v string) predicate.Tag {
 	return predicate.Tag(sql.FieldEQ(FieldName, v))
@@ -213,6 +218,26 @@ func DeletedAtIsNil() predicate.Tag {
 // DeletedAtNotNil applies the NotNil predicate on the "deleted_at" field.
 func DeletedAtNotNil() predicate.Tag {
 	return predicate.Tag(sql.FieldNotNull(FieldDeletedAt))
+}
+
+// UserIDEQ applies the EQ predicate on the "user_id" field.
+func UserIDEQ(v int) predicate.Tag {
+	return predicate.Tag(sql.FieldEQ(FieldUserID, v))
+}
+
+// UserIDNEQ applies the NEQ predicate on the "user_id" field.
+func UserIDNEQ(v int) predicate.Tag {
+	return predicate.Tag(sql.FieldNEQ(FieldUserID, v))
+}
+
+// UserIDIn applies the In predicate on the "user_id" field.
+func UserIDIn(vs ...int) predicate.Tag {
+	return predicate.Tag(sql.FieldIn(FieldUserID, vs...))
+}
+
+// UserIDNotIn applies the NotIn predicate on the "user_id" field.
+func UserIDNotIn(vs ...int) predicate.Tag {
+	return predicate.Tag(sql.FieldNotIn(FieldUserID, vs...))
 }
 
 // NameEQ applies the EQ predicate on the "name" field.
@@ -430,6 +455,29 @@ func ColorContainsFold(v string) predicate.Tag {
 	return predicate.Tag(sql.FieldContainsFold(FieldColor, v))
 }
 
+// HasUser applies the HasEdge predicate on the "user" edge.
+func HasUser() predicate.Tag {
+	return predicate.Tag(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, UserTable, UserColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasUserWith applies the HasEdge predicate on the "user" edge with a given conditions (other predicates).
+func HasUserWith(preds ...predicate.User) predicate.Tag {
+	return predicate.Tag(func(s *sql.Selector) {
+		step := newUserStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // HasMonitors applies the HasEdge predicate on the "monitors" edge.
 func HasMonitors() predicate.Tag {
 	return predicate.Tag(func(s *sql.Selector) {
@@ -445,29 +493,6 @@ func HasMonitors() predicate.Tag {
 func HasMonitorsWith(preds ...predicate.Monitor) predicate.Tag {
 	return predicate.Tag(func(s *sql.Selector) {
 		step := newMonitorsStep()
-		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
-			for _, p := range preds {
-				p(s)
-			}
-		})
-	})
-}
-
-// HasStatusPages applies the HasEdge predicate on the "status_pages" edge.
-func HasStatusPages() predicate.Tag {
-	return predicate.Tag(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, StatusPagesTable, StatusPagesColumn),
-		)
-		sqlgraph.HasNeighbors(s, step)
-	})
-}
-
-// HasStatusPagesWith applies the HasEdge predicate on the "status_pages" edge with a given conditions (other predicates).
-func HasStatusPagesWith(preds ...predicate.StatusPage) predicate.Tag {
-	return predicate.Tag(func(s *sql.Selector) {
-		step := newStatusPagesStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

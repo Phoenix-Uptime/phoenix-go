@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/incident"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/predicate"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/statusmessage"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/statuspage"
@@ -25,6 +26,7 @@ type StatusMessageQuery struct {
 	inters          []Interceptor
 	predicates      []predicate.StatusMessage
 	withStatusPage  *StatusPageQuery
+	withIncident    *IncidentQuery
 	withParent      *StatusMessageQuery
 	withSubMessages *StatusMessageQuery
 	// intermediate query (i.e. traversal path).
@@ -78,6 +80,28 @@ func (_q *StatusMessageQuery) QueryStatusPage() *StatusPageQuery {
 			sqlgraph.From(statusmessage.Table, statusmessage.FieldID, selector),
 			sqlgraph.To(statuspage.Table, statuspage.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, statusmessage.StatusPageTable, statusmessage.StatusPageColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryIncident chains the current query on the "incident" edge.
+func (_q *StatusMessageQuery) QueryIncident() *IncidentQuery {
+	query := (&IncidentClient{config: _q.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := _q.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := _q.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(statusmessage.Table, statusmessage.FieldID, selector),
+			sqlgraph.To(incident.Table, incident.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, statusmessage.IncidentTable, statusmessage.IncidentColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -322,6 +346,7 @@ func (_q *StatusMessageQuery) Clone() *StatusMessageQuery {
 		inters:          append([]Interceptor{}, _q.inters...),
 		predicates:      append([]predicate.StatusMessage{}, _q.predicates...),
 		withStatusPage:  _q.withStatusPage.Clone(),
+		withIncident:    _q.withIncident.Clone(),
 		withParent:      _q.withParent.Clone(),
 		withSubMessages: _q.withSubMessages.Clone(),
 		// clone intermediate query.
@@ -338,6 +363,17 @@ func (_q *StatusMessageQuery) WithStatusPage(opts ...func(*StatusPageQuery)) *St
 		opt(query)
 	}
 	_q.withStatusPage = query
+	return _q
+}
+
+// WithIncident tells the query-builder to eager-load the nodes that are connected to
+// the "incident" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *StatusMessageQuery) WithIncident(opts ...func(*IncidentQuery)) *StatusMessageQuery {
+	query := (&IncidentClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	_q.withIncident = query
 	return _q
 }
 
@@ -441,8 +477,9 @@ func (_q *StatusMessageQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([
 	var (
 		nodes       = []*StatusMessage{}
 		_spec       = _q.querySpec()
-		loadedTypes = [3]bool{
+		loadedTypes = [4]bool{
 			_q.withStatusPage != nil,
+			_q.withIncident != nil,
 			_q.withParent != nil,
 			_q.withSubMessages != nil,
 		}
@@ -468,6 +505,12 @@ func (_q *StatusMessageQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([
 	if query := _q.withStatusPage; query != nil {
 		if err := _q.loadStatusPage(ctx, query, nodes, nil,
 			func(n *StatusMessage, e *StatusPage) { n.Edges.StatusPage = e }); err != nil {
+			return nil, err
+		}
+	}
+	if query := _q.withIncident; query != nil {
+		if err := _q.loadIncident(ctx, query, nodes, nil,
+			func(n *StatusMessage, e *Incident) { n.Edges.Incident = e }); err != nil {
 			return nil, err
 		}
 	}
@@ -509,6 +552,38 @@ func (_q *StatusMessageQuery) loadStatusPage(ctx context.Context, query *StatusP
 		nodes, ok := nodeids[n.ID]
 		if !ok {
 			return fmt.Errorf(`unexpected foreign-key "status_page_id" returned %v`, n.ID)
+		}
+		for i := range nodes {
+			assign(nodes[i], n)
+		}
+	}
+	return nil
+}
+func (_q *StatusMessageQuery) loadIncident(ctx context.Context, query *IncidentQuery, nodes []*StatusMessage, init func(*StatusMessage), assign func(*StatusMessage, *Incident)) error {
+	ids := make([]int, 0, len(nodes))
+	nodeids := make(map[int][]*StatusMessage)
+	for i := range nodes {
+		if nodes[i].IncidentID == nil {
+			continue
+		}
+		fk := *nodes[i].IncidentID
+		if _, ok := nodeids[fk]; !ok {
+			ids = append(ids, fk)
+		}
+		nodeids[fk] = append(nodeids[fk], nodes[i])
+	}
+	if len(ids) == 0 {
+		return nil
+	}
+	query.Where(incident.IDIn(ids...))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nodeids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected foreign-key "incident_id" returned %v`, n.ID)
 		}
 		for i := range nodes {
 			assign(nodes[i], n)
@@ -609,6 +684,9 @@ func (_q *StatusMessageQuery) querySpec() *sqlgraph.QuerySpec {
 		}
 		if _q.withStatusPage != nil {
 			_spec.Node.AddColumnOnce(statusmessage.FieldStatusPageID)
+		}
+		if _q.withIncident != nil {
+			_spec.Node.AddColumnOnce(statusmessage.FieldIncidentID)
 		}
 		if _q.withParent != nil {
 			_spec.Node.AddColumnOnce(statusmessage.FieldParentID)

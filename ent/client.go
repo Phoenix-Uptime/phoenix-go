@@ -15,10 +15,15 @@ import (
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/apikey"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/incident"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/maintenancewindow"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/monitor"
-	"github.com/Phoenix-Uptime/phoenix-go/ent/monitorhistory"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/monitorcheck"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/notification"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/statusmessage"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/statuspage"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/statuspagemonitor"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/tag"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/user"
 )
@@ -28,14 +33,24 @@ type Client struct {
 	config
 	// Schema is the client for creating, migrating and dropping schema.
 	Schema *migrate.Schema
+	// APIKey is the client for interacting with the APIKey builders.
+	APIKey *APIKeyClient
+	// Incident is the client for interacting with the Incident builders.
+	Incident *IncidentClient
+	// MaintenanceWindow is the client for interacting with the MaintenanceWindow builders.
+	MaintenanceWindow *MaintenanceWindowClient
 	// Monitor is the client for interacting with the Monitor builders.
 	Monitor *MonitorClient
-	// MonitorHistory is the client for interacting with the MonitorHistory builders.
-	MonitorHistory *MonitorHistoryClient
+	// MonitorCheck is the client for interacting with the MonitorCheck builders.
+	MonitorCheck *MonitorCheckClient
+	// Notification is the client for interacting with the Notification builders.
+	Notification *NotificationClient
 	// StatusMessage is the client for interacting with the StatusMessage builders.
 	StatusMessage *StatusMessageClient
 	// StatusPage is the client for interacting with the StatusPage builders.
 	StatusPage *StatusPageClient
+	// StatusPageMonitor is the client for interacting with the StatusPageMonitor builders.
+	StatusPageMonitor *StatusPageMonitorClient
 	// Tag is the client for interacting with the Tag builders.
 	Tag *TagClient
 	// User is the client for interacting with the User builders.
@@ -51,10 +66,15 @@ func NewClient(opts ...Option) *Client {
 
 func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
+	c.APIKey = NewAPIKeyClient(c.config)
+	c.Incident = NewIncidentClient(c.config)
+	c.MaintenanceWindow = NewMaintenanceWindowClient(c.config)
 	c.Monitor = NewMonitorClient(c.config)
-	c.MonitorHistory = NewMonitorHistoryClient(c.config)
+	c.MonitorCheck = NewMonitorCheckClient(c.config)
+	c.Notification = NewNotificationClient(c.config)
 	c.StatusMessage = NewStatusMessageClient(c.config)
 	c.StatusPage = NewStatusPageClient(c.config)
+	c.StatusPageMonitor = NewStatusPageMonitorClient(c.config)
 	c.Tag = NewTagClient(c.config)
 	c.User = NewUserClient(c.config)
 }
@@ -147,14 +167,19 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	cfg := c.config
 	cfg.driver = tx
 	return &Tx{
-		ctx:            ctx,
-		config:         cfg,
-		Monitor:        NewMonitorClient(cfg),
-		MonitorHistory: NewMonitorHistoryClient(cfg),
-		StatusMessage:  NewStatusMessageClient(cfg),
-		StatusPage:     NewStatusPageClient(cfg),
-		Tag:            NewTagClient(cfg),
-		User:           NewUserClient(cfg),
+		ctx:               ctx,
+		config:            cfg,
+		APIKey:            NewAPIKeyClient(cfg),
+		Incident:          NewIncidentClient(cfg),
+		MaintenanceWindow: NewMaintenanceWindowClient(cfg),
+		Monitor:           NewMonitorClient(cfg),
+		MonitorCheck:      NewMonitorCheckClient(cfg),
+		Notification:      NewNotificationClient(cfg),
+		StatusMessage:     NewStatusMessageClient(cfg),
+		StatusPage:        NewStatusPageClient(cfg),
+		StatusPageMonitor: NewStatusPageMonitorClient(cfg),
+		Tag:               NewTagClient(cfg),
+		User:              NewUserClient(cfg),
 	}, nil
 }
 
@@ -172,21 +197,26 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	cfg := c.config
 	cfg.driver = &txDriver{tx: tx, drv: c.driver}
 	return &Tx{
-		ctx:            ctx,
-		config:         cfg,
-		Monitor:        NewMonitorClient(cfg),
-		MonitorHistory: NewMonitorHistoryClient(cfg),
-		StatusMessage:  NewStatusMessageClient(cfg),
-		StatusPage:     NewStatusPageClient(cfg),
-		Tag:            NewTagClient(cfg),
-		User:           NewUserClient(cfg),
+		ctx:               ctx,
+		config:            cfg,
+		APIKey:            NewAPIKeyClient(cfg),
+		Incident:          NewIncidentClient(cfg),
+		MaintenanceWindow: NewMaintenanceWindowClient(cfg),
+		Monitor:           NewMonitorClient(cfg),
+		MonitorCheck:      NewMonitorCheckClient(cfg),
+		Notification:      NewNotificationClient(cfg),
+		StatusMessage:     NewStatusMessageClient(cfg),
+		StatusPage:        NewStatusPageClient(cfg),
+		StatusPageMonitor: NewStatusPageMonitorClient(cfg),
+		Tag:               NewTagClient(cfg),
+		User:              NewUserClient(cfg),
 	}, nil
 }
 
 // Debug returns a new debug-client. It's used to get verbose logging on specific operations.
 //
 //	client.Debug().
-//		Monitor.
+//		APIKey.
 //		Query().
 //		Count(ctx)
 func (c *Client) Debug() *Client {
@@ -209,7 +239,9 @@ func (c *Client) Close() error {
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
-		c.Monitor, c.MonitorHistory, c.StatusMessage, c.StatusPage, c.Tag, c.User,
+		c.APIKey, c.Incident, c.MaintenanceWindow, c.Monitor, c.MonitorCheck,
+		c.Notification, c.StatusMessage, c.StatusPage, c.StatusPageMonitor, c.Tag,
+		c.User,
 	} {
 		n.Use(hooks...)
 	}
@@ -219,7 +251,9 @@ func (c *Client) Use(hooks ...Hook) {
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
-		c.Monitor, c.MonitorHistory, c.StatusMessage, c.StatusPage, c.Tag, c.User,
+		c.APIKey, c.Incident, c.MaintenanceWindow, c.Monitor, c.MonitorCheck,
+		c.Notification, c.StatusMessage, c.StatusPage, c.StatusPageMonitor, c.Tag,
+		c.User,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -228,20 +262,541 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 // Mutate implements the ent.Mutator interface.
 func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 	switch m := m.(type) {
+	case *APIKeyMutation:
+		return c.APIKey.mutate(ctx, m)
+	case *IncidentMutation:
+		return c.Incident.mutate(ctx, m)
+	case *MaintenanceWindowMutation:
+		return c.MaintenanceWindow.mutate(ctx, m)
 	case *MonitorMutation:
 		return c.Monitor.mutate(ctx, m)
-	case *MonitorHistoryMutation:
-		return c.MonitorHistory.mutate(ctx, m)
+	case *MonitorCheckMutation:
+		return c.MonitorCheck.mutate(ctx, m)
+	case *NotificationMutation:
+		return c.Notification.mutate(ctx, m)
 	case *StatusMessageMutation:
 		return c.StatusMessage.mutate(ctx, m)
 	case *StatusPageMutation:
 		return c.StatusPage.mutate(ctx, m)
+	case *StatusPageMonitorMutation:
+		return c.StatusPageMonitor.mutate(ctx, m)
 	case *TagMutation:
 		return c.Tag.mutate(ctx, m)
 	case *UserMutation:
 		return c.User.mutate(ctx, m)
 	default:
 		return nil, fmt.Errorf("ent: unknown mutation type %T", m)
+	}
+}
+
+// APIKeyClient is a client for the APIKey schema.
+type APIKeyClient struct {
+	config
+}
+
+// NewAPIKeyClient returns a client for the APIKey from the given config.
+func NewAPIKeyClient(c config) *APIKeyClient {
+	return &APIKeyClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `apikey.Hooks(f(g(h())))`.
+func (c *APIKeyClient) Use(hooks ...Hook) {
+	c.hooks.APIKey = append(c.hooks.APIKey, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `apikey.Intercept(f(g(h())))`.
+func (c *APIKeyClient) Intercept(interceptors ...Interceptor) {
+	c.inters.APIKey = append(c.inters.APIKey, interceptors...)
+}
+
+// Create returns a builder for creating a APIKey entity.
+func (c *APIKeyClient) Create() *APIKeyCreate {
+	mutation := newAPIKeyMutation(c.config, OpCreate)
+	return &APIKeyCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of APIKey entities.
+func (c *APIKeyClient) CreateBulk(builders ...*APIKeyCreate) *APIKeyCreateBulk {
+	return &APIKeyCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *APIKeyClient) MapCreateBulk(slice any, setFunc func(*APIKeyCreate, int)) *APIKeyCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &APIKeyCreateBulk{err: fmt.Errorf("calling to APIKeyClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*APIKeyCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &APIKeyCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for APIKey.
+func (c *APIKeyClient) Update() *APIKeyUpdate {
+	mutation := newAPIKeyMutation(c.config, OpUpdate)
+	return &APIKeyUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *APIKeyClient) UpdateOne(_m *APIKey) *APIKeyUpdateOne {
+	mutation := newAPIKeyMutation(c.config, OpUpdateOne, withAPIKey(_m))
+	return &APIKeyUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *APIKeyClient) UpdateOneID(id int) *APIKeyUpdateOne {
+	mutation := newAPIKeyMutation(c.config, OpUpdateOne, withAPIKeyID(id))
+	return &APIKeyUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for APIKey.
+func (c *APIKeyClient) Delete() *APIKeyDelete {
+	mutation := newAPIKeyMutation(c.config, OpDelete)
+	return &APIKeyDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *APIKeyClient) DeleteOne(_m *APIKey) *APIKeyDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *APIKeyClient) DeleteOneID(id int) *APIKeyDeleteOne {
+	builder := c.Delete().Where(apikey.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &APIKeyDeleteOne{builder}
+}
+
+// Query returns a query builder for APIKey.
+func (c *APIKeyClient) Query() *APIKeyQuery {
+	return &APIKeyQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeAPIKey},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a APIKey entity by its id.
+func (c *APIKeyClient) Get(ctx context.Context, id int) (*APIKey, error) {
+	return c.Query().Where(apikey.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *APIKeyClient) GetX(ctx context.Context, id int) *APIKey {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryUser queries the user edge of a APIKey.
+func (c *APIKeyClient) QueryUser(_m *APIKey) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(apikey.Table, apikey.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, apikey.UserTable, apikey.UserColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *APIKeyClient) Hooks() []Hook {
+	return c.hooks.APIKey
+}
+
+// Interceptors returns the client interceptors.
+func (c *APIKeyClient) Interceptors() []Interceptor {
+	return c.inters.APIKey
+}
+
+func (c *APIKeyClient) mutate(ctx context.Context, m *APIKeyMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&APIKeyCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&APIKeyUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&APIKeyUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&APIKeyDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown APIKey mutation op: %q", m.Op())
+	}
+}
+
+// IncidentClient is a client for the Incident schema.
+type IncidentClient struct {
+	config
+}
+
+// NewIncidentClient returns a client for the Incident from the given config.
+func NewIncidentClient(c config) *IncidentClient {
+	return &IncidentClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `incident.Hooks(f(g(h())))`.
+func (c *IncidentClient) Use(hooks ...Hook) {
+	c.hooks.Incident = append(c.hooks.Incident, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `incident.Intercept(f(g(h())))`.
+func (c *IncidentClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Incident = append(c.inters.Incident, interceptors...)
+}
+
+// Create returns a builder for creating a Incident entity.
+func (c *IncidentClient) Create() *IncidentCreate {
+	mutation := newIncidentMutation(c.config, OpCreate)
+	return &IncidentCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Incident entities.
+func (c *IncidentClient) CreateBulk(builders ...*IncidentCreate) *IncidentCreateBulk {
+	return &IncidentCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *IncidentClient) MapCreateBulk(slice any, setFunc func(*IncidentCreate, int)) *IncidentCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &IncidentCreateBulk{err: fmt.Errorf("calling to IncidentClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*IncidentCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &IncidentCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Incident.
+func (c *IncidentClient) Update() *IncidentUpdate {
+	mutation := newIncidentMutation(c.config, OpUpdate)
+	return &IncidentUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *IncidentClient) UpdateOne(_m *Incident) *IncidentUpdateOne {
+	mutation := newIncidentMutation(c.config, OpUpdateOne, withIncident(_m))
+	return &IncidentUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *IncidentClient) UpdateOneID(id int) *IncidentUpdateOne {
+	mutation := newIncidentMutation(c.config, OpUpdateOne, withIncidentID(id))
+	return &IncidentUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Incident.
+func (c *IncidentClient) Delete() *IncidentDelete {
+	mutation := newIncidentMutation(c.config, OpDelete)
+	return &IncidentDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *IncidentClient) DeleteOne(_m *Incident) *IncidentDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *IncidentClient) DeleteOneID(id int) *IncidentDeleteOne {
+	builder := c.Delete().Where(incident.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &IncidentDeleteOne{builder}
+}
+
+// Query returns a query builder for Incident.
+func (c *IncidentClient) Query() *IncidentQuery {
+	return &IncidentQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeIncident},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a Incident entity by its id.
+func (c *IncidentClient) Get(ctx context.Context, id int) (*Incident, error) {
+	return c.Query().Where(incident.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *IncidentClient) GetX(ctx context.Context, id int) *Incident {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryMonitor queries the monitor edge of a Incident.
+func (c *IncidentClient) QueryMonitor(_m *Incident) *MonitorQuery {
+	query := (&MonitorClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(incident.Table, incident.FieldID, id),
+			sqlgraph.To(monitor.Table, monitor.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, incident.MonitorTable, incident.MonitorColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryStatusPage queries the status_page edge of a Incident.
+func (c *IncidentClient) QueryStatusPage(_m *Incident) *StatusPageQuery {
+	query := (&StatusPageClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(incident.Table, incident.FieldID, id),
+			sqlgraph.To(statuspage.Table, statuspage.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, incident.StatusPageTable, incident.StatusPageColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryResolvedBy queries the resolved_by edge of a Incident.
+func (c *IncidentClient) QueryResolvedBy(_m *Incident) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(incident.Table, incident.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, incident.ResolvedByTable, incident.ResolvedByColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryMessages queries the messages edge of a Incident.
+func (c *IncidentClient) QueryMessages(_m *Incident) *StatusMessageQuery {
+	query := (&StatusMessageClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(incident.Table, incident.FieldID, id),
+			sqlgraph.To(statusmessage.Table, statusmessage.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, incident.MessagesTable, incident.MessagesColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *IncidentClient) Hooks() []Hook {
+	return c.hooks.Incident
+}
+
+// Interceptors returns the client interceptors.
+func (c *IncidentClient) Interceptors() []Interceptor {
+	return c.inters.Incident
+}
+
+func (c *IncidentClient) mutate(ctx context.Context, m *IncidentMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&IncidentCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&IncidentUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&IncidentUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&IncidentDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown Incident mutation op: %q", m.Op())
+	}
+}
+
+// MaintenanceWindowClient is a client for the MaintenanceWindow schema.
+type MaintenanceWindowClient struct {
+	config
+}
+
+// NewMaintenanceWindowClient returns a client for the MaintenanceWindow from the given config.
+func NewMaintenanceWindowClient(c config) *MaintenanceWindowClient {
+	return &MaintenanceWindowClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `maintenancewindow.Hooks(f(g(h())))`.
+func (c *MaintenanceWindowClient) Use(hooks ...Hook) {
+	c.hooks.MaintenanceWindow = append(c.hooks.MaintenanceWindow, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `maintenancewindow.Intercept(f(g(h())))`.
+func (c *MaintenanceWindowClient) Intercept(interceptors ...Interceptor) {
+	c.inters.MaintenanceWindow = append(c.inters.MaintenanceWindow, interceptors...)
+}
+
+// Create returns a builder for creating a MaintenanceWindow entity.
+func (c *MaintenanceWindowClient) Create() *MaintenanceWindowCreate {
+	mutation := newMaintenanceWindowMutation(c.config, OpCreate)
+	return &MaintenanceWindowCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of MaintenanceWindow entities.
+func (c *MaintenanceWindowClient) CreateBulk(builders ...*MaintenanceWindowCreate) *MaintenanceWindowCreateBulk {
+	return &MaintenanceWindowCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *MaintenanceWindowClient) MapCreateBulk(slice any, setFunc func(*MaintenanceWindowCreate, int)) *MaintenanceWindowCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &MaintenanceWindowCreateBulk{err: fmt.Errorf("calling to MaintenanceWindowClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*MaintenanceWindowCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &MaintenanceWindowCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for MaintenanceWindow.
+func (c *MaintenanceWindowClient) Update() *MaintenanceWindowUpdate {
+	mutation := newMaintenanceWindowMutation(c.config, OpUpdate)
+	return &MaintenanceWindowUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *MaintenanceWindowClient) UpdateOne(_m *MaintenanceWindow) *MaintenanceWindowUpdateOne {
+	mutation := newMaintenanceWindowMutation(c.config, OpUpdateOne, withMaintenanceWindow(_m))
+	return &MaintenanceWindowUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *MaintenanceWindowClient) UpdateOneID(id int) *MaintenanceWindowUpdateOne {
+	mutation := newMaintenanceWindowMutation(c.config, OpUpdateOne, withMaintenanceWindowID(id))
+	return &MaintenanceWindowUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for MaintenanceWindow.
+func (c *MaintenanceWindowClient) Delete() *MaintenanceWindowDelete {
+	mutation := newMaintenanceWindowMutation(c.config, OpDelete)
+	return &MaintenanceWindowDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *MaintenanceWindowClient) DeleteOne(_m *MaintenanceWindow) *MaintenanceWindowDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *MaintenanceWindowClient) DeleteOneID(id int) *MaintenanceWindowDeleteOne {
+	builder := c.Delete().Where(maintenancewindow.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &MaintenanceWindowDeleteOne{builder}
+}
+
+// Query returns a query builder for MaintenanceWindow.
+func (c *MaintenanceWindowClient) Query() *MaintenanceWindowQuery {
+	return &MaintenanceWindowQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeMaintenanceWindow},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a MaintenanceWindow entity by its id.
+func (c *MaintenanceWindowClient) Get(ctx context.Context, id int) (*MaintenanceWindow, error) {
+	return c.Query().Where(maintenancewindow.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *MaintenanceWindowClient) GetX(ctx context.Context, id int) *MaintenanceWindow {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryUser queries the user edge of a MaintenanceWindow.
+func (c *MaintenanceWindowClient) QueryUser(_m *MaintenanceWindow) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(maintenancewindow.Table, maintenancewindow.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, maintenancewindow.UserTable, maintenancewindow.UserColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryMonitors queries the monitors edge of a MaintenanceWindow.
+func (c *MaintenanceWindowClient) QueryMonitors(_m *MaintenanceWindow) *MonitorQuery {
+	query := (&MonitorClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(maintenancewindow.Table, maintenancewindow.FieldID, id),
+			sqlgraph.To(monitor.Table, monitor.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, maintenancewindow.MonitorsTable, maintenancewindow.MonitorsPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *MaintenanceWindowClient) Hooks() []Hook {
+	return c.hooks.MaintenanceWindow
+}
+
+// Interceptors returns the client interceptors.
+func (c *MaintenanceWindowClient) Interceptors() []Interceptor {
+	return c.inters.MaintenanceWindow
+}
+
+func (c *MaintenanceWindowClient) mutate(ctx context.Context, m *MaintenanceWindowMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&MaintenanceWindowCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&MaintenanceWindowUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&MaintenanceWindowUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&MaintenanceWindowDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown MaintenanceWindow mutation op: %q", m.Op())
 	}
 }
 
@@ -369,15 +924,15 @@ func (c *MonitorClient) QueryUser(_m *Monitor) *UserQuery {
 	return query
 }
 
-// QueryHistory queries the history edge of a Monitor.
-func (c *MonitorClient) QueryHistory(_m *Monitor) *MonitorHistoryQuery {
-	query := (&MonitorHistoryClient{config: c.config}).Query()
+// QueryChecks queries the checks edge of a Monitor.
+func (c *MonitorClient) QueryChecks(_m *Monitor) *MonitorCheckQuery {
+	query := (&MonitorCheckClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := _m.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(monitor.Table, monitor.FieldID, id),
-			sqlgraph.To(monitorhistory.Table, monitorhistory.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, monitor.HistoryTable, monitor.HistoryColumn),
+			sqlgraph.To(monitorcheck.Table, monitorcheck.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, monitor.ChecksTable, monitor.ChecksColumn),
 		)
 		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
 		return fromV, nil
@@ -394,6 +949,70 @@ func (c *MonitorClient) QueryTags(_m *Monitor) *TagQuery {
 			sqlgraph.From(monitor.Table, monitor.FieldID, id),
 			sqlgraph.To(tag.Table, tag.FieldID),
 			sqlgraph.Edge(sqlgraph.M2M, false, monitor.TagsTable, monitor.TagsPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryNotifications queries the notifications edge of a Monitor.
+func (c *MonitorClient) QueryNotifications(_m *Monitor) *NotificationQuery {
+	query := (&NotificationClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(monitor.Table, monitor.FieldID, id),
+			sqlgraph.To(notification.Table, notification.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, monitor.NotificationsTable, monitor.NotificationsPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryStatusPageMonitors queries the status_page_monitors edge of a Monitor.
+func (c *MonitorClient) QueryStatusPageMonitors(_m *Monitor) *StatusPageMonitorQuery {
+	query := (&StatusPageMonitorClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(monitor.Table, monitor.FieldID, id),
+			sqlgraph.To(statuspagemonitor.Table, statuspagemonitor.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, monitor.StatusPageMonitorsTable, monitor.StatusPageMonitorsColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryMaintenanceWindows queries the maintenance_windows edge of a Monitor.
+func (c *MonitorClient) QueryMaintenanceWindows(_m *Monitor) *MaintenanceWindowQuery {
+	query := (&MaintenanceWindowClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(monitor.Table, monitor.FieldID, id),
+			sqlgraph.To(maintenancewindow.Table, maintenancewindow.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, monitor.MaintenanceWindowsTable, monitor.MaintenanceWindowsPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryIncidents queries the incidents edge of a Monitor.
+func (c *MonitorClient) QueryIncidents(_m *Monitor) *IncidentQuery {
+	query := (&IncidentClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(monitor.Table, monitor.FieldID, id),
+			sqlgraph.To(incident.Table, incident.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, monitor.IncidentsTable, monitor.IncidentsColumn),
 		)
 		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
 		return fromV, nil
@@ -426,107 +1045,107 @@ func (c *MonitorClient) mutate(ctx context.Context, m *MonitorMutation) (Value, 
 	}
 }
 
-// MonitorHistoryClient is a client for the MonitorHistory schema.
-type MonitorHistoryClient struct {
+// MonitorCheckClient is a client for the MonitorCheck schema.
+type MonitorCheckClient struct {
 	config
 }
 
-// NewMonitorHistoryClient returns a client for the MonitorHistory from the given config.
-func NewMonitorHistoryClient(c config) *MonitorHistoryClient {
-	return &MonitorHistoryClient{config: c}
+// NewMonitorCheckClient returns a client for the MonitorCheck from the given config.
+func NewMonitorCheckClient(c config) *MonitorCheckClient {
+	return &MonitorCheckClient{config: c}
 }
 
 // Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `monitorhistory.Hooks(f(g(h())))`.
-func (c *MonitorHistoryClient) Use(hooks ...Hook) {
-	c.hooks.MonitorHistory = append(c.hooks.MonitorHistory, hooks...)
+// A call to `Use(f, g, h)` equals to `monitorcheck.Hooks(f(g(h())))`.
+func (c *MonitorCheckClient) Use(hooks ...Hook) {
+	c.hooks.MonitorCheck = append(c.hooks.MonitorCheck, hooks...)
 }
 
 // Intercept adds a list of query interceptors to the interceptors stack.
-// A call to `Intercept(f, g, h)` equals to `monitorhistory.Intercept(f(g(h())))`.
-func (c *MonitorHistoryClient) Intercept(interceptors ...Interceptor) {
-	c.inters.MonitorHistory = append(c.inters.MonitorHistory, interceptors...)
+// A call to `Intercept(f, g, h)` equals to `monitorcheck.Intercept(f(g(h())))`.
+func (c *MonitorCheckClient) Intercept(interceptors ...Interceptor) {
+	c.inters.MonitorCheck = append(c.inters.MonitorCheck, interceptors...)
 }
 
-// Create returns a builder for creating a MonitorHistory entity.
-func (c *MonitorHistoryClient) Create() *MonitorHistoryCreate {
-	mutation := newMonitorHistoryMutation(c.config, OpCreate)
-	return &MonitorHistoryCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+// Create returns a builder for creating a MonitorCheck entity.
+func (c *MonitorCheckClient) Create() *MonitorCheckCreate {
+	mutation := newMonitorCheckMutation(c.config, OpCreate)
+	return &MonitorCheckCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// CreateBulk returns a builder for creating a bulk of MonitorHistory entities.
-func (c *MonitorHistoryClient) CreateBulk(builders ...*MonitorHistoryCreate) *MonitorHistoryCreateBulk {
-	return &MonitorHistoryCreateBulk{config: c.config, builders: builders}
+// CreateBulk returns a builder for creating a bulk of MonitorCheck entities.
+func (c *MonitorCheckClient) CreateBulk(builders ...*MonitorCheckCreate) *MonitorCheckCreateBulk {
+	return &MonitorCheckCreateBulk{config: c.config, builders: builders}
 }
 
 // MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
 // a builder and applies setFunc on it.
-func (c *MonitorHistoryClient) MapCreateBulk(slice any, setFunc func(*MonitorHistoryCreate, int)) *MonitorHistoryCreateBulk {
+func (c *MonitorCheckClient) MapCreateBulk(slice any, setFunc func(*MonitorCheckCreate, int)) *MonitorCheckCreateBulk {
 	rv := reflect.ValueOf(slice)
 	if rv.Kind() != reflect.Slice {
-		return &MonitorHistoryCreateBulk{err: fmt.Errorf("calling to MonitorHistoryClient.MapCreateBulk with wrong type %T, need slice", slice)}
+		return &MonitorCheckCreateBulk{err: fmt.Errorf("calling to MonitorCheckClient.MapCreateBulk with wrong type %T, need slice", slice)}
 	}
-	builders := make([]*MonitorHistoryCreate, rv.Len())
+	builders := make([]*MonitorCheckCreate, rv.Len())
 	for i := 0; i < rv.Len(); i++ {
 		builders[i] = c.Create()
 		setFunc(builders[i], i)
 	}
-	return &MonitorHistoryCreateBulk{config: c.config, builders: builders}
+	return &MonitorCheckCreateBulk{config: c.config, builders: builders}
 }
 
-// Update returns an update builder for MonitorHistory.
-func (c *MonitorHistoryClient) Update() *MonitorHistoryUpdate {
-	mutation := newMonitorHistoryMutation(c.config, OpUpdate)
-	return &MonitorHistoryUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+// Update returns an update builder for MonitorCheck.
+func (c *MonitorCheckClient) Update() *MonitorCheckUpdate {
+	mutation := newMonitorCheckMutation(c.config, OpUpdate)
+	return &MonitorCheckUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // UpdateOne returns an update builder for the given entity.
-func (c *MonitorHistoryClient) UpdateOne(_m *MonitorHistory) *MonitorHistoryUpdateOne {
-	mutation := newMonitorHistoryMutation(c.config, OpUpdateOne, withMonitorHistory(_m))
-	return &MonitorHistoryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+func (c *MonitorCheckClient) UpdateOne(_m *MonitorCheck) *MonitorCheckUpdateOne {
+	mutation := newMonitorCheckMutation(c.config, OpUpdateOne, withMonitorCheck(_m))
+	return &MonitorCheckUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *MonitorHistoryClient) UpdateOneID(id int) *MonitorHistoryUpdateOne {
-	mutation := newMonitorHistoryMutation(c.config, OpUpdateOne, withMonitorHistoryID(id))
-	return &MonitorHistoryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+func (c *MonitorCheckClient) UpdateOneID(id int) *MonitorCheckUpdateOne {
+	mutation := newMonitorCheckMutation(c.config, OpUpdateOne, withMonitorCheckID(id))
+	return &MonitorCheckUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// Delete returns a delete builder for MonitorHistory.
-func (c *MonitorHistoryClient) Delete() *MonitorHistoryDelete {
-	mutation := newMonitorHistoryMutation(c.config, OpDelete)
-	return &MonitorHistoryDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+// Delete returns a delete builder for MonitorCheck.
+func (c *MonitorCheckClient) Delete() *MonitorCheckDelete {
+	mutation := newMonitorCheckMutation(c.config, OpDelete)
+	return &MonitorCheckDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // DeleteOne returns a builder for deleting the given entity.
-func (c *MonitorHistoryClient) DeleteOne(_m *MonitorHistory) *MonitorHistoryDeleteOne {
+func (c *MonitorCheckClient) DeleteOne(_m *MonitorCheck) *MonitorCheckDeleteOne {
 	return c.DeleteOneID(_m.ID)
 }
 
 // DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *MonitorHistoryClient) DeleteOneID(id int) *MonitorHistoryDeleteOne {
-	builder := c.Delete().Where(monitorhistory.ID(id))
+func (c *MonitorCheckClient) DeleteOneID(id int) *MonitorCheckDeleteOne {
+	builder := c.Delete().Where(monitorcheck.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
-	return &MonitorHistoryDeleteOne{builder}
+	return &MonitorCheckDeleteOne{builder}
 }
 
-// Query returns a query builder for MonitorHistory.
-func (c *MonitorHistoryClient) Query() *MonitorHistoryQuery {
-	return &MonitorHistoryQuery{
+// Query returns a query builder for MonitorCheck.
+func (c *MonitorCheckClient) Query() *MonitorCheckQuery {
+	return &MonitorCheckQuery{
 		config: c.config,
-		ctx:    &QueryContext{Type: TypeMonitorHistory},
+		ctx:    &QueryContext{Type: TypeMonitorCheck},
 		inters: c.Interceptors(),
 	}
 }
 
-// Get returns a MonitorHistory entity by its id.
-func (c *MonitorHistoryClient) Get(ctx context.Context, id int) (*MonitorHistory, error) {
-	return c.Query().Where(monitorhistory.ID(id)).Only(ctx)
+// Get returns a MonitorCheck entity by its id.
+func (c *MonitorCheckClient) Get(ctx context.Context, id int) (*MonitorCheck, error) {
+	return c.Query().Where(monitorcheck.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *MonitorHistoryClient) GetX(ctx context.Context, id int) *MonitorHistory {
+func (c *MonitorCheckClient) GetX(ctx context.Context, id int) *MonitorCheck {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -534,15 +1153,15 @@ func (c *MonitorHistoryClient) GetX(ctx context.Context, id int) *MonitorHistory
 	return obj
 }
 
-// QueryMonitor queries the monitor edge of a MonitorHistory.
-func (c *MonitorHistoryClient) QueryMonitor(_m *MonitorHistory) *MonitorQuery {
+// QueryMonitor queries the monitor edge of a MonitorCheck.
+func (c *MonitorCheckClient) QueryMonitor(_m *MonitorCheck) *MonitorQuery {
 	query := (&MonitorClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := _m.ID
 		step := sqlgraph.NewStep(
-			sqlgraph.From(monitorhistory.Table, monitorhistory.FieldID, id),
+			sqlgraph.From(monitorcheck.Table, monitorcheck.FieldID, id),
 			sqlgraph.To(monitor.Table, monitor.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, monitorhistory.MonitorTable, monitorhistory.MonitorColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, monitorcheck.MonitorTable, monitorcheck.MonitorColumn),
 		)
 		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
 		return fromV, nil
@@ -551,27 +1170,192 @@ func (c *MonitorHistoryClient) QueryMonitor(_m *MonitorHistory) *MonitorQuery {
 }
 
 // Hooks returns the client hooks.
-func (c *MonitorHistoryClient) Hooks() []Hook {
-	return c.hooks.MonitorHistory
+func (c *MonitorCheckClient) Hooks() []Hook {
+	return c.hooks.MonitorCheck
 }
 
 // Interceptors returns the client interceptors.
-func (c *MonitorHistoryClient) Interceptors() []Interceptor {
-	return c.inters.MonitorHistory
+func (c *MonitorCheckClient) Interceptors() []Interceptor {
+	return c.inters.MonitorCheck
 }
 
-func (c *MonitorHistoryClient) mutate(ctx context.Context, m *MonitorHistoryMutation) (Value, error) {
+func (c *MonitorCheckClient) mutate(ctx context.Context, m *MonitorCheckMutation) (Value, error) {
 	switch m.Op() {
 	case OpCreate:
-		return (&MonitorHistoryCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+		return (&MonitorCheckCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
 	case OpUpdate:
-		return (&MonitorHistoryUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+		return (&MonitorCheckUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
 	case OpUpdateOne:
-		return (&MonitorHistoryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+		return (&MonitorCheckUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
 	case OpDelete, OpDeleteOne:
-		return (&MonitorHistoryDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+		return (&MonitorCheckDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
-		return nil, fmt.Errorf("ent: unknown MonitorHistory mutation op: %q", m.Op())
+		return nil, fmt.Errorf("ent: unknown MonitorCheck mutation op: %q", m.Op())
+	}
+}
+
+// NotificationClient is a client for the Notification schema.
+type NotificationClient struct {
+	config
+}
+
+// NewNotificationClient returns a client for the Notification from the given config.
+func NewNotificationClient(c config) *NotificationClient {
+	return &NotificationClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `notification.Hooks(f(g(h())))`.
+func (c *NotificationClient) Use(hooks ...Hook) {
+	c.hooks.Notification = append(c.hooks.Notification, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `notification.Intercept(f(g(h())))`.
+func (c *NotificationClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Notification = append(c.inters.Notification, interceptors...)
+}
+
+// Create returns a builder for creating a Notification entity.
+func (c *NotificationClient) Create() *NotificationCreate {
+	mutation := newNotificationMutation(c.config, OpCreate)
+	return &NotificationCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Notification entities.
+func (c *NotificationClient) CreateBulk(builders ...*NotificationCreate) *NotificationCreateBulk {
+	return &NotificationCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *NotificationClient) MapCreateBulk(slice any, setFunc func(*NotificationCreate, int)) *NotificationCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &NotificationCreateBulk{err: fmt.Errorf("calling to NotificationClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*NotificationCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &NotificationCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Notification.
+func (c *NotificationClient) Update() *NotificationUpdate {
+	mutation := newNotificationMutation(c.config, OpUpdate)
+	return &NotificationUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *NotificationClient) UpdateOne(_m *Notification) *NotificationUpdateOne {
+	mutation := newNotificationMutation(c.config, OpUpdateOne, withNotification(_m))
+	return &NotificationUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *NotificationClient) UpdateOneID(id int) *NotificationUpdateOne {
+	mutation := newNotificationMutation(c.config, OpUpdateOne, withNotificationID(id))
+	return &NotificationUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Notification.
+func (c *NotificationClient) Delete() *NotificationDelete {
+	mutation := newNotificationMutation(c.config, OpDelete)
+	return &NotificationDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *NotificationClient) DeleteOne(_m *Notification) *NotificationDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *NotificationClient) DeleteOneID(id int) *NotificationDeleteOne {
+	builder := c.Delete().Where(notification.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &NotificationDeleteOne{builder}
+}
+
+// Query returns a query builder for Notification.
+func (c *NotificationClient) Query() *NotificationQuery {
+	return &NotificationQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeNotification},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a Notification entity by its id.
+func (c *NotificationClient) Get(ctx context.Context, id int) (*Notification, error) {
+	return c.Query().Where(notification.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *NotificationClient) GetX(ctx context.Context, id int) *Notification {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryUser queries the user edge of a Notification.
+func (c *NotificationClient) QueryUser(_m *Notification) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(notification.Table, notification.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, notification.UserTable, notification.UserColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryMonitors queries the monitors edge of a Notification.
+func (c *NotificationClient) QueryMonitors(_m *Notification) *MonitorQuery {
+	query := (&MonitorClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(notification.Table, notification.FieldID, id),
+			sqlgraph.To(monitor.Table, monitor.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, notification.MonitorsTable, notification.MonitorsPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *NotificationClient) Hooks() []Hook {
+	return c.hooks.Notification
+}
+
+// Interceptors returns the client interceptors.
+func (c *NotificationClient) Interceptors() []Interceptor {
+	return c.inters.Notification
+}
+
+func (c *NotificationClient) mutate(ctx context.Context, m *NotificationMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&NotificationCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&NotificationUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&NotificationUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&NotificationDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown Notification mutation op: %q", m.Op())
 	}
 }
 
@@ -692,6 +1476,22 @@ func (c *StatusMessageClient) QueryStatusPage(_m *StatusMessage) *StatusPageQuer
 			sqlgraph.From(statusmessage.Table, statusmessage.FieldID, id),
 			sqlgraph.To(statuspage.Table, statuspage.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, statusmessage.StatusPageTable, statusmessage.StatusPageColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryIncident queries the incident edge of a StatusMessage.
+func (c *StatusMessageClient) QueryIncident(_m *StatusMessage) *IncidentQuery {
+	query := (&IncidentClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(statusmessage.Table, statusmessage.FieldID, id),
+			sqlgraph.To(incident.Table, incident.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, statusmessage.IncidentTable, statusmessage.IncidentColumn),
 		)
 		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
 		return fromV, nil
@@ -864,15 +1664,31 @@ func (c *StatusPageClient) GetX(ctx context.Context, id int) *StatusPage {
 	return obj
 }
 
-// QueryTag queries the tag edge of a StatusPage.
-func (c *StatusPageClient) QueryTag(_m *StatusPage) *TagQuery {
-	query := (&TagClient{config: c.config}).Query()
+// QueryUser queries the user edge of a StatusPage.
+func (c *StatusPageClient) QueryUser(_m *StatusPage) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := _m.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(statuspage.Table, statuspage.FieldID, id),
-			sqlgraph.To(tag.Table, tag.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, statuspage.TagTable, statuspage.TagColumn),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, statuspage.UserTable, statuspage.UserColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryStatusPageMonitors queries the status_page_monitors edge of a StatusPage.
+func (c *StatusPageClient) QueryStatusPageMonitors(_m *StatusPage) *StatusPageMonitorQuery {
+	query := (&StatusPageMonitorClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(statuspage.Table, statuspage.FieldID, id),
+			sqlgraph.To(statuspagemonitor.Table, statuspagemonitor.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, statuspage.StatusPageMonitorsTable, statuspage.StatusPageMonitorsColumn),
 		)
 		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
 		return fromV, nil
@@ -889,6 +1705,22 @@ func (c *StatusPageClient) QueryMessages(_m *StatusPage) *StatusMessageQuery {
 			sqlgraph.From(statuspage.Table, statuspage.FieldID, id),
 			sqlgraph.To(statusmessage.Table, statusmessage.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, statuspage.MessagesTable, statuspage.MessagesColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryIncidents queries the incidents edge of a StatusPage.
+func (c *StatusPageClient) QueryIncidents(_m *StatusPage) *IncidentQuery {
+	query := (&IncidentClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(statuspage.Table, statuspage.FieldID, id),
+			sqlgraph.To(incident.Table, incident.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, statuspage.IncidentsTable, statuspage.IncidentsColumn),
 		)
 		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
 		return fromV, nil
@@ -918,6 +1750,171 @@ func (c *StatusPageClient) mutate(ctx context.Context, m *StatusPageMutation) (V
 		return (&StatusPageDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown StatusPage mutation op: %q", m.Op())
+	}
+}
+
+// StatusPageMonitorClient is a client for the StatusPageMonitor schema.
+type StatusPageMonitorClient struct {
+	config
+}
+
+// NewStatusPageMonitorClient returns a client for the StatusPageMonitor from the given config.
+func NewStatusPageMonitorClient(c config) *StatusPageMonitorClient {
+	return &StatusPageMonitorClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `statuspagemonitor.Hooks(f(g(h())))`.
+func (c *StatusPageMonitorClient) Use(hooks ...Hook) {
+	c.hooks.StatusPageMonitor = append(c.hooks.StatusPageMonitor, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `statuspagemonitor.Intercept(f(g(h())))`.
+func (c *StatusPageMonitorClient) Intercept(interceptors ...Interceptor) {
+	c.inters.StatusPageMonitor = append(c.inters.StatusPageMonitor, interceptors...)
+}
+
+// Create returns a builder for creating a StatusPageMonitor entity.
+func (c *StatusPageMonitorClient) Create() *StatusPageMonitorCreate {
+	mutation := newStatusPageMonitorMutation(c.config, OpCreate)
+	return &StatusPageMonitorCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of StatusPageMonitor entities.
+func (c *StatusPageMonitorClient) CreateBulk(builders ...*StatusPageMonitorCreate) *StatusPageMonitorCreateBulk {
+	return &StatusPageMonitorCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *StatusPageMonitorClient) MapCreateBulk(slice any, setFunc func(*StatusPageMonitorCreate, int)) *StatusPageMonitorCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &StatusPageMonitorCreateBulk{err: fmt.Errorf("calling to StatusPageMonitorClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*StatusPageMonitorCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &StatusPageMonitorCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for StatusPageMonitor.
+func (c *StatusPageMonitorClient) Update() *StatusPageMonitorUpdate {
+	mutation := newStatusPageMonitorMutation(c.config, OpUpdate)
+	return &StatusPageMonitorUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *StatusPageMonitorClient) UpdateOne(_m *StatusPageMonitor) *StatusPageMonitorUpdateOne {
+	mutation := newStatusPageMonitorMutation(c.config, OpUpdateOne, withStatusPageMonitor(_m))
+	return &StatusPageMonitorUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *StatusPageMonitorClient) UpdateOneID(id int) *StatusPageMonitorUpdateOne {
+	mutation := newStatusPageMonitorMutation(c.config, OpUpdateOne, withStatusPageMonitorID(id))
+	return &StatusPageMonitorUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for StatusPageMonitor.
+func (c *StatusPageMonitorClient) Delete() *StatusPageMonitorDelete {
+	mutation := newStatusPageMonitorMutation(c.config, OpDelete)
+	return &StatusPageMonitorDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *StatusPageMonitorClient) DeleteOne(_m *StatusPageMonitor) *StatusPageMonitorDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *StatusPageMonitorClient) DeleteOneID(id int) *StatusPageMonitorDeleteOne {
+	builder := c.Delete().Where(statuspagemonitor.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &StatusPageMonitorDeleteOne{builder}
+}
+
+// Query returns a query builder for StatusPageMonitor.
+func (c *StatusPageMonitorClient) Query() *StatusPageMonitorQuery {
+	return &StatusPageMonitorQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeStatusPageMonitor},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a StatusPageMonitor entity by its id.
+func (c *StatusPageMonitorClient) Get(ctx context.Context, id int) (*StatusPageMonitor, error) {
+	return c.Query().Where(statuspagemonitor.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *StatusPageMonitorClient) GetX(ctx context.Context, id int) *StatusPageMonitor {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryStatusPage queries the status_page edge of a StatusPageMonitor.
+func (c *StatusPageMonitorClient) QueryStatusPage(_m *StatusPageMonitor) *StatusPageQuery {
+	query := (&StatusPageClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(statuspagemonitor.Table, statuspagemonitor.FieldID, id),
+			sqlgraph.To(statuspage.Table, statuspage.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, statuspagemonitor.StatusPageTable, statuspagemonitor.StatusPageColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryMonitor queries the monitor edge of a StatusPageMonitor.
+func (c *StatusPageMonitorClient) QueryMonitor(_m *StatusPageMonitor) *MonitorQuery {
+	query := (&MonitorClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(statuspagemonitor.Table, statuspagemonitor.FieldID, id),
+			sqlgraph.To(monitor.Table, monitor.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, statuspagemonitor.MonitorTable, statuspagemonitor.MonitorColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *StatusPageMonitorClient) Hooks() []Hook {
+	return c.hooks.StatusPageMonitor
+}
+
+// Interceptors returns the client interceptors.
+func (c *StatusPageMonitorClient) Interceptors() []Interceptor {
+	return c.inters.StatusPageMonitor
+}
+
+func (c *StatusPageMonitorClient) mutate(ctx context.Context, m *StatusPageMonitorMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&StatusPageMonitorCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&StatusPageMonitorUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&StatusPageMonitorUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&StatusPageMonitorDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown StatusPageMonitor mutation op: %q", m.Op())
 	}
 }
 
@@ -1029,6 +2026,22 @@ func (c *TagClient) GetX(ctx context.Context, id int) *Tag {
 	return obj
 }
 
+// QueryUser queries the user edge of a Tag.
+func (c *TagClient) QueryUser(_m *Tag) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(tag.Table, tag.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, tag.UserTable, tag.UserColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // QueryMonitors queries the monitors edge of a Tag.
 func (c *TagClient) QueryMonitors(_m *Tag) *MonitorQuery {
 	query := (&MonitorClient{config: c.config}).Query()
@@ -1038,22 +2051,6 @@ func (c *TagClient) QueryMonitors(_m *Tag) *MonitorQuery {
 			sqlgraph.From(tag.Table, tag.FieldID, id),
 			sqlgraph.To(monitor.Table, monitor.FieldID),
 			sqlgraph.Edge(sqlgraph.M2M, true, tag.MonitorsTable, tag.MonitorsPrimaryKey...),
-		)
-		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryStatusPages queries the status_pages edge of a Tag.
-func (c *TagClient) QueryStatusPages(_m *Tag) *StatusPageQuery {
-	query := (&StatusPageClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := _m.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(tag.Table, tag.FieldID, id),
-			sqlgraph.To(statuspage.Table, statuspage.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, tag.StatusPagesTable, tag.StatusPagesColumn),
 		)
 		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
 		return fromV, nil
@@ -1210,6 +2207,102 @@ func (c *UserClient) QueryMonitors(_m *User) *MonitorQuery {
 	return query
 }
 
+// QueryTags queries the tags edge of a User.
+func (c *UserClient) QueryTags(_m *User) *TagQuery {
+	query := (&TagClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(tag.Table, tag.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.TagsTable, user.TagsColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryAPIKeys queries the api_keys edge of a User.
+func (c *UserClient) QueryAPIKeys(_m *User) *APIKeyQuery {
+	query := (&APIKeyClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(apikey.Table, apikey.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.APIKeysTable, user.APIKeysColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryNotifications queries the notifications edge of a User.
+func (c *UserClient) QueryNotifications(_m *User) *NotificationQuery {
+	query := (&NotificationClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(notification.Table, notification.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.NotificationsTable, user.NotificationsColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryStatusPages queries the status_pages edge of a User.
+func (c *UserClient) QueryStatusPages(_m *User) *StatusPageQuery {
+	query := (&StatusPageClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(statuspage.Table, statuspage.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.StatusPagesTable, user.StatusPagesColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryMaintenanceWindows queries the maintenance_windows edge of a User.
+func (c *UserClient) QueryMaintenanceWindows(_m *User) *MaintenanceWindowQuery {
+	query := (&MaintenanceWindowClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(maintenancewindow.Table, maintenancewindow.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.MaintenanceWindowsTable, user.MaintenanceWindowsColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryResolvedIncidents queries the resolved_incidents edge of a User.
+func (c *UserClient) QueryResolvedIncidents(_m *User) *IncidentQuery {
+	query := (&IncidentClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(incident.Table, incident.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.ResolvedIncidentsTable, user.ResolvedIncidentsColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *UserClient) Hooks() []Hook {
 	return c.hooks.User
@@ -1238,9 +2331,11 @@ func (c *UserClient) mutate(ctx context.Context, m *UserMutation) (Value, error)
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		Monitor, MonitorHistory, StatusMessage, StatusPage, Tag, User []ent.Hook
+		APIKey, Incident, MaintenanceWindow, Monitor, MonitorCheck, Notification,
+		StatusMessage, StatusPage, StatusPageMonitor, Tag, User []ent.Hook
 	}
 	inters struct {
-		Monitor, MonitorHistory, StatusMessage, StatusPage, Tag, User []ent.Interceptor
+		APIKey, Incident, MaintenanceWindow, Monitor, MonitorCheck, Notification,
+		StatusMessage, StatusPage, StatusPageMonitor, Tag, User []ent.Interceptor
 	}
 )

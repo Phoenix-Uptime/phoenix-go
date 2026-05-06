@@ -6,17 +6,32 @@ import (
 	"entgo.io/ent/dialect/sql"
 )
 
+// APIKey is the predicate function for apikey builders.
+type APIKey func(*sql.Selector)
+
+// Incident is the predicate function for incident builders.
+type Incident func(*sql.Selector)
+
+// MaintenanceWindow is the predicate function for maintenancewindow builders.
+type MaintenanceWindow func(*sql.Selector)
+
 // Monitor is the predicate function for monitor builders.
 type Monitor func(*sql.Selector)
 
-// MonitorHistory is the predicate function for monitorhistory builders.
-type MonitorHistory func(*sql.Selector)
+// MonitorCheck is the predicate function for monitorcheck builders.
+type MonitorCheck func(*sql.Selector)
+
+// Notification is the predicate function for notification builders.
+type Notification func(*sql.Selector)
 
 // StatusMessage is the predicate function for statusmessage builders.
 type StatusMessage func(*sql.Selector)
 
 // StatusPage is the predicate function for statuspage builders.
 type StatusPage func(*sql.Selector)
+
+// StatusPageMonitor is the predicate function for statuspagemonitor builders.
+type StatusPageMonitor func(*sql.Selector)
 
 // Tag is the predicate function for tag builders.
 type Tag func(*sql.Selector)

@@ -12,19 +12,31 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/apikey"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/incident"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/maintenancewindow"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/monitor"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/notification"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/predicate"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/statuspage"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/tag"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/user"
 )
 
 // UserQuery is the builder for querying User entities.
 type UserQuery struct {
 	config
-	ctx          *QueryContext
-	order        []user.OrderOption
-	inters       []Interceptor
-	predicates   []predicate.User
-	withMonitors *MonitorQuery
+	ctx                    *QueryContext
+	order                  []user.OrderOption
+	inters                 []Interceptor
+	predicates             []predicate.User
+	withMonitors           *MonitorQuery
+	withTags               *TagQuery
+	withAPIKeys            *APIKeyQuery
+	withNotifications      *NotificationQuery
+	withStatusPages        *StatusPageQuery
+	withMaintenanceWindows *MaintenanceWindowQuery
+	withResolvedIncidents  *IncidentQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -76,6 +88,138 @@ func (_q *UserQuery) QueryMonitors() *MonitorQuery {
 			sqlgraph.From(user.Table, user.FieldID, selector),
 			sqlgraph.To(monitor.Table, monitor.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, user.MonitorsTable, user.MonitorsColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryTags chains the current query on the "tags" edge.
+func (_q *UserQuery) QueryTags() *TagQuery {
+	query := (&TagClient{config: _q.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := _q.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := _q.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(tag.Table, tag.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.TagsTable, user.TagsColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryAPIKeys chains the current query on the "api_keys" edge.
+func (_q *UserQuery) QueryAPIKeys() *APIKeyQuery {
+	query := (&APIKeyClient{config: _q.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := _q.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := _q.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(apikey.Table, apikey.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.APIKeysTable, user.APIKeysColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryNotifications chains the current query on the "notifications" edge.
+func (_q *UserQuery) QueryNotifications() *NotificationQuery {
+	query := (&NotificationClient{config: _q.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := _q.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := _q.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(notification.Table, notification.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.NotificationsTable, user.NotificationsColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryStatusPages chains the current query on the "status_pages" edge.
+func (_q *UserQuery) QueryStatusPages() *StatusPageQuery {
+	query := (&StatusPageClient{config: _q.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := _q.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := _q.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(statuspage.Table, statuspage.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.StatusPagesTable, user.StatusPagesColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryMaintenanceWindows chains the current query on the "maintenance_windows" edge.
+func (_q *UserQuery) QueryMaintenanceWindows() *MaintenanceWindowQuery {
+	query := (&MaintenanceWindowClient{config: _q.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := _q.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := _q.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(maintenancewindow.Table, maintenancewindow.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.MaintenanceWindowsTable, user.MaintenanceWindowsColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryResolvedIncidents chains the current query on the "resolved_incidents" edge.
+func (_q *UserQuery) QueryResolvedIncidents() *IncidentQuery {
+	query := (&IncidentClient{config: _q.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := _q.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := _q.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(incident.Table, incident.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.ResolvedIncidentsTable, user.ResolvedIncidentsColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -270,12 +414,18 @@ func (_q *UserQuery) Clone() *UserQuery {
 		return nil
 	}
 	return &UserQuery{
-		config:       _q.config,
-		ctx:          _q.ctx.Clone(),
-		order:        append([]user.OrderOption{}, _q.order...),
-		inters:       append([]Interceptor{}, _q.inters...),
-		predicates:   append([]predicate.User{}, _q.predicates...),
-		withMonitors: _q.withMonitors.Clone(),
+		config:                 _q.config,
+		ctx:                    _q.ctx.Clone(),
+		order:                  append([]user.OrderOption{}, _q.order...),
+		inters:                 append([]Interceptor{}, _q.inters...),
+		predicates:             append([]predicate.User{}, _q.predicates...),
+		withMonitors:           _q.withMonitors.Clone(),
+		withTags:               _q.withTags.Clone(),
+		withAPIKeys:            _q.withAPIKeys.Clone(),
+		withNotifications:      _q.withNotifications.Clone(),
+		withStatusPages:        _q.withStatusPages.Clone(),
+		withMaintenanceWindows: _q.withMaintenanceWindows.Clone(),
+		withResolvedIncidents:  _q.withResolvedIncidents.Clone(),
 		// clone intermediate query.
 		sql:  _q.sql.Clone(),
 		path: _q.path,
@@ -290,6 +440,72 @@ func (_q *UserQuery) WithMonitors(opts ...func(*MonitorQuery)) *UserQuery {
 		opt(query)
 	}
 	_q.withMonitors = query
+	return _q
+}
+
+// WithTags tells the query-builder to eager-load the nodes that are connected to
+// the "tags" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *UserQuery) WithTags(opts ...func(*TagQuery)) *UserQuery {
+	query := (&TagClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	_q.withTags = query
+	return _q
+}
+
+// WithAPIKeys tells the query-builder to eager-load the nodes that are connected to
+// the "api_keys" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *UserQuery) WithAPIKeys(opts ...func(*APIKeyQuery)) *UserQuery {
+	query := (&APIKeyClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	_q.withAPIKeys = query
+	return _q
+}
+
+// WithNotifications tells the query-builder to eager-load the nodes that are connected to
+// the "notifications" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *UserQuery) WithNotifications(opts ...func(*NotificationQuery)) *UserQuery {
+	query := (&NotificationClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	_q.withNotifications = query
+	return _q
+}
+
+// WithStatusPages tells the query-builder to eager-load the nodes that are connected to
+// the "status_pages" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *UserQuery) WithStatusPages(opts ...func(*StatusPageQuery)) *UserQuery {
+	query := (&StatusPageClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	_q.withStatusPages = query
+	return _q
+}
+
+// WithMaintenanceWindows tells the query-builder to eager-load the nodes that are connected to
+// the "maintenance_windows" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *UserQuery) WithMaintenanceWindows(opts ...func(*MaintenanceWindowQuery)) *UserQuery {
+	query := (&MaintenanceWindowClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	_q.withMaintenanceWindows = query
+	return _q
+}
+
+// WithResolvedIncidents tells the query-builder to eager-load the nodes that are connected to
+// the "resolved_incidents" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *UserQuery) WithResolvedIncidents(opts ...func(*IncidentQuery)) *UserQuery {
+	query := (&IncidentClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	_q.withResolvedIncidents = query
 	return _q
 }
 
@@ -371,8 +587,14 @@ func (_q *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 	var (
 		nodes       = []*User{}
 		_spec       = _q.querySpec()
-		loadedTypes = [1]bool{
+		loadedTypes = [7]bool{
 			_q.withMonitors != nil,
+			_q.withTags != nil,
+			_q.withAPIKeys != nil,
+			_q.withNotifications != nil,
+			_q.withStatusPages != nil,
+			_q.withMaintenanceWindows != nil,
+			_q.withResolvedIncidents != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -397,6 +619,50 @@ func (_q *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 		if err := _q.loadMonitors(ctx, query, nodes,
 			func(n *User) { n.Edges.Monitors = []*Monitor{} },
 			func(n *User, e *Monitor) { n.Edges.Monitors = append(n.Edges.Monitors, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := _q.withTags; query != nil {
+		if err := _q.loadTags(ctx, query, nodes,
+			func(n *User) { n.Edges.Tags = []*Tag{} },
+			func(n *User, e *Tag) { n.Edges.Tags = append(n.Edges.Tags, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := _q.withAPIKeys; query != nil {
+		if err := _q.loadAPIKeys(ctx, query, nodes,
+			func(n *User) { n.Edges.APIKeys = []*APIKey{} },
+			func(n *User, e *APIKey) { n.Edges.APIKeys = append(n.Edges.APIKeys, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := _q.withNotifications; query != nil {
+		if err := _q.loadNotifications(ctx, query, nodes,
+			func(n *User) { n.Edges.Notifications = []*Notification{} },
+			func(n *User, e *Notification) { n.Edges.Notifications = append(n.Edges.Notifications, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := _q.withStatusPages; query != nil {
+		if err := _q.loadStatusPages(ctx, query, nodes,
+			func(n *User) { n.Edges.StatusPages = []*StatusPage{} },
+			func(n *User, e *StatusPage) { n.Edges.StatusPages = append(n.Edges.StatusPages, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := _q.withMaintenanceWindows; query != nil {
+		if err := _q.loadMaintenanceWindows(ctx, query, nodes,
+			func(n *User) { n.Edges.MaintenanceWindows = []*MaintenanceWindow{} },
+			func(n *User, e *MaintenanceWindow) {
+				n.Edges.MaintenanceWindows = append(n.Edges.MaintenanceWindows, e)
+			}); err != nil {
+			return nil, err
+		}
+	}
+	if query := _q.withResolvedIncidents; query != nil {
+		if err := _q.loadResolvedIncidents(ctx, query, nodes,
+			func(n *User) { n.Edges.ResolvedIncidents = []*Incident{} },
+			func(n *User, e *Incident) { n.Edges.ResolvedIncidents = append(n.Edges.ResolvedIncidents, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -428,6 +694,189 @@ func (_q *UserQuery) loadMonitors(ctx context.Context, query *MonitorQuery, node
 		node, ok := nodeids[fk]
 		if !ok {
 			return fmt.Errorf(`unexpected referenced foreign-key "user_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (_q *UserQuery) loadTags(ctx context.Context, query *TagQuery, nodes []*User, init func(*User), assign func(*User, *Tag)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int]*User)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(tag.FieldUserID)
+	}
+	query.Where(predicate.Tag(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(user.TagsColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.UserID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "user_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (_q *UserQuery) loadAPIKeys(ctx context.Context, query *APIKeyQuery, nodes []*User, init func(*User), assign func(*User, *APIKey)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int]*User)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(apikey.FieldUserID)
+	}
+	query.Where(predicate.APIKey(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(user.APIKeysColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.UserID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "user_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (_q *UserQuery) loadNotifications(ctx context.Context, query *NotificationQuery, nodes []*User, init func(*User), assign func(*User, *Notification)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int]*User)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(notification.FieldUserID)
+	}
+	query.Where(predicate.Notification(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(user.NotificationsColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.UserID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "user_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (_q *UserQuery) loadStatusPages(ctx context.Context, query *StatusPageQuery, nodes []*User, init func(*User), assign func(*User, *StatusPage)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int]*User)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(statuspage.FieldUserID)
+	}
+	query.Where(predicate.StatusPage(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(user.StatusPagesColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.UserID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "user_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (_q *UserQuery) loadMaintenanceWindows(ctx context.Context, query *MaintenanceWindowQuery, nodes []*User, init func(*User), assign func(*User, *MaintenanceWindow)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int]*User)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(maintenancewindow.FieldUserID)
+	}
+	query.Where(predicate.MaintenanceWindow(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(user.MaintenanceWindowsColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.UserID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "user_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (_q *UserQuery) loadResolvedIncidents(ctx context.Context, query *IncidentQuery, nodes []*User, init func(*User), assign func(*User, *Incident)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int]*User)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(incident.FieldResolvedByID)
+	}
+	query.Where(predicate.Incident(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(user.ResolvedIncidentsColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.ResolvedByID
+		if fk == nil {
+			return fmt.Errorf(`foreign-key "resolved_by_id" is nil for node %v`, n.ID)
+		}
+		node, ok := nodeids[*fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "resolved_by_id" returned %v for node %v`, *fk, n.ID)
 		}
 		assign(node, n)
 	}

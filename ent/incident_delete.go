@@ -8,30 +8,30 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/Phoenix-Uptime/phoenix-go/ent/monitorhistory"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/incident"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/predicate"
 )
 
-// MonitorHistoryDelete is the builder for deleting a MonitorHistory entity.
-type MonitorHistoryDelete struct {
+// IncidentDelete is the builder for deleting a Incident entity.
+type IncidentDelete struct {
 	config
 	hooks    []Hook
-	mutation *MonitorHistoryMutation
+	mutation *IncidentMutation
 }
 
-// Where appends a list predicates to the MonitorHistoryDelete builder.
-func (_d *MonitorHistoryDelete) Where(ps ...predicate.MonitorHistory) *MonitorHistoryDelete {
+// Where appends a list predicates to the IncidentDelete builder.
+func (_d *IncidentDelete) Where(ps ...predicate.Incident) *IncidentDelete {
 	_d.mutation.Where(ps...)
 	return _d
 }
 
 // Exec executes the deletion query and returns how many vertices were deleted.
-func (_d *MonitorHistoryDelete) Exec(ctx context.Context) (int, error) {
+func (_d *IncidentDelete) Exec(ctx context.Context) (int, error) {
 	return withHooks(ctx, _d.sqlExec, _d.mutation, _d.hooks)
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (_d *MonitorHistoryDelete) ExecX(ctx context.Context) int {
+func (_d *IncidentDelete) ExecX(ctx context.Context) int {
 	n, err := _d.Exec(ctx)
 	if err != nil {
 		panic(err)
@@ -39,8 +39,8 @@ func (_d *MonitorHistoryDelete) ExecX(ctx context.Context) int {
 	return n
 }
 
-func (_d *MonitorHistoryDelete) sqlExec(ctx context.Context) (int, error) {
-	_spec := sqlgraph.NewDeleteSpec(monitorhistory.Table, sqlgraph.NewFieldSpec(monitorhistory.FieldID, field.TypeInt))
+func (_d *IncidentDelete) sqlExec(ctx context.Context) (int, error) {
+	_spec := sqlgraph.NewDeleteSpec(incident.Table, sqlgraph.NewFieldSpec(incident.FieldID, field.TypeInt))
 	if ps := _d.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -56,32 +56,32 @@ func (_d *MonitorHistoryDelete) sqlExec(ctx context.Context) (int, error) {
 	return affected, err
 }
 
-// MonitorHistoryDeleteOne is the builder for deleting a single MonitorHistory entity.
-type MonitorHistoryDeleteOne struct {
-	_d *MonitorHistoryDelete
+// IncidentDeleteOne is the builder for deleting a single Incident entity.
+type IncidentDeleteOne struct {
+	_d *IncidentDelete
 }
 
-// Where appends a list predicates to the MonitorHistoryDelete builder.
-func (_d *MonitorHistoryDeleteOne) Where(ps ...predicate.MonitorHistory) *MonitorHistoryDeleteOne {
+// Where appends a list predicates to the IncidentDelete builder.
+func (_d *IncidentDeleteOne) Where(ps ...predicate.Incident) *IncidentDeleteOne {
 	_d._d.mutation.Where(ps...)
 	return _d
 }
 
 // Exec executes the deletion query.
-func (_d *MonitorHistoryDeleteOne) Exec(ctx context.Context) error {
+func (_d *IncidentDeleteOne) Exec(ctx context.Context) error {
 	n, err := _d._d.Exec(ctx)
 	switch {
 	case err != nil:
 		return err
 	case n == 0:
-		return &NotFoundError{monitorhistory.Label}
+		return &NotFoundError{incident.Label}
 	default:
 		return nil
 	}
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (_d *MonitorHistoryDeleteOne) ExecX(ctx context.Context) {
+func (_d *IncidentDeleteOne) ExecX(ctx context.Context) {
 	if err := _d.Exec(ctx); err != nil {
 		panic(err)
 	}

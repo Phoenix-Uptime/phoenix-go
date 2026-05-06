@@ -13,8 +13,8 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/monitor"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/predicate"
-	"github.com/Phoenix-Uptime/phoenix-go/ent/statuspage"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/tag"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/user"
 )
 
 // TagUpdate is the builder for updating Tag entities.
@@ -53,6 +53,20 @@ func (_u *TagUpdate) SetNillableDeletedAt(v *time.Time) *TagUpdate {
 // ClearDeletedAt clears the value of the "deleted_at" field.
 func (_u *TagUpdate) ClearDeletedAt() *TagUpdate {
 	_u.mutation.ClearDeletedAt()
+	return _u
+}
+
+// SetUserID sets the "user_id" field.
+func (_u *TagUpdate) SetUserID(v int) *TagUpdate {
+	_u.mutation.SetUserID(v)
+	return _u
+}
+
+// SetNillableUserID sets the "user_id" field if the given value is not nil.
+func (_u *TagUpdate) SetNillableUserID(v *int) *TagUpdate {
+	if v != nil {
+		_u.SetUserID(*v)
+	}
 	return _u
 }
 
@@ -110,6 +124,11 @@ func (_u *TagUpdate) ClearColor() *TagUpdate {
 	return _u
 }
 
+// SetUser sets the "user" edge to the User entity.
+func (_u *TagUpdate) SetUser(v *User) *TagUpdate {
+	return _u.SetUserID(v.ID)
+}
+
 // AddMonitorIDs adds the "monitors" edge to the Monitor entity by IDs.
 func (_u *TagUpdate) AddMonitorIDs(ids ...int) *TagUpdate {
 	_u.mutation.AddMonitorIDs(ids...)
@@ -125,24 +144,15 @@ func (_u *TagUpdate) AddMonitors(v ...*Monitor) *TagUpdate {
 	return _u.AddMonitorIDs(ids...)
 }
 
-// AddStatusPageIDs adds the "status_pages" edge to the StatusPage entity by IDs.
-func (_u *TagUpdate) AddStatusPageIDs(ids ...int) *TagUpdate {
-	_u.mutation.AddStatusPageIDs(ids...)
-	return _u
-}
-
-// AddStatusPages adds the "status_pages" edges to the StatusPage entity.
-func (_u *TagUpdate) AddStatusPages(v ...*StatusPage) *TagUpdate {
-	ids := make([]int, len(v))
-	for i := range v {
-		ids[i] = v[i].ID
-	}
-	return _u.AddStatusPageIDs(ids...)
-}
-
 // Mutation returns the TagMutation object of the builder.
 func (_u *TagUpdate) Mutation() *TagMutation {
 	return _u.mutation
+}
+
+// ClearUser clears the "user" edge to the User entity.
+func (_u *TagUpdate) ClearUser() *TagUpdate {
+	_u.mutation.ClearUser()
+	return _u
 }
 
 // ClearMonitors clears all "monitors" edges to the Monitor entity.
@@ -164,27 +174,6 @@ func (_u *TagUpdate) RemoveMonitors(v ...*Monitor) *TagUpdate {
 		ids[i] = v[i].ID
 	}
 	return _u.RemoveMonitorIDs(ids...)
-}
-
-// ClearStatusPages clears all "status_pages" edges to the StatusPage entity.
-func (_u *TagUpdate) ClearStatusPages() *TagUpdate {
-	_u.mutation.ClearStatusPages()
-	return _u
-}
-
-// RemoveStatusPageIDs removes the "status_pages" edge to StatusPage entities by IDs.
-func (_u *TagUpdate) RemoveStatusPageIDs(ids ...int) *TagUpdate {
-	_u.mutation.RemoveStatusPageIDs(ids...)
-	return _u
-}
-
-// RemoveStatusPages removes "status_pages" edges to StatusPage entities.
-func (_u *TagUpdate) RemoveStatusPages(v ...*StatusPage) *TagUpdate {
-	ids := make([]int, len(v))
-	for i := range v {
-		ids[i] = v[i].ID
-	}
-	return _u.RemoveStatusPageIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -230,6 +219,9 @@ func (_u *TagUpdate) check() error {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "Tag.name": %w`, err)}
 		}
 	}
+	if _u.mutation.UserCleared() && len(_u.mutation.UserIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "Tag.user"`)
+	}
 	return nil
 }
 
@@ -269,6 +261,35 @@ func (_u *TagUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if _u.mutation.ColorCleared() {
 		_spec.ClearField(tag.FieldColor, field.TypeString)
 	}
+	if _u.mutation.UserCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   tag.UserTable,
+			Columns: []string{tag.UserColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.UserIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   tag.UserTable,
+			Columns: []string{tag.UserColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if _u.mutation.MonitorsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
@@ -307,51 +328,6 @@ func (_u *TagUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(monitor.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if _u.mutation.StatusPagesCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   tag.StatusPagesTable,
-			Columns: []string{tag.StatusPagesColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(statuspage.FieldID, field.TypeInt),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := _u.mutation.RemovedStatusPagesIDs(); len(nodes) > 0 && !_u.mutation.StatusPagesCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   tag.StatusPagesTable,
-			Columns: []string{tag.StatusPagesColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(statuspage.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := _u.mutation.StatusPagesIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   tag.StatusPagesTable,
-			Columns: []string{tag.StatusPagesColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(statuspage.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -402,6 +378,20 @@ func (_u *TagUpdateOne) SetNillableDeletedAt(v *time.Time) *TagUpdateOne {
 // ClearDeletedAt clears the value of the "deleted_at" field.
 func (_u *TagUpdateOne) ClearDeletedAt() *TagUpdateOne {
 	_u.mutation.ClearDeletedAt()
+	return _u
+}
+
+// SetUserID sets the "user_id" field.
+func (_u *TagUpdateOne) SetUserID(v int) *TagUpdateOne {
+	_u.mutation.SetUserID(v)
+	return _u
+}
+
+// SetNillableUserID sets the "user_id" field if the given value is not nil.
+func (_u *TagUpdateOne) SetNillableUserID(v *int) *TagUpdateOne {
+	if v != nil {
+		_u.SetUserID(*v)
+	}
 	return _u
 }
 
@@ -459,6 +449,11 @@ func (_u *TagUpdateOne) ClearColor() *TagUpdateOne {
 	return _u
 }
 
+// SetUser sets the "user" edge to the User entity.
+func (_u *TagUpdateOne) SetUser(v *User) *TagUpdateOne {
+	return _u.SetUserID(v.ID)
+}
+
 // AddMonitorIDs adds the "monitors" edge to the Monitor entity by IDs.
 func (_u *TagUpdateOne) AddMonitorIDs(ids ...int) *TagUpdateOne {
 	_u.mutation.AddMonitorIDs(ids...)
@@ -474,24 +469,15 @@ func (_u *TagUpdateOne) AddMonitors(v ...*Monitor) *TagUpdateOne {
 	return _u.AddMonitorIDs(ids...)
 }
 
-// AddStatusPageIDs adds the "status_pages" edge to the StatusPage entity by IDs.
-func (_u *TagUpdateOne) AddStatusPageIDs(ids ...int) *TagUpdateOne {
-	_u.mutation.AddStatusPageIDs(ids...)
-	return _u
-}
-
-// AddStatusPages adds the "status_pages" edges to the StatusPage entity.
-func (_u *TagUpdateOne) AddStatusPages(v ...*StatusPage) *TagUpdateOne {
-	ids := make([]int, len(v))
-	for i := range v {
-		ids[i] = v[i].ID
-	}
-	return _u.AddStatusPageIDs(ids...)
-}
-
 // Mutation returns the TagMutation object of the builder.
 func (_u *TagUpdateOne) Mutation() *TagMutation {
 	return _u.mutation
+}
+
+// ClearUser clears the "user" edge to the User entity.
+func (_u *TagUpdateOne) ClearUser() *TagUpdateOne {
+	_u.mutation.ClearUser()
+	return _u
 }
 
 // ClearMonitors clears all "monitors" edges to the Monitor entity.
@@ -513,27 +499,6 @@ func (_u *TagUpdateOne) RemoveMonitors(v ...*Monitor) *TagUpdateOne {
 		ids[i] = v[i].ID
 	}
 	return _u.RemoveMonitorIDs(ids...)
-}
-
-// ClearStatusPages clears all "status_pages" edges to the StatusPage entity.
-func (_u *TagUpdateOne) ClearStatusPages() *TagUpdateOne {
-	_u.mutation.ClearStatusPages()
-	return _u
-}
-
-// RemoveStatusPageIDs removes the "status_pages" edge to StatusPage entities by IDs.
-func (_u *TagUpdateOne) RemoveStatusPageIDs(ids ...int) *TagUpdateOne {
-	_u.mutation.RemoveStatusPageIDs(ids...)
-	return _u
-}
-
-// RemoveStatusPages removes "status_pages" edges to StatusPage entities.
-func (_u *TagUpdateOne) RemoveStatusPages(v ...*StatusPage) *TagUpdateOne {
-	ids := make([]int, len(v))
-	for i := range v {
-		ids[i] = v[i].ID
-	}
-	return _u.RemoveStatusPageIDs(ids...)
 }
 
 // Where appends a list predicates to the TagUpdate builder.
@@ -592,6 +557,9 @@ func (_u *TagUpdateOne) check() error {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "Tag.name": %w`, err)}
 		}
 	}
+	if _u.mutation.UserCleared() && len(_u.mutation.UserIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "Tag.user"`)
+	}
 	return nil
 }
 
@@ -648,6 +616,35 @@ func (_u *TagUpdateOne) sqlSave(ctx context.Context) (_node *Tag, err error) {
 	if _u.mutation.ColorCleared() {
 		_spec.ClearField(tag.FieldColor, field.TypeString)
 	}
+	if _u.mutation.UserCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   tag.UserTable,
+			Columns: []string{tag.UserColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.UserIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   tag.UserTable,
+			Columns: []string{tag.UserColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if _u.mutation.MonitorsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
@@ -686,51 +683,6 @@ func (_u *TagUpdateOne) sqlSave(ctx context.Context) (_node *Tag, err error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(monitor.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if _u.mutation.StatusPagesCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   tag.StatusPagesTable,
-			Columns: []string{tag.StatusPagesColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(statuspage.FieldID, field.TypeInt),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := _u.mutation.RemovedStatusPagesIDs(); len(nodes) > 0 && !_u.mutation.StatusPagesCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   tag.StatusPagesTable,
-			Columns: []string{tag.StatusPagesColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(statuspage.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := _u.mutation.StatusPagesIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   tag.StatusPagesTable,
-			Columns: []string{tag.StatusPagesColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(statuspage.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

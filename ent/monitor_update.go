@@ -12,9 +12,13 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/dialect/sql/sqljson"
 	"entgo.io/ent/schema/field"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/incident"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/maintenancewindow"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/monitor"
-	"github.com/Phoenix-Uptime/phoenix-go/ent/monitorhistory"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/monitorcheck"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/notification"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/predicate"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/statuspagemonitor"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/tag"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/user"
 )
@@ -86,6 +90,26 @@ func (_u *MonitorUpdate) SetNillableName(v *string) *MonitorUpdate {
 	return _u
 }
 
+// SetDescription sets the "description" field.
+func (_u *MonitorUpdate) SetDescription(v string) *MonitorUpdate {
+	_u.mutation.SetDescription(v)
+	return _u
+}
+
+// SetNillableDescription sets the "description" field if the given value is not nil.
+func (_u *MonitorUpdate) SetNillableDescription(v *string) *MonitorUpdate {
+	if v != nil {
+		_u.SetDescription(*v)
+	}
+	return _u
+}
+
+// ClearDescription clears the value of the "description" field.
+func (_u *MonitorUpdate) ClearDescription() *MonitorUpdate {
+	_u.mutation.ClearDescription()
+	return _u
+}
+
 // SetURL sets the "url" field.
 func (_u *MonitorUpdate) SetURL(v string) *MonitorUpdate {
 	_u.mutation.SetURL(v)
@@ -121,6 +145,27 @@ func (_u *MonitorUpdate) AddInterval(v int) *MonitorUpdate {
 	return _u
 }
 
+// SetTimeout sets the "timeout" field.
+func (_u *MonitorUpdate) SetTimeout(v int) *MonitorUpdate {
+	_u.mutation.ResetTimeout()
+	_u.mutation.SetTimeout(v)
+	return _u
+}
+
+// SetNillableTimeout sets the "timeout" field if the given value is not nil.
+func (_u *MonitorUpdate) SetNillableTimeout(v *int) *MonitorUpdate {
+	if v != nil {
+		_u.SetTimeout(*v)
+	}
+	return _u
+}
+
+// AddTimeout adds value to the "timeout" field.
+func (_u *MonitorUpdate) AddTimeout(v int) *MonitorUpdate {
+	_u.mutation.AddTimeout(v)
+	return _u
+}
+
 // SetStatus sets the "status" field.
 func (_u *MonitorUpdate) SetStatus(v monitor.Status) *MonitorUpdate {
 	_u.mutation.SetStatus(v)
@@ -149,6 +194,20 @@ func (_u *MonitorUpdate) SetNillableType(v *monitor.Type) *MonitorUpdate {
 	return _u
 }
 
+// SetIsActive sets the "is_active" field.
+func (_u *MonitorUpdate) SetIsActive(v bool) *MonitorUpdate {
+	_u.mutation.SetIsActive(v)
+	return _u
+}
+
+// SetNillableIsActive sets the "is_active" field if the given value is not nil.
+func (_u *MonitorUpdate) SetNillableIsActive(v *bool) *MonitorUpdate {
+	if v != nil {
+		_u.SetIsActive(*v)
+	}
+	return _u
+}
+
 // SetMethod sets the "method" field.
 func (_u *MonitorUpdate) SetMethod(v string) *MonitorUpdate {
 	_u.mutation.SetMethod(v)
@@ -163,9 +222,93 @@ func (_u *MonitorUpdate) SetNillableMethod(v *string) *MonitorUpdate {
 	return _u
 }
 
-// ClearMethod clears the value of the "method" field.
-func (_u *MonitorUpdate) ClearMethod() *MonitorUpdate {
-	_u.mutation.ClearMethod()
+// SetAcceptedStatusCodes sets the "accepted_status_codes" field.
+func (_u *MonitorUpdate) SetAcceptedStatusCodes(v []string) *MonitorUpdate {
+	_u.mutation.SetAcceptedStatusCodes(v)
+	return _u
+}
+
+// AppendAcceptedStatusCodes appends value to the "accepted_status_codes" field.
+func (_u *MonitorUpdate) AppendAcceptedStatusCodes(v []string) *MonitorUpdate {
+	_u.mutation.AppendAcceptedStatusCodes(v)
+	return _u
+}
+
+// ClearAcceptedStatusCodes clears the value of the "accepted_status_codes" field.
+func (_u *MonitorUpdate) ClearAcceptedStatusCodes() *MonitorUpdate {
+	_u.mutation.ClearAcceptedStatusCodes()
+	return _u
+}
+
+// SetHeaders sets the "headers" field.
+func (_u *MonitorUpdate) SetHeaders(v map[string]string) *MonitorUpdate {
+	_u.mutation.SetHeaders(v)
+	return _u
+}
+
+// ClearHeaders clears the value of the "headers" field.
+func (_u *MonitorUpdate) ClearHeaders() *MonitorUpdate {
+	_u.mutation.ClearHeaders()
+	return _u
+}
+
+// SetBody sets the "body" field.
+func (_u *MonitorUpdate) SetBody(v string) *MonitorUpdate {
+	_u.mutation.SetBody(v)
+	return _u
+}
+
+// SetNillableBody sets the "body" field if the given value is not nil.
+func (_u *MonitorUpdate) SetNillableBody(v *string) *MonitorUpdate {
+	if v != nil {
+		_u.SetBody(*v)
+	}
+	return _u
+}
+
+// ClearBody clears the value of the "body" field.
+func (_u *MonitorUpdate) ClearBody() *MonitorUpdate {
+	_u.mutation.ClearBody()
+	return _u
+}
+
+// SetAuthUsername sets the "auth_username" field.
+func (_u *MonitorUpdate) SetAuthUsername(v string) *MonitorUpdate {
+	_u.mutation.SetAuthUsername(v)
+	return _u
+}
+
+// SetNillableAuthUsername sets the "auth_username" field if the given value is not nil.
+func (_u *MonitorUpdate) SetNillableAuthUsername(v *string) *MonitorUpdate {
+	if v != nil {
+		_u.SetAuthUsername(*v)
+	}
+	return _u
+}
+
+// ClearAuthUsername clears the value of the "auth_username" field.
+func (_u *MonitorUpdate) ClearAuthUsername() *MonitorUpdate {
+	_u.mutation.ClearAuthUsername()
+	return _u
+}
+
+// SetAuthPassword sets the "auth_password" field.
+func (_u *MonitorUpdate) SetAuthPassword(v string) *MonitorUpdate {
+	_u.mutation.SetAuthPassword(v)
+	return _u
+}
+
+// SetNillableAuthPassword sets the "auth_password" field if the given value is not nil.
+func (_u *MonitorUpdate) SetNillableAuthPassword(v *string) *MonitorUpdate {
+	if v != nil {
+		_u.SetAuthPassword(*v)
+	}
+	return _u
+}
+
+// ClearAuthPassword clears the value of the "auth_password" field.
+func (_u *MonitorUpdate) ClearAuthPassword() *MonitorUpdate {
+	_u.mutation.ClearAuthPassword()
 	return _u
 }
 
@@ -206,6 +349,81 @@ func (_u *MonitorUpdate) SetNillableFiltersNotContains(v *string) *MonitorUpdate
 // ClearFiltersNotContains clears the value of the "filters_not_contains" field.
 func (_u *MonitorUpdate) ClearFiltersNotContains() *MonitorUpdate {
 	_u.mutation.ClearFiltersNotContains()
+	return _u
+}
+
+// SetJSONPath sets the "json_path" field.
+func (_u *MonitorUpdate) SetJSONPath(v string) *MonitorUpdate {
+	_u.mutation.SetJSONPath(v)
+	return _u
+}
+
+// SetNillableJSONPath sets the "json_path" field if the given value is not nil.
+func (_u *MonitorUpdate) SetNillableJSONPath(v *string) *MonitorUpdate {
+	if v != nil {
+		_u.SetJSONPath(*v)
+	}
+	return _u
+}
+
+// ClearJSONPath clears the value of the "json_path" field.
+func (_u *MonitorUpdate) ClearJSONPath() *MonitorUpdate {
+	_u.mutation.ClearJSONPath()
+	return _u
+}
+
+// SetExpectedValue sets the "expected_value" field.
+func (_u *MonitorUpdate) SetExpectedValue(v string) *MonitorUpdate {
+	_u.mutation.SetExpectedValue(v)
+	return _u
+}
+
+// SetNillableExpectedValue sets the "expected_value" field if the given value is not nil.
+func (_u *MonitorUpdate) SetNillableExpectedValue(v *string) *MonitorUpdate {
+	if v != nil {
+		_u.SetExpectedValue(*v)
+	}
+	return _u
+}
+
+// ClearExpectedValue clears the value of the "expected_value" field.
+func (_u *MonitorUpdate) ClearExpectedValue() *MonitorUpdate {
+	_u.mutation.ClearExpectedValue()
+	return _u
+}
+
+// SetIgnoreTLSErrors sets the "ignore_tls_errors" field.
+func (_u *MonitorUpdate) SetIgnoreTLSErrors(v bool) *MonitorUpdate {
+	_u.mutation.SetIgnoreTLSErrors(v)
+	return _u
+}
+
+// SetNillableIgnoreTLSErrors sets the "ignore_tls_errors" field if the given value is not nil.
+func (_u *MonitorUpdate) SetNillableIgnoreTLSErrors(v *bool) *MonitorUpdate {
+	if v != nil {
+		_u.SetIgnoreTLSErrors(*v)
+	}
+	return _u
+}
+
+// SetMaxRedirects sets the "max_redirects" field.
+func (_u *MonitorUpdate) SetMaxRedirects(v int) *MonitorUpdate {
+	_u.mutation.ResetMaxRedirects()
+	_u.mutation.SetMaxRedirects(v)
+	return _u
+}
+
+// SetNillableMaxRedirects sets the "max_redirects" field if the given value is not nil.
+func (_u *MonitorUpdate) SetNillableMaxRedirects(v *int) *MonitorUpdate {
+	if v != nil {
+		_u.SetMaxRedirects(*v)
+	}
+	return _u
+}
+
+// AddMaxRedirects adds value to the "max_redirects" field.
+func (_u *MonitorUpdate) AddMaxRedirects(v int) *MonitorUpdate {
+	_u.mutation.AddMaxRedirects(v)
 	return _u
 }
 
@@ -251,21 +469,35 @@ func (_u *MonitorUpdate) AddRetryAfter(v int) *MonitorUpdate {
 	return _u
 }
 
-// SetAlertTypes sets the "alert_types" field.
-func (_u *MonitorUpdate) SetAlertTypes(v []string) *MonitorUpdate {
-	_u.mutation.SetAlertTypes(v)
+// SetPushToken sets the "push_token" field.
+func (_u *MonitorUpdate) SetPushToken(v string) *MonitorUpdate {
+	_u.mutation.SetPushToken(v)
 	return _u
 }
 
-// AppendAlertTypes appends value to the "alert_types" field.
-func (_u *MonitorUpdate) AppendAlertTypes(v []string) *MonitorUpdate {
-	_u.mutation.AppendAlertTypes(v)
+// SetNillablePushToken sets the "push_token" field if the given value is not nil.
+func (_u *MonitorUpdate) SetNillablePushToken(v *string) *MonitorUpdate {
+	if v != nil {
+		_u.SetPushToken(*v)
+	}
 	return _u
 }
 
-// ClearAlertTypes clears the value of the "alert_types" field.
-func (_u *MonitorUpdate) ClearAlertTypes() *MonitorUpdate {
-	_u.mutation.ClearAlertTypes()
+// ClearPushToken clears the value of the "push_token" field.
+func (_u *MonitorUpdate) ClearPushToken() *MonitorUpdate {
+	_u.mutation.ClearPushToken()
+	return _u
+}
+
+// SetConfig sets the "config" field.
+func (_u *MonitorUpdate) SetConfig(v map[string]interface{}) *MonitorUpdate {
+	_u.mutation.SetConfig(v)
+	return _u
+}
+
+// ClearConfig clears the value of the "config" field.
+func (_u *MonitorUpdate) ClearConfig() *MonitorUpdate {
+	_u.mutation.ClearConfig()
 	return _u
 }
 
@@ -274,19 +506,19 @@ func (_u *MonitorUpdate) SetUser(v *User) *MonitorUpdate {
 	return _u.SetUserID(v.ID)
 }
 
-// AddHistoryIDs adds the "history" edge to the MonitorHistory entity by IDs.
-func (_u *MonitorUpdate) AddHistoryIDs(ids ...int) *MonitorUpdate {
-	_u.mutation.AddHistoryIDs(ids...)
+// AddCheckIDs adds the "checks" edge to the MonitorCheck entity by IDs.
+func (_u *MonitorUpdate) AddCheckIDs(ids ...int) *MonitorUpdate {
+	_u.mutation.AddCheckIDs(ids...)
 	return _u
 }
 
-// AddHistory adds the "history" edges to the MonitorHistory entity.
-func (_u *MonitorUpdate) AddHistory(v ...*MonitorHistory) *MonitorUpdate {
+// AddChecks adds the "checks" edges to the MonitorCheck entity.
+func (_u *MonitorUpdate) AddChecks(v ...*MonitorCheck) *MonitorUpdate {
 	ids := make([]int, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
-	return _u.AddHistoryIDs(ids...)
+	return _u.AddCheckIDs(ids...)
 }
 
 // AddTagIDs adds the "tags" edge to the Tag entity by IDs.
@@ -304,6 +536,66 @@ func (_u *MonitorUpdate) AddTags(v ...*Tag) *MonitorUpdate {
 	return _u.AddTagIDs(ids...)
 }
 
+// AddNotificationIDs adds the "notifications" edge to the Notification entity by IDs.
+func (_u *MonitorUpdate) AddNotificationIDs(ids ...int) *MonitorUpdate {
+	_u.mutation.AddNotificationIDs(ids...)
+	return _u
+}
+
+// AddNotifications adds the "notifications" edges to the Notification entity.
+func (_u *MonitorUpdate) AddNotifications(v ...*Notification) *MonitorUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddNotificationIDs(ids...)
+}
+
+// AddStatusPageMonitorIDs adds the "status_page_monitors" edge to the StatusPageMonitor entity by IDs.
+func (_u *MonitorUpdate) AddStatusPageMonitorIDs(ids ...int) *MonitorUpdate {
+	_u.mutation.AddStatusPageMonitorIDs(ids...)
+	return _u
+}
+
+// AddStatusPageMonitors adds the "status_page_monitors" edges to the StatusPageMonitor entity.
+func (_u *MonitorUpdate) AddStatusPageMonitors(v ...*StatusPageMonitor) *MonitorUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddStatusPageMonitorIDs(ids...)
+}
+
+// AddMaintenanceWindowIDs adds the "maintenance_windows" edge to the MaintenanceWindow entity by IDs.
+func (_u *MonitorUpdate) AddMaintenanceWindowIDs(ids ...int) *MonitorUpdate {
+	_u.mutation.AddMaintenanceWindowIDs(ids...)
+	return _u
+}
+
+// AddMaintenanceWindows adds the "maintenance_windows" edges to the MaintenanceWindow entity.
+func (_u *MonitorUpdate) AddMaintenanceWindows(v ...*MaintenanceWindow) *MonitorUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddMaintenanceWindowIDs(ids...)
+}
+
+// AddIncidentIDs adds the "incidents" edge to the Incident entity by IDs.
+func (_u *MonitorUpdate) AddIncidentIDs(ids ...int) *MonitorUpdate {
+	_u.mutation.AddIncidentIDs(ids...)
+	return _u
+}
+
+// AddIncidents adds the "incidents" edges to the Incident entity.
+func (_u *MonitorUpdate) AddIncidents(v ...*Incident) *MonitorUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddIncidentIDs(ids...)
+}
+
 // Mutation returns the MonitorMutation object of the builder.
 func (_u *MonitorUpdate) Mutation() *MonitorMutation {
 	return _u.mutation
@@ -315,25 +607,25 @@ func (_u *MonitorUpdate) ClearUser() *MonitorUpdate {
 	return _u
 }
 
-// ClearHistory clears all "history" edges to the MonitorHistory entity.
-func (_u *MonitorUpdate) ClearHistory() *MonitorUpdate {
-	_u.mutation.ClearHistory()
+// ClearChecks clears all "checks" edges to the MonitorCheck entity.
+func (_u *MonitorUpdate) ClearChecks() *MonitorUpdate {
+	_u.mutation.ClearChecks()
 	return _u
 }
 
-// RemoveHistoryIDs removes the "history" edge to MonitorHistory entities by IDs.
-func (_u *MonitorUpdate) RemoveHistoryIDs(ids ...int) *MonitorUpdate {
-	_u.mutation.RemoveHistoryIDs(ids...)
+// RemoveCheckIDs removes the "checks" edge to MonitorCheck entities by IDs.
+func (_u *MonitorUpdate) RemoveCheckIDs(ids ...int) *MonitorUpdate {
+	_u.mutation.RemoveCheckIDs(ids...)
 	return _u
 }
 
-// RemoveHistory removes "history" edges to MonitorHistory entities.
-func (_u *MonitorUpdate) RemoveHistory(v ...*MonitorHistory) *MonitorUpdate {
+// RemoveChecks removes "checks" edges to MonitorCheck entities.
+func (_u *MonitorUpdate) RemoveChecks(v ...*MonitorCheck) *MonitorUpdate {
 	ids := make([]int, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
-	return _u.RemoveHistoryIDs(ids...)
+	return _u.RemoveCheckIDs(ids...)
 }
 
 // ClearTags clears all "tags" edges to the Tag entity.
@@ -355,6 +647,90 @@ func (_u *MonitorUpdate) RemoveTags(v ...*Tag) *MonitorUpdate {
 		ids[i] = v[i].ID
 	}
 	return _u.RemoveTagIDs(ids...)
+}
+
+// ClearNotifications clears all "notifications" edges to the Notification entity.
+func (_u *MonitorUpdate) ClearNotifications() *MonitorUpdate {
+	_u.mutation.ClearNotifications()
+	return _u
+}
+
+// RemoveNotificationIDs removes the "notifications" edge to Notification entities by IDs.
+func (_u *MonitorUpdate) RemoveNotificationIDs(ids ...int) *MonitorUpdate {
+	_u.mutation.RemoveNotificationIDs(ids...)
+	return _u
+}
+
+// RemoveNotifications removes "notifications" edges to Notification entities.
+func (_u *MonitorUpdate) RemoveNotifications(v ...*Notification) *MonitorUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveNotificationIDs(ids...)
+}
+
+// ClearStatusPageMonitors clears all "status_page_monitors" edges to the StatusPageMonitor entity.
+func (_u *MonitorUpdate) ClearStatusPageMonitors() *MonitorUpdate {
+	_u.mutation.ClearStatusPageMonitors()
+	return _u
+}
+
+// RemoveStatusPageMonitorIDs removes the "status_page_monitors" edge to StatusPageMonitor entities by IDs.
+func (_u *MonitorUpdate) RemoveStatusPageMonitorIDs(ids ...int) *MonitorUpdate {
+	_u.mutation.RemoveStatusPageMonitorIDs(ids...)
+	return _u
+}
+
+// RemoveStatusPageMonitors removes "status_page_monitors" edges to StatusPageMonitor entities.
+func (_u *MonitorUpdate) RemoveStatusPageMonitors(v ...*StatusPageMonitor) *MonitorUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveStatusPageMonitorIDs(ids...)
+}
+
+// ClearMaintenanceWindows clears all "maintenance_windows" edges to the MaintenanceWindow entity.
+func (_u *MonitorUpdate) ClearMaintenanceWindows() *MonitorUpdate {
+	_u.mutation.ClearMaintenanceWindows()
+	return _u
+}
+
+// RemoveMaintenanceWindowIDs removes the "maintenance_windows" edge to MaintenanceWindow entities by IDs.
+func (_u *MonitorUpdate) RemoveMaintenanceWindowIDs(ids ...int) *MonitorUpdate {
+	_u.mutation.RemoveMaintenanceWindowIDs(ids...)
+	return _u
+}
+
+// RemoveMaintenanceWindows removes "maintenance_windows" edges to MaintenanceWindow entities.
+func (_u *MonitorUpdate) RemoveMaintenanceWindows(v ...*MaintenanceWindow) *MonitorUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveMaintenanceWindowIDs(ids...)
+}
+
+// ClearIncidents clears all "incidents" edges to the Incident entity.
+func (_u *MonitorUpdate) ClearIncidents() *MonitorUpdate {
+	_u.mutation.ClearIncidents()
+	return _u
+}
+
+// RemoveIncidentIDs removes the "incidents" edge to Incident entities by IDs.
+func (_u *MonitorUpdate) RemoveIncidentIDs(ids ...int) *MonitorUpdate {
+	_u.mutation.RemoveIncidentIDs(ids...)
+	return _u
+}
+
+// RemoveIncidents removes "incidents" edges to Incident entities.
+func (_u *MonitorUpdate) RemoveIncidents(v ...*Incident) *MonitorUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveIncidentIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -445,6 +821,12 @@ func (_u *MonitorUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(monitor.FieldName, field.TypeString, value)
 	}
+	if value, ok := _u.mutation.Description(); ok {
+		_spec.SetField(monitor.FieldDescription, field.TypeString, value)
+	}
+	if _u.mutation.DescriptionCleared() {
+		_spec.ClearField(monitor.FieldDescription, field.TypeString)
+	}
 	if value, ok := _u.mutation.URL(); ok {
 		_spec.SetField(monitor.FieldURL, field.TypeString, value)
 	}
@@ -454,17 +836,58 @@ func (_u *MonitorUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if value, ok := _u.mutation.AddedInterval(); ok {
 		_spec.AddField(monitor.FieldInterval, field.TypeInt, value)
 	}
+	if value, ok := _u.mutation.Timeout(); ok {
+		_spec.SetField(monitor.FieldTimeout, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedTimeout(); ok {
+		_spec.AddField(monitor.FieldTimeout, field.TypeInt, value)
+	}
 	if value, ok := _u.mutation.Status(); ok {
 		_spec.SetField(monitor.FieldStatus, field.TypeEnum, value)
 	}
 	if value, ok := _u.mutation.GetType(); ok {
 		_spec.SetField(monitor.FieldType, field.TypeEnum, value)
 	}
+	if value, ok := _u.mutation.IsActive(); ok {
+		_spec.SetField(monitor.FieldIsActive, field.TypeBool, value)
+	}
 	if value, ok := _u.mutation.Method(); ok {
 		_spec.SetField(monitor.FieldMethod, field.TypeString, value)
 	}
-	if _u.mutation.MethodCleared() {
-		_spec.ClearField(monitor.FieldMethod, field.TypeString)
+	if value, ok := _u.mutation.AcceptedStatusCodes(); ok {
+		_spec.SetField(monitor.FieldAcceptedStatusCodes, field.TypeJSON, value)
+	}
+	if value, ok := _u.mutation.AppendedAcceptedStatusCodes(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, monitor.FieldAcceptedStatusCodes, value)
+		})
+	}
+	if _u.mutation.AcceptedStatusCodesCleared() {
+		_spec.ClearField(monitor.FieldAcceptedStatusCodes, field.TypeJSON)
+	}
+	if value, ok := _u.mutation.Headers(); ok {
+		_spec.SetField(monitor.FieldHeaders, field.TypeJSON, value)
+	}
+	if _u.mutation.HeadersCleared() {
+		_spec.ClearField(monitor.FieldHeaders, field.TypeJSON)
+	}
+	if value, ok := _u.mutation.Body(); ok {
+		_spec.SetField(monitor.FieldBody, field.TypeString, value)
+	}
+	if _u.mutation.BodyCleared() {
+		_spec.ClearField(monitor.FieldBody, field.TypeString)
+	}
+	if value, ok := _u.mutation.AuthUsername(); ok {
+		_spec.SetField(monitor.FieldAuthUsername, field.TypeString, value)
+	}
+	if _u.mutation.AuthUsernameCleared() {
+		_spec.ClearField(monitor.FieldAuthUsername, field.TypeString)
+	}
+	if value, ok := _u.mutation.AuthPassword(); ok {
+		_spec.SetField(monitor.FieldAuthPassword, field.TypeString, value)
+	}
+	if _u.mutation.AuthPasswordCleared() {
+		_spec.ClearField(monitor.FieldAuthPassword, field.TypeString)
 	}
 	if value, ok := _u.mutation.FiltersContains(); ok {
 		_spec.SetField(monitor.FieldFiltersContains, field.TypeString, value)
@@ -478,6 +901,27 @@ func (_u *MonitorUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if _u.mutation.FiltersNotContainsCleared() {
 		_spec.ClearField(monitor.FieldFiltersNotContains, field.TypeString)
 	}
+	if value, ok := _u.mutation.JSONPath(); ok {
+		_spec.SetField(monitor.FieldJSONPath, field.TypeString, value)
+	}
+	if _u.mutation.JSONPathCleared() {
+		_spec.ClearField(monitor.FieldJSONPath, field.TypeString)
+	}
+	if value, ok := _u.mutation.ExpectedValue(); ok {
+		_spec.SetField(monitor.FieldExpectedValue, field.TypeString, value)
+	}
+	if _u.mutation.ExpectedValueCleared() {
+		_spec.ClearField(monitor.FieldExpectedValue, field.TypeString)
+	}
+	if value, ok := _u.mutation.IgnoreTLSErrors(); ok {
+		_spec.SetField(monitor.FieldIgnoreTLSErrors, field.TypeBool, value)
+	}
+	if value, ok := _u.mutation.MaxRedirects(); ok {
+		_spec.SetField(monitor.FieldMaxRedirects, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedMaxRedirects(); ok {
+		_spec.AddField(monitor.FieldMaxRedirects, field.TypeInt, value)
+	}
 	if value, ok := _u.mutation.Retry(); ok {
 		_spec.SetField(monitor.FieldRetry, field.TypeInt, value)
 	}
@@ -490,16 +934,17 @@ func (_u *MonitorUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if value, ok := _u.mutation.AddedRetryAfter(); ok {
 		_spec.AddField(monitor.FieldRetryAfter, field.TypeInt, value)
 	}
-	if value, ok := _u.mutation.AlertTypes(); ok {
-		_spec.SetField(monitor.FieldAlertTypes, field.TypeJSON, value)
+	if value, ok := _u.mutation.PushToken(); ok {
+		_spec.SetField(monitor.FieldPushToken, field.TypeString, value)
 	}
-	if value, ok := _u.mutation.AppendedAlertTypes(); ok {
-		_spec.AddModifier(func(u *sql.UpdateBuilder) {
-			sqljson.Append(u, monitor.FieldAlertTypes, value)
-		})
+	if _u.mutation.PushTokenCleared() {
+		_spec.ClearField(monitor.FieldPushToken, field.TypeString)
 	}
-	if _u.mutation.AlertTypesCleared() {
-		_spec.ClearField(monitor.FieldAlertTypes, field.TypeJSON)
+	if value, ok := _u.mutation.Config(); ok {
+		_spec.SetField(monitor.FieldConfig, field.TypeJSON, value)
+	}
+	if _u.mutation.ConfigCleared() {
+		_spec.ClearField(monitor.FieldConfig, field.TypeJSON)
 	}
 	if _u.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -530,28 +975,28 @@ func (_u *MonitorUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if _u.mutation.HistoryCleared() {
+	if _u.mutation.ChecksCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   monitor.HistoryTable,
-			Columns: []string{monitor.HistoryColumn},
+			Table:   monitor.ChecksTable,
+			Columns: []string{monitor.ChecksColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(monitorhistory.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(monitorcheck.FieldID, field.TypeInt),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := _u.mutation.RemovedHistoryIDs(); len(nodes) > 0 && !_u.mutation.HistoryCleared() {
+	if nodes := _u.mutation.RemovedChecksIDs(); len(nodes) > 0 && !_u.mutation.ChecksCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   monitor.HistoryTable,
-			Columns: []string{monitor.HistoryColumn},
+			Table:   monitor.ChecksTable,
+			Columns: []string{monitor.ChecksColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(monitorhistory.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(monitorcheck.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -559,15 +1004,15 @@ func (_u *MonitorUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := _u.mutation.HistoryIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.ChecksIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   monitor.HistoryTable,
-			Columns: []string{monitor.HistoryColumn},
+			Table:   monitor.ChecksTable,
+			Columns: []string{monitor.ChecksColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(monitorhistory.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(monitorcheck.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -613,6 +1058,186 @@ func (_u *MonitorUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(tag.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.NotificationsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   monitor.NotificationsTable,
+			Columns: monitor.NotificationsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(notification.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedNotificationsIDs(); len(nodes) > 0 && !_u.mutation.NotificationsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   monitor.NotificationsTable,
+			Columns: monitor.NotificationsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(notification.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.NotificationsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   monitor.NotificationsTable,
+			Columns: monitor.NotificationsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(notification.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.StatusPageMonitorsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   monitor.StatusPageMonitorsTable,
+			Columns: []string{monitor.StatusPageMonitorsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(statuspagemonitor.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedStatusPageMonitorsIDs(); len(nodes) > 0 && !_u.mutation.StatusPageMonitorsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   monitor.StatusPageMonitorsTable,
+			Columns: []string{monitor.StatusPageMonitorsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(statuspagemonitor.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.StatusPageMonitorsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   monitor.StatusPageMonitorsTable,
+			Columns: []string{monitor.StatusPageMonitorsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(statuspagemonitor.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.MaintenanceWindowsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   monitor.MaintenanceWindowsTable,
+			Columns: monitor.MaintenanceWindowsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(maintenancewindow.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedMaintenanceWindowsIDs(); len(nodes) > 0 && !_u.mutation.MaintenanceWindowsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   monitor.MaintenanceWindowsTable,
+			Columns: monitor.MaintenanceWindowsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(maintenancewindow.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.MaintenanceWindowsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   monitor.MaintenanceWindowsTable,
+			Columns: monitor.MaintenanceWindowsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(maintenancewindow.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.IncidentsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   monitor.IncidentsTable,
+			Columns: []string{monitor.IncidentsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(incident.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedIncidentsIDs(); len(nodes) > 0 && !_u.mutation.IncidentsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   monitor.IncidentsTable,
+			Columns: []string{monitor.IncidentsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(incident.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.IncidentsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   monitor.IncidentsTable,
+			Columns: []string{monitor.IncidentsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(incident.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -694,6 +1319,26 @@ func (_u *MonitorUpdateOne) SetNillableName(v *string) *MonitorUpdateOne {
 	return _u
 }
 
+// SetDescription sets the "description" field.
+func (_u *MonitorUpdateOne) SetDescription(v string) *MonitorUpdateOne {
+	_u.mutation.SetDescription(v)
+	return _u
+}
+
+// SetNillableDescription sets the "description" field if the given value is not nil.
+func (_u *MonitorUpdateOne) SetNillableDescription(v *string) *MonitorUpdateOne {
+	if v != nil {
+		_u.SetDescription(*v)
+	}
+	return _u
+}
+
+// ClearDescription clears the value of the "description" field.
+func (_u *MonitorUpdateOne) ClearDescription() *MonitorUpdateOne {
+	_u.mutation.ClearDescription()
+	return _u
+}
+
 // SetURL sets the "url" field.
 func (_u *MonitorUpdateOne) SetURL(v string) *MonitorUpdateOne {
 	_u.mutation.SetURL(v)
@@ -729,6 +1374,27 @@ func (_u *MonitorUpdateOne) AddInterval(v int) *MonitorUpdateOne {
 	return _u
 }
 
+// SetTimeout sets the "timeout" field.
+func (_u *MonitorUpdateOne) SetTimeout(v int) *MonitorUpdateOne {
+	_u.mutation.ResetTimeout()
+	_u.mutation.SetTimeout(v)
+	return _u
+}
+
+// SetNillableTimeout sets the "timeout" field if the given value is not nil.
+func (_u *MonitorUpdateOne) SetNillableTimeout(v *int) *MonitorUpdateOne {
+	if v != nil {
+		_u.SetTimeout(*v)
+	}
+	return _u
+}
+
+// AddTimeout adds value to the "timeout" field.
+func (_u *MonitorUpdateOne) AddTimeout(v int) *MonitorUpdateOne {
+	_u.mutation.AddTimeout(v)
+	return _u
+}
+
 // SetStatus sets the "status" field.
 func (_u *MonitorUpdateOne) SetStatus(v monitor.Status) *MonitorUpdateOne {
 	_u.mutation.SetStatus(v)
@@ -757,6 +1423,20 @@ func (_u *MonitorUpdateOne) SetNillableType(v *monitor.Type) *MonitorUpdateOne {
 	return _u
 }
 
+// SetIsActive sets the "is_active" field.
+func (_u *MonitorUpdateOne) SetIsActive(v bool) *MonitorUpdateOne {
+	_u.mutation.SetIsActive(v)
+	return _u
+}
+
+// SetNillableIsActive sets the "is_active" field if the given value is not nil.
+func (_u *MonitorUpdateOne) SetNillableIsActive(v *bool) *MonitorUpdateOne {
+	if v != nil {
+		_u.SetIsActive(*v)
+	}
+	return _u
+}
+
 // SetMethod sets the "method" field.
 func (_u *MonitorUpdateOne) SetMethod(v string) *MonitorUpdateOne {
 	_u.mutation.SetMethod(v)
@@ -771,9 +1451,93 @@ func (_u *MonitorUpdateOne) SetNillableMethod(v *string) *MonitorUpdateOne {
 	return _u
 }
 
-// ClearMethod clears the value of the "method" field.
-func (_u *MonitorUpdateOne) ClearMethod() *MonitorUpdateOne {
-	_u.mutation.ClearMethod()
+// SetAcceptedStatusCodes sets the "accepted_status_codes" field.
+func (_u *MonitorUpdateOne) SetAcceptedStatusCodes(v []string) *MonitorUpdateOne {
+	_u.mutation.SetAcceptedStatusCodes(v)
+	return _u
+}
+
+// AppendAcceptedStatusCodes appends value to the "accepted_status_codes" field.
+func (_u *MonitorUpdateOne) AppendAcceptedStatusCodes(v []string) *MonitorUpdateOne {
+	_u.mutation.AppendAcceptedStatusCodes(v)
+	return _u
+}
+
+// ClearAcceptedStatusCodes clears the value of the "accepted_status_codes" field.
+func (_u *MonitorUpdateOne) ClearAcceptedStatusCodes() *MonitorUpdateOne {
+	_u.mutation.ClearAcceptedStatusCodes()
+	return _u
+}
+
+// SetHeaders sets the "headers" field.
+func (_u *MonitorUpdateOne) SetHeaders(v map[string]string) *MonitorUpdateOne {
+	_u.mutation.SetHeaders(v)
+	return _u
+}
+
+// ClearHeaders clears the value of the "headers" field.
+func (_u *MonitorUpdateOne) ClearHeaders() *MonitorUpdateOne {
+	_u.mutation.ClearHeaders()
+	return _u
+}
+
+// SetBody sets the "body" field.
+func (_u *MonitorUpdateOne) SetBody(v string) *MonitorUpdateOne {
+	_u.mutation.SetBody(v)
+	return _u
+}
+
+// SetNillableBody sets the "body" field if the given value is not nil.
+func (_u *MonitorUpdateOne) SetNillableBody(v *string) *MonitorUpdateOne {
+	if v != nil {
+		_u.SetBody(*v)
+	}
+	return _u
+}
+
+// ClearBody clears the value of the "body" field.
+func (_u *MonitorUpdateOne) ClearBody() *MonitorUpdateOne {
+	_u.mutation.ClearBody()
+	return _u
+}
+
+// SetAuthUsername sets the "auth_username" field.
+func (_u *MonitorUpdateOne) SetAuthUsername(v string) *MonitorUpdateOne {
+	_u.mutation.SetAuthUsername(v)
+	return _u
+}
+
+// SetNillableAuthUsername sets the "auth_username" field if the given value is not nil.
+func (_u *MonitorUpdateOne) SetNillableAuthUsername(v *string) *MonitorUpdateOne {
+	if v != nil {
+		_u.SetAuthUsername(*v)
+	}
+	return _u
+}
+
+// ClearAuthUsername clears the value of the "auth_username" field.
+func (_u *MonitorUpdateOne) ClearAuthUsername() *MonitorUpdateOne {
+	_u.mutation.ClearAuthUsername()
+	return _u
+}
+
+// SetAuthPassword sets the "auth_password" field.
+func (_u *MonitorUpdateOne) SetAuthPassword(v string) *MonitorUpdateOne {
+	_u.mutation.SetAuthPassword(v)
+	return _u
+}
+
+// SetNillableAuthPassword sets the "auth_password" field if the given value is not nil.
+func (_u *MonitorUpdateOne) SetNillableAuthPassword(v *string) *MonitorUpdateOne {
+	if v != nil {
+		_u.SetAuthPassword(*v)
+	}
+	return _u
+}
+
+// ClearAuthPassword clears the value of the "auth_password" field.
+func (_u *MonitorUpdateOne) ClearAuthPassword() *MonitorUpdateOne {
+	_u.mutation.ClearAuthPassword()
 	return _u
 }
 
@@ -814,6 +1578,81 @@ func (_u *MonitorUpdateOne) SetNillableFiltersNotContains(v *string) *MonitorUpd
 // ClearFiltersNotContains clears the value of the "filters_not_contains" field.
 func (_u *MonitorUpdateOne) ClearFiltersNotContains() *MonitorUpdateOne {
 	_u.mutation.ClearFiltersNotContains()
+	return _u
+}
+
+// SetJSONPath sets the "json_path" field.
+func (_u *MonitorUpdateOne) SetJSONPath(v string) *MonitorUpdateOne {
+	_u.mutation.SetJSONPath(v)
+	return _u
+}
+
+// SetNillableJSONPath sets the "json_path" field if the given value is not nil.
+func (_u *MonitorUpdateOne) SetNillableJSONPath(v *string) *MonitorUpdateOne {
+	if v != nil {
+		_u.SetJSONPath(*v)
+	}
+	return _u
+}
+
+// ClearJSONPath clears the value of the "json_path" field.
+func (_u *MonitorUpdateOne) ClearJSONPath() *MonitorUpdateOne {
+	_u.mutation.ClearJSONPath()
+	return _u
+}
+
+// SetExpectedValue sets the "expected_value" field.
+func (_u *MonitorUpdateOne) SetExpectedValue(v string) *MonitorUpdateOne {
+	_u.mutation.SetExpectedValue(v)
+	return _u
+}
+
+// SetNillableExpectedValue sets the "expected_value" field if the given value is not nil.
+func (_u *MonitorUpdateOne) SetNillableExpectedValue(v *string) *MonitorUpdateOne {
+	if v != nil {
+		_u.SetExpectedValue(*v)
+	}
+	return _u
+}
+
+// ClearExpectedValue clears the value of the "expected_value" field.
+func (_u *MonitorUpdateOne) ClearExpectedValue() *MonitorUpdateOne {
+	_u.mutation.ClearExpectedValue()
+	return _u
+}
+
+// SetIgnoreTLSErrors sets the "ignore_tls_errors" field.
+func (_u *MonitorUpdateOne) SetIgnoreTLSErrors(v bool) *MonitorUpdateOne {
+	_u.mutation.SetIgnoreTLSErrors(v)
+	return _u
+}
+
+// SetNillableIgnoreTLSErrors sets the "ignore_tls_errors" field if the given value is not nil.
+func (_u *MonitorUpdateOne) SetNillableIgnoreTLSErrors(v *bool) *MonitorUpdateOne {
+	if v != nil {
+		_u.SetIgnoreTLSErrors(*v)
+	}
+	return _u
+}
+
+// SetMaxRedirects sets the "max_redirects" field.
+func (_u *MonitorUpdateOne) SetMaxRedirects(v int) *MonitorUpdateOne {
+	_u.mutation.ResetMaxRedirects()
+	_u.mutation.SetMaxRedirects(v)
+	return _u
+}
+
+// SetNillableMaxRedirects sets the "max_redirects" field if the given value is not nil.
+func (_u *MonitorUpdateOne) SetNillableMaxRedirects(v *int) *MonitorUpdateOne {
+	if v != nil {
+		_u.SetMaxRedirects(*v)
+	}
+	return _u
+}
+
+// AddMaxRedirects adds value to the "max_redirects" field.
+func (_u *MonitorUpdateOne) AddMaxRedirects(v int) *MonitorUpdateOne {
+	_u.mutation.AddMaxRedirects(v)
 	return _u
 }
 
@@ -859,21 +1698,35 @@ func (_u *MonitorUpdateOne) AddRetryAfter(v int) *MonitorUpdateOne {
 	return _u
 }
 
-// SetAlertTypes sets the "alert_types" field.
-func (_u *MonitorUpdateOne) SetAlertTypes(v []string) *MonitorUpdateOne {
-	_u.mutation.SetAlertTypes(v)
+// SetPushToken sets the "push_token" field.
+func (_u *MonitorUpdateOne) SetPushToken(v string) *MonitorUpdateOne {
+	_u.mutation.SetPushToken(v)
 	return _u
 }
 
-// AppendAlertTypes appends value to the "alert_types" field.
-func (_u *MonitorUpdateOne) AppendAlertTypes(v []string) *MonitorUpdateOne {
-	_u.mutation.AppendAlertTypes(v)
+// SetNillablePushToken sets the "push_token" field if the given value is not nil.
+func (_u *MonitorUpdateOne) SetNillablePushToken(v *string) *MonitorUpdateOne {
+	if v != nil {
+		_u.SetPushToken(*v)
+	}
 	return _u
 }
 
-// ClearAlertTypes clears the value of the "alert_types" field.
-func (_u *MonitorUpdateOne) ClearAlertTypes() *MonitorUpdateOne {
-	_u.mutation.ClearAlertTypes()
+// ClearPushToken clears the value of the "push_token" field.
+func (_u *MonitorUpdateOne) ClearPushToken() *MonitorUpdateOne {
+	_u.mutation.ClearPushToken()
+	return _u
+}
+
+// SetConfig sets the "config" field.
+func (_u *MonitorUpdateOne) SetConfig(v map[string]interface{}) *MonitorUpdateOne {
+	_u.mutation.SetConfig(v)
+	return _u
+}
+
+// ClearConfig clears the value of the "config" field.
+func (_u *MonitorUpdateOne) ClearConfig() *MonitorUpdateOne {
+	_u.mutation.ClearConfig()
 	return _u
 }
 
@@ -882,19 +1735,19 @@ func (_u *MonitorUpdateOne) SetUser(v *User) *MonitorUpdateOne {
 	return _u.SetUserID(v.ID)
 }
 
-// AddHistoryIDs adds the "history" edge to the MonitorHistory entity by IDs.
-func (_u *MonitorUpdateOne) AddHistoryIDs(ids ...int) *MonitorUpdateOne {
-	_u.mutation.AddHistoryIDs(ids...)
+// AddCheckIDs adds the "checks" edge to the MonitorCheck entity by IDs.
+func (_u *MonitorUpdateOne) AddCheckIDs(ids ...int) *MonitorUpdateOne {
+	_u.mutation.AddCheckIDs(ids...)
 	return _u
 }
 
-// AddHistory adds the "history" edges to the MonitorHistory entity.
-func (_u *MonitorUpdateOne) AddHistory(v ...*MonitorHistory) *MonitorUpdateOne {
+// AddChecks adds the "checks" edges to the MonitorCheck entity.
+func (_u *MonitorUpdateOne) AddChecks(v ...*MonitorCheck) *MonitorUpdateOne {
 	ids := make([]int, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
-	return _u.AddHistoryIDs(ids...)
+	return _u.AddCheckIDs(ids...)
 }
 
 // AddTagIDs adds the "tags" edge to the Tag entity by IDs.
@@ -912,6 +1765,66 @@ func (_u *MonitorUpdateOne) AddTags(v ...*Tag) *MonitorUpdateOne {
 	return _u.AddTagIDs(ids...)
 }
 
+// AddNotificationIDs adds the "notifications" edge to the Notification entity by IDs.
+func (_u *MonitorUpdateOne) AddNotificationIDs(ids ...int) *MonitorUpdateOne {
+	_u.mutation.AddNotificationIDs(ids...)
+	return _u
+}
+
+// AddNotifications adds the "notifications" edges to the Notification entity.
+func (_u *MonitorUpdateOne) AddNotifications(v ...*Notification) *MonitorUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddNotificationIDs(ids...)
+}
+
+// AddStatusPageMonitorIDs adds the "status_page_monitors" edge to the StatusPageMonitor entity by IDs.
+func (_u *MonitorUpdateOne) AddStatusPageMonitorIDs(ids ...int) *MonitorUpdateOne {
+	_u.mutation.AddStatusPageMonitorIDs(ids...)
+	return _u
+}
+
+// AddStatusPageMonitors adds the "status_page_monitors" edges to the StatusPageMonitor entity.
+func (_u *MonitorUpdateOne) AddStatusPageMonitors(v ...*StatusPageMonitor) *MonitorUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddStatusPageMonitorIDs(ids...)
+}
+
+// AddMaintenanceWindowIDs adds the "maintenance_windows" edge to the MaintenanceWindow entity by IDs.
+func (_u *MonitorUpdateOne) AddMaintenanceWindowIDs(ids ...int) *MonitorUpdateOne {
+	_u.mutation.AddMaintenanceWindowIDs(ids...)
+	return _u
+}
+
+// AddMaintenanceWindows adds the "maintenance_windows" edges to the MaintenanceWindow entity.
+func (_u *MonitorUpdateOne) AddMaintenanceWindows(v ...*MaintenanceWindow) *MonitorUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddMaintenanceWindowIDs(ids...)
+}
+
+// AddIncidentIDs adds the "incidents" edge to the Incident entity by IDs.
+func (_u *MonitorUpdateOne) AddIncidentIDs(ids ...int) *MonitorUpdateOne {
+	_u.mutation.AddIncidentIDs(ids...)
+	return _u
+}
+
+// AddIncidents adds the "incidents" edges to the Incident entity.
+func (_u *MonitorUpdateOne) AddIncidents(v ...*Incident) *MonitorUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddIncidentIDs(ids...)
+}
+
 // Mutation returns the MonitorMutation object of the builder.
 func (_u *MonitorUpdateOne) Mutation() *MonitorMutation {
 	return _u.mutation
@@ -923,25 +1836,25 @@ func (_u *MonitorUpdateOne) ClearUser() *MonitorUpdateOne {
 	return _u
 }
 
-// ClearHistory clears all "history" edges to the MonitorHistory entity.
-func (_u *MonitorUpdateOne) ClearHistory() *MonitorUpdateOne {
-	_u.mutation.ClearHistory()
+// ClearChecks clears all "checks" edges to the MonitorCheck entity.
+func (_u *MonitorUpdateOne) ClearChecks() *MonitorUpdateOne {
+	_u.mutation.ClearChecks()
 	return _u
 }
 
-// RemoveHistoryIDs removes the "history" edge to MonitorHistory entities by IDs.
-func (_u *MonitorUpdateOne) RemoveHistoryIDs(ids ...int) *MonitorUpdateOne {
-	_u.mutation.RemoveHistoryIDs(ids...)
+// RemoveCheckIDs removes the "checks" edge to MonitorCheck entities by IDs.
+func (_u *MonitorUpdateOne) RemoveCheckIDs(ids ...int) *MonitorUpdateOne {
+	_u.mutation.RemoveCheckIDs(ids...)
 	return _u
 }
 
-// RemoveHistory removes "history" edges to MonitorHistory entities.
-func (_u *MonitorUpdateOne) RemoveHistory(v ...*MonitorHistory) *MonitorUpdateOne {
+// RemoveChecks removes "checks" edges to MonitorCheck entities.
+func (_u *MonitorUpdateOne) RemoveChecks(v ...*MonitorCheck) *MonitorUpdateOne {
 	ids := make([]int, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
-	return _u.RemoveHistoryIDs(ids...)
+	return _u.RemoveCheckIDs(ids...)
 }
 
 // ClearTags clears all "tags" edges to the Tag entity.
@@ -963,6 +1876,90 @@ func (_u *MonitorUpdateOne) RemoveTags(v ...*Tag) *MonitorUpdateOne {
 		ids[i] = v[i].ID
 	}
 	return _u.RemoveTagIDs(ids...)
+}
+
+// ClearNotifications clears all "notifications" edges to the Notification entity.
+func (_u *MonitorUpdateOne) ClearNotifications() *MonitorUpdateOne {
+	_u.mutation.ClearNotifications()
+	return _u
+}
+
+// RemoveNotificationIDs removes the "notifications" edge to Notification entities by IDs.
+func (_u *MonitorUpdateOne) RemoveNotificationIDs(ids ...int) *MonitorUpdateOne {
+	_u.mutation.RemoveNotificationIDs(ids...)
+	return _u
+}
+
+// RemoveNotifications removes "notifications" edges to Notification entities.
+func (_u *MonitorUpdateOne) RemoveNotifications(v ...*Notification) *MonitorUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveNotificationIDs(ids...)
+}
+
+// ClearStatusPageMonitors clears all "status_page_monitors" edges to the StatusPageMonitor entity.
+func (_u *MonitorUpdateOne) ClearStatusPageMonitors() *MonitorUpdateOne {
+	_u.mutation.ClearStatusPageMonitors()
+	return _u
+}
+
+// RemoveStatusPageMonitorIDs removes the "status_page_monitors" edge to StatusPageMonitor entities by IDs.
+func (_u *MonitorUpdateOne) RemoveStatusPageMonitorIDs(ids ...int) *MonitorUpdateOne {
+	_u.mutation.RemoveStatusPageMonitorIDs(ids...)
+	return _u
+}
+
+// RemoveStatusPageMonitors removes "status_page_monitors" edges to StatusPageMonitor entities.
+func (_u *MonitorUpdateOne) RemoveStatusPageMonitors(v ...*StatusPageMonitor) *MonitorUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveStatusPageMonitorIDs(ids...)
+}
+
+// ClearMaintenanceWindows clears all "maintenance_windows" edges to the MaintenanceWindow entity.
+func (_u *MonitorUpdateOne) ClearMaintenanceWindows() *MonitorUpdateOne {
+	_u.mutation.ClearMaintenanceWindows()
+	return _u
+}
+
+// RemoveMaintenanceWindowIDs removes the "maintenance_windows" edge to MaintenanceWindow entities by IDs.
+func (_u *MonitorUpdateOne) RemoveMaintenanceWindowIDs(ids ...int) *MonitorUpdateOne {
+	_u.mutation.RemoveMaintenanceWindowIDs(ids...)
+	return _u
+}
+
+// RemoveMaintenanceWindows removes "maintenance_windows" edges to MaintenanceWindow entities.
+func (_u *MonitorUpdateOne) RemoveMaintenanceWindows(v ...*MaintenanceWindow) *MonitorUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveMaintenanceWindowIDs(ids...)
+}
+
+// ClearIncidents clears all "incidents" edges to the Incident entity.
+func (_u *MonitorUpdateOne) ClearIncidents() *MonitorUpdateOne {
+	_u.mutation.ClearIncidents()
+	return _u
+}
+
+// RemoveIncidentIDs removes the "incidents" edge to Incident entities by IDs.
+func (_u *MonitorUpdateOne) RemoveIncidentIDs(ids ...int) *MonitorUpdateOne {
+	_u.mutation.RemoveIncidentIDs(ids...)
+	return _u
+}
+
+// RemoveIncidents removes "incidents" edges to Incident entities.
+func (_u *MonitorUpdateOne) RemoveIncidents(v ...*Incident) *MonitorUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveIncidentIDs(ids...)
 }
 
 // Where appends a list predicates to the MonitorUpdate builder.
@@ -1083,6 +2080,12 @@ func (_u *MonitorUpdateOne) sqlSave(ctx context.Context) (_node *Monitor, err er
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(monitor.FieldName, field.TypeString, value)
 	}
+	if value, ok := _u.mutation.Description(); ok {
+		_spec.SetField(monitor.FieldDescription, field.TypeString, value)
+	}
+	if _u.mutation.DescriptionCleared() {
+		_spec.ClearField(monitor.FieldDescription, field.TypeString)
+	}
 	if value, ok := _u.mutation.URL(); ok {
 		_spec.SetField(monitor.FieldURL, field.TypeString, value)
 	}
@@ -1092,17 +2095,58 @@ func (_u *MonitorUpdateOne) sqlSave(ctx context.Context) (_node *Monitor, err er
 	if value, ok := _u.mutation.AddedInterval(); ok {
 		_spec.AddField(monitor.FieldInterval, field.TypeInt, value)
 	}
+	if value, ok := _u.mutation.Timeout(); ok {
+		_spec.SetField(monitor.FieldTimeout, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedTimeout(); ok {
+		_spec.AddField(monitor.FieldTimeout, field.TypeInt, value)
+	}
 	if value, ok := _u.mutation.Status(); ok {
 		_spec.SetField(monitor.FieldStatus, field.TypeEnum, value)
 	}
 	if value, ok := _u.mutation.GetType(); ok {
 		_spec.SetField(monitor.FieldType, field.TypeEnum, value)
 	}
+	if value, ok := _u.mutation.IsActive(); ok {
+		_spec.SetField(monitor.FieldIsActive, field.TypeBool, value)
+	}
 	if value, ok := _u.mutation.Method(); ok {
 		_spec.SetField(monitor.FieldMethod, field.TypeString, value)
 	}
-	if _u.mutation.MethodCleared() {
-		_spec.ClearField(monitor.FieldMethod, field.TypeString)
+	if value, ok := _u.mutation.AcceptedStatusCodes(); ok {
+		_spec.SetField(monitor.FieldAcceptedStatusCodes, field.TypeJSON, value)
+	}
+	if value, ok := _u.mutation.AppendedAcceptedStatusCodes(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, monitor.FieldAcceptedStatusCodes, value)
+		})
+	}
+	if _u.mutation.AcceptedStatusCodesCleared() {
+		_spec.ClearField(monitor.FieldAcceptedStatusCodes, field.TypeJSON)
+	}
+	if value, ok := _u.mutation.Headers(); ok {
+		_spec.SetField(monitor.FieldHeaders, field.TypeJSON, value)
+	}
+	if _u.mutation.HeadersCleared() {
+		_spec.ClearField(monitor.FieldHeaders, field.TypeJSON)
+	}
+	if value, ok := _u.mutation.Body(); ok {
+		_spec.SetField(monitor.FieldBody, field.TypeString, value)
+	}
+	if _u.mutation.BodyCleared() {
+		_spec.ClearField(monitor.FieldBody, field.TypeString)
+	}
+	if value, ok := _u.mutation.AuthUsername(); ok {
+		_spec.SetField(monitor.FieldAuthUsername, field.TypeString, value)
+	}
+	if _u.mutation.AuthUsernameCleared() {
+		_spec.ClearField(monitor.FieldAuthUsername, field.TypeString)
+	}
+	if value, ok := _u.mutation.AuthPassword(); ok {
+		_spec.SetField(monitor.FieldAuthPassword, field.TypeString, value)
+	}
+	if _u.mutation.AuthPasswordCleared() {
+		_spec.ClearField(monitor.FieldAuthPassword, field.TypeString)
 	}
 	if value, ok := _u.mutation.FiltersContains(); ok {
 		_spec.SetField(monitor.FieldFiltersContains, field.TypeString, value)
@@ -1116,6 +2160,27 @@ func (_u *MonitorUpdateOne) sqlSave(ctx context.Context) (_node *Monitor, err er
 	if _u.mutation.FiltersNotContainsCleared() {
 		_spec.ClearField(monitor.FieldFiltersNotContains, field.TypeString)
 	}
+	if value, ok := _u.mutation.JSONPath(); ok {
+		_spec.SetField(monitor.FieldJSONPath, field.TypeString, value)
+	}
+	if _u.mutation.JSONPathCleared() {
+		_spec.ClearField(monitor.FieldJSONPath, field.TypeString)
+	}
+	if value, ok := _u.mutation.ExpectedValue(); ok {
+		_spec.SetField(monitor.FieldExpectedValue, field.TypeString, value)
+	}
+	if _u.mutation.ExpectedValueCleared() {
+		_spec.ClearField(monitor.FieldExpectedValue, field.TypeString)
+	}
+	if value, ok := _u.mutation.IgnoreTLSErrors(); ok {
+		_spec.SetField(monitor.FieldIgnoreTLSErrors, field.TypeBool, value)
+	}
+	if value, ok := _u.mutation.MaxRedirects(); ok {
+		_spec.SetField(monitor.FieldMaxRedirects, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedMaxRedirects(); ok {
+		_spec.AddField(monitor.FieldMaxRedirects, field.TypeInt, value)
+	}
 	if value, ok := _u.mutation.Retry(); ok {
 		_spec.SetField(monitor.FieldRetry, field.TypeInt, value)
 	}
@@ -1128,16 +2193,17 @@ func (_u *MonitorUpdateOne) sqlSave(ctx context.Context) (_node *Monitor, err er
 	if value, ok := _u.mutation.AddedRetryAfter(); ok {
 		_spec.AddField(monitor.FieldRetryAfter, field.TypeInt, value)
 	}
-	if value, ok := _u.mutation.AlertTypes(); ok {
-		_spec.SetField(monitor.FieldAlertTypes, field.TypeJSON, value)
+	if value, ok := _u.mutation.PushToken(); ok {
+		_spec.SetField(monitor.FieldPushToken, field.TypeString, value)
 	}
-	if value, ok := _u.mutation.AppendedAlertTypes(); ok {
-		_spec.AddModifier(func(u *sql.UpdateBuilder) {
-			sqljson.Append(u, monitor.FieldAlertTypes, value)
-		})
+	if _u.mutation.PushTokenCleared() {
+		_spec.ClearField(monitor.FieldPushToken, field.TypeString)
 	}
-	if _u.mutation.AlertTypesCleared() {
-		_spec.ClearField(monitor.FieldAlertTypes, field.TypeJSON)
+	if value, ok := _u.mutation.Config(); ok {
+		_spec.SetField(monitor.FieldConfig, field.TypeJSON, value)
+	}
+	if _u.mutation.ConfigCleared() {
+		_spec.ClearField(monitor.FieldConfig, field.TypeJSON)
 	}
 	if _u.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -1168,28 +2234,28 @@ func (_u *MonitorUpdateOne) sqlSave(ctx context.Context) (_node *Monitor, err er
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if _u.mutation.HistoryCleared() {
+	if _u.mutation.ChecksCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   monitor.HistoryTable,
-			Columns: []string{monitor.HistoryColumn},
+			Table:   monitor.ChecksTable,
+			Columns: []string{monitor.ChecksColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(monitorhistory.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(monitorcheck.FieldID, field.TypeInt),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := _u.mutation.RemovedHistoryIDs(); len(nodes) > 0 && !_u.mutation.HistoryCleared() {
+	if nodes := _u.mutation.RemovedChecksIDs(); len(nodes) > 0 && !_u.mutation.ChecksCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   monitor.HistoryTable,
-			Columns: []string{monitor.HistoryColumn},
+			Table:   monitor.ChecksTable,
+			Columns: []string{monitor.ChecksColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(monitorhistory.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(monitorcheck.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -1197,15 +2263,15 @@ func (_u *MonitorUpdateOne) sqlSave(ctx context.Context) (_node *Monitor, err er
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := _u.mutation.HistoryIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.ChecksIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   monitor.HistoryTable,
-			Columns: []string{monitor.HistoryColumn},
+			Table:   monitor.ChecksTable,
+			Columns: []string{monitor.ChecksColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(monitorhistory.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(monitorcheck.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -1251,6 +2317,186 @@ func (_u *MonitorUpdateOne) sqlSave(ctx context.Context) (_node *Monitor, err er
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(tag.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.NotificationsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   monitor.NotificationsTable,
+			Columns: monitor.NotificationsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(notification.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedNotificationsIDs(); len(nodes) > 0 && !_u.mutation.NotificationsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   monitor.NotificationsTable,
+			Columns: monitor.NotificationsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(notification.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.NotificationsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   monitor.NotificationsTable,
+			Columns: monitor.NotificationsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(notification.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.StatusPageMonitorsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   monitor.StatusPageMonitorsTable,
+			Columns: []string{monitor.StatusPageMonitorsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(statuspagemonitor.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedStatusPageMonitorsIDs(); len(nodes) > 0 && !_u.mutation.StatusPageMonitorsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   monitor.StatusPageMonitorsTable,
+			Columns: []string{monitor.StatusPageMonitorsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(statuspagemonitor.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.StatusPageMonitorsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   monitor.StatusPageMonitorsTable,
+			Columns: []string{monitor.StatusPageMonitorsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(statuspagemonitor.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.MaintenanceWindowsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   monitor.MaintenanceWindowsTable,
+			Columns: monitor.MaintenanceWindowsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(maintenancewindow.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedMaintenanceWindowsIDs(); len(nodes) > 0 && !_u.mutation.MaintenanceWindowsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   monitor.MaintenanceWindowsTable,
+			Columns: monitor.MaintenanceWindowsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(maintenancewindow.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.MaintenanceWindowsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   monitor.MaintenanceWindowsTable,
+			Columns: monitor.MaintenanceWindowsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(maintenancewindow.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.IncidentsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   monitor.IncidentsTable,
+			Columns: []string{monitor.IncidentsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(incident.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedIncidentsIDs(); len(nodes) > 0 && !_u.mutation.IncidentsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   monitor.IncidentsTable,
+			Columns: []string{monitor.IncidentsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(incident.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.IncidentsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   monitor.IncidentsTable,
+			Columns: []string{monitor.IncidentsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(incident.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

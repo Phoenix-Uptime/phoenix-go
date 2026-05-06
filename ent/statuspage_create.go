@@ -10,9 +10,11 @@ import (
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/incident"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/statusmessage"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/statuspage"
-	"github.com/Phoenix-Uptime/phoenix-go/ent/tag"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/statuspagemonitor"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/user"
 )
 
 // StatusPageCreate is the builder for creating a StatusPage entity.
@@ -64,15 +66,35 @@ func (_c *StatusPageCreate) SetNillableDeletedAt(v *time.Time) *StatusPageCreate
 	return _c
 }
 
-// SetTagID sets the "tag_id" field.
-func (_c *StatusPageCreate) SetTagID(v int) *StatusPageCreate {
-	_c.mutation.SetTagID(v)
+// SetUserID sets the "user_id" field.
+func (_c *StatusPageCreate) SetUserID(v int) *StatusPageCreate {
+	_c.mutation.SetUserID(v)
+	return _c
+}
+
+// SetSlug sets the "slug" field.
+func (_c *StatusPageCreate) SetSlug(v string) *StatusPageCreate {
+	_c.mutation.SetSlug(v)
 	return _c
 }
 
 // SetName sets the "name" field.
 func (_c *StatusPageCreate) SetName(v string) *StatusPageCreate {
 	_c.mutation.SetName(v)
+	return _c
+}
+
+// SetDescription sets the "description" field.
+func (_c *StatusPageCreate) SetDescription(v string) *StatusPageCreate {
+	_c.mutation.SetDescription(v)
+	return _c
+}
+
+// SetNillableDescription sets the "description" field if the given value is not nil.
+func (_c *StatusPageCreate) SetNillableDescription(v *string) *StatusPageCreate {
+	if v != nil {
+		_c.SetDescription(*v)
+	}
 	return _c
 }
 
@@ -90,9 +112,150 @@ func (_c *StatusPageCreate) SetNillableIsPublic(v *bool) *StatusPageCreate {
 	return _c
 }
 
-// SetTag sets the "tag" edge to the Tag entity.
-func (_c *StatusPageCreate) SetTag(v *Tag) *StatusPageCreate {
-	return _c.SetTagID(v.ID)
+// SetPassword sets the "password" field.
+func (_c *StatusPageCreate) SetPassword(v string) *StatusPageCreate {
+	_c.mutation.SetPassword(v)
+	return _c
+}
+
+// SetNillablePassword sets the "password" field if the given value is not nil.
+func (_c *StatusPageCreate) SetNillablePassword(v *string) *StatusPageCreate {
+	if v != nil {
+		_c.SetPassword(*v)
+	}
+	return _c
+}
+
+// SetTheme sets the "theme" field.
+func (_c *StatusPageCreate) SetTheme(v string) *StatusPageCreate {
+	_c.mutation.SetTheme(v)
+	return _c
+}
+
+// SetNillableTheme sets the "theme" field if the given value is not nil.
+func (_c *StatusPageCreate) SetNillableTheme(v *string) *StatusPageCreate {
+	if v != nil {
+		_c.SetTheme(*v)
+	}
+	return _c
+}
+
+// SetCustomCSS sets the "custom_css" field.
+func (_c *StatusPageCreate) SetCustomCSS(v string) *StatusPageCreate {
+	_c.mutation.SetCustomCSS(v)
+	return _c
+}
+
+// SetNillableCustomCSS sets the "custom_css" field if the given value is not nil.
+func (_c *StatusPageCreate) SetNillableCustomCSS(v *string) *StatusPageCreate {
+	if v != nil {
+		_c.SetCustomCSS(*v)
+	}
+	return _c
+}
+
+// SetFooterText sets the "footer_text" field.
+func (_c *StatusPageCreate) SetFooterText(v string) *StatusPageCreate {
+	_c.mutation.SetFooterText(v)
+	return _c
+}
+
+// SetNillableFooterText sets the "footer_text" field if the given value is not nil.
+func (_c *StatusPageCreate) SetNillableFooterText(v *string) *StatusPageCreate {
+	if v != nil {
+		_c.SetFooterText(*v)
+	}
+	return _c
+}
+
+// SetShowTags sets the "show_tags" field.
+func (_c *StatusPageCreate) SetShowTags(v bool) *StatusPageCreate {
+	_c.mutation.SetShowTags(v)
+	return _c
+}
+
+// SetNillableShowTags sets the "show_tags" field if the given value is not nil.
+func (_c *StatusPageCreate) SetNillableShowTags(v *bool) *StatusPageCreate {
+	if v != nil {
+		_c.SetShowTags(*v)
+	}
+	return _c
+}
+
+// SetShowCharts sets the "show_charts" field.
+func (_c *StatusPageCreate) SetShowCharts(v bool) *StatusPageCreate {
+	_c.mutation.SetShowCharts(v)
+	return _c
+}
+
+// SetNillableShowCharts sets the "show_charts" field if the given value is not nil.
+func (_c *StatusPageCreate) SetNillableShowCharts(v *bool) *StatusPageCreate {
+	if v != nil {
+		_c.SetShowCharts(*v)
+	}
+	return _c
+}
+
+// SetShowUptimePercentage sets the "show_uptime_percentage" field.
+func (_c *StatusPageCreate) SetShowUptimePercentage(v bool) *StatusPageCreate {
+	_c.mutation.SetShowUptimePercentage(v)
+	return _c
+}
+
+// SetNillableShowUptimePercentage sets the "show_uptime_percentage" field if the given value is not nil.
+func (_c *StatusPageCreate) SetNillableShowUptimePercentage(v *bool) *StatusPageCreate {
+	if v != nil {
+		_c.SetShowUptimePercentage(*v)
+	}
+	return _c
+}
+
+// SetShowPoweredBy sets the "show_powered_by" field.
+func (_c *StatusPageCreate) SetShowPoweredBy(v bool) *StatusPageCreate {
+	_c.mutation.SetShowPoweredBy(v)
+	return _c
+}
+
+// SetNillableShowPoweredBy sets the "show_powered_by" field if the given value is not nil.
+func (_c *StatusPageCreate) SetNillableShowPoweredBy(v *bool) *StatusPageCreate {
+	if v != nil {
+		_c.SetShowPoweredBy(*v)
+	}
+	return _c
+}
+
+// SetAutoRefreshInterval sets the "auto_refresh_interval" field.
+func (_c *StatusPageCreate) SetAutoRefreshInterval(v int) *StatusPageCreate {
+	_c.mutation.SetAutoRefreshInterval(v)
+	return _c
+}
+
+// SetNillableAutoRefreshInterval sets the "auto_refresh_interval" field if the given value is not nil.
+func (_c *StatusPageCreate) SetNillableAutoRefreshInterval(v *int) *StatusPageCreate {
+	if v != nil {
+		_c.SetAutoRefreshInterval(*v)
+	}
+	return _c
+}
+
+// SetUser sets the "user" edge to the User entity.
+func (_c *StatusPageCreate) SetUser(v *User) *StatusPageCreate {
+	return _c.SetUserID(v.ID)
+}
+
+// AddStatusPageMonitorIDs adds the "status_page_monitors" edge to the StatusPageMonitor entity by IDs.
+func (_c *StatusPageCreate) AddStatusPageMonitorIDs(ids ...int) *StatusPageCreate {
+	_c.mutation.AddStatusPageMonitorIDs(ids...)
+	return _c
+}
+
+// AddStatusPageMonitors adds the "status_page_monitors" edges to the StatusPageMonitor entity.
+func (_c *StatusPageCreate) AddStatusPageMonitors(v ...*StatusPageMonitor) *StatusPageCreate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _c.AddStatusPageMonitorIDs(ids...)
 }
 
 // AddMessageIDs adds the "messages" edge to the StatusMessage entity by IDs.
@@ -108,6 +271,21 @@ func (_c *StatusPageCreate) AddMessages(v ...*StatusMessage) *StatusPageCreate {
 		ids[i] = v[i].ID
 	}
 	return _c.AddMessageIDs(ids...)
+}
+
+// AddIncidentIDs adds the "incidents" edge to the Incident entity by IDs.
+func (_c *StatusPageCreate) AddIncidentIDs(ids ...int) *StatusPageCreate {
+	_c.mutation.AddIncidentIDs(ids...)
+	return _c
+}
+
+// AddIncidents adds the "incidents" edges to the Incident entity.
+func (_c *StatusPageCreate) AddIncidents(v ...*Incident) *StatusPageCreate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _c.AddIncidentIDs(ids...)
 }
 
 // Mutation returns the StatusPageMutation object of the builder.
@@ -157,6 +335,30 @@ func (_c *StatusPageCreate) defaults() {
 		v := statuspage.DefaultIsPublic
 		_c.mutation.SetIsPublic(v)
 	}
+	if _, ok := _c.mutation.Theme(); !ok {
+		v := statuspage.DefaultTheme
+		_c.mutation.SetTheme(v)
+	}
+	if _, ok := _c.mutation.ShowTags(); !ok {
+		v := statuspage.DefaultShowTags
+		_c.mutation.SetShowTags(v)
+	}
+	if _, ok := _c.mutation.ShowCharts(); !ok {
+		v := statuspage.DefaultShowCharts
+		_c.mutation.SetShowCharts(v)
+	}
+	if _, ok := _c.mutation.ShowUptimePercentage(); !ok {
+		v := statuspage.DefaultShowUptimePercentage
+		_c.mutation.SetShowUptimePercentage(v)
+	}
+	if _, ok := _c.mutation.ShowPoweredBy(); !ok {
+		v := statuspage.DefaultShowPoweredBy
+		_c.mutation.SetShowPoweredBy(v)
+	}
+	if _, ok := _c.mutation.AutoRefreshInterval(); !ok {
+		v := statuspage.DefaultAutoRefreshInterval
+		_c.mutation.SetAutoRefreshInterval(v)
+	}
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -167,8 +369,16 @@ func (_c *StatusPageCreate) check() error {
 	if _, ok := _c.mutation.UpdatedAt(); !ok {
 		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "StatusPage.updated_at"`)}
 	}
-	if _, ok := _c.mutation.TagID(); !ok {
-		return &ValidationError{Name: "tag_id", err: errors.New(`ent: missing required field "StatusPage.tag_id"`)}
+	if _, ok := _c.mutation.UserID(); !ok {
+		return &ValidationError{Name: "user_id", err: errors.New(`ent: missing required field "StatusPage.user_id"`)}
+	}
+	if _, ok := _c.mutation.Slug(); !ok {
+		return &ValidationError{Name: "slug", err: errors.New(`ent: missing required field "StatusPage.slug"`)}
+	}
+	if v, ok := _c.mutation.Slug(); ok {
+		if err := statuspage.SlugValidator(v); err != nil {
+			return &ValidationError{Name: "slug", err: fmt.Errorf(`ent: validator failed for field "StatusPage.slug": %w`, err)}
+		}
 	}
 	if _, ok := _c.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New(`ent: missing required field "StatusPage.name"`)}
@@ -181,8 +391,26 @@ func (_c *StatusPageCreate) check() error {
 	if _, ok := _c.mutation.IsPublic(); !ok {
 		return &ValidationError{Name: "is_public", err: errors.New(`ent: missing required field "StatusPage.is_public"`)}
 	}
-	if len(_c.mutation.TagIDs()) == 0 {
-		return &ValidationError{Name: "tag", err: errors.New(`ent: missing required edge "StatusPage.tag"`)}
+	if _, ok := _c.mutation.Theme(); !ok {
+		return &ValidationError{Name: "theme", err: errors.New(`ent: missing required field "StatusPage.theme"`)}
+	}
+	if _, ok := _c.mutation.ShowTags(); !ok {
+		return &ValidationError{Name: "show_tags", err: errors.New(`ent: missing required field "StatusPage.show_tags"`)}
+	}
+	if _, ok := _c.mutation.ShowCharts(); !ok {
+		return &ValidationError{Name: "show_charts", err: errors.New(`ent: missing required field "StatusPage.show_charts"`)}
+	}
+	if _, ok := _c.mutation.ShowUptimePercentage(); !ok {
+		return &ValidationError{Name: "show_uptime_percentage", err: errors.New(`ent: missing required field "StatusPage.show_uptime_percentage"`)}
+	}
+	if _, ok := _c.mutation.ShowPoweredBy(); !ok {
+		return &ValidationError{Name: "show_powered_by", err: errors.New(`ent: missing required field "StatusPage.show_powered_by"`)}
+	}
+	if _, ok := _c.mutation.AutoRefreshInterval(); !ok {
+		return &ValidationError{Name: "auto_refresh_interval", err: errors.New(`ent: missing required field "StatusPage.auto_refresh_interval"`)}
+	}
+	if len(_c.mutation.UserIDs()) == 0 {
+		return &ValidationError{Name: "user", err: errors.New(`ent: missing required edge "StatusPage.user"`)}
 	}
 	return nil
 }
@@ -222,29 +450,89 @@ func (_c *StatusPageCreate) createSpec() (*StatusPage, *sqlgraph.CreateSpec) {
 		_spec.SetField(statuspage.FieldDeletedAt, field.TypeTime, value)
 		_node.DeletedAt = &value
 	}
+	if value, ok := _c.mutation.Slug(); ok {
+		_spec.SetField(statuspage.FieldSlug, field.TypeString, value)
+		_node.Slug = value
+	}
 	if value, ok := _c.mutation.Name(); ok {
 		_spec.SetField(statuspage.FieldName, field.TypeString, value)
 		_node.Name = value
+	}
+	if value, ok := _c.mutation.Description(); ok {
+		_spec.SetField(statuspage.FieldDescription, field.TypeString, value)
+		_node.Description = &value
 	}
 	if value, ok := _c.mutation.IsPublic(); ok {
 		_spec.SetField(statuspage.FieldIsPublic, field.TypeBool, value)
 		_node.IsPublic = value
 	}
-	if nodes := _c.mutation.TagIDs(); len(nodes) > 0 {
+	if value, ok := _c.mutation.Password(); ok {
+		_spec.SetField(statuspage.FieldPassword, field.TypeString, value)
+		_node.Password = &value
+	}
+	if value, ok := _c.mutation.Theme(); ok {
+		_spec.SetField(statuspage.FieldTheme, field.TypeString, value)
+		_node.Theme = value
+	}
+	if value, ok := _c.mutation.CustomCSS(); ok {
+		_spec.SetField(statuspage.FieldCustomCSS, field.TypeString, value)
+		_node.CustomCSS = &value
+	}
+	if value, ok := _c.mutation.FooterText(); ok {
+		_spec.SetField(statuspage.FieldFooterText, field.TypeString, value)
+		_node.FooterText = &value
+	}
+	if value, ok := _c.mutation.ShowTags(); ok {
+		_spec.SetField(statuspage.FieldShowTags, field.TypeBool, value)
+		_node.ShowTags = value
+	}
+	if value, ok := _c.mutation.ShowCharts(); ok {
+		_spec.SetField(statuspage.FieldShowCharts, field.TypeBool, value)
+		_node.ShowCharts = value
+	}
+	if value, ok := _c.mutation.ShowUptimePercentage(); ok {
+		_spec.SetField(statuspage.FieldShowUptimePercentage, field.TypeBool, value)
+		_node.ShowUptimePercentage = value
+	}
+	if value, ok := _c.mutation.ShowPoweredBy(); ok {
+		_spec.SetField(statuspage.FieldShowPoweredBy, field.TypeBool, value)
+		_node.ShowPoweredBy = value
+	}
+	if value, ok := _c.mutation.AutoRefreshInterval(); ok {
+		_spec.SetField(statuspage.FieldAutoRefreshInterval, field.TypeInt, value)
+		_node.AutoRefreshInterval = value
+	}
+	if nodes := _c.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   statuspage.TagTable,
-			Columns: []string{statuspage.TagColumn},
+			Table:   statuspage.UserTable,
+			Columns: []string{statuspage.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(tag.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.TagID = nodes[0]
+		_node.UserID = nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.StatusPageMonitorsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   statuspage.StatusPageMonitorsTable,
+			Columns: []string{statuspage.StatusPageMonitorsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(statuspagemonitor.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := _c.mutation.MessagesIDs(); len(nodes) > 0 {
@@ -256,6 +544,22 @@ func (_c *StatusPageCreate) createSpec() (*StatusPage, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(statusmessage.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.IncidentsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   statuspage.IncidentsTable,
+			Columns: []string{statuspage.IncidentsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(incident.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

@@ -80,6 +80,11 @@ func Name(v string) predicate.Monitor {
 	return predicate.Monitor(sql.FieldEQ(FieldName, v))
 }
 
+// Description applies equality check predicate on the "description" field. It's identical to DescriptionEQ.
+func Description(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldEQ(FieldDescription, v))
+}
+
 // URL applies equality check predicate on the "url" field. It's identical to URLEQ.
 func URL(v string) predicate.Monitor {
 	return predicate.Monitor(sql.FieldEQ(FieldURL, v))
@@ -90,9 +95,34 @@ func Interval(v int) predicate.Monitor {
 	return predicate.Monitor(sql.FieldEQ(FieldInterval, v))
 }
 
+// Timeout applies equality check predicate on the "timeout" field. It's identical to TimeoutEQ.
+func Timeout(v int) predicate.Monitor {
+	return predicate.Monitor(sql.FieldEQ(FieldTimeout, v))
+}
+
+// IsActive applies equality check predicate on the "is_active" field. It's identical to IsActiveEQ.
+func IsActive(v bool) predicate.Monitor {
+	return predicate.Monitor(sql.FieldEQ(FieldIsActive, v))
+}
+
 // Method applies equality check predicate on the "method" field. It's identical to MethodEQ.
 func Method(v string) predicate.Monitor {
 	return predicate.Monitor(sql.FieldEQ(FieldMethod, v))
+}
+
+// Body applies equality check predicate on the "body" field. It's identical to BodyEQ.
+func Body(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldEQ(FieldBody, v))
+}
+
+// AuthUsername applies equality check predicate on the "auth_username" field. It's identical to AuthUsernameEQ.
+func AuthUsername(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldEQ(FieldAuthUsername, v))
+}
+
+// AuthPassword applies equality check predicate on the "auth_password" field. It's identical to AuthPasswordEQ.
+func AuthPassword(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldEQ(FieldAuthPassword, v))
 }
 
 // FiltersContains applies equality check predicate on the "filters_contains" field. It's identical to FiltersContainsEQ.
@@ -105,6 +135,26 @@ func FiltersNotContains(v string) predicate.Monitor {
 	return predicate.Monitor(sql.FieldEQ(FieldFiltersNotContains, v))
 }
 
+// JSONPath applies equality check predicate on the "json_path" field. It's identical to JSONPathEQ.
+func JSONPath(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldEQ(FieldJSONPath, v))
+}
+
+// ExpectedValue applies equality check predicate on the "expected_value" field. It's identical to ExpectedValueEQ.
+func ExpectedValue(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldEQ(FieldExpectedValue, v))
+}
+
+// IgnoreTLSErrors applies equality check predicate on the "ignore_tls_errors" field. It's identical to IgnoreTLSErrorsEQ.
+func IgnoreTLSErrors(v bool) predicate.Monitor {
+	return predicate.Monitor(sql.FieldEQ(FieldIgnoreTLSErrors, v))
+}
+
+// MaxRedirects applies equality check predicate on the "max_redirects" field. It's identical to MaxRedirectsEQ.
+func MaxRedirects(v int) predicate.Monitor {
+	return predicate.Monitor(sql.FieldEQ(FieldMaxRedirects, v))
+}
+
 // Retry applies equality check predicate on the "retry" field. It's identical to RetryEQ.
 func Retry(v int) predicate.Monitor {
 	return predicate.Monitor(sql.FieldEQ(FieldRetry, v))
@@ -113,6 +163,11 @@ func Retry(v int) predicate.Monitor {
 // RetryAfter applies equality check predicate on the "retry_after" field. It's identical to RetryAfterEQ.
 func RetryAfter(v int) predicate.Monitor {
 	return predicate.Monitor(sql.FieldEQ(FieldRetryAfter, v))
+}
+
+// PushToken applies equality check predicate on the "push_token" field. It's identical to PushTokenEQ.
+func PushToken(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldEQ(FieldPushToken, v))
 }
 
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
@@ -330,6 +385,81 @@ func NameContainsFold(v string) predicate.Monitor {
 	return predicate.Monitor(sql.FieldContainsFold(FieldName, v))
 }
 
+// DescriptionEQ applies the EQ predicate on the "description" field.
+func DescriptionEQ(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldEQ(FieldDescription, v))
+}
+
+// DescriptionNEQ applies the NEQ predicate on the "description" field.
+func DescriptionNEQ(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldNEQ(FieldDescription, v))
+}
+
+// DescriptionIn applies the In predicate on the "description" field.
+func DescriptionIn(vs ...string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldIn(FieldDescription, vs...))
+}
+
+// DescriptionNotIn applies the NotIn predicate on the "description" field.
+func DescriptionNotIn(vs ...string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldNotIn(FieldDescription, vs...))
+}
+
+// DescriptionGT applies the GT predicate on the "description" field.
+func DescriptionGT(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldGT(FieldDescription, v))
+}
+
+// DescriptionGTE applies the GTE predicate on the "description" field.
+func DescriptionGTE(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldGTE(FieldDescription, v))
+}
+
+// DescriptionLT applies the LT predicate on the "description" field.
+func DescriptionLT(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldLT(FieldDescription, v))
+}
+
+// DescriptionLTE applies the LTE predicate on the "description" field.
+func DescriptionLTE(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldLTE(FieldDescription, v))
+}
+
+// DescriptionContains applies the Contains predicate on the "description" field.
+func DescriptionContains(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldContains(FieldDescription, v))
+}
+
+// DescriptionHasPrefix applies the HasPrefix predicate on the "description" field.
+func DescriptionHasPrefix(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldHasPrefix(FieldDescription, v))
+}
+
+// DescriptionHasSuffix applies the HasSuffix predicate on the "description" field.
+func DescriptionHasSuffix(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldHasSuffix(FieldDescription, v))
+}
+
+// DescriptionIsNil applies the IsNil predicate on the "description" field.
+func DescriptionIsNil() predicate.Monitor {
+	return predicate.Monitor(sql.FieldIsNull(FieldDescription))
+}
+
+// DescriptionNotNil applies the NotNil predicate on the "description" field.
+func DescriptionNotNil() predicate.Monitor {
+	return predicate.Monitor(sql.FieldNotNull(FieldDescription))
+}
+
+// DescriptionEqualFold applies the EqualFold predicate on the "description" field.
+func DescriptionEqualFold(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldEqualFold(FieldDescription, v))
+}
+
+// DescriptionContainsFold applies the ContainsFold predicate on the "description" field.
+func DescriptionContainsFold(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldContainsFold(FieldDescription, v))
+}
+
 // URLEQ applies the EQ predicate on the "url" field.
 func URLEQ(v string) predicate.Monitor {
 	return predicate.Monitor(sql.FieldEQ(FieldURL, v))
@@ -435,6 +565,46 @@ func IntervalLTE(v int) predicate.Monitor {
 	return predicate.Monitor(sql.FieldLTE(FieldInterval, v))
 }
 
+// TimeoutEQ applies the EQ predicate on the "timeout" field.
+func TimeoutEQ(v int) predicate.Monitor {
+	return predicate.Monitor(sql.FieldEQ(FieldTimeout, v))
+}
+
+// TimeoutNEQ applies the NEQ predicate on the "timeout" field.
+func TimeoutNEQ(v int) predicate.Monitor {
+	return predicate.Monitor(sql.FieldNEQ(FieldTimeout, v))
+}
+
+// TimeoutIn applies the In predicate on the "timeout" field.
+func TimeoutIn(vs ...int) predicate.Monitor {
+	return predicate.Monitor(sql.FieldIn(FieldTimeout, vs...))
+}
+
+// TimeoutNotIn applies the NotIn predicate on the "timeout" field.
+func TimeoutNotIn(vs ...int) predicate.Monitor {
+	return predicate.Monitor(sql.FieldNotIn(FieldTimeout, vs...))
+}
+
+// TimeoutGT applies the GT predicate on the "timeout" field.
+func TimeoutGT(v int) predicate.Monitor {
+	return predicate.Monitor(sql.FieldGT(FieldTimeout, v))
+}
+
+// TimeoutGTE applies the GTE predicate on the "timeout" field.
+func TimeoutGTE(v int) predicate.Monitor {
+	return predicate.Monitor(sql.FieldGTE(FieldTimeout, v))
+}
+
+// TimeoutLT applies the LT predicate on the "timeout" field.
+func TimeoutLT(v int) predicate.Monitor {
+	return predicate.Monitor(sql.FieldLT(FieldTimeout, v))
+}
+
+// TimeoutLTE applies the LTE predicate on the "timeout" field.
+func TimeoutLTE(v int) predicate.Monitor {
+	return predicate.Monitor(sql.FieldLTE(FieldTimeout, v))
+}
+
 // StatusEQ applies the EQ predicate on the "status" field.
 func StatusEQ(v Status) predicate.Monitor {
 	return predicate.Monitor(sql.FieldEQ(FieldStatus, v))
@@ -473,6 +643,16 @@ func TypeIn(vs ...Type) predicate.Monitor {
 // TypeNotIn applies the NotIn predicate on the "type" field.
 func TypeNotIn(vs ...Type) predicate.Monitor {
 	return predicate.Monitor(sql.FieldNotIn(FieldType, vs...))
+}
+
+// IsActiveEQ applies the EQ predicate on the "is_active" field.
+func IsActiveEQ(v bool) predicate.Monitor {
+	return predicate.Monitor(sql.FieldEQ(FieldIsActive, v))
+}
+
+// IsActiveNEQ applies the NEQ predicate on the "is_active" field.
+func IsActiveNEQ(v bool) predicate.Monitor {
+	return predicate.Monitor(sql.FieldNEQ(FieldIsActive, v))
 }
 
 // MethodEQ applies the EQ predicate on the "method" field.
@@ -530,16 +710,6 @@ func MethodHasSuffix(v string) predicate.Monitor {
 	return predicate.Monitor(sql.FieldHasSuffix(FieldMethod, v))
 }
 
-// MethodIsNil applies the IsNil predicate on the "method" field.
-func MethodIsNil() predicate.Monitor {
-	return predicate.Monitor(sql.FieldIsNull(FieldMethod))
-}
-
-// MethodNotNil applies the NotNil predicate on the "method" field.
-func MethodNotNil() predicate.Monitor {
-	return predicate.Monitor(sql.FieldNotNull(FieldMethod))
-}
-
 // MethodEqualFold applies the EqualFold predicate on the "method" field.
 func MethodEqualFold(v string) predicate.Monitor {
 	return predicate.Monitor(sql.FieldEqualFold(FieldMethod, v))
@@ -548,6 +718,251 @@ func MethodEqualFold(v string) predicate.Monitor {
 // MethodContainsFold applies the ContainsFold predicate on the "method" field.
 func MethodContainsFold(v string) predicate.Monitor {
 	return predicate.Monitor(sql.FieldContainsFold(FieldMethod, v))
+}
+
+// AcceptedStatusCodesIsNil applies the IsNil predicate on the "accepted_status_codes" field.
+func AcceptedStatusCodesIsNil() predicate.Monitor {
+	return predicate.Monitor(sql.FieldIsNull(FieldAcceptedStatusCodes))
+}
+
+// AcceptedStatusCodesNotNil applies the NotNil predicate on the "accepted_status_codes" field.
+func AcceptedStatusCodesNotNil() predicate.Monitor {
+	return predicate.Monitor(sql.FieldNotNull(FieldAcceptedStatusCodes))
+}
+
+// HeadersIsNil applies the IsNil predicate on the "headers" field.
+func HeadersIsNil() predicate.Monitor {
+	return predicate.Monitor(sql.FieldIsNull(FieldHeaders))
+}
+
+// HeadersNotNil applies the NotNil predicate on the "headers" field.
+func HeadersNotNil() predicate.Monitor {
+	return predicate.Monitor(sql.FieldNotNull(FieldHeaders))
+}
+
+// BodyEQ applies the EQ predicate on the "body" field.
+func BodyEQ(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldEQ(FieldBody, v))
+}
+
+// BodyNEQ applies the NEQ predicate on the "body" field.
+func BodyNEQ(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldNEQ(FieldBody, v))
+}
+
+// BodyIn applies the In predicate on the "body" field.
+func BodyIn(vs ...string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldIn(FieldBody, vs...))
+}
+
+// BodyNotIn applies the NotIn predicate on the "body" field.
+func BodyNotIn(vs ...string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldNotIn(FieldBody, vs...))
+}
+
+// BodyGT applies the GT predicate on the "body" field.
+func BodyGT(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldGT(FieldBody, v))
+}
+
+// BodyGTE applies the GTE predicate on the "body" field.
+func BodyGTE(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldGTE(FieldBody, v))
+}
+
+// BodyLT applies the LT predicate on the "body" field.
+func BodyLT(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldLT(FieldBody, v))
+}
+
+// BodyLTE applies the LTE predicate on the "body" field.
+func BodyLTE(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldLTE(FieldBody, v))
+}
+
+// BodyContains applies the Contains predicate on the "body" field.
+func BodyContains(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldContains(FieldBody, v))
+}
+
+// BodyHasPrefix applies the HasPrefix predicate on the "body" field.
+func BodyHasPrefix(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldHasPrefix(FieldBody, v))
+}
+
+// BodyHasSuffix applies the HasSuffix predicate on the "body" field.
+func BodyHasSuffix(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldHasSuffix(FieldBody, v))
+}
+
+// BodyIsNil applies the IsNil predicate on the "body" field.
+func BodyIsNil() predicate.Monitor {
+	return predicate.Monitor(sql.FieldIsNull(FieldBody))
+}
+
+// BodyNotNil applies the NotNil predicate on the "body" field.
+func BodyNotNil() predicate.Monitor {
+	return predicate.Monitor(sql.FieldNotNull(FieldBody))
+}
+
+// BodyEqualFold applies the EqualFold predicate on the "body" field.
+func BodyEqualFold(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldEqualFold(FieldBody, v))
+}
+
+// BodyContainsFold applies the ContainsFold predicate on the "body" field.
+func BodyContainsFold(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldContainsFold(FieldBody, v))
+}
+
+// AuthUsernameEQ applies the EQ predicate on the "auth_username" field.
+func AuthUsernameEQ(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldEQ(FieldAuthUsername, v))
+}
+
+// AuthUsernameNEQ applies the NEQ predicate on the "auth_username" field.
+func AuthUsernameNEQ(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldNEQ(FieldAuthUsername, v))
+}
+
+// AuthUsernameIn applies the In predicate on the "auth_username" field.
+func AuthUsernameIn(vs ...string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldIn(FieldAuthUsername, vs...))
+}
+
+// AuthUsernameNotIn applies the NotIn predicate on the "auth_username" field.
+func AuthUsernameNotIn(vs ...string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldNotIn(FieldAuthUsername, vs...))
+}
+
+// AuthUsernameGT applies the GT predicate on the "auth_username" field.
+func AuthUsernameGT(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldGT(FieldAuthUsername, v))
+}
+
+// AuthUsernameGTE applies the GTE predicate on the "auth_username" field.
+func AuthUsernameGTE(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldGTE(FieldAuthUsername, v))
+}
+
+// AuthUsernameLT applies the LT predicate on the "auth_username" field.
+func AuthUsernameLT(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldLT(FieldAuthUsername, v))
+}
+
+// AuthUsernameLTE applies the LTE predicate on the "auth_username" field.
+func AuthUsernameLTE(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldLTE(FieldAuthUsername, v))
+}
+
+// AuthUsernameContains applies the Contains predicate on the "auth_username" field.
+func AuthUsernameContains(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldContains(FieldAuthUsername, v))
+}
+
+// AuthUsernameHasPrefix applies the HasPrefix predicate on the "auth_username" field.
+func AuthUsernameHasPrefix(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldHasPrefix(FieldAuthUsername, v))
+}
+
+// AuthUsernameHasSuffix applies the HasSuffix predicate on the "auth_username" field.
+func AuthUsernameHasSuffix(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldHasSuffix(FieldAuthUsername, v))
+}
+
+// AuthUsernameIsNil applies the IsNil predicate on the "auth_username" field.
+func AuthUsernameIsNil() predicate.Monitor {
+	return predicate.Monitor(sql.FieldIsNull(FieldAuthUsername))
+}
+
+// AuthUsernameNotNil applies the NotNil predicate on the "auth_username" field.
+func AuthUsernameNotNil() predicate.Monitor {
+	return predicate.Monitor(sql.FieldNotNull(FieldAuthUsername))
+}
+
+// AuthUsernameEqualFold applies the EqualFold predicate on the "auth_username" field.
+func AuthUsernameEqualFold(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldEqualFold(FieldAuthUsername, v))
+}
+
+// AuthUsernameContainsFold applies the ContainsFold predicate on the "auth_username" field.
+func AuthUsernameContainsFold(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldContainsFold(FieldAuthUsername, v))
+}
+
+// AuthPasswordEQ applies the EQ predicate on the "auth_password" field.
+func AuthPasswordEQ(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldEQ(FieldAuthPassword, v))
+}
+
+// AuthPasswordNEQ applies the NEQ predicate on the "auth_password" field.
+func AuthPasswordNEQ(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldNEQ(FieldAuthPassword, v))
+}
+
+// AuthPasswordIn applies the In predicate on the "auth_password" field.
+func AuthPasswordIn(vs ...string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldIn(FieldAuthPassword, vs...))
+}
+
+// AuthPasswordNotIn applies the NotIn predicate on the "auth_password" field.
+func AuthPasswordNotIn(vs ...string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldNotIn(FieldAuthPassword, vs...))
+}
+
+// AuthPasswordGT applies the GT predicate on the "auth_password" field.
+func AuthPasswordGT(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldGT(FieldAuthPassword, v))
+}
+
+// AuthPasswordGTE applies the GTE predicate on the "auth_password" field.
+func AuthPasswordGTE(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldGTE(FieldAuthPassword, v))
+}
+
+// AuthPasswordLT applies the LT predicate on the "auth_password" field.
+func AuthPasswordLT(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldLT(FieldAuthPassword, v))
+}
+
+// AuthPasswordLTE applies the LTE predicate on the "auth_password" field.
+func AuthPasswordLTE(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldLTE(FieldAuthPassword, v))
+}
+
+// AuthPasswordContains applies the Contains predicate on the "auth_password" field.
+func AuthPasswordContains(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldContains(FieldAuthPassword, v))
+}
+
+// AuthPasswordHasPrefix applies the HasPrefix predicate on the "auth_password" field.
+func AuthPasswordHasPrefix(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldHasPrefix(FieldAuthPassword, v))
+}
+
+// AuthPasswordHasSuffix applies the HasSuffix predicate on the "auth_password" field.
+func AuthPasswordHasSuffix(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldHasSuffix(FieldAuthPassword, v))
+}
+
+// AuthPasswordIsNil applies the IsNil predicate on the "auth_password" field.
+func AuthPasswordIsNil() predicate.Monitor {
+	return predicate.Monitor(sql.FieldIsNull(FieldAuthPassword))
+}
+
+// AuthPasswordNotNil applies the NotNil predicate on the "auth_password" field.
+func AuthPasswordNotNil() predicate.Monitor {
+	return predicate.Monitor(sql.FieldNotNull(FieldAuthPassword))
+}
+
+// AuthPasswordEqualFold applies the EqualFold predicate on the "auth_password" field.
+func AuthPasswordEqualFold(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldEqualFold(FieldAuthPassword, v))
+}
+
+// AuthPasswordContainsFold applies the ContainsFold predicate on the "auth_password" field.
+func AuthPasswordContainsFold(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldContainsFold(FieldAuthPassword, v))
 }
 
 // FiltersContainsEQ applies the EQ predicate on the "filters_contains" field.
@@ -700,6 +1115,206 @@ func FiltersNotContainsContainsFold(v string) predicate.Monitor {
 	return predicate.Monitor(sql.FieldContainsFold(FieldFiltersNotContains, v))
 }
 
+// JSONPathEQ applies the EQ predicate on the "json_path" field.
+func JSONPathEQ(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldEQ(FieldJSONPath, v))
+}
+
+// JSONPathNEQ applies the NEQ predicate on the "json_path" field.
+func JSONPathNEQ(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldNEQ(FieldJSONPath, v))
+}
+
+// JSONPathIn applies the In predicate on the "json_path" field.
+func JSONPathIn(vs ...string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldIn(FieldJSONPath, vs...))
+}
+
+// JSONPathNotIn applies the NotIn predicate on the "json_path" field.
+func JSONPathNotIn(vs ...string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldNotIn(FieldJSONPath, vs...))
+}
+
+// JSONPathGT applies the GT predicate on the "json_path" field.
+func JSONPathGT(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldGT(FieldJSONPath, v))
+}
+
+// JSONPathGTE applies the GTE predicate on the "json_path" field.
+func JSONPathGTE(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldGTE(FieldJSONPath, v))
+}
+
+// JSONPathLT applies the LT predicate on the "json_path" field.
+func JSONPathLT(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldLT(FieldJSONPath, v))
+}
+
+// JSONPathLTE applies the LTE predicate on the "json_path" field.
+func JSONPathLTE(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldLTE(FieldJSONPath, v))
+}
+
+// JSONPathContains applies the Contains predicate on the "json_path" field.
+func JSONPathContains(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldContains(FieldJSONPath, v))
+}
+
+// JSONPathHasPrefix applies the HasPrefix predicate on the "json_path" field.
+func JSONPathHasPrefix(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldHasPrefix(FieldJSONPath, v))
+}
+
+// JSONPathHasSuffix applies the HasSuffix predicate on the "json_path" field.
+func JSONPathHasSuffix(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldHasSuffix(FieldJSONPath, v))
+}
+
+// JSONPathIsNil applies the IsNil predicate on the "json_path" field.
+func JSONPathIsNil() predicate.Monitor {
+	return predicate.Monitor(sql.FieldIsNull(FieldJSONPath))
+}
+
+// JSONPathNotNil applies the NotNil predicate on the "json_path" field.
+func JSONPathNotNil() predicate.Monitor {
+	return predicate.Monitor(sql.FieldNotNull(FieldJSONPath))
+}
+
+// JSONPathEqualFold applies the EqualFold predicate on the "json_path" field.
+func JSONPathEqualFold(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldEqualFold(FieldJSONPath, v))
+}
+
+// JSONPathContainsFold applies the ContainsFold predicate on the "json_path" field.
+func JSONPathContainsFold(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldContainsFold(FieldJSONPath, v))
+}
+
+// ExpectedValueEQ applies the EQ predicate on the "expected_value" field.
+func ExpectedValueEQ(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldEQ(FieldExpectedValue, v))
+}
+
+// ExpectedValueNEQ applies the NEQ predicate on the "expected_value" field.
+func ExpectedValueNEQ(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldNEQ(FieldExpectedValue, v))
+}
+
+// ExpectedValueIn applies the In predicate on the "expected_value" field.
+func ExpectedValueIn(vs ...string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldIn(FieldExpectedValue, vs...))
+}
+
+// ExpectedValueNotIn applies the NotIn predicate on the "expected_value" field.
+func ExpectedValueNotIn(vs ...string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldNotIn(FieldExpectedValue, vs...))
+}
+
+// ExpectedValueGT applies the GT predicate on the "expected_value" field.
+func ExpectedValueGT(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldGT(FieldExpectedValue, v))
+}
+
+// ExpectedValueGTE applies the GTE predicate on the "expected_value" field.
+func ExpectedValueGTE(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldGTE(FieldExpectedValue, v))
+}
+
+// ExpectedValueLT applies the LT predicate on the "expected_value" field.
+func ExpectedValueLT(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldLT(FieldExpectedValue, v))
+}
+
+// ExpectedValueLTE applies the LTE predicate on the "expected_value" field.
+func ExpectedValueLTE(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldLTE(FieldExpectedValue, v))
+}
+
+// ExpectedValueContains applies the Contains predicate on the "expected_value" field.
+func ExpectedValueContains(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldContains(FieldExpectedValue, v))
+}
+
+// ExpectedValueHasPrefix applies the HasPrefix predicate on the "expected_value" field.
+func ExpectedValueHasPrefix(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldHasPrefix(FieldExpectedValue, v))
+}
+
+// ExpectedValueHasSuffix applies the HasSuffix predicate on the "expected_value" field.
+func ExpectedValueHasSuffix(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldHasSuffix(FieldExpectedValue, v))
+}
+
+// ExpectedValueIsNil applies the IsNil predicate on the "expected_value" field.
+func ExpectedValueIsNil() predicate.Monitor {
+	return predicate.Monitor(sql.FieldIsNull(FieldExpectedValue))
+}
+
+// ExpectedValueNotNil applies the NotNil predicate on the "expected_value" field.
+func ExpectedValueNotNil() predicate.Monitor {
+	return predicate.Monitor(sql.FieldNotNull(FieldExpectedValue))
+}
+
+// ExpectedValueEqualFold applies the EqualFold predicate on the "expected_value" field.
+func ExpectedValueEqualFold(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldEqualFold(FieldExpectedValue, v))
+}
+
+// ExpectedValueContainsFold applies the ContainsFold predicate on the "expected_value" field.
+func ExpectedValueContainsFold(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldContainsFold(FieldExpectedValue, v))
+}
+
+// IgnoreTLSErrorsEQ applies the EQ predicate on the "ignore_tls_errors" field.
+func IgnoreTLSErrorsEQ(v bool) predicate.Monitor {
+	return predicate.Monitor(sql.FieldEQ(FieldIgnoreTLSErrors, v))
+}
+
+// IgnoreTLSErrorsNEQ applies the NEQ predicate on the "ignore_tls_errors" field.
+func IgnoreTLSErrorsNEQ(v bool) predicate.Monitor {
+	return predicate.Monitor(sql.FieldNEQ(FieldIgnoreTLSErrors, v))
+}
+
+// MaxRedirectsEQ applies the EQ predicate on the "max_redirects" field.
+func MaxRedirectsEQ(v int) predicate.Monitor {
+	return predicate.Monitor(sql.FieldEQ(FieldMaxRedirects, v))
+}
+
+// MaxRedirectsNEQ applies the NEQ predicate on the "max_redirects" field.
+func MaxRedirectsNEQ(v int) predicate.Monitor {
+	return predicate.Monitor(sql.FieldNEQ(FieldMaxRedirects, v))
+}
+
+// MaxRedirectsIn applies the In predicate on the "max_redirects" field.
+func MaxRedirectsIn(vs ...int) predicate.Monitor {
+	return predicate.Monitor(sql.FieldIn(FieldMaxRedirects, vs...))
+}
+
+// MaxRedirectsNotIn applies the NotIn predicate on the "max_redirects" field.
+func MaxRedirectsNotIn(vs ...int) predicate.Monitor {
+	return predicate.Monitor(sql.FieldNotIn(FieldMaxRedirects, vs...))
+}
+
+// MaxRedirectsGT applies the GT predicate on the "max_redirects" field.
+func MaxRedirectsGT(v int) predicate.Monitor {
+	return predicate.Monitor(sql.FieldGT(FieldMaxRedirects, v))
+}
+
+// MaxRedirectsGTE applies the GTE predicate on the "max_redirects" field.
+func MaxRedirectsGTE(v int) predicate.Monitor {
+	return predicate.Monitor(sql.FieldGTE(FieldMaxRedirects, v))
+}
+
+// MaxRedirectsLT applies the LT predicate on the "max_redirects" field.
+func MaxRedirectsLT(v int) predicate.Monitor {
+	return predicate.Monitor(sql.FieldLT(FieldMaxRedirects, v))
+}
+
+// MaxRedirectsLTE applies the LTE predicate on the "max_redirects" field.
+func MaxRedirectsLTE(v int) predicate.Monitor {
+	return predicate.Monitor(sql.FieldLTE(FieldMaxRedirects, v))
+}
+
 // RetryEQ applies the EQ predicate on the "retry" field.
 func RetryEQ(v int) predicate.Monitor {
 	return predicate.Monitor(sql.FieldEQ(FieldRetry, v))
@@ -780,14 +1395,89 @@ func RetryAfterLTE(v int) predicate.Monitor {
 	return predicate.Monitor(sql.FieldLTE(FieldRetryAfter, v))
 }
 
-// AlertTypesIsNil applies the IsNil predicate on the "alert_types" field.
-func AlertTypesIsNil() predicate.Monitor {
-	return predicate.Monitor(sql.FieldIsNull(FieldAlertTypes))
+// PushTokenEQ applies the EQ predicate on the "push_token" field.
+func PushTokenEQ(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldEQ(FieldPushToken, v))
 }
 
-// AlertTypesNotNil applies the NotNil predicate on the "alert_types" field.
-func AlertTypesNotNil() predicate.Monitor {
-	return predicate.Monitor(sql.FieldNotNull(FieldAlertTypes))
+// PushTokenNEQ applies the NEQ predicate on the "push_token" field.
+func PushTokenNEQ(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldNEQ(FieldPushToken, v))
+}
+
+// PushTokenIn applies the In predicate on the "push_token" field.
+func PushTokenIn(vs ...string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldIn(FieldPushToken, vs...))
+}
+
+// PushTokenNotIn applies the NotIn predicate on the "push_token" field.
+func PushTokenNotIn(vs ...string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldNotIn(FieldPushToken, vs...))
+}
+
+// PushTokenGT applies the GT predicate on the "push_token" field.
+func PushTokenGT(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldGT(FieldPushToken, v))
+}
+
+// PushTokenGTE applies the GTE predicate on the "push_token" field.
+func PushTokenGTE(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldGTE(FieldPushToken, v))
+}
+
+// PushTokenLT applies the LT predicate on the "push_token" field.
+func PushTokenLT(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldLT(FieldPushToken, v))
+}
+
+// PushTokenLTE applies the LTE predicate on the "push_token" field.
+func PushTokenLTE(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldLTE(FieldPushToken, v))
+}
+
+// PushTokenContains applies the Contains predicate on the "push_token" field.
+func PushTokenContains(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldContains(FieldPushToken, v))
+}
+
+// PushTokenHasPrefix applies the HasPrefix predicate on the "push_token" field.
+func PushTokenHasPrefix(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldHasPrefix(FieldPushToken, v))
+}
+
+// PushTokenHasSuffix applies the HasSuffix predicate on the "push_token" field.
+func PushTokenHasSuffix(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldHasSuffix(FieldPushToken, v))
+}
+
+// PushTokenIsNil applies the IsNil predicate on the "push_token" field.
+func PushTokenIsNil() predicate.Monitor {
+	return predicate.Monitor(sql.FieldIsNull(FieldPushToken))
+}
+
+// PushTokenNotNil applies the NotNil predicate on the "push_token" field.
+func PushTokenNotNil() predicate.Monitor {
+	return predicate.Monitor(sql.FieldNotNull(FieldPushToken))
+}
+
+// PushTokenEqualFold applies the EqualFold predicate on the "push_token" field.
+func PushTokenEqualFold(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldEqualFold(FieldPushToken, v))
+}
+
+// PushTokenContainsFold applies the ContainsFold predicate on the "push_token" field.
+func PushTokenContainsFold(v string) predicate.Monitor {
+	return predicate.Monitor(sql.FieldContainsFold(FieldPushToken, v))
+}
+
+// ConfigIsNil applies the IsNil predicate on the "config" field.
+func ConfigIsNil() predicate.Monitor {
+	return predicate.Monitor(sql.FieldIsNull(FieldConfig))
+}
+
+// ConfigNotNil applies the NotNil predicate on the "config" field.
+func ConfigNotNil() predicate.Monitor {
+	return predicate.Monitor(sql.FieldNotNull(FieldConfig))
 }
 
 // HasUser applies the HasEdge predicate on the "user" edge.
@@ -813,21 +1503,21 @@ func HasUserWith(preds ...predicate.User) predicate.Monitor {
 	})
 }
 
-// HasHistory applies the HasEdge predicate on the "history" edge.
-func HasHistory() predicate.Monitor {
+// HasChecks applies the HasEdge predicate on the "checks" edge.
+func HasChecks() predicate.Monitor {
 	return predicate.Monitor(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, HistoryTable, HistoryColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, ChecksTable, ChecksColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
-// HasHistoryWith applies the HasEdge predicate on the "history" edge with a given conditions (other predicates).
-func HasHistoryWith(preds ...predicate.MonitorHistory) predicate.Monitor {
+// HasChecksWith applies the HasEdge predicate on the "checks" edge with a given conditions (other predicates).
+func HasChecksWith(preds ...predicate.MonitorCheck) predicate.Monitor {
 	return predicate.Monitor(func(s *sql.Selector) {
-		step := newHistoryStep()
+		step := newChecksStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)
@@ -851,6 +1541,98 @@ func HasTags() predicate.Monitor {
 func HasTagsWith(preds ...predicate.Tag) predicate.Monitor {
 	return predicate.Monitor(func(s *sql.Selector) {
 		step := newTagsStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasNotifications applies the HasEdge predicate on the "notifications" edge.
+func HasNotifications() predicate.Monitor {
+	return predicate.Monitor(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, NotificationsTable, NotificationsPrimaryKey...),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasNotificationsWith applies the HasEdge predicate on the "notifications" edge with a given conditions (other predicates).
+func HasNotificationsWith(preds ...predicate.Notification) predicate.Monitor {
+	return predicate.Monitor(func(s *sql.Selector) {
+		step := newNotificationsStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasStatusPageMonitors applies the HasEdge predicate on the "status_page_monitors" edge.
+func HasStatusPageMonitors() predicate.Monitor {
+	return predicate.Monitor(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, StatusPageMonitorsTable, StatusPageMonitorsColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasStatusPageMonitorsWith applies the HasEdge predicate on the "status_page_monitors" edge with a given conditions (other predicates).
+func HasStatusPageMonitorsWith(preds ...predicate.StatusPageMonitor) predicate.Monitor {
+	return predicate.Monitor(func(s *sql.Selector) {
+		step := newStatusPageMonitorsStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasMaintenanceWindows applies the HasEdge predicate on the "maintenance_windows" edge.
+func HasMaintenanceWindows() predicate.Monitor {
+	return predicate.Monitor(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, MaintenanceWindowsTable, MaintenanceWindowsPrimaryKey...),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasMaintenanceWindowsWith applies the HasEdge predicate on the "maintenance_windows" edge with a given conditions (other predicates).
+func HasMaintenanceWindowsWith(preds ...predicate.MaintenanceWindow) predicate.Monitor {
+	return predicate.Monitor(func(s *sql.Selector) {
+		step := newMaintenanceWindowsStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasIncidents applies the HasEdge predicate on the "incidents" edge.
+func HasIncidents() predicate.Monitor {
+	return predicate.Monitor(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, IncidentsTable, IncidentsColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasIncidentsWith applies the HasEdge predicate on the "incidents" edge with a given conditions (other predicates).
+func HasIncidentsWith(preds ...predicate.Incident) predicate.Monitor {
+	return predicate.Monitor(func(s *sql.Selector) {
+		step := newIncidentsStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

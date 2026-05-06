@@ -44,6 +44,18 @@ const (
 	FieldTelegramBotToken = "telegram_bot_token"
 	// EdgeMonitors holds the string denoting the monitors edge name in mutations.
 	EdgeMonitors = "monitors"
+	// EdgeTags holds the string denoting the tags edge name in mutations.
+	EdgeTags = "tags"
+	// EdgeAPIKeys holds the string denoting the api_keys edge name in mutations.
+	EdgeAPIKeys = "api_keys"
+	// EdgeNotifications holds the string denoting the notifications edge name in mutations.
+	EdgeNotifications = "notifications"
+	// EdgeStatusPages holds the string denoting the status_pages edge name in mutations.
+	EdgeStatusPages = "status_pages"
+	// EdgeMaintenanceWindows holds the string denoting the maintenance_windows edge name in mutations.
+	EdgeMaintenanceWindows = "maintenance_windows"
+	// EdgeResolvedIncidents holds the string denoting the resolved_incidents edge name in mutations.
+	EdgeResolvedIncidents = "resolved_incidents"
 	// Table holds the table name of the user in the database.
 	Table = "users"
 	// MonitorsTable is the table that holds the monitors relation/edge.
@@ -53,6 +65,48 @@ const (
 	MonitorsInverseTable = "monitors"
 	// MonitorsColumn is the table column denoting the monitors relation/edge.
 	MonitorsColumn = "user_id"
+	// TagsTable is the table that holds the tags relation/edge.
+	TagsTable = "tags"
+	// TagsInverseTable is the table name for the Tag entity.
+	// It exists in this package in order to avoid circular dependency with the "tag" package.
+	TagsInverseTable = "tags"
+	// TagsColumn is the table column denoting the tags relation/edge.
+	TagsColumn = "user_id"
+	// APIKeysTable is the table that holds the api_keys relation/edge.
+	APIKeysTable = "api_keys"
+	// APIKeysInverseTable is the table name for the APIKey entity.
+	// It exists in this package in order to avoid circular dependency with the "apikey" package.
+	APIKeysInverseTable = "api_keys"
+	// APIKeysColumn is the table column denoting the api_keys relation/edge.
+	APIKeysColumn = "user_id"
+	// NotificationsTable is the table that holds the notifications relation/edge.
+	NotificationsTable = "notifications"
+	// NotificationsInverseTable is the table name for the Notification entity.
+	// It exists in this package in order to avoid circular dependency with the "notification" package.
+	NotificationsInverseTable = "notifications"
+	// NotificationsColumn is the table column denoting the notifications relation/edge.
+	NotificationsColumn = "user_id"
+	// StatusPagesTable is the table that holds the status_pages relation/edge.
+	StatusPagesTable = "status_pages"
+	// StatusPagesInverseTable is the table name for the StatusPage entity.
+	// It exists in this package in order to avoid circular dependency with the "statuspage" package.
+	StatusPagesInverseTable = "status_pages"
+	// StatusPagesColumn is the table column denoting the status_pages relation/edge.
+	StatusPagesColumn = "user_id"
+	// MaintenanceWindowsTable is the table that holds the maintenance_windows relation/edge.
+	MaintenanceWindowsTable = "maintenance_windows"
+	// MaintenanceWindowsInverseTable is the table name for the MaintenanceWindow entity.
+	// It exists in this package in order to avoid circular dependency with the "maintenancewindow" package.
+	MaintenanceWindowsInverseTable = "maintenance_windows"
+	// MaintenanceWindowsColumn is the table column denoting the maintenance_windows relation/edge.
+	MaintenanceWindowsColumn = "user_id"
+	// ResolvedIncidentsTable is the table that holds the resolved_incidents relation/edge.
+	ResolvedIncidentsTable = "incidents"
+	// ResolvedIncidentsInverseTable is the table name for the Incident entity.
+	// It exists in this package in order to avoid circular dependency with the "incident" package.
+	ResolvedIncidentsInverseTable = "incidents"
+	// ResolvedIncidentsColumn is the table column denoting the resolved_incidents relation/edge.
+	ResolvedIncidentsColumn = "resolved_by_id"
 )
 
 // Columns holds all SQL columns for user fields.
@@ -192,10 +246,136 @@ func ByMonitors(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newMonitorsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByTagsCount orders the results by tags count.
+func ByTagsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newTagsStep(), opts...)
+	}
+}
+
+// ByTags orders the results by tags terms.
+func ByTags(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newTagsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByAPIKeysCount orders the results by api_keys count.
+func ByAPIKeysCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newAPIKeysStep(), opts...)
+	}
+}
+
+// ByAPIKeys orders the results by api_keys terms.
+func ByAPIKeys(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newAPIKeysStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByNotificationsCount orders the results by notifications count.
+func ByNotificationsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newNotificationsStep(), opts...)
+	}
+}
+
+// ByNotifications orders the results by notifications terms.
+func ByNotifications(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newNotificationsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByStatusPagesCount orders the results by status_pages count.
+func ByStatusPagesCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newStatusPagesStep(), opts...)
+	}
+}
+
+// ByStatusPages orders the results by status_pages terms.
+func ByStatusPages(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newStatusPagesStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByMaintenanceWindowsCount orders the results by maintenance_windows count.
+func ByMaintenanceWindowsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newMaintenanceWindowsStep(), opts...)
+	}
+}
+
+// ByMaintenanceWindows orders the results by maintenance_windows terms.
+func ByMaintenanceWindows(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newMaintenanceWindowsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByResolvedIncidentsCount orders the results by resolved_incidents count.
+func ByResolvedIncidentsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newResolvedIncidentsStep(), opts...)
+	}
+}
+
+// ByResolvedIncidents orders the results by resolved_incidents terms.
+func ByResolvedIncidents(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newResolvedIncidentsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newMonitorsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(MonitorsInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, MonitorsTable, MonitorsColumn),
+	)
+}
+func newTagsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(TagsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, TagsTable, TagsColumn),
+	)
+}
+func newAPIKeysStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(APIKeysInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, APIKeysTable, APIKeysColumn),
+	)
+}
+func newNotificationsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(NotificationsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, NotificationsTable, NotificationsColumn),
+	)
+}
+func newStatusPagesStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(StatusPagesInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, StatusPagesTable, StatusPagesColumn),
+	)
+}
+func newMaintenanceWindowsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(MaintenanceWindowsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, MaintenanceWindowsTable, MaintenanceWindowsColumn),
+	)
+}
+func newResolvedIncidentsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(ResolvedIncidentsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, ResolvedIncidentsTable, ResolvedIncidentsColumn),
 	)
 }

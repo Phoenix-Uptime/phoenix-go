@@ -55,9 +55,21 @@ type User struct {
 type UserEdges struct {
 	// Monitors holds the value of the monitors edge.
 	Monitors []*Monitor `json:"monitors,omitempty"`
+	// Tags holds the value of the tags edge.
+	Tags []*Tag `json:"tags,omitempty"`
+	// APIKeys holds the value of the api_keys edge.
+	APIKeys []*APIKey `json:"api_keys,omitempty"`
+	// Notifications holds the value of the notifications edge.
+	Notifications []*Notification `json:"notifications,omitempty"`
+	// StatusPages holds the value of the status_pages edge.
+	StatusPages []*StatusPage `json:"status_pages,omitempty"`
+	// MaintenanceWindows holds the value of the maintenance_windows edge.
+	MaintenanceWindows []*MaintenanceWindow `json:"maintenance_windows,omitempty"`
+	// ResolvedIncidents holds the value of the resolved_incidents edge.
+	ResolvedIncidents []*Incident `json:"resolved_incidents,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [1]bool
+	loadedTypes [7]bool
 }
 
 // MonitorsOrErr returns the Monitors value or an error if the edge
@@ -67,6 +79,60 @@ func (e UserEdges) MonitorsOrErr() ([]*Monitor, error) {
 		return e.Monitors, nil
 	}
 	return nil, &NotLoadedError{edge: "monitors"}
+}
+
+// TagsOrErr returns the Tags value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) TagsOrErr() ([]*Tag, error) {
+	if e.loadedTypes[1] {
+		return e.Tags, nil
+	}
+	return nil, &NotLoadedError{edge: "tags"}
+}
+
+// APIKeysOrErr returns the APIKeys value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) APIKeysOrErr() ([]*APIKey, error) {
+	if e.loadedTypes[2] {
+		return e.APIKeys, nil
+	}
+	return nil, &NotLoadedError{edge: "api_keys"}
+}
+
+// NotificationsOrErr returns the Notifications value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) NotificationsOrErr() ([]*Notification, error) {
+	if e.loadedTypes[3] {
+		return e.Notifications, nil
+	}
+	return nil, &NotLoadedError{edge: "notifications"}
+}
+
+// StatusPagesOrErr returns the StatusPages value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) StatusPagesOrErr() ([]*StatusPage, error) {
+	if e.loadedTypes[4] {
+		return e.StatusPages, nil
+	}
+	return nil, &NotLoadedError{edge: "status_pages"}
+}
+
+// MaintenanceWindowsOrErr returns the MaintenanceWindows value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) MaintenanceWindowsOrErr() ([]*MaintenanceWindow, error) {
+	if e.loadedTypes[5] {
+		return e.MaintenanceWindows, nil
+	}
+	return nil, &NotLoadedError{edge: "maintenance_windows"}
+}
+
+// ResolvedIncidentsOrErr returns the ResolvedIncidents value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) ResolvedIncidentsOrErr() ([]*Incident, error) {
+	if e.loadedTypes[6] {
+		return e.ResolvedIncidents, nil
+	}
+	return nil, &NotLoadedError{edge: "resolved_incidents"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -204,6 +270,36 @@ func (_m *User) Value(name string) (ent.Value, error) {
 // QueryMonitors queries the "monitors" edge of the User entity.
 func (_m *User) QueryMonitors() *MonitorQuery {
 	return NewUserClient(_m.config).QueryMonitors(_m)
+}
+
+// QueryTags queries the "tags" edge of the User entity.
+func (_m *User) QueryTags() *TagQuery {
+	return NewUserClient(_m.config).QueryTags(_m)
+}
+
+// QueryAPIKeys queries the "api_keys" edge of the User entity.
+func (_m *User) QueryAPIKeys() *APIKeyQuery {
+	return NewUserClient(_m.config).QueryAPIKeys(_m)
+}
+
+// QueryNotifications queries the "notifications" edge of the User entity.
+func (_m *User) QueryNotifications() *NotificationQuery {
+	return NewUserClient(_m.config).QueryNotifications(_m)
+}
+
+// QueryStatusPages queries the "status_pages" edge of the User entity.
+func (_m *User) QueryStatusPages() *StatusPageQuery {
+	return NewUserClient(_m.config).QueryStatusPages(_m)
+}
+
+// QueryMaintenanceWindows queries the "maintenance_windows" edge of the User entity.
+func (_m *User) QueryMaintenanceWindows() *MaintenanceWindowQuery {
+	return NewUserClient(_m.config).QueryMaintenanceWindows(_m)
+}
+
+// QueryResolvedIncidents queries the "resolved_incidents" edge of the User entity.
+func (_m *User) QueryResolvedIncidents() *IncidentQuery {
+	return NewUserClient(_m.config).QueryResolvedIncidents(_m)
 }
 
 // Update returns a builder for updating this User.

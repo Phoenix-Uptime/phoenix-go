@@ -9,6 +9,7 @@ import (
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/incident"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/statusmessage"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/statuspage"
 )
@@ -26,10 +27,14 @@ type StatusMessage struct {
 	DeletedAt *time.Time `json:"deleted_at,omitempty"`
 	// StatusPageID holds the value of the "status_page_id" field.
 	StatusPageID int `json:"status_page_id,omitempty"`
+	// IncidentID holds the value of the "incident_id" field.
+	IncidentID *int `json:"incident_id,omitempty"`
 	// ParentID holds the value of the "parent_id" field.
 	ParentID *int `json:"parent_id,omitempty"`
 	// Type holds the value of the "type" field.
 	Type statusmessage.Type `json:"type,omitempty"`
+	// Title holds the value of the "title" field.
+	Title *string `json:"title,omitempty"`
 	// Content holds the value of the "content" field.
 	Content string `json:"content,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
@@ -42,13 +47,15 @@ type StatusMessage struct {
 type StatusMessageEdges struct {
 	// StatusPage holds the value of the status_page edge.
 	StatusPage *StatusPage `json:"status_page,omitempty"`
+	// Incident holds the value of the incident edge.
+	Incident *Incident `json:"incident,omitempty"`
 	// Parent holds the value of the parent edge.
 	Parent *StatusMessage `json:"parent,omitempty"`
 	// SubMessages holds the value of the sub_messages edge.
 	SubMessages []*StatusMessage `json:"sub_messages,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [3]bool
+	loadedTypes [4]bool
 }
 
 // StatusPageOrErr returns the StatusPage value or an error if the edge
@@ -62,12 +69,23 @@ func (e StatusMessageEdges) StatusPageOrErr() (*StatusPage, error) {
 	return nil, &NotLoadedError{edge: "status_page"}
 }
 
+// IncidentOrErr returns the Incident value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e StatusMessageEdges) IncidentOrErr() (*Incident, error) {
+	if e.Incident != nil {
+		return e.Incident, nil
+	} else if e.loadedTypes[1] {
+		return nil, &NotFoundError{label: incident.Label}
+	}
+	return nil, &NotLoadedError{edge: "incident"}
+}
+
 // ParentOrErr returns the Parent value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
 func (e StatusMessageEdges) ParentOrErr() (*StatusMessage, error) {
 	if e.Parent != nil {
 		return e.Parent, nil
-	} else if e.loadedTypes[1] {
+	} else if e.loadedTypes[2] {
 		return nil, &NotFoundError{label: statusmessage.Label}
 	}
 	return nil, &NotLoadedError{edge: "parent"}
@@ -76,7 +94,7 @@ func (e StatusMessageEdges) ParentOrErr() (*StatusMessage, error) {
 // SubMessagesOrErr returns the SubMessages value or an error if the edge
 // was not loaded in eager-loading.
 func (e StatusMessageEdges) SubMessagesOrErr() ([]*StatusMessage, error) {
-	if e.loadedTypes[2] {
+	if e.loadedTypes[3] {
 		return e.SubMessages, nil
 	}
 	return nil, &NotLoadedError{edge: "sub_messages"}
@@ -87,9 +105,9 @@ func (*StatusMessage) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case statusmessage.FieldID, statusmessage.FieldStatusPageID, statusmessage.FieldParentID:
+		case statusmessage.FieldID, statusmessage.FieldStatusPageID, statusmessage.FieldIncidentID, statusmessage.FieldParentID:
 			values[i] = new(sql.NullInt64)
-		case statusmessage.FieldType, statusmessage.FieldContent:
+		case statusmessage.FieldType, statusmessage.FieldTitle, statusmessage.FieldContent:
 			values[i] = new(sql.NullString)
 		case statusmessage.FieldCreatedAt, statusmessage.FieldUpdatedAt, statusmessage.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -139,6 +157,13 @@ func (_m *StatusMessage) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.StatusPageID = int(value.Int64)
 			}
+		case statusmessage.FieldIncidentID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field incident_id", values[i])
+			} else if value.Valid {
+				_m.IncidentID = new(int)
+				*_m.IncidentID = int(value.Int64)
+			}
 		case statusmessage.FieldParentID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field parent_id", values[i])
@@ -151,6 +176,13 @@ func (_m *StatusMessage) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field type", values[i])
 			} else if value.Valid {
 				_m.Type = statusmessage.Type(value.String)
+			}
+		case statusmessage.FieldTitle:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field title", values[i])
+			} else if value.Valid {
+				_m.Title = new(string)
+				*_m.Title = value.String
 			}
 		case statusmessage.FieldContent:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -174,6 +206,11 @@ func (_m *StatusMessage) Value(name string) (ent.Value, error) {
 // QueryStatusPage queries the "status_page" edge of the StatusMessage entity.
 func (_m *StatusMessage) QueryStatusPage() *StatusPageQuery {
 	return NewStatusMessageClient(_m.config).QueryStatusPage(_m)
+}
+
+// QueryIncident queries the "incident" edge of the StatusMessage entity.
+func (_m *StatusMessage) QueryIncident() *IncidentQuery {
+	return NewStatusMessageClient(_m.config).QueryIncident(_m)
 }
 
 // QueryParent queries the "parent" edge of the StatusMessage entity.
@@ -223,6 +260,11 @@ func (_m *StatusMessage) String() string {
 	builder.WriteString("status_page_id=")
 	builder.WriteString(fmt.Sprintf("%v", _m.StatusPageID))
 	builder.WriteString(", ")
+	if v := _m.IncidentID; v != nil {
+		builder.WriteString("incident_id=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
 	if v := _m.ParentID; v != nil {
 		builder.WriteString("parent_id=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
@@ -230,6 +272,11 @@ func (_m *StatusMessage) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("type=")
 	builder.WriteString(fmt.Sprintf("%v", _m.Type))
+	builder.WriteString(", ")
+	if v := _m.Title; v != nil {
+		builder.WriteString("title=")
+		builder.WriteString(*v)
+	}
 	builder.WriteString(", ")
 	builder.WriteString("content=")
 	builder.WriteString(_m.Content)

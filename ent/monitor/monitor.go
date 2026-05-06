@@ -25,32 +25,66 @@ const (
 	FieldUserID = "user_id"
 	// FieldName holds the string denoting the name field in the database.
 	FieldName = "name"
+	// FieldDescription holds the string denoting the description field in the database.
+	FieldDescription = "description"
 	// FieldURL holds the string denoting the url field in the database.
 	FieldURL = "url"
 	// FieldInterval holds the string denoting the interval field in the database.
 	FieldInterval = "interval"
+	// FieldTimeout holds the string denoting the timeout field in the database.
+	FieldTimeout = "timeout"
 	// FieldStatus holds the string denoting the status field in the database.
 	FieldStatus = "status"
 	// FieldType holds the string denoting the type field in the database.
 	FieldType = "type"
+	// FieldIsActive holds the string denoting the is_active field in the database.
+	FieldIsActive = "is_active"
 	// FieldMethod holds the string denoting the method field in the database.
 	FieldMethod = "method"
+	// FieldAcceptedStatusCodes holds the string denoting the accepted_status_codes field in the database.
+	FieldAcceptedStatusCodes = "accepted_status_codes"
+	// FieldHeaders holds the string denoting the headers field in the database.
+	FieldHeaders = "headers"
+	// FieldBody holds the string denoting the body field in the database.
+	FieldBody = "body"
+	// FieldAuthUsername holds the string denoting the auth_username field in the database.
+	FieldAuthUsername = "auth_username"
+	// FieldAuthPassword holds the string denoting the auth_password field in the database.
+	FieldAuthPassword = "auth_password"
 	// FieldFiltersContains holds the string denoting the filters_contains field in the database.
 	FieldFiltersContains = "filters_contains"
 	// FieldFiltersNotContains holds the string denoting the filters_not_contains field in the database.
 	FieldFiltersNotContains = "filters_not_contains"
+	// FieldJSONPath holds the string denoting the json_path field in the database.
+	FieldJSONPath = "json_path"
+	// FieldExpectedValue holds the string denoting the expected_value field in the database.
+	FieldExpectedValue = "expected_value"
+	// FieldIgnoreTLSErrors holds the string denoting the ignore_tls_errors field in the database.
+	FieldIgnoreTLSErrors = "ignore_tls_errors"
+	// FieldMaxRedirects holds the string denoting the max_redirects field in the database.
+	FieldMaxRedirects = "max_redirects"
 	// FieldRetry holds the string denoting the retry field in the database.
 	FieldRetry = "retry"
 	// FieldRetryAfter holds the string denoting the retry_after field in the database.
 	FieldRetryAfter = "retry_after"
-	// FieldAlertTypes holds the string denoting the alert_types field in the database.
-	FieldAlertTypes = "alert_types"
+	// FieldPushToken holds the string denoting the push_token field in the database.
+	FieldPushToken = "push_token"
+	// FieldConfig holds the string denoting the config field in the database.
+	FieldConfig = "config"
 	// EdgeUser holds the string denoting the user edge name in mutations.
 	EdgeUser = "user"
-	// EdgeHistory holds the string denoting the history edge name in mutations.
-	EdgeHistory = "history"
+	// EdgeChecks holds the string denoting the checks edge name in mutations.
+	EdgeChecks = "checks"
 	// EdgeTags holds the string denoting the tags edge name in mutations.
 	EdgeTags = "tags"
+	// EdgeNotifications holds the string denoting the notifications edge name in mutations.
+	EdgeNotifications = "notifications"
+	// EdgeStatusPageMonitors holds the string denoting the status_page_monitors edge name in mutations.
+	EdgeStatusPageMonitors = "status_page_monitors"
+	// EdgeMaintenanceWindows holds the string denoting the maintenance_windows edge name in mutations.
+	EdgeMaintenanceWindows = "maintenance_windows"
+	// EdgeIncidents holds the string denoting the incidents edge name in mutations.
+	EdgeIncidents = "incidents"
 	// Table holds the table name of the monitor in the database.
 	Table = "monitors"
 	// UserTable is the table that holds the user relation/edge.
@@ -60,18 +94,42 @@ const (
 	UserInverseTable = "users"
 	// UserColumn is the table column denoting the user relation/edge.
 	UserColumn = "user_id"
-	// HistoryTable is the table that holds the history relation/edge.
-	HistoryTable = "monitor_histories"
-	// HistoryInverseTable is the table name for the MonitorHistory entity.
-	// It exists in this package in order to avoid circular dependency with the "monitorhistory" package.
-	HistoryInverseTable = "monitor_histories"
-	// HistoryColumn is the table column denoting the history relation/edge.
-	HistoryColumn = "monitor_id"
+	// ChecksTable is the table that holds the checks relation/edge.
+	ChecksTable = "monitor_checks"
+	// ChecksInverseTable is the table name for the MonitorCheck entity.
+	// It exists in this package in order to avoid circular dependency with the "monitorcheck" package.
+	ChecksInverseTable = "monitor_checks"
+	// ChecksColumn is the table column denoting the checks relation/edge.
+	ChecksColumn = "monitor_id"
 	// TagsTable is the table that holds the tags relation/edge. The primary key declared below.
 	TagsTable = "monitor_tags"
 	// TagsInverseTable is the table name for the Tag entity.
 	// It exists in this package in order to avoid circular dependency with the "tag" package.
 	TagsInverseTable = "tags"
+	// NotificationsTable is the table that holds the notifications relation/edge. The primary key declared below.
+	NotificationsTable = "monitor_notifications"
+	// NotificationsInverseTable is the table name for the Notification entity.
+	// It exists in this package in order to avoid circular dependency with the "notification" package.
+	NotificationsInverseTable = "notifications"
+	// StatusPageMonitorsTable is the table that holds the status_page_monitors relation/edge.
+	StatusPageMonitorsTable = "status_page_monitors"
+	// StatusPageMonitorsInverseTable is the table name for the StatusPageMonitor entity.
+	// It exists in this package in order to avoid circular dependency with the "statuspagemonitor" package.
+	StatusPageMonitorsInverseTable = "status_page_monitors"
+	// StatusPageMonitorsColumn is the table column denoting the status_page_monitors relation/edge.
+	StatusPageMonitorsColumn = "monitor_id"
+	// MaintenanceWindowsTable is the table that holds the maintenance_windows relation/edge. The primary key declared below.
+	MaintenanceWindowsTable = "monitor_maintenance_windows"
+	// MaintenanceWindowsInverseTable is the table name for the MaintenanceWindow entity.
+	// It exists in this package in order to avoid circular dependency with the "maintenancewindow" package.
+	MaintenanceWindowsInverseTable = "maintenance_windows"
+	// IncidentsTable is the table that holds the incidents relation/edge.
+	IncidentsTable = "incidents"
+	// IncidentsInverseTable is the table name for the Incident entity.
+	// It exists in this package in order to avoid circular dependency with the "incident" package.
+	IncidentsInverseTable = "incidents"
+	// IncidentsColumn is the table column denoting the incidents relation/edge.
+	IncidentsColumn = "monitor_id"
 )
 
 // Columns holds all SQL columns for monitor fields.
@@ -82,22 +140,41 @@ var Columns = []string{
 	FieldDeletedAt,
 	FieldUserID,
 	FieldName,
+	FieldDescription,
 	FieldURL,
 	FieldInterval,
+	FieldTimeout,
 	FieldStatus,
 	FieldType,
+	FieldIsActive,
 	FieldMethod,
+	FieldAcceptedStatusCodes,
+	FieldHeaders,
+	FieldBody,
+	FieldAuthUsername,
+	FieldAuthPassword,
 	FieldFiltersContains,
 	FieldFiltersNotContains,
+	FieldJSONPath,
+	FieldExpectedValue,
+	FieldIgnoreTLSErrors,
+	FieldMaxRedirects,
 	FieldRetry,
 	FieldRetryAfter,
-	FieldAlertTypes,
+	FieldPushToken,
+	FieldConfig,
 }
 
 var (
 	// TagsPrimaryKey and TagsColumn2 are the table columns denoting the
 	// primary key for the tags relation (M2M).
 	TagsPrimaryKey = []string{"monitor_id", "tag_id"}
+	// NotificationsPrimaryKey and NotificationsColumn2 are the table columns denoting the
+	// primary key for the notifications relation (M2M).
+	NotificationsPrimaryKey = []string{"monitor_id", "notification_id"}
+	// MaintenanceWindowsPrimaryKey and MaintenanceWindowsColumn2 are the table columns denoting the
+	// primary key for the maintenance_windows relation (M2M).
+	MaintenanceWindowsPrimaryKey = []string{"maintenance_window_id", "monitor_id"}
 )
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -123,6 +200,16 @@ var (
 	URLValidator func(string) error
 	// DefaultInterval holds the default value on creation for the "interval" field.
 	DefaultInterval int
+	// DefaultTimeout holds the default value on creation for the "timeout" field.
+	DefaultTimeout int
+	// DefaultIsActive holds the default value on creation for the "is_active" field.
+	DefaultIsActive bool
+	// DefaultMethod holds the default value on creation for the "method" field.
+	DefaultMethod string
+	// DefaultIgnoreTLSErrors holds the default value on creation for the "ignore_tls_errors" field.
+	DefaultIgnoreTLSErrors bool
+	// DefaultMaxRedirects holds the default value on creation for the "max_redirects" field.
+	DefaultMaxRedirects int
 	// DefaultRetry holds the default value on creation for the "retry" field.
 	DefaultRetry int
 	// DefaultRetryAfter holds the default value on creation for the "retry_after" field.
@@ -137,10 +224,12 @@ const DefaultStatus = StatusUnknown
 
 // Status values.
 const (
-	StatusUp      Status = "up"
-	StatusDown    Status = "down"
-	StatusPaused  Status = "paused"
-	StatusUnknown Status = "unknown"
+	StatusUp          Status = "up"
+	StatusDown        Status = "down"
+	StatusPending     Status = "pending"
+	StatusMaintenance Status = "maintenance"
+	StatusPaused      Status = "paused"
+	StatusUnknown     Status = "unknown"
 )
 
 func (s Status) String() string {
@@ -150,7 +239,7 @@ func (s Status) String() string {
 // StatusValidator is a validator for the "status" field enum values. It is called by the builders before save.
 func StatusValidator(s Status) error {
 	switch s {
-	case StatusUp, StatusDown, StatusPaused, StatusUnknown:
+	case StatusUp, StatusDown, StatusPending, StatusMaintenance, StatusPaused, StatusUnknown:
 		return nil
 	default:
 		return fmt.Errorf("monitor: invalid enum value for status field: %q", s)
@@ -162,9 +251,15 @@ type Type string
 
 // Type values.
 const (
-	TypeURL  Type = "url"
-	TypePing Type = "ping"
-	TypeSMTP Type = "smtp"
+	TypeHTTP    Type = "http"
+	TypeKeyword Type = "keyword"
+	TypeJSON    Type = "json"
+	TypePing    Type = "ping"
+	TypeTCP     Type = "tcp"
+	TypeSMTP    Type = "smtp"
+	TypeDNS     Type = "dns"
+	TypePush    Type = "push"
+	TypeGrpc    Type = "grpc"
 )
 
 func (_type Type) String() string {
@@ -174,7 +269,7 @@ func (_type Type) String() string {
 // TypeValidator is a validator for the "type" field enum values. It is called by the builders before save.
 func TypeValidator(_type Type) error {
 	switch _type {
-	case TypeURL, TypePing, TypeSMTP:
+	case TypeHTTP, TypeKeyword, TypeJSON, TypePing, TypeTCP, TypeSMTP, TypeDNS, TypePush, TypeGrpc:
 		return nil
 	default:
 		return fmt.Errorf("monitor: invalid enum value for type field: %q", _type)
@@ -214,6 +309,11 @@ func ByName(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldName, opts...).ToFunc()
 }
 
+// ByDescription orders the results by the description field.
+func ByDescription(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldDescription, opts...).ToFunc()
+}
+
 // ByURL orders the results by the url field.
 func ByURL(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldURL, opts...).ToFunc()
@@ -222,6 +322,11 @@ func ByURL(opts ...sql.OrderTermOption) OrderOption {
 // ByInterval orders the results by the interval field.
 func ByInterval(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldInterval, opts...).ToFunc()
+}
+
+// ByTimeout orders the results by the timeout field.
+func ByTimeout(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldTimeout, opts...).ToFunc()
 }
 
 // ByStatus orders the results by the status field.
@@ -234,9 +339,29 @@ func ByType(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldType, opts...).ToFunc()
 }
 
+// ByIsActive orders the results by the is_active field.
+func ByIsActive(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldIsActive, opts...).ToFunc()
+}
+
 // ByMethod orders the results by the method field.
 func ByMethod(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldMethod, opts...).ToFunc()
+}
+
+// ByBody orders the results by the body field.
+func ByBody(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldBody, opts...).ToFunc()
+}
+
+// ByAuthUsername orders the results by the auth_username field.
+func ByAuthUsername(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldAuthUsername, opts...).ToFunc()
+}
+
+// ByAuthPassword orders the results by the auth_password field.
+func ByAuthPassword(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldAuthPassword, opts...).ToFunc()
 }
 
 // ByFiltersContains orders the results by the filters_contains field.
@@ -249,6 +374,26 @@ func ByFiltersNotContains(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldFiltersNotContains, opts...).ToFunc()
 }
 
+// ByJSONPath orders the results by the json_path field.
+func ByJSONPath(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldJSONPath, opts...).ToFunc()
+}
+
+// ByExpectedValue orders the results by the expected_value field.
+func ByExpectedValue(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldExpectedValue, opts...).ToFunc()
+}
+
+// ByIgnoreTLSErrors orders the results by the ignore_tls_errors field.
+func ByIgnoreTLSErrors(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldIgnoreTLSErrors, opts...).ToFunc()
+}
+
+// ByMaxRedirects orders the results by the max_redirects field.
+func ByMaxRedirects(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldMaxRedirects, opts...).ToFunc()
+}
+
 // ByRetry orders the results by the retry field.
 func ByRetry(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldRetry, opts...).ToFunc()
@@ -259,6 +404,11 @@ func ByRetryAfter(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldRetryAfter, opts...).ToFunc()
 }
 
+// ByPushToken orders the results by the push_token field.
+func ByPushToken(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldPushToken, opts...).ToFunc()
+}
+
 // ByUserField orders the results by user field.
 func ByUserField(field string, opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
@@ -266,17 +416,17 @@ func ByUserField(field string, opts ...sql.OrderTermOption) OrderOption {
 	}
 }
 
-// ByHistoryCount orders the results by history count.
-func ByHistoryCount(opts ...sql.OrderTermOption) OrderOption {
+// ByChecksCount orders the results by checks count.
+func ByChecksCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newHistoryStep(), opts...)
+		sqlgraph.OrderByNeighborsCount(s, newChecksStep(), opts...)
 	}
 }
 
-// ByHistory orders the results by history terms.
-func ByHistory(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+// ByChecks orders the results by checks terms.
+func ByChecks(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newHistoryStep(), append([]sql.OrderTerm{term}, terms...)...)
+		sqlgraph.OrderByNeighborTerms(s, newChecksStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
 
@@ -293,6 +443,62 @@ func ByTags(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newTagsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByNotificationsCount orders the results by notifications count.
+func ByNotificationsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newNotificationsStep(), opts...)
+	}
+}
+
+// ByNotifications orders the results by notifications terms.
+func ByNotifications(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newNotificationsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByStatusPageMonitorsCount orders the results by status_page_monitors count.
+func ByStatusPageMonitorsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newStatusPageMonitorsStep(), opts...)
+	}
+}
+
+// ByStatusPageMonitors orders the results by status_page_monitors terms.
+func ByStatusPageMonitors(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newStatusPageMonitorsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByMaintenanceWindowsCount orders the results by maintenance_windows count.
+func ByMaintenanceWindowsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newMaintenanceWindowsStep(), opts...)
+	}
+}
+
+// ByMaintenanceWindows orders the results by maintenance_windows terms.
+func ByMaintenanceWindows(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newMaintenanceWindowsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByIncidentsCount orders the results by incidents count.
+func ByIncidentsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newIncidentsStep(), opts...)
+	}
+}
+
+// ByIncidents orders the results by incidents terms.
+func ByIncidents(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newIncidentsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newUserStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -300,11 +506,11 @@ func newUserStep() *sqlgraph.Step {
 		sqlgraph.Edge(sqlgraph.M2O, true, UserTable, UserColumn),
 	)
 }
-func newHistoryStep() *sqlgraph.Step {
+func newChecksStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(HistoryInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2M, false, HistoryTable, HistoryColumn),
+		sqlgraph.To(ChecksInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, ChecksTable, ChecksColumn),
 	)
 }
 func newTagsStep() *sqlgraph.Step {
@@ -312,5 +518,33 @@ func newTagsStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(TagsInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2M, false, TagsTable, TagsPrimaryKey...),
+	)
+}
+func newNotificationsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(NotificationsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2M, false, NotificationsTable, NotificationsPrimaryKey...),
+	)
+}
+func newStatusPageMonitorsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(StatusPageMonitorsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, StatusPageMonitorsTable, StatusPageMonitorsColumn),
+	)
+}
+func newMaintenanceWindowsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(MaintenanceWindowsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2M, true, MaintenanceWindowsTable, MaintenanceWindowsPrimaryKey...),
+	)
+}
+func newIncidentsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(IncidentsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, IncidentsTable, IncidentsColumn),
 	)
 }

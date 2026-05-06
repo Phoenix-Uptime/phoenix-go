@@ -9,6 +9,42 @@ import (
 	"github.com/Phoenix-Uptime/phoenix-go/ent"
 )
 
+// The APIKeyFunc type is an adapter to allow the use of ordinary
+// function as APIKey mutator.
+type APIKeyFunc func(context.Context, *ent.APIKeyMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f APIKeyFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.APIKeyMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.APIKeyMutation", m)
+}
+
+// The IncidentFunc type is an adapter to allow the use of ordinary
+// function as Incident mutator.
+type IncidentFunc func(context.Context, *ent.IncidentMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f IncidentFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.IncidentMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.IncidentMutation", m)
+}
+
+// The MaintenanceWindowFunc type is an adapter to allow the use of ordinary
+// function as MaintenanceWindow mutator.
+type MaintenanceWindowFunc func(context.Context, *ent.MaintenanceWindowMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f MaintenanceWindowFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.MaintenanceWindowMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.MaintenanceWindowMutation", m)
+}
+
 // The MonitorFunc type is an adapter to allow the use of ordinary
 // function as Monitor mutator.
 type MonitorFunc func(context.Context, *ent.MonitorMutation) (ent.Value, error)
@@ -21,16 +57,28 @@ func (f MonitorFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, err
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.MonitorMutation", m)
 }
 
-// The MonitorHistoryFunc type is an adapter to allow the use of ordinary
-// function as MonitorHistory mutator.
-type MonitorHistoryFunc func(context.Context, *ent.MonitorHistoryMutation) (ent.Value, error)
+// The MonitorCheckFunc type is an adapter to allow the use of ordinary
+// function as MonitorCheck mutator.
+type MonitorCheckFunc func(context.Context, *ent.MonitorCheckMutation) (ent.Value, error)
 
 // Mutate calls f(ctx, m).
-func (f MonitorHistoryFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-	if mv, ok := m.(*ent.MonitorHistoryMutation); ok {
+func (f MonitorCheckFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.MonitorCheckMutation); ok {
 		return f(ctx, mv)
 	}
-	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.MonitorHistoryMutation", m)
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.MonitorCheckMutation", m)
+}
+
+// The NotificationFunc type is an adapter to allow the use of ordinary
+// function as Notification mutator.
+type NotificationFunc func(context.Context, *ent.NotificationMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f NotificationFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.NotificationMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.NotificationMutation", m)
 }
 
 // The StatusMessageFunc type is an adapter to allow the use of ordinary
@@ -55,6 +103,18 @@ func (f StatusPageFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, 
 		return f(ctx, mv)
 	}
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.StatusPageMutation", m)
+}
+
+// The StatusPageMonitorFunc type is an adapter to allow the use of ordinary
+// function as StatusPageMonitor mutator.
+type StatusPageMonitorFunc func(context.Context, *ent.StatusPageMonitorMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f StatusPageMonitorFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.StatusPageMonitorMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.StatusPageMonitorMutation", m)
 }
 
 // The TagFunc type is an adapter to allow the use of ordinary

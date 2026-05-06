@@ -10,6 +10,7 @@ import (
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/incident"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/statusmessage"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/statuspage"
 )
@@ -69,6 +70,20 @@ func (_c *StatusMessageCreate) SetStatusPageID(v int) *StatusMessageCreate {
 	return _c
 }
 
+// SetIncidentID sets the "incident_id" field.
+func (_c *StatusMessageCreate) SetIncidentID(v int) *StatusMessageCreate {
+	_c.mutation.SetIncidentID(v)
+	return _c
+}
+
+// SetNillableIncidentID sets the "incident_id" field if the given value is not nil.
+func (_c *StatusMessageCreate) SetNillableIncidentID(v *int) *StatusMessageCreate {
+	if v != nil {
+		_c.SetIncidentID(*v)
+	}
+	return _c
+}
+
 // SetParentID sets the "parent_id" field.
 func (_c *StatusMessageCreate) SetParentID(v int) *StatusMessageCreate {
 	_c.mutation.SetParentID(v)
@@ -89,6 +104,20 @@ func (_c *StatusMessageCreate) SetType(v statusmessage.Type) *StatusMessageCreat
 	return _c
 }
 
+// SetTitle sets the "title" field.
+func (_c *StatusMessageCreate) SetTitle(v string) *StatusMessageCreate {
+	_c.mutation.SetTitle(v)
+	return _c
+}
+
+// SetNillableTitle sets the "title" field if the given value is not nil.
+func (_c *StatusMessageCreate) SetNillableTitle(v *string) *StatusMessageCreate {
+	if v != nil {
+		_c.SetTitle(*v)
+	}
+	return _c
+}
+
 // SetContent sets the "content" field.
 func (_c *StatusMessageCreate) SetContent(v string) *StatusMessageCreate {
 	_c.mutation.SetContent(v)
@@ -98,6 +127,11 @@ func (_c *StatusMessageCreate) SetContent(v string) *StatusMessageCreate {
 // SetStatusPage sets the "status_page" edge to the StatusPage entity.
 func (_c *StatusMessageCreate) SetStatusPage(v *StatusPage) *StatusMessageCreate {
 	return _c.SetStatusPageID(v.ID)
+}
+
+// SetIncident sets the "incident" edge to the Incident entity.
+func (_c *StatusMessageCreate) SetIncident(v *Incident) *StatusMessageCreate {
+	return _c.SetIncidentID(v.ID)
 }
 
 // SetParent sets the "parent" edge to the StatusMessage entity.
@@ -237,6 +271,10 @@ func (_c *StatusMessageCreate) createSpec() (*StatusMessage, *sqlgraph.CreateSpe
 		_spec.SetField(statusmessage.FieldType, field.TypeEnum, value)
 		_node.Type = value
 	}
+	if value, ok := _c.mutation.Title(); ok {
+		_spec.SetField(statusmessage.FieldTitle, field.TypeString, value)
+		_node.Title = &value
+	}
 	if value, ok := _c.mutation.Content(); ok {
 		_spec.SetField(statusmessage.FieldContent, field.TypeString, value)
 		_node.Content = value
@@ -256,6 +294,23 @@ func (_c *StatusMessageCreate) createSpec() (*StatusMessage, *sqlgraph.CreateSpe
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_node.StatusPageID = nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.IncidentIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   statusmessage.IncidentTable,
+			Columns: []string{statusmessage.IncidentColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(incident.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.IncidentID = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := _c.mutation.ParentIDs(); len(nodes) > 0 {

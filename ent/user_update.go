@@ -11,8 +11,14 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/apikey"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/incident"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/maintenancewindow"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/monitor"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/notification"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/predicate"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/statuspage"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/tag"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/user"
 )
 
@@ -273,6 +279,96 @@ func (_u *UserUpdate) AddMonitors(v ...*Monitor) *UserUpdate {
 	return _u.AddMonitorIDs(ids...)
 }
 
+// AddTagIDs adds the "tags" edge to the Tag entity by IDs.
+func (_u *UserUpdate) AddTagIDs(ids ...int) *UserUpdate {
+	_u.mutation.AddTagIDs(ids...)
+	return _u
+}
+
+// AddTags adds the "tags" edges to the Tag entity.
+func (_u *UserUpdate) AddTags(v ...*Tag) *UserUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddTagIDs(ids...)
+}
+
+// AddAPIKeyIDs adds the "api_keys" edge to the APIKey entity by IDs.
+func (_u *UserUpdate) AddAPIKeyIDs(ids ...int) *UserUpdate {
+	_u.mutation.AddAPIKeyIDs(ids...)
+	return _u
+}
+
+// AddAPIKeys adds the "api_keys" edges to the APIKey entity.
+func (_u *UserUpdate) AddAPIKeys(v ...*APIKey) *UserUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddAPIKeyIDs(ids...)
+}
+
+// AddNotificationIDs adds the "notifications" edge to the Notification entity by IDs.
+func (_u *UserUpdate) AddNotificationIDs(ids ...int) *UserUpdate {
+	_u.mutation.AddNotificationIDs(ids...)
+	return _u
+}
+
+// AddNotifications adds the "notifications" edges to the Notification entity.
+func (_u *UserUpdate) AddNotifications(v ...*Notification) *UserUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddNotificationIDs(ids...)
+}
+
+// AddStatusPageIDs adds the "status_pages" edge to the StatusPage entity by IDs.
+func (_u *UserUpdate) AddStatusPageIDs(ids ...int) *UserUpdate {
+	_u.mutation.AddStatusPageIDs(ids...)
+	return _u
+}
+
+// AddStatusPages adds the "status_pages" edges to the StatusPage entity.
+func (_u *UserUpdate) AddStatusPages(v ...*StatusPage) *UserUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddStatusPageIDs(ids...)
+}
+
+// AddMaintenanceWindowIDs adds the "maintenance_windows" edge to the MaintenanceWindow entity by IDs.
+func (_u *UserUpdate) AddMaintenanceWindowIDs(ids ...int) *UserUpdate {
+	_u.mutation.AddMaintenanceWindowIDs(ids...)
+	return _u
+}
+
+// AddMaintenanceWindows adds the "maintenance_windows" edges to the MaintenanceWindow entity.
+func (_u *UserUpdate) AddMaintenanceWindows(v ...*MaintenanceWindow) *UserUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddMaintenanceWindowIDs(ids...)
+}
+
+// AddResolvedIncidentIDs adds the "resolved_incidents" edge to the Incident entity by IDs.
+func (_u *UserUpdate) AddResolvedIncidentIDs(ids ...int) *UserUpdate {
+	_u.mutation.AddResolvedIncidentIDs(ids...)
+	return _u
+}
+
+// AddResolvedIncidents adds the "resolved_incidents" edges to the Incident entity.
+func (_u *UserUpdate) AddResolvedIncidents(v ...*Incident) *UserUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddResolvedIncidentIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (_u *UserUpdate) Mutation() *UserMutation {
 	return _u.mutation
@@ -297,6 +393,132 @@ func (_u *UserUpdate) RemoveMonitors(v ...*Monitor) *UserUpdate {
 		ids[i] = v[i].ID
 	}
 	return _u.RemoveMonitorIDs(ids...)
+}
+
+// ClearTags clears all "tags" edges to the Tag entity.
+func (_u *UserUpdate) ClearTags() *UserUpdate {
+	_u.mutation.ClearTags()
+	return _u
+}
+
+// RemoveTagIDs removes the "tags" edge to Tag entities by IDs.
+func (_u *UserUpdate) RemoveTagIDs(ids ...int) *UserUpdate {
+	_u.mutation.RemoveTagIDs(ids...)
+	return _u
+}
+
+// RemoveTags removes "tags" edges to Tag entities.
+func (_u *UserUpdate) RemoveTags(v ...*Tag) *UserUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveTagIDs(ids...)
+}
+
+// ClearAPIKeys clears all "api_keys" edges to the APIKey entity.
+func (_u *UserUpdate) ClearAPIKeys() *UserUpdate {
+	_u.mutation.ClearAPIKeys()
+	return _u
+}
+
+// RemoveAPIKeyIDs removes the "api_keys" edge to APIKey entities by IDs.
+func (_u *UserUpdate) RemoveAPIKeyIDs(ids ...int) *UserUpdate {
+	_u.mutation.RemoveAPIKeyIDs(ids...)
+	return _u
+}
+
+// RemoveAPIKeys removes "api_keys" edges to APIKey entities.
+func (_u *UserUpdate) RemoveAPIKeys(v ...*APIKey) *UserUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveAPIKeyIDs(ids...)
+}
+
+// ClearNotifications clears all "notifications" edges to the Notification entity.
+func (_u *UserUpdate) ClearNotifications() *UserUpdate {
+	_u.mutation.ClearNotifications()
+	return _u
+}
+
+// RemoveNotificationIDs removes the "notifications" edge to Notification entities by IDs.
+func (_u *UserUpdate) RemoveNotificationIDs(ids ...int) *UserUpdate {
+	_u.mutation.RemoveNotificationIDs(ids...)
+	return _u
+}
+
+// RemoveNotifications removes "notifications" edges to Notification entities.
+func (_u *UserUpdate) RemoveNotifications(v ...*Notification) *UserUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveNotificationIDs(ids...)
+}
+
+// ClearStatusPages clears all "status_pages" edges to the StatusPage entity.
+func (_u *UserUpdate) ClearStatusPages() *UserUpdate {
+	_u.mutation.ClearStatusPages()
+	return _u
+}
+
+// RemoveStatusPageIDs removes the "status_pages" edge to StatusPage entities by IDs.
+func (_u *UserUpdate) RemoveStatusPageIDs(ids ...int) *UserUpdate {
+	_u.mutation.RemoveStatusPageIDs(ids...)
+	return _u
+}
+
+// RemoveStatusPages removes "status_pages" edges to StatusPage entities.
+func (_u *UserUpdate) RemoveStatusPages(v ...*StatusPage) *UserUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveStatusPageIDs(ids...)
+}
+
+// ClearMaintenanceWindows clears all "maintenance_windows" edges to the MaintenanceWindow entity.
+func (_u *UserUpdate) ClearMaintenanceWindows() *UserUpdate {
+	_u.mutation.ClearMaintenanceWindows()
+	return _u
+}
+
+// RemoveMaintenanceWindowIDs removes the "maintenance_windows" edge to MaintenanceWindow entities by IDs.
+func (_u *UserUpdate) RemoveMaintenanceWindowIDs(ids ...int) *UserUpdate {
+	_u.mutation.RemoveMaintenanceWindowIDs(ids...)
+	return _u
+}
+
+// RemoveMaintenanceWindows removes "maintenance_windows" edges to MaintenanceWindow entities.
+func (_u *UserUpdate) RemoveMaintenanceWindows(v ...*MaintenanceWindow) *UserUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveMaintenanceWindowIDs(ids...)
+}
+
+// ClearResolvedIncidents clears all "resolved_incidents" edges to the Incident entity.
+func (_u *UserUpdate) ClearResolvedIncidents() *UserUpdate {
+	_u.mutation.ClearResolvedIncidents()
+	return _u
+}
+
+// RemoveResolvedIncidentIDs removes the "resolved_incidents" edge to Incident entities by IDs.
+func (_u *UserUpdate) RemoveResolvedIncidentIDs(ids ...int) *UserUpdate {
+	_u.mutation.RemoveResolvedIncidentIDs(ids...)
+	return _u
+}
+
+// RemoveResolvedIncidents removes "resolved_incidents" edges to Incident entities.
+func (_u *UserUpdate) RemoveResolvedIncidents(v ...*Incident) *UserUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveResolvedIncidentIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -476,6 +698,276 @@ func (_u *UserUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(monitor.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.TagsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.TagsTable,
+			Columns: []string{user.TagsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(tag.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedTagsIDs(); len(nodes) > 0 && !_u.mutation.TagsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.TagsTable,
+			Columns: []string{user.TagsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(tag.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.TagsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.TagsTable,
+			Columns: []string{user.TagsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(tag.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.APIKeysCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.APIKeysTable,
+			Columns: []string{user.APIKeysColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(apikey.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedAPIKeysIDs(); len(nodes) > 0 && !_u.mutation.APIKeysCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.APIKeysTable,
+			Columns: []string{user.APIKeysColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(apikey.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.APIKeysIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.APIKeysTable,
+			Columns: []string{user.APIKeysColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(apikey.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.NotificationsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.NotificationsTable,
+			Columns: []string{user.NotificationsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(notification.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedNotificationsIDs(); len(nodes) > 0 && !_u.mutation.NotificationsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.NotificationsTable,
+			Columns: []string{user.NotificationsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(notification.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.NotificationsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.NotificationsTable,
+			Columns: []string{user.NotificationsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(notification.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.StatusPagesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.StatusPagesTable,
+			Columns: []string{user.StatusPagesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(statuspage.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedStatusPagesIDs(); len(nodes) > 0 && !_u.mutation.StatusPagesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.StatusPagesTable,
+			Columns: []string{user.StatusPagesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(statuspage.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.StatusPagesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.StatusPagesTable,
+			Columns: []string{user.StatusPagesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(statuspage.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.MaintenanceWindowsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.MaintenanceWindowsTable,
+			Columns: []string{user.MaintenanceWindowsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(maintenancewindow.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedMaintenanceWindowsIDs(); len(nodes) > 0 && !_u.mutation.MaintenanceWindowsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.MaintenanceWindowsTable,
+			Columns: []string{user.MaintenanceWindowsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(maintenancewindow.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.MaintenanceWindowsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.MaintenanceWindowsTable,
+			Columns: []string{user.MaintenanceWindowsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(maintenancewindow.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.ResolvedIncidentsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ResolvedIncidentsTable,
+			Columns: []string{user.ResolvedIncidentsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(incident.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedResolvedIncidentsIDs(); len(nodes) > 0 && !_u.mutation.ResolvedIncidentsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ResolvedIncidentsTable,
+			Columns: []string{user.ResolvedIncidentsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(incident.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.ResolvedIncidentsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ResolvedIncidentsTable,
+			Columns: []string{user.ResolvedIncidentsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(incident.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -747,6 +1239,96 @@ func (_u *UserUpdateOne) AddMonitors(v ...*Monitor) *UserUpdateOne {
 	return _u.AddMonitorIDs(ids...)
 }
 
+// AddTagIDs adds the "tags" edge to the Tag entity by IDs.
+func (_u *UserUpdateOne) AddTagIDs(ids ...int) *UserUpdateOne {
+	_u.mutation.AddTagIDs(ids...)
+	return _u
+}
+
+// AddTags adds the "tags" edges to the Tag entity.
+func (_u *UserUpdateOne) AddTags(v ...*Tag) *UserUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddTagIDs(ids...)
+}
+
+// AddAPIKeyIDs adds the "api_keys" edge to the APIKey entity by IDs.
+func (_u *UserUpdateOne) AddAPIKeyIDs(ids ...int) *UserUpdateOne {
+	_u.mutation.AddAPIKeyIDs(ids...)
+	return _u
+}
+
+// AddAPIKeys adds the "api_keys" edges to the APIKey entity.
+func (_u *UserUpdateOne) AddAPIKeys(v ...*APIKey) *UserUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddAPIKeyIDs(ids...)
+}
+
+// AddNotificationIDs adds the "notifications" edge to the Notification entity by IDs.
+func (_u *UserUpdateOne) AddNotificationIDs(ids ...int) *UserUpdateOne {
+	_u.mutation.AddNotificationIDs(ids...)
+	return _u
+}
+
+// AddNotifications adds the "notifications" edges to the Notification entity.
+func (_u *UserUpdateOne) AddNotifications(v ...*Notification) *UserUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddNotificationIDs(ids...)
+}
+
+// AddStatusPageIDs adds the "status_pages" edge to the StatusPage entity by IDs.
+func (_u *UserUpdateOne) AddStatusPageIDs(ids ...int) *UserUpdateOne {
+	_u.mutation.AddStatusPageIDs(ids...)
+	return _u
+}
+
+// AddStatusPages adds the "status_pages" edges to the StatusPage entity.
+func (_u *UserUpdateOne) AddStatusPages(v ...*StatusPage) *UserUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddStatusPageIDs(ids...)
+}
+
+// AddMaintenanceWindowIDs adds the "maintenance_windows" edge to the MaintenanceWindow entity by IDs.
+func (_u *UserUpdateOne) AddMaintenanceWindowIDs(ids ...int) *UserUpdateOne {
+	_u.mutation.AddMaintenanceWindowIDs(ids...)
+	return _u
+}
+
+// AddMaintenanceWindows adds the "maintenance_windows" edges to the MaintenanceWindow entity.
+func (_u *UserUpdateOne) AddMaintenanceWindows(v ...*MaintenanceWindow) *UserUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddMaintenanceWindowIDs(ids...)
+}
+
+// AddResolvedIncidentIDs adds the "resolved_incidents" edge to the Incident entity by IDs.
+func (_u *UserUpdateOne) AddResolvedIncidentIDs(ids ...int) *UserUpdateOne {
+	_u.mutation.AddResolvedIncidentIDs(ids...)
+	return _u
+}
+
+// AddResolvedIncidents adds the "resolved_incidents" edges to the Incident entity.
+func (_u *UserUpdateOne) AddResolvedIncidents(v ...*Incident) *UserUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddResolvedIncidentIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (_u *UserUpdateOne) Mutation() *UserMutation {
 	return _u.mutation
@@ -771,6 +1353,132 @@ func (_u *UserUpdateOne) RemoveMonitors(v ...*Monitor) *UserUpdateOne {
 		ids[i] = v[i].ID
 	}
 	return _u.RemoveMonitorIDs(ids...)
+}
+
+// ClearTags clears all "tags" edges to the Tag entity.
+func (_u *UserUpdateOne) ClearTags() *UserUpdateOne {
+	_u.mutation.ClearTags()
+	return _u
+}
+
+// RemoveTagIDs removes the "tags" edge to Tag entities by IDs.
+func (_u *UserUpdateOne) RemoveTagIDs(ids ...int) *UserUpdateOne {
+	_u.mutation.RemoveTagIDs(ids...)
+	return _u
+}
+
+// RemoveTags removes "tags" edges to Tag entities.
+func (_u *UserUpdateOne) RemoveTags(v ...*Tag) *UserUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveTagIDs(ids...)
+}
+
+// ClearAPIKeys clears all "api_keys" edges to the APIKey entity.
+func (_u *UserUpdateOne) ClearAPIKeys() *UserUpdateOne {
+	_u.mutation.ClearAPIKeys()
+	return _u
+}
+
+// RemoveAPIKeyIDs removes the "api_keys" edge to APIKey entities by IDs.
+func (_u *UserUpdateOne) RemoveAPIKeyIDs(ids ...int) *UserUpdateOne {
+	_u.mutation.RemoveAPIKeyIDs(ids...)
+	return _u
+}
+
+// RemoveAPIKeys removes "api_keys" edges to APIKey entities.
+func (_u *UserUpdateOne) RemoveAPIKeys(v ...*APIKey) *UserUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveAPIKeyIDs(ids...)
+}
+
+// ClearNotifications clears all "notifications" edges to the Notification entity.
+func (_u *UserUpdateOne) ClearNotifications() *UserUpdateOne {
+	_u.mutation.ClearNotifications()
+	return _u
+}
+
+// RemoveNotificationIDs removes the "notifications" edge to Notification entities by IDs.
+func (_u *UserUpdateOne) RemoveNotificationIDs(ids ...int) *UserUpdateOne {
+	_u.mutation.RemoveNotificationIDs(ids...)
+	return _u
+}
+
+// RemoveNotifications removes "notifications" edges to Notification entities.
+func (_u *UserUpdateOne) RemoveNotifications(v ...*Notification) *UserUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveNotificationIDs(ids...)
+}
+
+// ClearStatusPages clears all "status_pages" edges to the StatusPage entity.
+func (_u *UserUpdateOne) ClearStatusPages() *UserUpdateOne {
+	_u.mutation.ClearStatusPages()
+	return _u
+}
+
+// RemoveStatusPageIDs removes the "status_pages" edge to StatusPage entities by IDs.
+func (_u *UserUpdateOne) RemoveStatusPageIDs(ids ...int) *UserUpdateOne {
+	_u.mutation.RemoveStatusPageIDs(ids...)
+	return _u
+}
+
+// RemoveStatusPages removes "status_pages" edges to StatusPage entities.
+func (_u *UserUpdateOne) RemoveStatusPages(v ...*StatusPage) *UserUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveStatusPageIDs(ids...)
+}
+
+// ClearMaintenanceWindows clears all "maintenance_windows" edges to the MaintenanceWindow entity.
+func (_u *UserUpdateOne) ClearMaintenanceWindows() *UserUpdateOne {
+	_u.mutation.ClearMaintenanceWindows()
+	return _u
+}
+
+// RemoveMaintenanceWindowIDs removes the "maintenance_windows" edge to MaintenanceWindow entities by IDs.
+func (_u *UserUpdateOne) RemoveMaintenanceWindowIDs(ids ...int) *UserUpdateOne {
+	_u.mutation.RemoveMaintenanceWindowIDs(ids...)
+	return _u
+}
+
+// RemoveMaintenanceWindows removes "maintenance_windows" edges to MaintenanceWindow entities.
+func (_u *UserUpdateOne) RemoveMaintenanceWindows(v ...*MaintenanceWindow) *UserUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveMaintenanceWindowIDs(ids...)
+}
+
+// ClearResolvedIncidents clears all "resolved_incidents" edges to the Incident entity.
+func (_u *UserUpdateOne) ClearResolvedIncidents() *UserUpdateOne {
+	_u.mutation.ClearResolvedIncidents()
+	return _u
+}
+
+// RemoveResolvedIncidentIDs removes the "resolved_incidents" edge to Incident entities by IDs.
+func (_u *UserUpdateOne) RemoveResolvedIncidentIDs(ids ...int) *UserUpdateOne {
+	_u.mutation.RemoveResolvedIncidentIDs(ids...)
+	return _u
+}
+
+// RemoveResolvedIncidents removes "resolved_incidents" edges to Incident entities.
+func (_u *UserUpdateOne) RemoveResolvedIncidents(v ...*Incident) *UserUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveResolvedIncidentIDs(ids...)
 }
 
 // Where appends a list predicates to the UserUpdate builder.
@@ -980,6 +1688,276 @@ func (_u *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(monitor.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.TagsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.TagsTable,
+			Columns: []string{user.TagsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(tag.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedTagsIDs(); len(nodes) > 0 && !_u.mutation.TagsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.TagsTable,
+			Columns: []string{user.TagsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(tag.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.TagsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.TagsTable,
+			Columns: []string{user.TagsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(tag.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.APIKeysCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.APIKeysTable,
+			Columns: []string{user.APIKeysColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(apikey.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedAPIKeysIDs(); len(nodes) > 0 && !_u.mutation.APIKeysCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.APIKeysTable,
+			Columns: []string{user.APIKeysColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(apikey.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.APIKeysIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.APIKeysTable,
+			Columns: []string{user.APIKeysColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(apikey.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.NotificationsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.NotificationsTable,
+			Columns: []string{user.NotificationsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(notification.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedNotificationsIDs(); len(nodes) > 0 && !_u.mutation.NotificationsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.NotificationsTable,
+			Columns: []string{user.NotificationsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(notification.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.NotificationsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.NotificationsTable,
+			Columns: []string{user.NotificationsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(notification.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.StatusPagesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.StatusPagesTable,
+			Columns: []string{user.StatusPagesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(statuspage.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedStatusPagesIDs(); len(nodes) > 0 && !_u.mutation.StatusPagesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.StatusPagesTable,
+			Columns: []string{user.StatusPagesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(statuspage.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.StatusPagesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.StatusPagesTable,
+			Columns: []string{user.StatusPagesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(statuspage.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.MaintenanceWindowsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.MaintenanceWindowsTable,
+			Columns: []string{user.MaintenanceWindowsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(maintenancewindow.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedMaintenanceWindowsIDs(); len(nodes) > 0 && !_u.mutation.MaintenanceWindowsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.MaintenanceWindowsTable,
+			Columns: []string{user.MaintenanceWindowsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(maintenancewindow.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.MaintenanceWindowsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.MaintenanceWindowsTable,
+			Columns: []string{user.MaintenanceWindowsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(maintenancewindow.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.ResolvedIncidentsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ResolvedIncidentsTable,
+			Columns: []string{user.ResolvedIncidentsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(incident.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedResolvedIncidentsIDs(); len(nodes) > 0 && !_u.mutation.ResolvedIncidentsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ResolvedIncidentsTable,
+			Columns: []string{user.ResolvedIncidentsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(incident.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.ResolvedIncidentsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ResolvedIncidentsTable,
+			Columns: []string{user.ResolvedIncidentsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(incident.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

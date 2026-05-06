@@ -20,25 +20,58 @@ const (
 	FieldUpdatedAt = "updated_at"
 	// FieldDeletedAt holds the string denoting the deleted_at field in the database.
 	FieldDeletedAt = "deleted_at"
-	// FieldTagID holds the string denoting the tag_id field in the database.
-	FieldTagID = "tag_id"
+	// FieldUserID holds the string denoting the user_id field in the database.
+	FieldUserID = "user_id"
+	// FieldSlug holds the string denoting the slug field in the database.
+	FieldSlug = "slug"
 	// FieldName holds the string denoting the name field in the database.
 	FieldName = "name"
+	// FieldDescription holds the string denoting the description field in the database.
+	FieldDescription = "description"
 	// FieldIsPublic holds the string denoting the is_public field in the database.
 	FieldIsPublic = "is_public"
-	// EdgeTag holds the string denoting the tag edge name in mutations.
-	EdgeTag = "tag"
+	// FieldPassword holds the string denoting the password field in the database.
+	FieldPassword = "password"
+	// FieldTheme holds the string denoting the theme field in the database.
+	FieldTheme = "theme"
+	// FieldCustomCSS holds the string denoting the custom_css field in the database.
+	FieldCustomCSS = "custom_css"
+	// FieldFooterText holds the string denoting the footer_text field in the database.
+	FieldFooterText = "footer_text"
+	// FieldShowTags holds the string denoting the show_tags field in the database.
+	FieldShowTags = "show_tags"
+	// FieldShowCharts holds the string denoting the show_charts field in the database.
+	FieldShowCharts = "show_charts"
+	// FieldShowUptimePercentage holds the string denoting the show_uptime_percentage field in the database.
+	FieldShowUptimePercentage = "show_uptime_percentage"
+	// FieldShowPoweredBy holds the string denoting the show_powered_by field in the database.
+	FieldShowPoweredBy = "show_powered_by"
+	// FieldAutoRefreshInterval holds the string denoting the auto_refresh_interval field in the database.
+	FieldAutoRefreshInterval = "auto_refresh_interval"
+	// EdgeUser holds the string denoting the user edge name in mutations.
+	EdgeUser = "user"
+	// EdgeStatusPageMonitors holds the string denoting the status_page_monitors edge name in mutations.
+	EdgeStatusPageMonitors = "status_page_monitors"
 	// EdgeMessages holds the string denoting the messages edge name in mutations.
 	EdgeMessages = "messages"
+	// EdgeIncidents holds the string denoting the incidents edge name in mutations.
+	EdgeIncidents = "incidents"
 	// Table holds the table name of the statuspage in the database.
 	Table = "status_pages"
-	// TagTable is the table that holds the tag relation/edge.
-	TagTable = "status_pages"
-	// TagInverseTable is the table name for the Tag entity.
-	// It exists in this package in order to avoid circular dependency with the "tag" package.
-	TagInverseTable = "tags"
-	// TagColumn is the table column denoting the tag relation/edge.
-	TagColumn = "tag_id"
+	// UserTable is the table that holds the user relation/edge.
+	UserTable = "status_pages"
+	// UserInverseTable is the table name for the User entity.
+	// It exists in this package in order to avoid circular dependency with the "user" package.
+	UserInverseTable = "users"
+	// UserColumn is the table column denoting the user relation/edge.
+	UserColumn = "user_id"
+	// StatusPageMonitorsTable is the table that holds the status_page_monitors relation/edge.
+	StatusPageMonitorsTable = "status_page_monitors"
+	// StatusPageMonitorsInverseTable is the table name for the StatusPageMonitor entity.
+	// It exists in this package in order to avoid circular dependency with the "statuspagemonitor" package.
+	StatusPageMonitorsInverseTable = "status_page_monitors"
+	// StatusPageMonitorsColumn is the table column denoting the status_page_monitors relation/edge.
+	StatusPageMonitorsColumn = "status_page_id"
 	// MessagesTable is the table that holds the messages relation/edge.
 	MessagesTable = "status_messages"
 	// MessagesInverseTable is the table name for the StatusMessage entity.
@@ -46,6 +79,13 @@ const (
 	MessagesInverseTable = "status_messages"
 	// MessagesColumn is the table column denoting the messages relation/edge.
 	MessagesColumn = "status_page_id"
+	// IncidentsTable is the table that holds the incidents relation/edge.
+	IncidentsTable = "incidents"
+	// IncidentsInverseTable is the table name for the Incident entity.
+	// It exists in this package in order to avoid circular dependency with the "incident" package.
+	IncidentsInverseTable = "incidents"
+	// IncidentsColumn is the table column denoting the incidents relation/edge.
+	IncidentsColumn = "status_page_id"
 )
 
 // Columns holds all SQL columns for statuspage fields.
@@ -54,9 +94,20 @@ var Columns = []string{
 	FieldCreatedAt,
 	FieldUpdatedAt,
 	FieldDeletedAt,
-	FieldTagID,
+	FieldUserID,
+	FieldSlug,
 	FieldName,
+	FieldDescription,
 	FieldIsPublic,
+	FieldPassword,
+	FieldTheme,
+	FieldCustomCSS,
+	FieldFooterText,
+	FieldShowTags,
+	FieldShowCharts,
+	FieldShowUptimePercentage,
+	FieldShowPoweredBy,
+	FieldAutoRefreshInterval,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -76,10 +127,24 @@ var (
 	DefaultUpdatedAt func() time.Time
 	// UpdateDefaultUpdatedAt holds the default value on update for the "updated_at" field.
 	UpdateDefaultUpdatedAt func() time.Time
+	// SlugValidator is a validator for the "slug" field. It is called by the builders before save.
+	SlugValidator func(string) error
 	// NameValidator is a validator for the "name" field. It is called by the builders before save.
 	NameValidator func(string) error
 	// DefaultIsPublic holds the default value on creation for the "is_public" field.
 	DefaultIsPublic bool
+	// DefaultTheme holds the default value on creation for the "theme" field.
+	DefaultTheme string
+	// DefaultShowTags holds the default value on creation for the "show_tags" field.
+	DefaultShowTags bool
+	// DefaultShowCharts holds the default value on creation for the "show_charts" field.
+	DefaultShowCharts bool
+	// DefaultShowUptimePercentage holds the default value on creation for the "show_uptime_percentage" field.
+	DefaultShowUptimePercentage bool
+	// DefaultShowPoweredBy holds the default value on creation for the "show_powered_by" field.
+	DefaultShowPoweredBy bool
+	// DefaultAutoRefreshInterval holds the default value on creation for the "auto_refresh_interval" field.
+	DefaultAutoRefreshInterval int
 )
 
 // OrderOption defines the ordering options for the StatusPage queries.
@@ -105,9 +170,14 @@ func ByDeletedAt(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldDeletedAt, opts...).ToFunc()
 }
 
-// ByTagID orders the results by the tag_id field.
-func ByTagID(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldTagID, opts...).ToFunc()
+// ByUserID orders the results by the user_id field.
+func ByUserID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldUserID, opts...).ToFunc()
+}
+
+// BySlug orders the results by the slug field.
+func BySlug(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldSlug, opts...).ToFunc()
 }
 
 // ByName orders the results by the name field.
@@ -115,15 +185,79 @@ func ByName(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldName, opts...).ToFunc()
 }
 
+// ByDescription orders the results by the description field.
+func ByDescription(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldDescription, opts...).ToFunc()
+}
+
 // ByIsPublic orders the results by the is_public field.
 func ByIsPublic(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldIsPublic, opts...).ToFunc()
 }
 
-// ByTagField orders the results by tag field.
-func ByTagField(field string, opts ...sql.OrderTermOption) OrderOption {
+// ByPassword orders the results by the password field.
+func ByPassword(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldPassword, opts...).ToFunc()
+}
+
+// ByTheme orders the results by the theme field.
+func ByTheme(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldTheme, opts...).ToFunc()
+}
+
+// ByCustomCSS orders the results by the custom_css field.
+func ByCustomCSS(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCustomCSS, opts...).ToFunc()
+}
+
+// ByFooterText orders the results by the footer_text field.
+func ByFooterText(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldFooterText, opts...).ToFunc()
+}
+
+// ByShowTags orders the results by the show_tags field.
+func ByShowTags(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldShowTags, opts...).ToFunc()
+}
+
+// ByShowCharts orders the results by the show_charts field.
+func ByShowCharts(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldShowCharts, opts...).ToFunc()
+}
+
+// ByShowUptimePercentage orders the results by the show_uptime_percentage field.
+func ByShowUptimePercentage(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldShowUptimePercentage, opts...).ToFunc()
+}
+
+// ByShowPoweredBy orders the results by the show_powered_by field.
+func ByShowPoweredBy(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldShowPoweredBy, opts...).ToFunc()
+}
+
+// ByAutoRefreshInterval orders the results by the auto_refresh_interval field.
+func ByAutoRefreshInterval(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldAutoRefreshInterval, opts...).ToFunc()
+}
+
+// ByUserField orders the results by user field.
+func ByUserField(field string, opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newTagStep(), sql.OrderByField(field, opts...))
+		sqlgraph.OrderByNeighborTerms(s, newUserStep(), sql.OrderByField(field, opts...))
+	}
+}
+
+// ByStatusPageMonitorsCount orders the results by status_page_monitors count.
+func ByStatusPageMonitorsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newStatusPageMonitorsStep(), opts...)
+	}
+}
+
+// ByStatusPageMonitors orders the results by status_page_monitors terms.
+func ByStatusPageMonitors(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newStatusPageMonitorsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
 
@@ -140,11 +274,32 @@ func ByMessages(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newMessagesStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
-func newTagStep() *sqlgraph.Step {
+
+// ByIncidentsCount orders the results by incidents count.
+func ByIncidentsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newIncidentsStep(), opts...)
+	}
+}
+
+// ByIncidents orders the results by incidents terms.
+func ByIncidents(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newIncidentsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+func newUserStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(TagInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.M2O, true, TagTable, TagColumn),
+		sqlgraph.To(UserInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, true, UserTable, UserColumn),
+	)
+}
+func newStatusPageMonitorsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(StatusPageMonitorsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, StatusPageMonitorsTable, StatusPageMonitorsColumn),
 	)
 }
 func newMessagesStep() *sqlgraph.Step {
@@ -152,5 +307,12 @@ func newMessagesStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(MessagesInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, MessagesTable, MessagesColumn),
+	)
+}
+func newIncidentsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(IncidentsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, IncidentsTable, IncidentsColumn),
 	)
 }

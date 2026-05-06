@@ -10,7 +10,7 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/statuspage"
-	"github.com/Phoenix-Uptime/phoenix-go/ent/tag"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/user"
 )
 
 // StatusPage is the model entity for the StatusPage schema.
@@ -24,12 +24,34 @@ type StatusPage struct {
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
 	// DeletedAt holds the value of the "deleted_at" field.
 	DeletedAt *time.Time `json:"deleted_at,omitempty"`
-	// TagID holds the value of the "tag_id" field.
-	TagID int `json:"tag_id,omitempty"`
+	// UserID holds the value of the "user_id" field.
+	UserID int `json:"user_id,omitempty"`
+	// Slug holds the value of the "slug" field.
+	Slug string `json:"slug,omitempty"`
 	// Name holds the value of the "name" field.
 	Name string `json:"name,omitempty"`
+	// Description holds the value of the "description" field.
+	Description *string `json:"description,omitempty"`
 	// IsPublic holds the value of the "is_public" field.
 	IsPublic bool `json:"is_public,omitempty"`
+	// Password holds the value of the "password" field.
+	Password *string `json:"-"`
+	// Theme holds the value of the "theme" field.
+	Theme string `json:"theme,omitempty"`
+	// CustomCSS holds the value of the "custom_css" field.
+	CustomCSS *string `json:"custom_css,omitempty"`
+	// FooterText holds the value of the "footer_text" field.
+	FooterText *string `json:"footer_text,omitempty"`
+	// ShowTags holds the value of the "show_tags" field.
+	ShowTags bool `json:"show_tags,omitempty"`
+	// ShowCharts holds the value of the "show_charts" field.
+	ShowCharts bool `json:"show_charts,omitempty"`
+	// ShowUptimePercentage holds the value of the "show_uptime_percentage" field.
+	ShowUptimePercentage bool `json:"show_uptime_percentage,omitempty"`
+	// ShowPoweredBy holds the value of the "show_powered_by" field.
+	ShowPoweredBy bool `json:"show_powered_by,omitempty"`
+	// AutoRefreshInterval holds the value of the "auto_refresh_interval" field.
+	AutoRefreshInterval int `json:"auto_refresh_interval,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the StatusPageQuery when eager-loading is set.
 	Edges        StatusPageEdges `json:"edges"`
@@ -38,33 +60,55 @@ type StatusPage struct {
 
 // StatusPageEdges holds the relations/edges for other nodes in the graph.
 type StatusPageEdges struct {
-	// Tag holds the value of the tag edge.
-	Tag *Tag `json:"tag,omitempty"`
+	// User holds the value of the user edge.
+	User *User `json:"user,omitempty"`
+	// StatusPageMonitors holds the value of the status_page_monitors edge.
+	StatusPageMonitors []*StatusPageMonitor `json:"status_page_monitors,omitempty"`
 	// Messages holds the value of the messages edge.
 	Messages []*StatusMessage `json:"messages,omitempty"`
+	// Incidents holds the value of the incidents edge.
+	Incidents []*Incident `json:"incidents,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [2]bool
+	loadedTypes [4]bool
 }
 
-// TagOrErr returns the Tag value or an error if the edge
+// UserOrErr returns the User value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
-func (e StatusPageEdges) TagOrErr() (*Tag, error) {
-	if e.Tag != nil {
-		return e.Tag, nil
+func (e StatusPageEdges) UserOrErr() (*User, error) {
+	if e.User != nil {
+		return e.User, nil
 	} else if e.loadedTypes[0] {
-		return nil, &NotFoundError{label: tag.Label}
+		return nil, &NotFoundError{label: user.Label}
 	}
-	return nil, &NotLoadedError{edge: "tag"}
+	return nil, &NotLoadedError{edge: "user"}
+}
+
+// StatusPageMonitorsOrErr returns the StatusPageMonitors value or an error if the edge
+// was not loaded in eager-loading.
+func (e StatusPageEdges) StatusPageMonitorsOrErr() ([]*StatusPageMonitor, error) {
+	if e.loadedTypes[1] {
+		return e.StatusPageMonitors, nil
+	}
+	return nil, &NotLoadedError{edge: "status_page_monitors"}
 }
 
 // MessagesOrErr returns the Messages value or an error if the edge
 // was not loaded in eager-loading.
 func (e StatusPageEdges) MessagesOrErr() ([]*StatusMessage, error) {
-	if e.loadedTypes[1] {
+	if e.loadedTypes[2] {
 		return e.Messages, nil
 	}
 	return nil, &NotLoadedError{edge: "messages"}
+}
+
+// IncidentsOrErr returns the Incidents value or an error if the edge
+// was not loaded in eager-loading.
+func (e StatusPageEdges) IncidentsOrErr() ([]*Incident, error) {
+	if e.loadedTypes[3] {
+		return e.Incidents, nil
+	}
+	return nil, &NotLoadedError{edge: "incidents"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -72,11 +116,11 @@ func (*StatusPage) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case statuspage.FieldIsPublic:
+		case statuspage.FieldIsPublic, statuspage.FieldShowTags, statuspage.FieldShowCharts, statuspage.FieldShowUptimePercentage, statuspage.FieldShowPoweredBy:
 			values[i] = new(sql.NullBool)
-		case statuspage.FieldID, statuspage.FieldTagID:
+		case statuspage.FieldID, statuspage.FieldUserID, statuspage.FieldAutoRefreshInterval:
 			values[i] = new(sql.NullInt64)
-		case statuspage.FieldName:
+		case statuspage.FieldSlug, statuspage.FieldName, statuspage.FieldDescription, statuspage.FieldPassword, statuspage.FieldTheme, statuspage.FieldCustomCSS, statuspage.FieldFooterText:
 			values[i] = new(sql.NullString)
 		case statuspage.FieldCreatedAt, statuspage.FieldUpdatedAt, statuspage.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -120,11 +164,17 @@ func (_m *StatusPage) assignValues(columns []string, values []any) error {
 				_m.DeletedAt = new(time.Time)
 				*_m.DeletedAt = value.Time
 			}
-		case statuspage.FieldTagID:
+		case statuspage.FieldUserID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field tag_id", values[i])
+				return fmt.Errorf("unexpected type %T for field user_id", values[i])
 			} else if value.Valid {
-				_m.TagID = int(value.Int64)
+				_m.UserID = int(value.Int64)
+			}
+		case statuspage.FieldSlug:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field slug", values[i])
+			} else if value.Valid {
+				_m.Slug = value.String
 			}
 		case statuspage.FieldName:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -132,11 +182,75 @@ func (_m *StatusPage) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.Name = value.String
 			}
+		case statuspage.FieldDescription:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field description", values[i])
+			} else if value.Valid {
+				_m.Description = new(string)
+				*_m.Description = value.String
+			}
 		case statuspage.FieldIsPublic:
 			if value, ok := values[i].(*sql.NullBool); !ok {
 				return fmt.Errorf("unexpected type %T for field is_public", values[i])
 			} else if value.Valid {
 				_m.IsPublic = value.Bool
+			}
+		case statuspage.FieldPassword:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field password", values[i])
+			} else if value.Valid {
+				_m.Password = new(string)
+				*_m.Password = value.String
+			}
+		case statuspage.FieldTheme:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field theme", values[i])
+			} else if value.Valid {
+				_m.Theme = value.String
+			}
+		case statuspage.FieldCustomCSS:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field custom_css", values[i])
+			} else if value.Valid {
+				_m.CustomCSS = new(string)
+				*_m.CustomCSS = value.String
+			}
+		case statuspage.FieldFooterText:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field footer_text", values[i])
+			} else if value.Valid {
+				_m.FooterText = new(string)
+				*_m.FooterText = value.String
+			}
+		case statuspage.FieldShowTags:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field show_tags", values[i])
+			} else if value.Valid {
+				_m.ShowTags = value.Bool
+			}
+		case statuspage.FieldShowCharts:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field show_charts", values[i])
+			} else if value.Valid {
+				_m.ShowCharts = value.Bool
+			}
+		case statuspage.FieldShowUptimePercentage:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field show_uptime_percentage", values[i])
+			} else if value.Valid {
+				_m.ShowUptimePercentage = value.Bool
+			}
+		case statuspage.FieldShowPoweredBy:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field show_powered_by", values[i])
+			} else if value.Valid {
+				_m.ShowPoweredBy = value.Bool
+			}
+		case statuspage.FieldAutoRefreshInterval:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field auto_refresh_interval", values[i])
+			} else if value.Valid {
+				_m.AutoRefreshInterval = int(value.Int64)
 			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
@@ -151,14 +265,24 @@ func (_m *StatusPage) Value(name string) (ent.Value, error) {
 	return _m.selectValues.Get(name)
 }
 
-// QueryTag queries the "tag" edge of the StatusPage entity.
-func (_m *StatusPage) QueryTag() *TagQuery {
-	return NewStatusPageClient(_m.config).QueryTag(_m)
+// QueryUser queries the "user" edge of the StatusPage entity.
+func (_m *StatusPage) QueryUser() *UserQuery {
+	return NewStatusPageClient(_m.config).QueryUser(_m)
+}
+
+// QueryStatusPageMonitors queries the "status_page_monitors" edge of the StatusPage entity.
+func (_m *StatusPage) QueryStatusPageMonitors() *StatusPageMonitorQuery {
+	return NewStatusPageClient(_m.config).QueryStatusPageMonitors(_m)
 }
 
 // QueryMessages queries the "messages" edge of the StatusPage entity.
 func (_m *StatusPage) QueryMessages() *StatusMessageQuery {
 	return NewStatusPageClient(_m.config).QueryMessages(_m)
+}
+
+// QueryIncidents queries the "incidents" edge of the StatusPage entity.
+func (_m *StatusPage) QueryIncidents() *IncidentQuery {
+	return NewStatusPageClient(_m.config).QueryIncidents(_m)
 }
 
 // Update returns a builder for updating this StatusPage.
@@ -195,14 +319,52 @@ func (_m *StatusPage) String() string {
 		builder.WriteString(v.Format(time.ANSIC))
 	}
 	builder.WriteString(", ")
-	builder.WriteString("tag_id=")
-	builder.WriteString(fmt.Sprintf("%v", _m.TagID))
+	builder.WriteString("user_id=")
+	builder.WriteString(fmt.Sprintf("%v", _m.UserID))
+	builder.WriteString(", ")
+	builder.WriteString("slug=")
+	builder.WriteString(_m.Slug)
 	builder.WriteString(", ")
 	builder.WriteString("name=")
 	builder.WriteString(_m.Name)
 	builder.WriteString(", ")
+	if v := _m.Description; v != nil {
+		builder.WriteString("description=")
+		builder.WriteString(*v)
+	}
+	builder.WriteString(", ")
 	builder.WriteString("is_public=")
 	builder.WriteString(fmt.Sprintf("%v", _m.IsPublic))
+	builder.WriteString(", ")
+	builder.WriteString("password=<sensitive>")
+	builder.WriteString(", ")
+	builder.WriteString("theme=")
+	builder.WriteString(_m.Theme)
+	builder.WriteString(", ")
+	if v := _m.CustomCSS; v != nil {
+		builder.WriteString("custom_css=")
+		builder.WriteString(*v)
+	}
+	builder.WriteString(", ")
+	if v := _m.FooterText; v != nil {
+		builder.WriteString("footer_text=")
+		builder.WriteString(*v)
+	}
+	builder.WriteString(", ")
+	builder.WriteString("show_tags=")
+	builder.WriteString(fmt.Sprintf("%v", _m.ShowTags))
+	builder.WriteString(", ")
+	builder.WriteString("show_charts=")
+	builder.WriteString(fmt.Sprintf("%v", _m.ShowCharts))
+	builder.WriteString(", ")
+	builder.WriteString("show_uptime_percentage=")
+	builder.WriteString(fmt.Sprintf("%v", _m.ShowUptimePercentage))
+	builder.WriteString(", ")
+	builder.WriteString("show_powered_by=")
+	builder.WriteString(fmt.Sprintf("%v", _m.ShowPoweredBy))
+	builder.WriteString(", ")
+	builder.WriteString("auto_refresh_interval=")
+	builder.WriteString(fmt.Sprintf("%v", _m.AutoRefreshInterval))
 	builder.WriteByte(')')
 	return builder.String()
 }

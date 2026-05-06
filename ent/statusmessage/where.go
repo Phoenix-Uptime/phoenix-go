@@ -75,9 +75,19 @@ func StatusPageID(v int) predicate.StatusMessage {
 	return predicate.StatusMessage(sql.FieldEQ(FieldStatusPageID, v))
 }
 
+// IncidentID applies equality check predicate on the "incident_id" field. It's identical to IncidentIDEQ.
+func IncidentID(v int) predicate.StatusMessage {
+	return predicate.StatusMessage(sql.FieldEQ(FieldIncidentID, v))
+}
+
 // ParentID applies equality check predicate on the "parent_id" field. It's identical to ParentIDEQ.
 func ParentID(v int) predicate.StatusMessage {
 	return predicate.StatusMessage(sql.FieldEQ(FieldParentID, v))
+}
+
+// Title applies equality check predicate on the "title" field. It's identical to TitleEQ.
+func Title(v string) predicate.StatusMessage {
+	return predicate.StatusMessage(sql.FieldEQ(FieldTitle, v))
 }
 
 // Content applies equality check predicate on the "content" field. It's identical to ContentEQ.
@@ -235,6 +245,36 @@ func StatusPageIDNotIn(vs ...int) predicate.StatusMessage {
 	return predicate.StatusMessage(sql.FieldNotIn(FieldStatusPageID, vs...))
 }
 
+// IncidentIDEQ applies the EQ predicate on the "incident_id" field.
+func IncidentIDEQ(v int) predicate.StatusMessage {
+	return predicate.StatusMessage(sql.FieldEQ(FieldIncidentID, v))
+}
+
+// IncidentIDNEQ applies the NEQ predicate on the "incident_id" field.
+func IncidentIDNEQ(v int) predicate.StatusMessage {
+	return predicate.StatusMessage(sql.FieldNEQ(FieldIncidentID, v))
+}
+
+// IncidentIDIn applies the In predicate on the "incident_id" field.
+func IncidentIDIn(vs ...int) predicate.StatusMessage {
+	return predicate.StatusMessage(sql.FieldIn(FieldIncidentID, vs...))
+}
+
+// IncidentIDNotIn applies the NotIn predicate on the "incident_id" field.
+func IncidentIDNotIn(vs ...int) predicate.StatusMessage {
+	return predicate.StatusMessage(sql.FieldNotIn(FieldIncidentID, vs...))
+}
+
+// IncidentIDIsNil applies the IsNil predicate on the "incident_id" field.
+func IncidentIDIsNil() predicate.StatusMessage {
+	return predicate.StatusMessage(sql.FieldIsNull(FieldIncidentID))
+}
+
+// IncidentIDNotNil applies the NotNil predicate on the "incident_id" field.
+func IncidentIDNotNil() predicate.StatusMessage {
+	return predicate.StatusMessage(sql.FieldNotNull(FieldIncidentID))
+}
+
 // ParentIDEQ applies the EQ predicate on the "parent_id" field.
 func ParentIDEQ(v int) predicate.StatusMessage {
 	return predicate.StatusMessage(sql.FieldEQ(FieldParentID, v))
@@ -283,6 +323,81 @@ func TypeIn(vs ...Type) predicate.StatusMessage {
 // TypeNotIn applies the NotIn predicate on the "type" field.
 func TypeNotIn(vs ...Type) predicate.StatusMessage {
 	return predicate.StatusMessage(sql.FieldNotIn(FieldType, vs...))
+}
+
+// TitleEQ applies the EQ predicate on the "title" field.
+func TitleEQ(v string) predicate.StatusMessage {
+	return predicate.StatusMessage(sql.FieldEQ(FieldTitle, v))
+}
+
+// TitleNEQ applies the NEQ predicate on the "title" field.
+func TitleNEQ(v string) predicate.StatusMessage {
+	return predicate.StatusMessage(sql.FieldNEQ(FieldTitle, v))
+}
+
+// TitleIn applies the In predicate on the "title" field.
+func TitleIn(vs ...string) predicate.StatusMessage {
+	return predicate.StatusMessage(sql.FieldIn(FieldTitle, vs...))
+}
+
+// TitleNotIn applies the NotIn predicate on the "title" field.
+func TitleNotIn(vs ...string) predicate.StatusMessage {
+	return predicate.StatusMessage(sql.FieldNotIn(FieldTitle, vs...))
+}
+
+// TitleGT applies the GT predicate on the "title" field.
+func TitleGT(v string) predicate.StatusMessage {
+	return predicate.StatusMessage(sql.FieldGT(FieldTitle, v))
+}
+
+// TitleGTE applies the GTE predicate on the "title" field.
+func TitleGTE(v string) predicate.StatusMessage {
+	return predicate.StatusMessage(sql.FieldGTE(FieldTitle, v))
+}
+
+// TitleLT applies the LT predicate on the "title" field.
+func TitleLT(v string) predicate.StatusMessage {
+	return predicate.StatusMessage(sql.FieldLT(FieldTitle, v))
+}
+
+// TitleLTE applies the LTE predicate on the "title" field.
+func TitleLTE(v string) predicate.StatusMessage {
+	return predicate.StatusMessage(sql.FieldLTE(FieldTitle, v))
+}
+
+// TitleContains applies the Contains predicate on the "title" field.
+func TitleContains(v string) predicate.StatusMessage {
+	return predicate.StatusMessage(sql.FieldContains(FieldTitle, v))
+}
+
+// TitleHasPrefix applies the HasPrefix predicate on the "title" field.
+func TitleHasPrefix(v string) predicate.StatusMessage {
+	return predicate.StatusMessage(sql.FieldHasPrefix(FieldTitle, v))
+}
+
+// TitleHasSuffix applies the HasSuffix predicate on the "title" field.
+func TitleHasSuffix(v string) predicate.StatusMessage {
+	return predicate.StatusMessage(sql.FieldHasSuffix(FieldTitle, v))
+}
+
+// TitleIsNil applies the IsNil predicate on the "title" field.
+func TitleIsNil() predicate.StatusMessage {
+	return predicate.StatusMessage(sql.FieldIsNull(FieldTitle))
+}
+
+// TitleNotNil applies the NotNil predicate on the "title" field.
+func TitleNotNil() predicate.StatusMessage {
+	return predicate.StatusMessage(sql.FieldNotNull(FieldTitle))
+}
+
+// TitleEqualFold applies the EqualFold predicate on the "title" field.
+func TitleEqualFold(v string) predicate.StatusMessage {
+	return predicate.StatusMessage(sql.FieldEqualFold(FieldTitle, v))
+}
+
+// TitleContainsFold applies the ContainsFold predicate on the "title" field.
+func TitleContainsFold(v string) predicate.StatusMessage {
+	return predicate.StatusMessage(sql.FieldContainsFold(FieldTitle, v))
 }
 
 // ContentEQ applies the EQ predicate on the "content" field.
@@ -365,6 +480,29 @@ func HasStatusPage() predicate.StatusMessage {
 func HasStatusPageWith(preds ...predicate.StatusPage) predicate.StatusMessage {
 	return predicate.StatusMessage(func(s *sql.Selector) {
 		step := newStatusPageStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasIncident applies the HasEdge predicate on the "incident" edge.
+func HasIncident() predicate.StatusMessage {
+	return predicate.StatusMessage(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, IncidentTable, IncidentColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasIncidentWith applies the HasEdge predicate on the "incident" edge with a given conditions (other predicates).
+func HasIncidentWith(preds ...predicate.Incident) predicate.StatusMessage {
+	return predicate.StatusMessage(func(s *sql.Selector) {
+		step := newIncidentStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)
