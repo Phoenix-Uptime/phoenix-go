@@ -16,6 +16,7 @@ import (
 	"github.com/Phoenix-Uptime/phoenix-go/ent/maintenancewindow"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/monitor"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/monitorcheck"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/monitorstat"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/notification"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/predicate"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/statusmessage"
@@ -39,6 +40,7 @@ const (
 	TypeMaintenanceWindow = "MaintenanceWindow"
 	TypeMonitor           = "Monitor"
 	TypeMonitorCheck      = "MonitorCheck"
+	TypeMonitorStat       = "MonitorStat"
 	TypeNotification      = "Notification"
 	TypeStatusMessage     = "StatusMessage"
 	TypeStatusPage        = "StatusPage"
@@ -3339,6 +3341,9 @@ type MonitorMutation struct {
 	checks                      map[int]struct{}
 	removedchecks               map[int]struct{}
 	clearedchecks               bool
+	stats                       map[int]struct{}
+	removedstats                map[int]struct{}
+	clearedstats                bool
 	tags                        map[int]struct{}
 	removedtags                 map[int]struct{}
 	clearedtags                 bool
@@ -4782,6 +4787,60 @@ func (m *MonitorMutation) ResetChecks() {
 	m.removedchecks = nil
 }
 
+// AddStatIDs adds the "stats" edge to the MonitorStat entity by ids.
+func (m *MonitorMutation) AddStatIDs(ids ...int) {
+	if m.stats == nil {
+		m.stats = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.stats[ids[i]] = struct{}{}
+	}
+}
+
+// ClearStats clears the "stats" edge to the MonitorStat entity.
+func (m *MonitorMutation) ClearStats() {
+	m.clearedstats = true
+}
+
+// StatsCleared reports if the "stats" edge to the MonitorStat entity was cleared.
+func (m *MonitorMutation) StatsCleared() bool {
+	return m.clearedstats
+}
+
+// RemoveStatIDs removes the "stats" edge to the MonitorStat entity by IDs.
+func (m *MonitorMutation) RemoveStatIDs(ids ...int) {
+	if m.removedstats == nil {
+		m.removedstats = make(map[int]struct{})
+	}
+	for i := range ids {
+		delete(m.stats, ids[i])
+		m.removedstats[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedStats returns the removed IDs of the "stats" edge to the MonitorStat entity.
+func (m *MonitorMutation) RemovedStatsIDs() (ids []int) {
+	for id := range m.removedstats {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// StatsIDs returns the "stats" edge IDs in the mutation.
+func (m *MonitorMutation) StatsIDs() (ids []int) {
+	for id := range m.stats {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetStats resets all changes to the "stats" edge.
+func (m *MonitorMutation) ResetStats() {
+	m.stats = nil
+	m.clearedstats = false
+	m.removedstats = nil
+}
+
 // AddTagIDs adds the "tags" edge to the Tag entity by ids.
 func (m *MonitorMutation) AddTagIDs(ids ...int) {
 	if m.tags == nil {
@@ -5765,12 +5824,15 @@ func (m *MonitorMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *MonitorMutation) AddedEdges() []string {
-	edges := make([]string, 0, 7)
+	edges := make([]string, 0, 8)
 	if m.user != nil {
 		edges = append(edges, monitor.EdgeUser)
 	}
 	if m.checks != nil {
 		edges = append(edges, monitor.EdgeChecks)
+	}
+	if m.stats != nil {
+		edges = append(edges, monitor.EdgeStats)
 	}
 	if m.tags != nil {
 		edges = append(edges, monitor.EdgeTags)
@@ -5801,6 +5863,12 @@ func (m *MonitorMutation) AddedIDs(name string) []ent.Value {
 	case monitor.EdgeChecks:
 		ids := make([]ent.Value, 0, len(m.checks))
 		for id := range m.checks {
+			ids = append(ids, id)
+		}
+		return ids
+	case monitor.EdgeStats:
+		ids := make([]ent.Value, 0, len(m.stats))
+		for id := range m.stats {
 			ids = append(ids, id)
 		}
 		return ids
@@ -5840,9 +5908,12 @@ func (m *MonitorMutation) AddedIDs(name string) []ent.Value {
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *MonitorMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 7)
+	edges := make([]string, 0, 8)
 	if m.removedchecks != nil {
 		edges = append(edges, monitor.EdgeChecks)
+	}
+	if m.removedstats != nil {
+		edges = append(edges, monitor.EdgeStats)
 	}
 	if m.removedtags != nil {
 		edges = append(edges, monitor.EdgeTags)
@@ -5869,6 +5940,12 @@ func (m *MonitorMutation) RemovedIDs(name string) []ent.Value {
 	case monitor.EdgeChecks:
 		ids := make([]ent.Value, 0, len(m.removedchecks))
 		for id := range m.removedchecks {
+			ids = append(ids, id)
+		}
+		return ids
+	case monitor.EdgeStats:
+		ids := make([]ent.Value, 0, len(m.removedstats))
+		for id := range m.removedstats {
 			ids = append(ids, id)
 		}
 		return ids
@@ -5908,12 +5985,15 @@ func (m *MonitorMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *MonitorMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 7)
+	edges := make([]string, 0, 8)
 	if m.cleareduser {
 		edges = append(edges, monitor.EdgeUser)
 	}
 	if m.clearedchecks {
 		edges = append(edges, monitor.EdgeChecks)
+	}
+	if m.clearedstats {
+		edges = append(edges, monitor.EdgeStats)
 	}
 	if m.clearedtags {
 		edges = append(edges, monitor.EdgeTags)
@@ -5941,6 +6021,8 @@ func (m *MonitorMutation) EdgeCleared(name string) bool {
 		return m.cleareduser
 	case monitor.EdgeChecks:
 		return m.clearedchecks
+	case monitor.EdgeStats:
+		return m.clearedstats
 	case monitor.EdgeTags:
 		return m.clearedtags
 	case monitor.EdgeNotifications:
@@ -5975,6 +6057,9 @@ func (m *MonitorMutation) ResetEdge(name string) error {
 		return nil
 	case monitor.EdgeChecks:
 		m.ResetChecks()
+		return nil
+	case monitor.EdgeStats:
+		m.ResetStats()
 		return nil
 	case monitor.EdgeTags:
 		m.ResetTags()
@@ -7236,6 +7321,1431 @@ func (m *MonitorCheckMutation) ResetEdge(name string) error {
 		return nil
 	}
 	return fmt.Errorf("unknown MonitorCheck edge %s", name)
+}
+
+// MonitorStatMutation represents an operation that mutates the MonitorStat nodes in the graph.
+type MonitorStatMutation struct {
+	config
+	op                      Op
+	typ                     string
+	id                      *int
+	created_at              *time.Time
+	updated_at              *time.Time
+	period                  *monitorstat.Period
+	period_start            *time.Time
+	total_checks            *int
+	addtotal_checks         *int
+	up_checks               *int
+	addup_checks            *int
+	down_checks             *int
+	adddown_checks          *int
+	maintenance_checks      *int
+	addmaintenance_checks   *int
+	uptime_percentage       *float64
+	adduptime_percentage    *float64
+	avg_response_time_ms    *int
+	addavg_response_time_ms *int
+	min_response_time_ms    *int
+	addmin_response_time_ms *int
+	max_response_time_ms    *int
+	addmax_response_time_ms *int
+	downtime_seconds        *int
+	adddowntime_seconds     *int
+	clearedFields           map[string]struct{}
+	monitor                 *int
+	clearedmonitor          bool
+	done                    bool
+	oldValue                func(context.Context) (*MonitorStat, error)
+	predicates              []predicate.MonitorStat
+}
+
+var _ ent.Mutation = (*MonitorStatMutation)(nil)
+
+// monitorstatOption allows management of the mutation configuration using functional options.
+type monitorstatOption func(*MonitorStatMutation)
+
+// newMonitorStatMutation creates new mutation for the MonitorStat entity.
+func newMonitorStatMutation(c config, op Op, opts ...monitorstatOption) *MonitorStatMutation {
+	m := &MonitorStatMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeMonitorStat,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withMonitorStatID sets the ID field of the mutation.
+func withMonitorStatID(id int) monitorstatOption {
+	return func(m *MonitorStatMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *MonitorStat
+		)
+		m.oldValue = func(ctx context.Context) (*MonitorStat, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().MonitorStat.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withMonitorStat sets the old MonitorStat of the mutation.
+func withMonitorStat(node *MonitorStat) monitorstatOption {
+	return func(m *MonitorStatMutation) {
+		m.oldValue = func(context.Context) (*MonitorStat, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m MonitorStatMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m MonitorStatMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *MonitorStatMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *MonitorStatMutation) IDs(ctx context.Context) ([]int, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().MonitorStat.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *MonitorStatMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *MonitorStatMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the MonitorStat entity.
+// If the MonitorStat object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MonitorStatMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *MonitorStatMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *MonitorStatMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *MonitorStatMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the MonitorStat entity.
+// If the MonitorStat object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MonitorStatMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *MonitorStatMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+}
+
+// SetMonitorID sets the "monitor_id" field.
+func (m *MonitorStatMutation) SetMonitorID(i int) {
+	m.monitor = &i
+}
+
+// MonitorID returns the value of the "monitor_id" field in the mutation.
+func (m *MonitorStatMutation) MonitorID() (r int, exists bool) {
+	v := m.monitor
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMonitorID returns the old "monitor_id" field's value of the MonitorStat entity.
+// If the MonitorStat object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MonitorStatMutation) OldMonitorID(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMonitorID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMonitorID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMonitorID: %w", err)
+	}
+	return oldValue.MonitorID, nil
+}
+
+// ResetMonitorID resets all changes to the "monitor_id" field.
+func (m *MonitorStatMutation) ResetMonitorID() {
+	m.monitor = nil
+}
+
+// SetPeriod sets the "period" field.
+func (m *MonitorStatMutation) SetPeriod(value monitorstat.Period) {
+	m.period = &value
+}
+
+// Period returns the value of the "period" field in the mutation.
+func (m *MonitorStatMutation) Period() (r monitorstat.Period, exists bool) {
+	v := m.period
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPeriod returns the old "period" field's value of the MonitorStat entity.
+// If the MonitorStat object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MonitorStatMutation) OldPeriod(ctx context.Context) (v monitorstat.Period, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPeriod is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPeriod requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPeriod: %w", err)
+	}
+	return oldValue.Period, nil
+}
+
+// ResetPeriod resets all changes to the "period" field.
+func (m *MonitorStatMutation) ResetPeriod() {
+	m.period = nil
+}
+
+// SetPeriodStart sets the "period_start" field.
+func (m *MonitorStatMutation) SetPeriodStart(t time.Time) {
+	m.period_start = &t
+}
+
+// PeriodStart returns the value of the "period_start" field in the mutation.
+func (m *MonitorStatMutation) PeriodStart() (r time.Time, exists bool) {
+	v := m.period_start
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPeriodStart returns the old "period_start" field's value of the MonitorStat entity.
+// If the MonitorStat object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MonitorStatMutation) OldPeriodStart(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPeriodStart is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPeriodStart requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPeriodStart: %w", err)
+	}
+	return oldValue.PeriodStart, nil
+}
+
+// ResetPeriodStart resets all changes to the "period_start" field.
+func (m *MonitorStatMutation) ResetPeriodStart() {
+	m.period_start = nil
+}
+
+// SetTotalChecks sets the "total_checks" field.
+func (m *MonitorStatMutation) SetTotalChecks(i int) {
+	m.total_checks = &i
+	m.addtotal_checks = nil
+}
+
+// TotalChecks returns the value of the "total_checks" field in the mutation.
+func (m *MonitorStatMutation) TotalChecks() (r int, exists bool) {
+	v := m.total_checks
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTotalChecks returns the old "total_checks" field's value of the MonitorStat entity.
+// If the MonitorStat object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MonitorStatMutation) OldTotalChecks(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTotalChecks is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTotalChecks requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTotalChecks: %w", err)
+	}
+	return oldValue.TotalChecks, nil
+}
+
+// AddTotalChecks adds i to the "total_checks" field.
+func (m *MonitorStatMutation) AddTotalChecks(i int) {
+	if m.addtotal_checks != nil {
+		*m.addtotal_checks += i
+	} else {
+		m.addtotal_checks = &i
+	}
+}
+
+// AddedTotalChecks returns the value that was added to the "total_checks" field in this mutation.
+func (m *MonitorStatMutation) AddedTotalChecks() (r int, exists bool) {
+	v := m.addtotal_checks
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetTotalChecks resets all changes to the "total_checks" field.
+func (m *MonitorStatMutation) ResetTotalChecks() {
+	m.total_checks = nil
+	m.addtotal_checks = nil
+}
+
+// SetUpChecks sets the "up_checks" field.
+func (m *MonitorStatMutation) SetUpChecks(i int) {
+	m.up_checks = &i
+	m.addup_checks = nil
+}
+
+// UpChecks returns the value of the "up_checks" field in the mutation.
+func (m *MonitorStatMutation) UpChecks() (r int, exists bool) {
+	v := m.up_checks
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpChecks returns the old "up_checks" field's value of the MonitorStat entity.
+// If the MonitorStat object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MonitorStatMutation) OldUpChecks(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpChecks is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpChecks requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpChecks: %w", err)
+	}
+	return oldValue.UpChecks, nil
+}
+
+// AddUpChecks adds i to the "up_checks" field.
+func (m *MonitorStatMutation) AddUpChecks(i int) {
+	if m.addup_checks != nil {
+		*m.addup_checks += i
+	} else {
+		m.addup_checks = &i
+	}
+}
+
+// AddedUpChecks returns the value that was added to the "up_checks" field in this mutation.
+func (m *MonitorStatMutation) AddedUpChecks() (r int, exists bool) {
+	v := m.addup_checks
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetUpChecks resets all changes to the "up_checks" field.
+func (m *MonitorStatMutation) ResetUpChecks() {
+	m.up_checks = nil
+	m.addup_checks = nil
+}
+
+// SetDownChecks sets the "down_checks" field.
+func (m *MonitorStatMutation) SetDownChecks(i int) {
+	m.down_checks = &i
+	m.adddown_checks = nil
+}
+
+// DownChecks returns the value of the "down_checks" field in the mutation.
+func (m *MonitorStatMutation) DownChecks() (r int, exists bool) {
+	v := m.down_checks
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDownChecks returns the old "down_checks" field's value of the MonitorStat entity.
+// If the MonitorStat object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MonitorStatMutation) OldDownChecks(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDownChecks is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDownChecks requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDownChecks: %w", err)
+	}
+	return oldValue.DownChecks, nil
+}
+
+// AddDownChecks adds i to the "down_checks" field.
+func (m *MonitorStatMutation) AddDownChecks(i int) {
+	if m.adddown_checks != nil {
+		*m.adddown_checks += i
+	} else {
+		m.adddown_checks = &i
+	}
+}
+
+// AddedDownChecks returns the value that was added to the "down_checks" field in this mutation.
+func (m *MonitorStatMutation) AddedDownChecks() (r int, exists bool) {
+	v := m.adddown_checks
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetDownChecks resets all changes to the "down_checks" field.
+func (m *MonitorStatMutation) ResetDownChecks() {
+	m.down_checks = nil
+	m.adddown_checks = nil
+}
+
+// SetMaintenanceChecks sets the "maintenance_checks" field.
+func (m *MonitorStatMutation) SetMaintenanceChecks(i int) {
+	m.maintenance_checks = &i
+	m.addmaintenance_checks = nil
+}
+
+// MaintenanceChecks returns the value of the "maintenance_checks" field in the mutation.
+func (m *MonitorStatMutation) MaintenanceChecks() (r int, exists bool) {
+	v := m.maintenance_checks
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMaintenanceChecks returns the old "maintenance_checks" field's value of the MonitorStat entity.
+// If the MonitorStat object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MonitorStatMutation) OldMaintenanceChecks(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMaintenanceChecks is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMaintenanceChecks requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMaintenanceChecks: %w", err)
+	}
+	return oldValue.MaintenanceChecks, nil
+}
+
+// AddMaintenanceChecks adds i to the "maintenance_checks" field.
+func (m *MonitorStatMutation) AddMaintenanceChecks(i int) {
+	if m.addmaintenance_checks != nil {
+		*m.addmaintenance_checks += i
+	} else {
+		m.addmaintenance_checks = &i
+	}
+}
+
+// AddedMaintenanceChecks returns the value that was added to the "maintenance_checks" field in this mutation.
+func (m *MonitorStatMutation) AddedMaintenanceChecks() (r int, exists bool) {
+	v := m.addmaintenance_checks
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetMaintenanceChecks resets all changes to the "maintenance_checks" field.
+func (m *MonitorStatMutation) ResetMaintenanceChecks() {
+	m.maintenance_checks = nil
+	m.addmaintenance_checks = nil
+}
+
+// SetUptimePercentage sets the "uptime_percentage" field.
+func (m *MonitorStatMutation) SetUptimePercentage(f float64) {
+	m.uptime_percentage = &f
+	m.adduptime_percentage = nil
+}
+
+// UptimePercentage returns the value of the "uptime_percentage" field in the mutation.
+func (m *MonitorStatMutation) UptimePercentage() (r float64, exists bool) {
+	v := m.uptime_percentage
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUptimePercentage returns the old "uptime_percentage" field's value of the MonitorStat entity.
+// If the MonitorStat object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MonitorStatMutation) OldUptimePercentage(ctx context.Context) (v float64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUptimePercentage is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUptimePercentage requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUptimePercentage: %w", err)
+	}
+	return oldValue.UptimePercentage, nil
+}
+
+// AddUptimePercentage adds f to the "uptime_percentage" field.
+func (m *MonitorStatMutation) AddUptimePercentage(f float64) {
+	if m.adduptime_percentage != nil {
+		*m.adduptime_percentage += f
+	} else {
+		m.adduptime_percentage = &f
+	}
+}
+
+// AddedUptimePercentage returns the value that was added to the "uptime_percentage" field in this mutation.
+func (m *MonitorStatMutation) AddedUptimePercentage() (r float64, exists bool) {
+	v := m.adduptime_percentage
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetUptimePercentage resets all changes to the "uptime_percentage" field.
+func (m *MonitorStatMutation) ResetUptimePercentage() {
+	m.uptime_percentage = nil
+	m.adduptime_percentage = nil
+}
+
+// SetAvgResponseTimeMs sets the "avg_response_time_ms" field.
+func (m *MonitorStatMutation) SetAvgResponseTimeMs(i int) {
+	m.avg_response_time_ms = &i
+	m.addavg_response_time_ms = nil
+}
+
+// AvgResponseTimeMs returns the value of the "avg_response_time_ms" field in the mutation.
+func (m *MonitorStatMutation) AvgResponseTimeMs() (r int, exists bool) {
+	v := m.avg_response_time_ms
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAvgResponseTimeMs returns the old "avg_response_time_ms" field's value of the MonitorStat entity.
+// If the MonitorStat object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MonitorStatMutation) OldAvgResponseTimeMs(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAvgResponseTimeMs is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAvgResponseTimeMs requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAvgResponseTimeMs: %w", err)
+	}
+	return oldValue.AvgResponseTimeMs, nil
+}
+
+// AddAvgResponseTimeMs adds i to the "avg_response_time_ms" field.
+func (m *MonitorStatMutation) AddAvgResponseTimeMs(i int) {
+	if m.addavg_response_time_ms != nil {
+		*m.addavg_response_time_ms += i
+	} else {
+		m.addavg_response_time_ms = &i
+	}
+}
+
+// AddedAvgResponseTimeMs returns the value that was added to the "avg_response_time_ms" field in this mutation.
+func (m *MonitorStatMutation) AddedAvgResponseTimeMs() (r int, exists bool) {
+	v := m.addavg_response_time_ms
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetAvgResponseTimeMs resets all changes to the "avg_response_time_ms" field.
+func (m *MonitorStatMutation) ResetAvgResponseTimeMs() {
+	m.avg_response_time_ms = nil
+	m.addavg_response_time_ms = nil
+}
+
+// SetMinResponseTimeMs sets the "min_response_time_ms" field.
+func (m *MonitorStatMutation) SetMinResponseTimeMs(i int) {
+	m.min_response_time_ms = &i
+	m.addmin_response_time_ms = nil
+}
+
+// MinResponseTimeMs returns the value of the "min_response_time_ms" field in the mutation.
+func (m *MonitorStatMutation) MinResponseTimeMs() (r int, exists bool) {
+	v := m.min_response_time_ms
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMinResponseTimeMs returns the old "min_response_time_ms" field's value of the MonitorStat entity.
+// If the MonitorStat object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MonitorStatMutation) OldMinResponseTimeMs(ctx context.Context) (v *int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMinResponseTimeMs is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMinResponseTimeMs requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMinResponseTimeMs: %w", err)
+	}
+	return oldValue.MinResponseTimeMs, nil
+}
+
+// AddMinResponseTimeMs adds i to the "min_response_time_ms" field.
+func (m *MonitorStatMutation) AddMinResponseTimeMs(i int) {
+	if m.addmin_response_time_ms != nil {
+		*m.addmin_response_time_ms += i
+	} else {
+		m.addmin_response_time_ms = &i
+	}
+}
+
+// AddedMinResponseTimeMs returns the value that was added to the "min_response_time_ms" field in this mutation.
+func (m *MonitorStatMutation) AddedMinResponseTimeMs() (r int, exists bool) {
+	v := m.addmin_response_time_ms
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearMinResponseTimeMs clears the value of the "min_response_time_ms" field.
+func (m *MonitorStatMutation) ClearMinResponseTimeMs() {
+	m.min_response_time_ms = nil
+	m.addmin_response_time_ms = nil
+	m.clearedFields[monitorstat.FieldMinResponseTimeMs] = struct{}{}
+}
+
+// MinResponseTimeMsCleared returns if the "min_response_time_ms" field was cleared in this mutation.
+func (m *MonitorStatMutation) MinResponseTimeMsCleared() bool {
+	_, ok := m.clearedFields[monitorstat.FieldMinResponseTimeMs]
+	return ok
+}
+
+// ResetMinResponseTimeMs resets all changes to the "min_response_time_ms" field.
+func (m *MonitorStatMutation) ResetMinResponseTimeMs() {
+	m.min_response_time_ms = nil
+	m.addmin_response_time_ms = nil
+	delete(m.clearedFields, monitorstat.FieldMinResponseTimeMs)
+}
+
+// SetMaxResponseTimeMs sets the "max_response_time_ms" field.
+func (m *MonitorStatMutation) SetMaxResponseTimeMs(i int) {
+	m.max_response_time_ms = &i
+	m.addmax_response_time_ms = nil
+}
+
+// MaxResponseTimeMs returns the value of the "max_response_time_ms" field in the mutation.
+func (m *MonitorStatMutation) MaxResponseTimeMs() (r int, exists bool) {
+	v := m.max_response_time_ms
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMaxResponseTimeMs returns the old "max_response_time_ms" field's value of the MonitorStat entity.
+// If the MonitorStat object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MonitorStatMutation) OldMaxResponseTimeMs(ctx context.Context) (v *int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMaxResponseTimeMs is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMaxResponseTimeMs requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMaxResponseTimeMs: %w", err)
+	}
+	return oldValue.MaxResponseTimeMs, nil
+}
+
+// AddMaxResponseTimeMs adds i to the "max_response_time_ms" field.
+func (m *MonitorStatMutation) AddMaxResponseTimeMs(i int) {
+	if m.addmax_response_time_ms != nil {
+		*m.addmax_response_time_ms += i
+	} else {
+		m.addmax_response_time_ms = &i
+	}
+}
+
+// AddedMaxResponseTimeMs returns the value that was added to the "max_response_time_ms" field in this mutation.
+func (m *MonitorStatMutation) AddedMaxResponseTimeMs() (r int, exists bool) {
+	v := m.addmax_response_time_ms
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearMaxResponseTimeMs clears the value of the "max_response_time_ms" field.
+func (m *MonitorStatMutation) ClearMaxResponseTimeMs() {
+	m.max_response_time_ms = nil
+	m.addmax_response_time_ms = nil
+	m.clearedFields[monitorstat.FieldMaxResponseTimeMs] = struct{}{}
+}
+
+// MaxResponseTimeMsCleared returns if the "max_response_time_ms" field was cleared in this mutation.
+func (m *MonitorStatMutation) MaxResponseTimeMsCleared() bool {
+	_, ok := m.clearedFields[monitorstat.FieldMaxResponseTimeMs]
+	return ok
+}
+
+// ResetMaxResponseTimeMs resets all changes to the "max_response_time_ms" field.
+func (m *MonitorStatMutation) ResetMaxResponseTimeMs() {
+	m.max_response_time_ms = nil
+	m.addmax_response_time_ms = nil
+	delete(m.clearedFields, monitorstat.FieldMaxResponseTimeMs)
+}
+
+// SetDowntimeSeconds sets the "downtime_seconds" field.
+func (m *MonitorStatMutation) SetDowntimeSeconds(i int) {
+	m.downtime_seconds = &i
+	m.adddowntime_seconds = nil
+}
+
+// DowntimeSeconds returns the value of the "downtime_seconds" field in the mutation.
+func (m *MonitorStatMutation) DowntimeSeconds() (r int, exists bool) {
+	v := m.downtime_seconds
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDowntimeSeconds returns the old "downtime_seconds" field's value of the MonitorStat entity.
+// If the MonitorStat object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MonitorStatMutation) OldDowntimeSeconds(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDowntimeSeconds is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDowntimeSeconds requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDowntimeSeconds: %w", err)
+	}
+	return oldValue.DowntimeSeconds, nil
+}
+
+// AddDowntimeSeconds adds i to the "downtime_seconds" field.
+func (m *MonitorStatMutation) AddDowntimeSeconds(i int) {
+	if m.adddowntime_seconds != nil {
+		*m.adddowntime_seconds += i
+	} else {
+		m.adddowntime_seconds = &i
+	}
+}
+
+// AddedDowntimeSeconds returns the value that was added to the "downtime_seconds" field in this mutation.
+func (m *MonitorStatMutation) AddedDowntimeSeconds() (r int, exists bool) {
+	v := m.adddowntime_seconds
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetDowntimeSeconds resets all changes to the "downtime_seconds" field.
+func (m *MonitorStatMutation) ResetDowntimeSeconds() {
+	m.downtime_seconds = nil
+	m.adddowntime_seconds = nil
+}
+
+// ClearMonitor clears the "monitor" edge to the Monitor entity.
+func (m *MonitorStatMutation) ClearMonitor() {
+	m.clearedmonitor = true
+	m.clearedFields[monitorstat.FieldMonitorID] = struct{}{}
+}
+
+// MonitorCleared reports if the "monitor" edge to the Monitor entity was cleared.
+func (m *MonitorStatMutation) MonitorCleared() bool {
+	return m.clearedmonitor
+}
+
+// MonitorIDs returns the "monitor" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// MonitorID instead. It exists only for internal usage by the builders.
+func (m *MonitorStatMutation) MonitorIDs() (ids []int) {
+	if id := m.monitor; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetMonitor resets all changes to the "monitor" edge.
+func (m *MonitorStatMutation) ResetMonitor() {
+	m.monitor = nil
+	m.clearedmonitor = false
+}
+
+// Where appends a list predicates to the MonitorStatMutation builder.
+func (m *MonitorStatMutation) Where(ps ...predicate.MonitorStat) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the MonitorStatMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *MonitorStatMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.MonitorStat, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *MonitorStatMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *MonitorStatMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (MonitorStat).
+func (m *MonitorStatMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *MonitorStatMutation) Fields() []string {
+	fields := make([]string, 0, 14)
+	if m.created_at != nil {
+		fields = append(fields, monitorstat.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, monitorstat.FieldUpdatedAt)
+	}
+	if m.monitor != nil {
+		fields = append(fields, monitorstat.FieldMonitorID)
+	}
+	if m.period != nil {
+		fields = append(fields, monitorstat.FieldPeriod)
+	}
+	if m.period_start != nil {
+		fields = append(fields, monitorstat.FieldPeriodStart)
+	}
+	if m.total_checks != nil {
+		fields = append(fields, monitorstat.FieldTotalChecks)
+	}
+	if m.up_checks != nil {
+		fields = append(fields, monitorstat.FieldUpChecks)
+	}
+	if m.down_checks != nil {
+		fields = append(fields, monitorstat.FieldDownChecks)
+	}
+	if m.maintenance_checks != nil {
+		fields = append(fields, monitorstat.FieldMaintenanceChecks)
+	}
+	if m.uptime_percentage != nil {
+		fields = append(fields, monitorstat.FieldUptimePercentage)
+	}
+	if m.avg_response_time_ms != nil {
+		fields = append(fields, monitorstat.FieldAvgResponseTimeMs)
+	}
+	if m.min_response_time_ms != nil {
+		fields = append(fields, monitorstat.FieldMinResponseTimeMs)
+	}
+	if m.max_response_time_ms != nil {
+		fields = append(fields, monitorstat.FieldMaxResponseTimeMs)
+	}
+	if m.downtime_seconds != nil {
+		fields = append(fields, monitorstat.FieldDowntimeSeconds)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *MonitorStatMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case monitorstat.FieldCreatedAt:
+		return m.CreatedAt()
+	case monitorstat.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case monitorstat.FieldMonitorID:
+		return m.MonitorID()
+	case monitorstat.FieldPeriod:
+		return m.Period()
+	case monitorstat.FieldPeriodStart:
+		return m.PeriodStart()
+	case monitorstat.FieldTotalChecks:
+		return m.TotalChecks()
+	case monitorstat.FieldUpChecks:
+		return m.UpChecks()
+	case monitorstat.FieldDownChecks:
+		return m.DownChecks()
+	case monitorstat.FieldMaintenanceChecks:
+		return m.MaintenanceChecks()
+	case monitorstat.FieldUptimePercentage:
+		return m.UptimePercentage()
+	case monitorstat.FieldAvgResponseTimeMs:
+		return m.AvgResponseTimeMs()
+	case monitorstat.FieldMinResponseTimeMs:
+		return m.MinResponseTimeMs()
+	case monitorstat.FieldMaxResponseTimeMs:
+		return m.MaxResponseTimeMs()
+	case monitorstat.FieldDowntimeSeconds:
+		return m.DowntimeSeconds()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *MonitorStatMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case monitorstat.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case monitorstat.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case monitorstat.FieldMonitorID:
+		return m.OldMonitorID(ctx)
+	case monitorstat.FieldPeriod:
+		return m.OldPeriod(ctx)
+	case monitorstat.FieldPeriodStart:
+		return m.OldPeriodStart(ctx)
+	case monitorstat.FieldTotalChecks:
+		return m.OldTotalChecks(ctx)
+	case monitorstat.FieldUpChecks:
+		return m.OldUpChecks(ctx)
+	case monitorstat.FieldDownChecks:
+		return m.OldDownChecks(ctx)
+	case monitorstat.FieldMaintenanceChecks:
+		return m.OldMaintenanceChecks(ctx)
+	case monitorstat.FieldUptimePercentage:
+		return m.OldUptimePercentage(ctx)
+	case monitorstat.FieldAvgResponseTimeMs:
+		return m.OldAvgResponseTimeMs(ctx)
+	case monitorstat.FieldMinResponseTimeMs:
+		return m.OldMinResponseTimeMs(ctx)
+	case monitorstat.FieldMaxResponseTimeMs:
+		return m.OldMaxResponseTimeMs(ctx)
+	case monitorstat.FieldDowntimeSeconds:
+		return m.OldDowntimeSeconds(ctx)
+	}
+	return nil, fmt.Errorf("unknown MonitorStat field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *MonitorStatMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case monitorstat.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case monitorstat.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case monitorstat.FieldMonitorID:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMonitorID(v)
+		return nil
+	case monitorstat.FieldPeriod:
+		v, ok := value.(monitorstat.Period)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPeriod(v)
+		return nil
+	case monitorstat.FieldPeriodStart:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPeriodStart(v)
+		return nil
+	case monitorstat.FieldTotalChecks:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTotalChecks(v)
+		return nil
+	case monitorstat.FieldUpChecks:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpChecks(v)
+		return nil
+	case monitorstat.FieldDownChecks:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDownChecks(v)
+		return nil
+	case monitorstat.FieldMaintenanceChecks:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMaintenanceChecks(v)
+		return nil
+	case monitorstat.FieldUptimePercentage:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUptimePercentage(v)
+		return nil
+	case monitorstat.FieldAvgResponseTimeMs:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAvgResponseTimeMs(v)
+		return nil
+	case monitorstat.FieldMinResponseTimeMs:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMinResponseTimeMs(v)
+		return nil
+	case monitorstat.FieldMaxResponseTimeMs:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMaxResponseTimeMs(v)
+		return nil
+	case monitorstat.FieldDowntimeSeconds:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDowntimeSeconds(v)
+		return nil
+	}
+	return fmt.Errorf("unknown MonitorStat field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *MonitorStatMutation) AddedFields() []string {
+	var fields []string
+	if m.addtotal_checks != nil {
+		fields = append(fields, monitorstat.FieldTotalChecks)
+	}
+	if m.addup_checks != nil {
+		fields = append(fields, monitorstat.FieldUpChecks)
+	}
+	if m.adddown_checks != nil {
+		fields = append(fields, monitorstat.FieldDownChecks)
+	}
+	if m.addmaintenance_checks != nil {
+		fields = append(fields, monitorstat.FieldMaintenanceChecks)
+	}
+	if m.adduptime_percentage != nil {
+		fields = append(fields, monitorstat.FieldUptimePercentage)
+	}
+	if m.addavg_response_time_ms != nil {
+		fields = append(fields, monitorstat.FieldAvgResponseTimeMs)
+	}
+	if m.addmin_response_time_ms != nil {
+		fields = append(fields, monitorstat.FieldMinResponseTimeMs)
+	}
+	if m.addmax_response_time_ms != nil {
+		fields = append(fields, monitorstat.FieldMaxResponseTimeMs)
+	}
+	if m.adddowntime_seconds != nil {
+		fields = append(fields, monitorstat.FieldDowntimeSeconds)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *MonitorStatMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case monitorstat.FieldTotalChecks:
+		return m.AddedTotalChecks()
+	case monitorstat.FieldUpChecks:
+		return m.AddedUpChecks()
+	case monitorstat.FieldDownChecks:
+		return m.AddedDownChecks()
+	case monitorstat.FieldMaintenanceChecks:
+		return m.AddedMaintenanceChecks()
+	case monitorstat.FieldUptimePercentage:
+		return m.AddedUptimePercentage()
+	case monitorstat.FieldAvgResponseTimeMs:
+		return m.AddedAvgResponseTimeMs()
+	case monitorstat.FieldMinResponseTimeMs:
+		return m.AddedMinResponseTimeMs()
+	case monitorstat.FieldMaxResponseTimeMs:
+		return m.AddedMaxResponseTimeMs()
+	case monitorstat.FieldDowntimeSeconds:
+		return m.AddedDowntimeSeconds()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *MonitorStatMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case monitorstat.FieldTotalChecks:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTotalChecks(v)
+		return nil
+	case monitorstat.FieldUpChecks:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUpChecks(v)
+		return nil
+	case monitorstat.FieldDownChecks:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddDownChecks(v)
+		return nil
+	case monitorstat.FieldMaintenanceChecks:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddMaintenanceChecks(v)
+		return nil
+	case monitorstat.FieldUptimePercentage:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUptimePercentage(v)
+		return nil
+	case monitorstat.FieldAvgResponseTimeMs:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddAvgResponseTimeMs(v)
+		return nil
+	case monitorstat.FieldMinResponseTimeMs:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddMinResponseTimeMs(v)
+		return nil
+	case monitorstat.FieldMaxResponseTimeMs:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddMaxResponseTimeMs(v)
+		return nil
+	case monitorstat.FieldDowntimeSeconds:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddDowntimeSeconds(v)
+		return nil
+	}
+	return fmt.Errorf("unknown MonitorStat numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *MonitorStatMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(monitorstat.FieldMinResponseTimeMs) {
+		fields = append(fields, monitorstat.FieldMinResponseTimeMs)
+	}
+	if m.FieldCleared(monitorstat.FieldMaxResponseTimeMs) {
+		fields = append(fields, monitorstat.FieldMaxResponseTimeMs)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *MonitorStatMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *MonitorStatMutation) ClearField(name string) error {
+	switch name {
+	case monitorstat.FieldMinResponseTimeMs:
+		m.ClearMinResponseTimeMs()
+		return nil
+	case monitorstat.FieldMaxResponseTimeMs:
+		m.ClearMaxResponseTimeMs()
+		return nil
+	}
+	return fmt.Errorf("unknown MonitorStat nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *MonitorStatMutation) ResetField(name string) error {
+	switch name {
+	case monitorstat.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case monitorstat.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case monitorstat.FieldMonitorID:
+		m.ResetMonitorID()
+		return nil
+	case monitorstat.FieldPeriod:
+		m.ResetPeriod()
+		return nil
+	case monitorstat.FieldPeriodStart:
+		m.ResetPeriodStart()
+		return nil
+	case monitorstat.FieldTotalChecks:
+		m.ResetTotalChecks()
+		return nil
+	case monitorstat.FieldUpChecks:
+		m.ResetUpChecks()
+		return nil
+	case monitorstat.FieldDownChecks:
+		m.ResetDownChecks()
+		return nil
+	case monitorstat.FieldMaintenanceChecks:
+		m.ResetMaintenanceChecks()
+		return nil
+	case monitorstat.FieldUptimePercentage:
+		m.ResetUptimePercentage()
+		return nil
+	case monitorstat.FieldAvgResponseTimeMs:
+		m.ResetAvgResponseTimeMs()
+		return nil
+	case monitorstat.FieldMinResponseTimeMs:
+		m.ResetMinResponseTimeMs()
+		return nil
+	case monitorstat.FieldMaxResponseTimeMs:
+		m.ResetMaxResponseTimeMs()
+		return nil
+	case monitorstat.FieldDowntimeSeconds:
+		m.ResetDowntimeSeconds()
+		return nil
+	}
+	return fmt.Errorf("unknown MonitorStat field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *MonitorStatMutation) AddedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.monitor != nil {
+		edges = append(edges, monitorstat.EdgeMonitor)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *MonitorStatMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case monitorstat.EdgeMonitor:
+		if id := m.monitor; id != nil {
+			return []ent.Value{*id}
+		}
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *MonitorStatMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 1)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *MonitorStatMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *MonitorStatMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.clearedmonitor {
+		edges = append(edges, monitorstat.EdgeMonitor)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *MonitorStatMutation) EdgeCleared(name string) bool {
+	switch name {
+	case monitorstat.EdgeMonitor:
+		return m.clearedmonitor
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *MonitorStatMutation) ClearEdge(name string) error {
+	switch name {
+	case monitorstat.EdgeMonitor:
+		m.ClearMonitor()
+		return nil
+	}
+	return fmt.Errorf("unknown MonitorStat unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *MonitorStatMutation) ResetEdge(name string) error {
+	switch name {
+	case monitorstat.EdgeMonitor:
+		m.ResetMonitor()
+		return nil
+	}
+	return fmt.Errorf("unknown MonitorStat edge %s", name)
 }
 
 // NotificationMutation represents an operation that mutates the Notification nodes in the graph.

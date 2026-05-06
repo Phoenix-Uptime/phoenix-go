@@ -73,6 +73,8 @@ const (
 	EdgeUser = "user"
 	// EdgeChecks holds the string denoting the checks edge name in mutations.
 	EdgeChecks = "checks"
+	// EdgeStats holds the string denoting the stats edge name in mutations.
+	EdgeStats = "stats"
 	// EdgeTags holds the string denoting the tags edge name in mutations.
 	EdgeTags = "tags"
 	// EdgeNotifications holds the string denoting the notifications edge name in mutations.
@@ -99,6 +101,13 @@ const (
 	ChecksInverseTable = "monitor_checks"
 	// ChecksColumn is the table column denoting the checks relation/edge.
 	ChecksColumn = "monitor_id"
+	// StatsTable is the table that holds the stats relation/edge.
+	StatsTable = "monitor_stats"
+	// StatsInverseTable is the table name for the MonitorStat entity.
+	// It exists in this package in order to avoid circular dependency with the "monitorstat" package.
+	StatsInverseTable = "monitor_stats"
+	// StatsColumn is the table column denoting the stats relation/edge.
+	StatsColumn = "monitor_id"
 	// TagsTable is the table that holds the tags relation/edge. The primary key declared below.
 	TagsTable = "monitor_tags"
 	// TagsInverseTable is the table name for the Tag entity.
@@ -422,6 +431,20 @@ func ByChecks(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	}
 }
 
+// ByStatsCount orders the results by stats count.
+func ByStatsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newStatsStep(), opts...)
+	}
+}
+
+// ByStats orders the results by stats terms.
+func ByStats(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newStatsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
 // ByTagsCount orders the results by tags count.
 func ByTagsCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
@@ -503,6 +526,13 @@ func newChecksStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(ChecksInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, ChecksTable, ChecksColumn),
+	)
+}
+func newStatsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(StatsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, StatsTable, StatsColumn),
 	)
 }
 func newTagsStep() *sqlgraph.Step {

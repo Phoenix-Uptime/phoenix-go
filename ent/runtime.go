@@ -10,6 +10,7 @@ import (
 	"github.com/Phoenix-Uptime/phoenix-go/ent/maintenancewindow"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/monitor"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/monitorcheck"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/monitorstat"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/notification"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/schema"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/statusmessage"
@@ -175,6 +176,46 @@ func init() {
 	monitorcheckDescImportant := monitorcheckFields[11].Descriptor()
 	// monitorcheck.DefaultImportant holds the default value on creation for the important field.
 	monitorcheck.DefaultImportant = monitorcheckDescImportant.Default.(bool)
+	monitorstatFields := schema.MonitorStat{}.Fields()
+	_ = monitorstatFields
+	// monitorstatDescCreatedAt is the schema descriptor for created_at field.
+	monitorstatDescCreatedAt := monitorstatFields[0].Descriptor()
+	// monitorstat.DefaultCreatedAt holds the default value on creation for the created_at field.
+	monitorstat.DefaultCreatedAt = monitorstatDescCreatedAt.Default.(func() time.Time)
+	// monitorstatDescUpdatedAt is the schema descriptor for updated_at field.
+	monitorstatDescUpdatedAt := monitorstatFields[1].Descriptor()
+	// monitorstat.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	monitorstat.DefaultUpdatedAt = monitorstatDescUpdatedAt.Default.(func() time.Time)
+	// monitorstat.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	monitorstat.UpdateDefaultUpdatedAt = monitorstatDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// monitorstatDescTotalChecks is the schema descriptor for total_checks field.
+	monitorstatDescTotalChecks := monitorstatFields[5].Descriptor()
+	// monitorstat.DefaultTotalChecks holds the default value on creation for the total_checks field.
+	monitorstat.DefaultTotalChecks = monitorstatDescTotalChecks.Default.(int)
+	// monitorstatDescUpChecks is the schema descriptor for up_checks field.
+	monitorstatDescUpChecks := monitorstatFields[6].Descriptor()
+	// monitorstat.DefaultUpChecks holds the default value on creation for the up_checks field.
+	monitorstat.DefaultUpChecks = monitorstatDescUpChecks.Default.(int)
+	// monitorstatDescDownChecks is the schema descriptor for down_checks field.
+	monitorstatDescDownChecks := monitorstatFields[7].Descriptor()
+	// monitorstat.DefaultDownChecks holds the default value on creation for the down_checks field.
+	monitorstat.DefaultDownChecks = monitorstatDescDownChecks.Default.(int)
+	// monitorstatDescMaintenanceChecks is the schema descriptor for maintenance_checks field.
+	monitorstatDescMaintenanceChecks := monitorstatFields[8].Descriptor()
+	// monitorstat.DefaultMaintenanceChecks holds the default value on creation for the maintenance_checks field.
+	monitorstat.DefaultMaintenanceChecks = monitorstatDescMaintenanceChecks.Default.(int)
+	// monitorstatDescUptimePercentage is the schema descriptor for uptime_percentage field.
+	monitorstatDescUptimePercentage := monitorstatFields[9].Descriptor()
+	// monitorstat.DefaultUptimePercentage holds the default value on creation for the uptime_percentage field.
+	monitorstat.DefaultUptimePercentage = monitorstatDescUptimePercentage.Default.(float64)
+	// monitorstatDescAvgResponseTimeMs is the schema descriptor for avg_response_time_ms field.
+	monitorstatDescAvgResponseTimeMs := monitorstatFields[10].Descriptor()
+	// monitorstat.DefaultAvgResponseTimeMs holds the default value on creation for the avg_response_time_ms field.
+	monitorstat.DefaultAvgResponseTimeMs = monitorstatDescAvgResponseTimeMs.Default.(int)
+	// monitorstatDescDowntimeSeconds is the schema descriptor for downtime_seconds field.
+	monitorstatDescDowntimeSeconds := monitorstatFields[13].Descriptor()
+	// monitorstat.DefaultDowntimeSeconds holds the default value on creation for the downtime_seconds field.
+	monitorstat.DefaultDowntimeSeconds = monitorstatDescDowntimeSeconds.Default.(int)
 	notificationFields := schema.Notification{}.Fields()
 	_ = notificationFields
 	// notificationDescCreatedAt is the schema descriptor for created_at field.

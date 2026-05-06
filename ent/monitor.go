@@ -85,6 +85,8 @@ type MonitorEdges struct {
 	User *User `json:"user,omitempty"`
 	// Checks holds the value of the checks edge.
 	Checks []*MonitorCheck `json:"checks,omitempty"`
+	// Stats holds the value of the stats edge.
+	Stats []*MonitorStat `json:"stats,omitempty"`
 	// Tags holds the value of the tags edge.
 	Tags []*Tag `json:"tags,omitempty"`
 	// Notifications holds the value of the notifications edge.
@@ -97,7 +99,7 @@ type MonitorEdges struct {
 	Incidents []*Incident `json:"incidents,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [7]bool
+	loadedTypes [8]bool
 }
 
 // UserOrErr returns the User value or an error if the edge
@@ -120,10 +122,19 @@ func (e MonitorEdges) ChecksOrErr() ([]*MonitorCheck, error) {
 	return nil, &NotLoadedError{edge: "checks"}
 }
 
+// StatsOrErr returns the Stats value or an error if the edge
+// was not loaded in eager-loading.
+func (e MonitorEdges) StatsOrErr() ([]*MonitorStat, error) {
+	if e.loadedTypes[2] {
+		return e.Stats, nil
+	}
+	return nil, &NotLoadedError{edge: "stats"}
+}
+
 // TagsOrErr returns the Tags value or an error if the edge
 // was not loaded in eager-loading.
 func (e MonitorEdges) TagsOrErr() ([]*Tag, error) {
-	if e.loadedTypes[2] {
+	if e.loadedTypes[3] {
 		return e.Tags, nil
 	}
 	return nil, &NotLoadedError{edge: "tags"}
@@ -132,7 +143,7 @@ func (e MonitorEdges) TagsOrErr() ([]*Tag, error) {
 // NotificationsOrErr returns the Notifications value or an error if the edge
 // was not loaded in eager-loading.
 func (e MonitorEdges) NotificationsOrErr() ([]*Notification, error) {
-	if e.loadedTypes[3] {
+	if e.loadedTypes[4] {
 		return e.Notifications, nil
 	}
 	return nil, &NotLoadedError{edge: "notifications"}
@@ -141,7 +152,7 @@ func (e MonitorEdges) NotificationsOrErr() ([]*Notification, error) {
 // StatusPageMonitorsOrErr returns the StatusPageMonitors value or an error if the edge
 // was not loaded in eager-loading.
 func (e MonitorEdges) StatusPageMonitorsOrErr() ([]*StatusPageMonitor, error) {
-	if e.loadedTypes[4] {
+	if e.loadedTypes[5] {
 		return e.StatusPageMonitors, nil
 	}
 	return nil, &NotLoadedError{edge: "status_page_monitors"}
@@ -150,7 +161,7 @@ func (e MonitorEdges) StatusPageMonitorsOrErr() ([]*StatusPageMonitor, error) {
 // MaintenanceWindowsOrErr returns the MaintenanceWindows value or an error if the edge
 // was not loaded in eager-loading.
 func (e MonitorEdges) MaintenanceWindowsOrErr() ([]*MaintenanceWindow, error) {
-	if e.loadedTypes[5] {
+	if e.loadedTypes[6] {
 		return e.MaintenanceWindows, nil
 	}
 	return nil, &NotLoadedError{edge: "maintenance_windows"}
@@ -159,7 +170,7 @@ func (e MonitorEdges) MaintenanceWindowsOrErr() ([]*MaintenanceWindow, error) {
 // IncidentsOrErr returns the Incidents value or an error if the edge
 // was not loaded in eager-loading.
 func (e MonitorEdges) IncidentsOrErr() ([]*Incident, error) {
-	if e.loadedTypes[6] {
+	if e.loadedTypes[7] {
 		return e.Incidents, nil
 	}
 	return nil, &NotLoadedError{edge: "incidents"}
@@ -399,6 +410,11 @@ func (_m *Monitor) QueryUser() *UserQuery {
 // QueryChecks queries the "checks" edge of the Monitor entity.
 func (_m *Monitor) QueryChecks() *MonitorCheckQuery {
 	return NewMonitorClient(_m.config).QueryChecks(_m)
+}
+
+// QueryStats queries the "stats" edge of the Monitor entity.
+func (_m *Monitor) QueryStats() *MonitorStatQuery {
+	return NewMonitorClient(_m.config).QueryStats(_m)
 }
 
 // QueryTags queries the "tags" edge of the Monitor entity.

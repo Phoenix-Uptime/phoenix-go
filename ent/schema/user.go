@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"entgo.io/ent"
+	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
@@ -54,12 +55,18 @@ func (User) Fields() []ent.Field {
 
 func (User) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.To("monitors", Monitor.Type),
-		edge.To("tags", Tag.Type),
-		edge.To("api_keys", APIKey.Type),
-		edge.To("notifications", Notification.Type),
-		edge.To("status_pages", StatusPage.Type),
-		edge.To("maintenance_windows", MaintenanceWindow.Type),
+		edge.To("monitors", Monitor.Type).
+			Annotations(entsql.OnDelete(entsql.Cascade)),
+		edge.To("tags", Tag.Type).
+			Annotations(entsql.OnDelete(entsql.Cascade)),
+		edge.To("api_keys", APIKey.Type).
+			Annotations(entsql.OnDelete(entsql.Cascade)),
+		edge.To("notifications", Notification.Type).
+			Annotations(entsql.OnDelete(entsql.Cascade)),
+		edge.To("status_pages", StatusPage.Type).
+			Annotations(entsql.OnDelete(entsql.Cascade)),
+		edge.To("maintenance_windows", MaintenanceWindow.Type).
+			Annotations(entsql.OnDelete(entsql.Cascade)),
 		edge.To("resolved_incidents", Incident.Type),
 	}
 }

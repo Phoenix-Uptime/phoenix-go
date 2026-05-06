@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"entgo.io/ent"
+	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
@@ -64,7 +65,8 @@ func (Incident) Edges() []ent.Edge {
 			Ref("resolved_incidents").
 			Field("resolved_by_id").
 			Unique(),
-		edge.To("messages", StatusMessage.Type),
+		edge.To("messages", StatusMessage.Type).
+			Annotations(entsql.OnDelete(entsql.Cascade)),
 	}
 }
 

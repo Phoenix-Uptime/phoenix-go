@@ -30,7 +30,7 @@ var (
 				Symbol:     "api_keys_users_api_keys",
 				Columns:    []*schema.Column{APIKeysColumns[8]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
-				OnDelete:   schema.NoAction,
+				OnDelete:   schema.Cascade,
 			},
 		},
 		Indexes: []*schema.Index{
@@ -72,7 +72,7 @@ var (
 				Symbol:     "incidents_monitors_incidents",
 				Columns:    []*schema.Column{IncidentsColumns[10]},
 				RefColumns: []*schema.Column{MonitorsColumns[0]},
-				OnDelete:   schema.NoAction,
+				OnDelete:   schema.Cascade,
 			},
 			{
 				Symbol:     "incidents_status_pages_incidents",
@@ -141,7 +141,7 @@ var (
 				Symbol:     "maintenance_windows_users_maintenance_windows",
 				Columns:    []*schema.Column{MaintenanceWindowsColumns[12]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
-				OnDelete:   schema.NoAction,
+				OnDelete:   schema.Cascade,
 			},
 		},
 		Indexes: []*schema.Index{
@@ -208,7 +208,7 @@ var (
 				Symbol:     "monitors_users_monitors",
 				Columns:    []*schema.Column{MonitorsColumns[27]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
-				OnDelete:   schema.NoAction,
+				OnDelete:   schema.Cascade,
 			},
 		},
 		Indexes: []*schema.Index{
@@ -261,7 +261,7 @@ var (
 				Symbol:     "monitor_checks_monitors_checks",
 				Columns:    []*schema.Column{MonitorChecksColumns[13]},
 				RefColumns: []*schema.Column{MonitorsColumns[0]},
-				OnDelete:   schema.NoAction,
+				OnDelete:   schema.Cascade,
 			},
 		},
 		Indexes: []*schema.Index{
@@ -287,6 +287,55 @@ var (
 			},
 		},
 	}
+	// MonitorStatsColumns holds the columns for the "monitor_stats" table.
+	MonitorStatsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "period", Type: field.TypeEnum, Enums: []string{"hour", "day"}},
+		{Name: "period_start", Type: field.TypeTime},
+		{Name: "total_checks", Type: field.TypeInt, Default: 0},
+		{Name: "up_checks", Type: field.TypeInt, Default: 0},
+		{Name: "down_checks", Type: field.TypeInt, Default: 0},
+		{Name: "maintenance_checks", Type: field.TypeInt, Default: 0},
+		{Name: "uptime_percentage", Type: field.TypeFloat64, Default: 0},
+		{Name: "avg_response_time_ms", Type: field.TypeInt, Default: 0},
+		{Name: "min_response_time_ms", Type: field.TypeInt, Nullable: true},
+		{Name: "max_response_time_ms", Type: field.TypeInt, Nullable: true},
+		{Name: "downtime_seconds", Type: field.TypeInt, Default: 0},
+		{Name: "monitor_id", Type: field.TypeInt},
+	}
+	// MonitorStatsTable holds the schema information for the "monitor_stats" table.
+	MonitorStatsTable = &schema.Table{
+		Name:       "monitor_stats",
+		Columns:    MonitorStatsColumns,
+		PrimaryKey: []*schema.Column{MonitorStatsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "monitor_stats_monitors_stats",
+				Columns:    []*schema.Column{MonitorStatsColumns[14]},
+				RefColumns: []*schema.Column{MonitorsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "monitorstat_monitor_id",
+				Unique:  false,
+				Columns: []*schema.Column{MonitorStatsColumns[14]},
+			},
+			{
+				Name:    "monitorstat_period_start",
+				Unique:  false,
+				Columns: []*schema.Column{MonitorStatsColumns[4]},
+			},
+			{
+				Name:    "monitorstat_monitor_id_period_period_start",
+				Unique:  true,
+				Columns: []*schema.Column{MonitorStatsColumns[14], MonitorStatsColumns[3], MonitorStatsColumns[4]},
+			},
+		},
+	}
 	// NotificationsColumns holds the columns for the "notifications" table.
 	NotificationsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -309,7 +358,7 @@ var (
 				Symbol:     "notifications_users_notifications",
 				Columns:    []*schema.Column{NotificationsColumns[8]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
-				OnDelete:   schema.NoAction,
+				OnDelete:   schema.Cascade,
 			},
 		},
 		Indexes: []*schema.Index{
@@ -352,7 +401,7 @@ var (
 				Symbol:     "status_messages_incidents_messages",
 				Columns:    []*schema.Column{StatusMessagesColumns[6]},
 				RefColumns: []*schema.Column{IncidentsColumns[0]},
-				OnDelete:   schema.SetNull,
+				OnDelete:   schema.Cascade,
 			},
 			{
 				Symbol:     "status_messages_status_messages_sub_messages",
@@ -364,7 +413,7 @@ var (
 				Symbol:     "status_messages_status_pages_messages",
 				Columns:    []*schema.Column{StatusMessagesColumns[8]},
 				RefColumns: []*schema.Column{StatusPagesColumns[0]},
-				OnDelete:   schema.NoAction,
+				OnDelete:   schema.Cascade,
 			},
 		},
 		Indexes: []*schema.Index{
@@ -415,7 +464,7 @@ var (
 				Symbol:     "status_pages_users_status_pages",
 				Columns:    []*schema.Column{StatusPagesColumns[16]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
-				OnDelete:   schema.NoAction,
+				OnDelete:   schema.Cascade,
 			},
 		},
 		Indexes: []*schema.Index{
@@ -452,13 +501,13 @@ var (
 				Symbol:     "status_page_monitors_monitors_status_page_monitors",
 				Columns:    []*schema.Column{StatusPageMonitorsColumns[6]},
 				RefColumns: []*schema.Column{MonitorsColumns[0]},
-				OnDelete:   schema.NoAction,
+				OnDelete:   schema.Cascade,
 			},
 			{
 				Symbol:     "status_page_monitors_status_pages_status_page_monitors",
 				Columns:    []*schema.Column{StatusPageMonitorsColumns[7]},
 				RefColumns: []*schema.Column{StatusPagesColumns[0]},
-				OnDelete:   schema.NoAction,
+				OnDelete:   schema.Cascade,
 			},
 		},
 		Indexes: []*schema.Index{
@@ -504,7 +553,7 @@ var (
 				Symbol:     "tags_users_tags",
 				Columns:    []*schema.Column{TagsColumns[6]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
-				OnDelete:   schema.NoAction,
+				OnDelete:   schema.Cascade,
 			},
 		},
 		Indexes: []*schema.Index{
@@ -642,6 +691,7 @@ var (
 		MaintenanceWindowsTable,
 		MonitorsTable,
 		MonitorChecksTable,
+		MonitorStatsTable,
 		NotificationsTable,
 		StatusMessagesTable,
 		StatusPagesTable,
@@ -662,6 +712,7 @@ func init() {
 	MaintenanceWindowsTable.ForeignKeys[0].RefTable = UsersTable
 	MonitorsTable.ForeignKeys[0].RefTable = UsersTable
 	MonitorChecksTable.ForeignKeys[0].RefTable = MonitorsTable
+	MonitorStatsTable.ForeignKeys[0].RefTable = MonitorsTable
 	NotificationsTable.ForeignKeys[0].RefTable = UsersTable
 	StatusMessagesTable.ForeignKeys[0].RefTable = IncidentsTable
 	StatusMessagesTable.ForeignKeys[1].RefTable = StatusMessagesTable

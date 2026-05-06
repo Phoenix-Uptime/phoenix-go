@@ -16,6 +16,7 @@ import (
 	"github.com/Phoenix-Uptime/phoenix-go/ent/maintenancewindow"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/monitor"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/monitorcheck"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/monitorstat"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/notification"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/predicate"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/statuspagemonitor"
@@ -32,6 +33,7 @@ type MonitorQuery struct {
 	predicates             []predicate.Monitor
 	withUser               *UserQuery
 	withChecks             *MonitorCheckQuery
+	withStats              *MonitorStatQuery
 	withTags               *TagQuery
 	withNotifications      *NotificationQuery
 	withStatusPageMonitors *StatusPageMonitorQuery
@@ -110,6 +112,28 @@ func (_q *MonitorQuery) QueryChecks() *MonitorCheckQuery {
 			sqlgraph.From(monitor.Table, monitor.FieldID, selector),
 			sqlgraph.To(monitorcheck.Table, monitorcheck.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, monitor.ChecksTable, monitor.ChecksColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryStats chains the current query on the "stats" edge.
+func (_q *MonitorQuery) QueryStats() *MonitorStatQuery {
+	query := (&MonitorStatClient{config: _q.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := _q.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := _q.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(monitor.Table, monitor.FieldID, selector),
+			sqlgraph.To(monitorstat.Table, monitorstat.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, monitor.StatsTable, monitor.StatsColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -421,6 +445,7 @@ func (_q *MonitorQuery) Clone() *MonitorQuery {
 		predicates:             append([]predicate.Monitor{}, _q.predicates...),
 		withUser:               _q.withUser.Clone(),
 		withChecks:             _q.withChecks.Clone(),
+		withStats:              _q.withStats.Clone(),
 		withTags:               _q.withTags.Clone(),
 		withNotifications:      _q.withNotifications.Clone(),
 		withStatusPageMonitors: _q.withStatusPageMonitors.Clone(),
@@ -451,6 +476,17 @@ func (_q *MonitorQuery) WithChecks(opts ...func(*MonitorCheckQuery)) *MonitorQue
 		opt(query)
 	}
 	_q.withChecks = query
+	return _q
+}
+
+// WithStats tells the query-builder to eager-load the nodes that are connected to
+// the "stats" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *MonitorQuery) WithStats(opts ...func(*MonitorStatQuery)) *MonitorQuery {
+	query := (&MonitorStatClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	_q.withStats = query
 	return _q
 }
 
@@ -587,9 +623,10 @@ func (_q *MonitorQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Moni
 	var (
 		nodes       = []*Monitor{}
 		_spec       = _q.querySpec()
-		loadedTypes = [7]bool{
+		loadedTypes = [8]bool{
 			_q.withUser != nil,
 			_q.withChecks != nil,
+			_q.withStats != nil,
 			_q.withTags != nil,
 			_q.withNotifications != nil,
 			_q.withStatusPageMonitors != nil,
@@ -625,6 +662,13 @@ func (_q *MonitorQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Moni
 		if err := _q.loadChecks(ctx, query, nodes,
 			func(n *Monitor) { n.Edges.Checks = []*MonitorCheck{} },
 			func(n *Monitor, e *MonitorCheck) { n.Edges.Checks = append(n.Edges.Checks, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := _q.withStats; query != nil {
+		if err := _q.loadStats(ctx, query, nodes,
+			func(n *Monitor) { n.Edges.Stats = []*MonitorStat{} },
+			func(n *Monitor, e *MonitorStat) { n.Edges.Stats = append(n.Edges.Stats, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -714,6 +758,36 @@ func (_q *MonitorQuery) loadChecks(ctx context.Context, query *MonitorCheckQuery
 	}
 	query.Where(predicate.MonitorCheck(func(s *sql.Selector) {
 		s.Where(sql.InValues(s.C(monitor.ChecksColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.MonitorID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "monitor_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (_q *MonitorQuery) loadStats(ctx context.Context, query *MonitorStatQuery, nodes []*Monitor, init func(*Monitor), assign func(*Monitor, *MonitorStat)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int]*Monitor)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(monitorstat.FieldMonitorID)
+	}
+	query.Where(predicate.MonitorStat(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(monitor.StatsColumn), fks...))
 	}))
 	neighbors, err := query.All(ctx)
 	if err != nil {

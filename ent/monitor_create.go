@@ -14,6 +14,7 @@ import (
 	"github.com/Phoenix-Uptime/phoenix-go/ent/maintenancewindow"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/monitor"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/monitorcheck"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/monitorstat"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/notification"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/statuspagemonitor"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/tag"
@@ -367,6 +368,21 @@ func (_c *MonitorCreate) AddChecks(v ...*MonitorCheck) *MonitorCreate {
 		ids[i] = v[i].ID
 	}
 	return _c.AddCheckIDs(ids...)
+}
+
+// AddStatIDs adds the "stats" edge to the MonitorStat entity by IDs.
+func (_c *MonitorCreate) AddStatIDs(ids ...int) *MonitorCreate {
+	_c.mutation.AddStatIDs(ids...)
+	return _c
+}
+
+// AddStats adds the "stats" edges to the MonitorStat entity.
+func (_c *MonitorCreate) AddStats(v ...*MonitorStat) *MonitorCreate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _c.AddStatIDs(ids...)
 }
 
 // AddTagIDs adds the "tags" edge to the Tag entity by IDs.
@@ -751,6 +767,22 @@ func (_c *MonitorCreate) createSpec() (*Monitor, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(monitorcheck.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.StatsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   monitor.StatsTable,
+			Columns: []string{monitor.StatsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(monitorstat.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

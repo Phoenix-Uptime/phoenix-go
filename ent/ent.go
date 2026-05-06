@@ -17,6 +17,7 @@ import (
 	"github.com/Phoenix-Uptime/phoenix-go/ent/maintenancewindow"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/monitor"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/monitorcheck"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/monitorstat"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/notification"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/statusmessage"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/statuspage"
@@ -88,6 +89,7 @@ func checkColumn(t, c string) error {
 			maintenancewindow.Table: maintenancewindow.ValidColumn,
 			monitor.Table:           monitor.ValidColumn,
 			monitorcheck.Table:      monitorcheck.ValidColumn,
+			monitorstat.Table:       monitorstat.ValidColumn,
 			notification.Table:      notification.ValidColumn,
 			statusmessage.Table:     statusmessage.ValidColumn,
 			statuspage.Table:        statuspage.ValidColumn,

@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"entgo.io/ent"
+	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
@@ -91,16 +92,22 @@ func (Monitor) Edges() []ent.Edge {
 			Ref("monitors").
 			Field("user_id").
 			Unique().
-			Required(),
-		edge.To("checks", MonitorCheck.Type),
+			Required().
+			Annotations(entsql.OnDelete(entsql.Cascade)),
+		edge.To("checks", MonitorCheck.Type).
+			Annotations(entsql.OnDelete(entsql.Cascade)),
+		edge.To("stats", MonitorStat.Type).
+			Annotations(entsql.OnDelete(entsql.Cascade)),
 		edge.To("tags", Tag.Type).
 			StorageKey(edge.Table("monitor_tags"), edge.Columns("monitor_id", "tag_id")),
 		edge.To("notifications", Notification.Type).
 			StorageKey(edge.Table("monitor_notifications"), edge.Columns("monitor_id", "notification_id")),
-		edge.To("status_page_monitors", StatusPageMonitor.Type),
+		edge.To("status_page_monitors", StatusPageMonitor.Type).
+			Annotations(entsql.OnDelete(entsql.Cascade)),
 		edge.From("maintenance_windows", MaintenanceWindow.Type).
 			Ref("monitors"),
-		edge.To("incidents", Incident.Type),
+		edge.To("incidents", Incident.Type).
+			Annotations(entsql.OnDelete(entsql.Cascade)),
 	}
 }
 

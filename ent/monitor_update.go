@@ -16,6 +16,7 @@ import (
 	"github.com/Phoenix-Uptime/phoenix-go/ent/maintenancewindow"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/monitor"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/monitorcheck"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/monitorstat"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/notification"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/predicate"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/statuspagemonitor"
@@ -501,6 +502,21 @@ func (_u *MonitorUpdate) AddChecks(v ...*MonitorCheck) *MonitorUpdate {
 	return _u.AddCheckIDs(ids...)
 }
 
+// AddStatIDs adds the "stats" edge to the MonitorStat entity by IDs.
+func (_u *MonitorUpdate) AddStatIDs(ids ...int) *MonitorUpdate {
+	_u.mutation.AddStatIDs(ids...)
+	return _u
+}
+
+// AddStats adds the "stats" edges to the MonitorStat entity.
+func (_u *MonitorUpdate) AddStats(v ...*MonitorStat) *MonitorUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddStatIDs(ids...)
+}
+
 // AddTagIDs adds the "tags" edge to the Tag entity by IDs.
 func (_u *MonitorUpdate) AddTagIDs(ids ...int) *MonitorUpdate {
 	_u.mutation.AddTagIDs(ids...)
@@ -606,6 +622,27 @@ func (_u *MonitorUpdate) RemoveChecks(v ...*MonitorCheck) *MonitorUpdate {
 		ids[i] = v[i].ID
 	}
 	return _u.RemoveCheckIDs(ids...)
+}
+
+// ClearStats clears all "stats" edges to the MonitorStat entity.
+func (_u *MonitorUpdate) ClearStats() *MonitorUpdate {
+	_u.mutation.ClearStats()
+	return _u
+}
+
+// RemoveStatIDs removes the "stats" edge to MonitorStat entities by IDs.
+func (_u *MonitorUpdate) RemoveStatIDs(ids ...int) *MonitorUpdate {
+	_u.mutation.RemoveStatIDs(ids...)
+	return _u
+}
+
+// RemoveStats removes "stats" edges to MonitorStat entities.
+func (_u *MonitorUpdate) RemoveStats(v ...*MonitorStat) *MonitorUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveStatIDs(ids...)
 }
 
 // ClearTags clears all "tags" edges to the Tag entity.
@@ -987,6 +1024,51 @@ func (_u *MonitorUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(monitorcheck.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.StatsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   monitor.StatsTable,
+			Columns: []string{monitor.StatsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(monitorstat.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedStatsIDs(); len(nodes) > 0 && !_u.mutation.StatsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   monitor.StatsTable,
+			Columns: []string{monitor.StatsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(monitorstat.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.StatsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   monitor.StatsTable,
+			Columns: []string{monitor.StatsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(monitorstat.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -1704,6 +1786,21 @@ func (_u *MonitorUpdateOne) AddChecks(v ...*MonitorCheck) *MonitorUpdateOne {
 	return _u.AddCheckIDs(ids...)
 }
 
+// AddStatIDs adds the "stats" edge to the MonitorStat entity by IDs.
+func (_u *MonitorUpdateOne) AddStatIDs(ids ...int) *MonitorUpdateOne {
+	_u.mutation.AddStatIDs(ids...)
+	return _u
+}
+
+// AddStats adds the "stats" edges to the MonitorStat entity.
+func (_u *MonitorUpdateOne) AddStats(v ...*MonitorStat) *MonitorUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddStatIDs(ids...)
+}
+
 // AddTagIDs adds the "tags" edge to the Tag entity by IDs.
 func (_u *MonitorUpdateOne) AddTagIDs(ids ...int) *MonitorUpdateOne {
 	_u.mutation.AddTagIDs(ids...)
@@ -1809,6 +1906,27 @@ func (_u *MonitorUpdateOne) RemoveChecks(v ...*MonitorCheck) *MonitorUpdateOne {
 		ids[i] = v[i].ID
 	}
 	return _u.RemoveCheckIDs(ids...)
+}
+
+// ClearStats clears all "stats" edges to the MonitorStat entity.
+func (_u *MonitorUpdateOne) ClearStats() *MonitorUpdateOne {
+	_u.mutation.ClearStats()
+	return _u
+}
+
+// RemoveStatIDs removes the "stats" edge to MonitorStat entities by IDs.
+func (_u *MonitorUpdateOne) RemoveStatIDs(ids ...int) *MonitorUpdateOne {
+	_u.mutation.RemoveStatIDs(ids...)
+	return _u
+}
+
+// RemoveStats removes "stats" edges to MonitorStat entities.
+func (_u *MonitorUpdateOne) RemoveStats(v ...*MonitorStat) *MonitorUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveStatIDs(ids...)
 }
 
 // ClearTags clears all "tags" edges to the Tag entity.
@@ -2220,6 +2338,51 @@ func (_u *MonitorUpdateOne) sqlSave(ctx context.Context) (_node *Monitor, err er
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(monitorcheck.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.StatsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   monitor.StatsTable,
+			Columns: []string{monitor.StatsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(monitorstat.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedStatsIDs(); len(nodes) > 0 && !_u.mutation.StatsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   monitor.StatsTable,
+			Columns: []string{monitor.StatsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(monitorstat.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.StatsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   monitor.StatsTable,
+			Columns: []string{monitor.StatsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(monitorstat.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

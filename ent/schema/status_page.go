@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"entgo.io/ent"
+	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
@@ -63,9 +64,12 @@ func (StatusPage) Edges() []ent.Edge {
 			Ref("status_pages").
 			Field("user_id").
 			Unique().
-			Required(),
-		edge.To("status_page_monitors", StatusPageMonitor.Type),
-		edge.To("messages", StatusMessage.Type),
+			Required().
+			Annotations(entsql.OnDelete(entsql.Cascade)),
+		edge.To("status_page_monitors", StatusPageMonitor.Type).
+			Annotations(entsql.OnDelete(entsql.Cascade)),
+		edge.To("messages", StatusMessage.Type).
+			Annotations(entsql.OnDelete(entsql.Cascade)),
 		edge.To("incidents", Incident.Type),
 	}
 }

@@ -22,6 +22,8 @@ type Tx struct {
 	Monitor *MonitorClient
 	// MonitorCheck is the client for interacting with the MonitorCheck builders.
 	MonitorCheck *MonitorCheckClient
+	// MonitorStat is the client for interacting with the MonitorStat builders.
+	MonitorStat *MonitorStatClient
 	// Notification is the client for interacting with the Notification builders.
 	Notification *NotificationClient
 	// StatusMessage is the client for interacting with the StatusMessage builders.
@@ -170,6 +172,7 @@ func (tx *Tx) init() {
 	tx.MaintenanceWindow = NewMaintenanceWindowClient(tx.config)
 	tx.Monitor = NewMonitorClient(tx.config)
 	tx.MonitorCheck = NewMonitorCheckClient(tx.config)
+	tx.MonitorStat = NewMonitorStatClient(tx.config)
 	tx.Notification = NewNotificationClient(tx.config)
 	tx.StatusMessage = NewStatusMessageClient(tx.config)
 	tx.StatusPage = NewStatusPageClient(tx.config)

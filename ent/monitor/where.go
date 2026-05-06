@@ -1471,6 +1471,29 @@ func HasChecksWith(preds ...predicate.MonitorCheck) predicate.Monitor {
 	})
 }
 
+// HasStats applies the HasEdge predicate on the "stats" edge.
+func HasStats() predicate.Monitor {
+	return predicate.Monitor(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, StatsTable, StatsColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasStatsWith applies the HasEdge predicate on the "stats" edge with a given conditions (other predicates).
+func HasStatsWith(preds ...predicate.MonitorStat) predicate.Monitor {
+	return predicate.Monitor(func(s *sql.Selector) {
+		step := newStatsStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // HasTags applies the HasEdge predicate on the "tags" edge.
 func HasTags() predicate.Monitor {
 	return predicate.Monitor(func(s *sql.Selector) {
