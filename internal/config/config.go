@@ -1,8 +1,8 @@
 package config
 
 import (
-	"errors"
 	"fmt"
+	"os"
 	"strings"
 
 	"github.com/go-playground/validator/v10"
@@ -25,37 +25,51 @@ type ConfigStructure struct {
 
 type ServerConfig struct {
 	Host string `validate:"required,hostname_rfc1123"`
-	Port string `validate:"required,numeric"`
+	Port uint   `validate:"required,port"`
 }
 
 type DatabaseConfig struct {
-	Driver   string         `validate:"required,oneof=sqlite postgres"`
-	SQLite   SQLiteConfig   `validate:"required_if=Driver sqlite"`
-	Postgres PostgresConfig `validate:"required_if=Driver postgres"`
+	Driver   string          `validate:"required,oneof=sqlite sqlite3 postgres"`
+	SQLite   *SQLiteConfig   `validate:"required_unless=Driver postgres"`
+	Postgres *PostgresConfig `validate:"required_if=Driver postgres"`
 }
 
 type SQLiteConfig struct {
-	Path string `validate:"required_if=Database.Driver sqlite"`
+	Path string `validate:"required,filepath"`
 }
 
 type PostgresConfig struct {
-	Host     string `validate:"required_if=Database.Driver postgres"`
-	Port     string `validate:"required_if=Database.Driver postgres,numeric"`
-	User     string `validate:"required_if=Database.Driver postgres"`
-	Password string `validate:"required_if=Database.Driver postgres"`
-	DBName   string `validate:"required_if=Database.Driver postgres"`
+	Host     string `validate:"required,hostname|ip"`
+	Port     uint   `validate:"required,port"`
+	User     string `validate:"omitempty,printascii"`
+	Password string `validate:"required_with=User,omitempty,printascii"`
+	DBName   string `validate:"required,printascii"`
 }
 
 // InitConfig loads configuration from a file with optional environment overrides
 func InitConfig() error {
-	if err := k.Load(file.Provider("phoenix.yaml"), yaml.Parser()); err != nil {
-		return errors.New("missing required configuration file: phoenix.yaml")
+	k.Set("server.host", "127.0.0.1")
+	k.Set("server.port", 3031)
+	k.Set("database.driver", "sqlite")
+	k.Set("database.sqlite.path", "phoenix.db")
+	k.Set("database.postgres.host", "localhost")
+	k.Set("database.postgres.port", 5432)
+	k.Set("database.postgres.dbname", "phoenix")
+
+	if _, err := os.Stat("phoenix.yaml"); err == nil {
+		if err := k.Load(file.Provider("phoenix.yaml"), yaml.Parser()); err != nil {
+			return fmt.Errorf("failed to load configuration file: %w", err)
+		}
+	} else if !os.IsNotExist(err) {
+		return fmt.Errorf("failed to inspect configuration file: %w", err)
 	}
 
 	// Load environment variable overrides with "PHOENIX_" prefix
 	err := k.Load(env.Provider("PHOENIX_", ".", func(key string) string {
-		// Convert environment variables like PHOENIX_DATABASE_SQLITE_PATH to database.sqlite.path
-		return strings.Replace(strings.ToLower(strings.TrimPrefix(key, "PHOENIX_")), "_", ".", -1)
+		key = strings.TrimPrefix(key, "PHOENIX_")
+		key = strings.ToLower(key)
+		key = strings.ReplaceAll(key, "_", ".")
+		return key
 	}), nil)
 	if err != nil {
 		return fmt.Errorf("failed to load environment variables: %w", err)
@@ -72,4 +86,16 @@ func InitConfig() error {
 	}
 
 	return nil
+}
+
+func Get() *ConfigStructure {
+	return config
+}
+
+func GetServer() ServerConfig {
+	return config.Server
+}
+
+func GetDatabase() DatabaseConfig {
+	return config.Database
 }

@@ -50,9 +50,8 @@ func main() {
 	// Initialize the server
 	app := server.New()
 
-	// Get host and port from the configuration
-	host, port := config.GetServerConfig()
-	address := fmt.Sprintf("%s:%s", host, port)
+	cfg := config.GetServer()
+	address := fmt.Sprintf("%s:%d", cfg.Host, cfg.Port)
 
 	log.Info().Msgf("Starting server on %s", address)
 	if err := app.Listen(address); err != nil {

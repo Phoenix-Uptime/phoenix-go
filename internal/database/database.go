@@ -19,19 +19,19 @@ var Client *ent.Client
 
 // InitDB initializes the Ent client and creates missing schema resources.
 func InitDB() error {
-	driver := config.GetDatabaseDriver()
+	cfg := config.GetDatabase()
 
 	var (
 		client *ent.Client
 		err    error
 	)
-	switch driver {
+	switch cfg.Driver {
 	case "postgres":
-		client, err = connectPostgres()
-	case "sqlite":
-		client, err = connectSQLite()
+		client, err = connectPostgres(cfg.Postgres)
+	case "sqlite", "sqlite3":
+		client, err = connectSQLite(cfg.SQLite)
 	default:
-		return fmt.Errorf("unsupported database driver: %s", driver)
+		return fmt.Errorf("unsupported database driver: %s", cfg.Driver)
 	}
 	if err != nil {
 		return fmt.Errorf("failed to connect to database: %w", err)
@@ -54,8 +54,8 @@ func Close() error {
 	return Client.Close()
 }
 
-func connectSQLite() (*ent.Client, error) {
-	path := config.GetSQLitePath()
+func connectSQLite(cfg *config.SQLiteConfig) (*ent.Client, error) {
+	path := cfg.Path
 	db, err := stdsql.Open("sqlite", path)
 	if err != nil {
 		return nil, err
@@ -69,14 +69,15 @@ func connectSQLite() (*ent.Client, error) {
 	return ent.NewClient(ent.Driver(entsql.OpenDB(dialect.SQLite, db))), nil
 }
 
-func connectPostgres() (*ent.Client, error) {
-	host, port, user, password, dbname := config.GetPostgresConfig()
-	if host == "" || port == "" || user == "" || password == "" || dbname == "" {
+func connectPostgres(cfg *config.PostgresConfig) (*ent.Client, error) {
+	if cfg.Host == "" || cfg.Port == 0 || cfg.DBName == "" {
 		return nil, fmt.Errorf("incomplete PostgreSQL configuration")
 	}
 
-	dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
-		host, port, user, password, dbname)
+	dsn := fmt.Sprintf("host=%s port=%d dbname=%s sslmode=disable", cfg.Host, cfg.Port, cfg.DBName)
+	if cfg.User != "" {
+		dsn += fmt.Sprintf(" user=%s password=%s", cfg.User, cfg.Password)
+	}
 
 	client, err := ent.Open(dialect.Postgres, dsn)
 	if err != nil {
