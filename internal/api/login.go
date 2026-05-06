@@ -3,7 +3,7 @@ package api
 import (
 	"github.com/Phoenix-Uptime/phoenix-go/internal/models"
 	"github.com/go-playground/validator/v10"
-	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v3"
 	"github.com/rs/zerolog/log"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -30,9 +30,9 @@ type LoginResponse struct {
 // @Failure 401 {object} ErrorResponse "invalid credentials"
 // @Failure 500 {object} ErrorResponse "internal server error"
 // @Router /login [post]
-func Login(c *fiber.Ctx) error {
+func Login(c fiber.Ctx) error {
 	var req LoginRequest
-	if err := c.BodyParser(&req); err != nil {
+	if err := c.Bind().Body(&req); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(ErrorResponse{
 			Status:  "error",
 			Message: "Invalid request payload",

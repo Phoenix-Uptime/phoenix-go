@@ -3,7 +3,7 @@ package api
 import (
 	"github.com/Phoenix-Uptime/phoenix-go/internal/models"
 	"github.com/go-playground/validator/v10"
-	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v3"
 	"github.com/rs/zerolog/log"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -32,9 +32,9 @@ type PasswordChangeResponse struct {
 // @Failure 403 {object} ErrorResponse "Forbidden - incorrect current password"
 // @Failure 500 {object} ErrorResponse "Internal server error"
 // @Router /account/change-password [post]
-func ChangePassword(c *fiber.Ctx) error {
+func ChangePassword(c fiber.Ctx) error {
 	var req PasswordChangeRequest
-	if err := c.BodyParser(&req); err != nil {
+	if err := c.Bind().Body(&req); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(ErrorResponse{
 			Status:  "error",
 			Message: "Invalid request payload",

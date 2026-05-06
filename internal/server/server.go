@@ -5,9 +5,9 @@ import (
 
 	"github.com/Phoenix-Uptime/phoenix-go/internal/api"
 	"github.com/Phoenix-Uptime/phoenix-go/internal/server/middleware"
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/cors"
-	"github.com/gofiber/swagger"
+	"github.com/gofiber/contrib/v3/swaggo"
+	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v3/middleware/cors"
 	"github.com/rs/zerolog/log"
 
 	_ "github.com/Phoenix-Uptime/phoenix-go/docs"
@@ -18,12 +18,12 @@ func New() *fiber.App {
 
 	// Set up CORS to allow all origins
 	app.Use(cors.New(cors.Config{
-		AllowOrigins:     "*",
+		AllowOrigins:     []string{"*"},
 		AllowCredentials: false,
 	}))
 
 	// Zerolog middleware for request logging
-	app.Use(func(c *fiber.Ctx) error {
+	app.Use(func(c fiber.Ctx) error {
 		start := time.Now()
 
 		// Proceed to the next middleware or handler
@@ -46,7 +46,7 @@ func New() *fiber.App {
 	})
 
 	// Register Swagger route
-	app.Get("/swagger/*", swagger.HandlerDefault)
+	app.Get("/swagger/*", swaggo.HandlerDefault)
 
 	// Register health check route
 	app.Get("/health", api.HealthCheck)
@@ -62,8 +62,8 @@ func New() *fiber.App {
 	account.Get("/settings", api.GetAccountSettings)
 	account.Post("/reset-api-key", api.ResetAPIKey)
 	account.Post("/change-password", api.ChangePassword)
-	account.Post("/settings/settings/telegram", api.UpdateTelegramBotSettings)
-	account.Post("/settings/settings/smtp", api.UpdateSMTPSettings)
+	account.Post("/settings/telegram", api.UpdateTelegramBotSettings)
+	account.Post("/settings/smtp", api.UpdateSMTPSettings)
 
 	return app
 }

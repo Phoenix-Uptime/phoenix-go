@@ -2,7 +2,7 @@ package api
 
 import (
 	"github.com/Phoenix-Uptime/phoenix-go/internal/models"
-	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v3"
 )
 
 type UserResponse struct {
@@ -21,7 +21,7 @@ type UserResponse struct {
 // @Success 200 {object} UserResponse "user basic information"
 // @Failure 401 {object} ErrorResponse "unauthorized - invalid or missing API key"
 // @Router /account/me [get]
-func GetAccountMe(c *fiber.Ctx) error {
+func GetAccountMe(c fiber.Ctx) error {
 	user := c.Locals("user").(*models.User)
 
 	response := UserResponse{

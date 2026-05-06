@@ -1,7 +1,7 @@
 package api
 
 import (
-	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v3"
 )
 
 type HealthCheckResponse struct {
@@ -14,7 +14,7 @@ type HealthCheckResponse struct {
 // @Tags Health
 // @Success 200 {object} HealthCheckResponse "status and message"
 // @Router /health [get]
-func HealthCheck(c *fiber.Ctx) error {
+func HealthCheck(c fiber.Ctx) error {
 
 	// If everything is healthy, return a success response
 	return c.JSON(HealthCheckResponse{

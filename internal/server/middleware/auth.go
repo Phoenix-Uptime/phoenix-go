@@ -2,12 +2,12 @@ package middleware
 
 import (
 	"github.com/Phoenix-Uptime/phoenix-go/internal/models"
-	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v3"
 	"github.com/rs/zerolog/log"
 )
 
 // AuthMiddleware is a Fiber middleware for API key
-func AuthMiddleware(c *fiber.Ctx) error {
+func AuthMiddleware(c fiber.Ctx) error {
 	apiKey := c.Get("x-api-key")
 	if apiKey == "" {
 		apiKey = c.Query("api_key")

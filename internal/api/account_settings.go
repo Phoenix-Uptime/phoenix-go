@@ -3,7 +3,7 @@ package api
 import (
 	"github.com/Phoenix-Uptime/phoenix-go/internal/models"
 	"github.com/go-playground/validator/v10"
-	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v3"
 	"github.com/rs/zerolog/log"
 )
 
@@ -23,11 +23,11 @@ type SettingsResponse struct {
 // @Failure 401 {object} ErrorResponse "unauthorized - invalid or missing API key"
 // @Failure 500 {object} ErrorResponse "internal server error"
 // @Router /account/settings [get]
-func GetAccountSettings(c *fiber.Ctx) error {
+func GetAccountSettings(c fiber.Ctx) error {
 	user := c.Locals("user").(*models.User)
 
 	// Ensure settings are loaded
-	if err := models.DB.Preload("SMTPSettings").Preload("TelegramBot").First(&user, user.ID).Error; err != nil {
+	if err := models.DB.Preload("SMTPSettings").Preload("TelegramBot").First(user, user.ID).Error; err != nil {
 		log.Error().Err(err).Msg("Failed to load user settings")
 		return c.Status(fiber.StatusInternalServerError).JSON(ErrorResponse{
 			Status:  "error",
@@ -65,11 +65,11 @@ type UpdateSMTPSettingsRequest struct {
 // @Failure 401 {object} ErrorResponse "unauthorized - invalid or missing API key"
 // @Failure 500 {object} ErrorResponse "internal server error"
 // @Router /account/settings/smtp [post]
-func UpdateSMTPSettings(c *fiber.Ctx) error {
+func UpdateSMTPSettings(c fiber.Ctx) error {
 	user := c.Locals("user").(*models.User)
 
 	var req UpdateSMTPSettingsRequest
-	if err := c.BodyParser(&req); err != nil {
+	if err := c.Bind().Body(&req); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(ErrorResponse{
 			Status:  "error",
 			Message: "Invalid request payload",
@@ -124,11 +124,11 @@ type UpdateTelegramBotRequest struct {
 // @Failure 401 {object} ErrorResponse "unauthorized - invalid or missing API key"
 // @Failure 500 {object} ErrorResponse "internal server error"
 // @Router /account/settings/telegram [post]
-func UpdateTelegramBotSettings(c *fiber.Ctx) error {
+func UpdateTelegramBotSettings(c fiber.Ctx) error {
 	user := c.Locals("user").(*models.User)
 
 	var req UpdateTelegramBotRequest
-	if err := c.BodyParser(&req); err != nil {
+	if err := c.Bind().Body(&req); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(ErrorResponse{
 			Status:  "error",
 			Message: "Invalid request payload",

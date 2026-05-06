@@ -22,7 +22,7 @@ type User struct {
 	ApiKey       string        `gorm:"unique;not null;index:idx_api_key" json:"api_key" swagger:"example=your_api_key"`
 	Monitors     []Monitor     `gorm:"foreignKey:UserID" json:"monitors"`
 	SMTPSettings *SMTPSettings `gorm:"embedded;embeddedPrefix:smtp_" json:"smtp_settings,omitempty"`    // Optional SMTP settings
-	TelegramBot  *TelegramBot  `gorm:"embedded;embeddedPrefix=telegram_" json:"telegram_bot,omitempty"` // Optional Telegram bot settings
+	TelegramBot  *TelegramBot  `gorm:"embedded;embeddedPrefix:telegram_" json:"telegram_bot,omitempty"` // Optional Telegram bot settings
 }
 
 type SMTPSettings struct {
