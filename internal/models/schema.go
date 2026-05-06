@@ -55,6 +55,32 @@ type Monitor struct {
 	AlertTypes AlertTypes       `json:"alert_types" gorm:"type:json" swagger:"example=['smtp', 'telegram']"` // Array of alert types
 }
 
+type StatusPage struct {
+	Model
+	TagID    uint            `json:"tag_id" gorm:"index:idx_tag_id"`                     // Associated Tag
+	Name     string          `gorm:"not null" json:"name" swagger:"example=Public Page"` // Public Status Page Name
+	IsPublic bool            `gorm:"default:true" json:"is_public"`                      // Visibility of the status page
+	Tag      Tag             `gorm:"foreignKey:TagID" json:"tag"`                        // Relation to Tag
+	Messages []StatusMessage `gorm:"foreignKey:StatusPageID" json:"messages"`            // Related Status Messages
+}
+
+type StatusMessage struct {
+	Model
+	StatusPageID uint            `json:"status_page_id" gorm:"index:idx_status_page_id"`
+	ParentID     *uint           `json:"parent_id,omitempty"` // Parent Message ID for nested messages
+	Type         MessageType     `gorm:"type:enum('issue', 'investigate', 'resolved')" json:"type"`
+	Content      string          `gorm:"not null" json:"content" swagger:"example=We are investigating an issue"`
+	SubMessages  []StatusMessage `gorm:"foreignKey:ParentID" json:"sub_messages"` // Sub-messages (nested)
+}
+
+type MessageType string
+
+const (
+	MessageIssue       MessageType = "issue"
+	MessageInvestigate MessageType = "investigate"
+	MessageResolved    MessageType = "resolved"
+)
+
 type Status string
 
 const (
