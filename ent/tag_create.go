@@ -50,20 +50,6 @@ func (_c *TagCreate) SetNillableUpdatedAt(v *time.Time) *TagCreate {
 	return _c
 }
 
-// SetDeletedAt sets the "deleted_at" field.
-func (_c *TagCreate) SetDeletedAt(v time.Time) *TagCreate {
-	_c.mutation.SetDeletedAt(v)
-	return _c
-}
-
-// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
-func (_c *TagCreate) SetNillableDeletedAt(v *time.Time) *TagCreate {
-	if v != nil {
-		_c.SetDeletedAt(*v)
-	}
-	return _c
-}
-
 // SetUserID sets the "user_id" field.
 func (_c *TagCreate) SetUserID(v int) *TagCreate {
 	_c.mutation.SetUserID(v)
@@ -224,10 +210,6 @@ func (_c *TagCreate) createSpec() (*Tag, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.UpdatedAt(); ok {
 		_spec.SetField(tag.FieldUpdatedAt, field.TypeTime, value)
 		_node.UpdatedAt = value
-	}
-	if value, ok := _c.mutation.DeletedAt(); ok {
-		_spec.SetField(tag.FieldDeletedAt, field.TypeTime, value)
-		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.Name(); ok {
 		_spec.SetField(tag.FieldName, field.TypeString, value)

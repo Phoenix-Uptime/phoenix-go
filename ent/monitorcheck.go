@@ -22,8 +22,6 @@ type MonitorCheck struct {
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
-	// DeletedAt holds the value of the "deleted_at" field.
-	DeletedAt *time.Time `json:"deleted_at,omitempty"`
 	// MonitorID holds the value of the "monitor_id" field.
 	MonitorID int `json:"monitor_id,omitempty"`
 	// Status holds the value of the "status" field.
@@ -83,7 +81,7 @@ func (*MonitorCheck) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullInt64)
 		case monitorcheck.FieldStatus, monitorcheck.FieldMessage, monitorcheck.FieldError, monitorcheck.FieldResponse:
 			values[i] = new(sql.NullString)
-		case monitorcheck.FieldCreatedAt, monitorcheck.FieldUpdatedAt, monitorcheck.FieldDeletedAt, monitorcheck.FieldCheckedAt:
+		case monitorcheck.FieldCreatedAt, monitorcheck.FieldUpdatedAt, monitorcheck.FieldCheckedAt:
 			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -117,13 +115,6 @@ func (_m *MonitorCheck) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
 			} else if value.Valid {
 				_m.UpdatedAt = value.Time
-			}
-		case monitorcheck.FieldDeletedAt:
-			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field deleted_at", values[i])
-			} else if value.Valid {
-				_m.DeletedAt = new(time.Time)
-				*_m.DeletedAt = value.Time
 			}
 		case monitorcheck.FieldMonitorID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -241,11 +232,6 @@ func (_m *MonitorCheck) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("updated_at=")
 	builder.WriteString(_m.UpdatedAt.Format(time.ANSIC))
-	builder.WriteString(", ")
-	if v := _m.DeletedAt; v != nil {
-		builder.WriteString("deleted_at=")
-		builder.WriteString(v.Format(time.ANSIC))
-	}
 	builder.WriteString(", ")
 	builder.WriteString("monitor_id=")
 	builder.WriteString(fmt.Sprintf("%v", _m.MonitorID))

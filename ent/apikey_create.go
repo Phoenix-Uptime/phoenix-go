@@ -49,20 +49,6 @@ func (_c *APIKeyCreate) SetNillableUpdatedAt(v *time.Time) *APIKeyCreate {
 	return _c
 }
 
-// SetDeletedAt sets the "deleted_at" field.
-func (_c *APIKeyCreate) SetDeletedAt(v time.Time) *APIKeyCreate {
-	_c.mutation.SetDeletedAt(v)
-	return _c
-}
-
-// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
-func (_c *APIKeyCreate) SetNillableDeletedAt(v *time.Time) *APIKeyCreate {
-	if v != nil {
-		_c.SetDeletedAt(*v)
-	}
-	return _c
-}
-
 // SetUserID sets the "user_id" field.
 func (_c *APIKeyCreate) SetUserID(v int) *APIKeyCreate {
 	_c.mutation.SetUserID(v)
@@ -243,10 +229,6 @@ func (_c *APIKeyCreate) createSpec() (*APIKey, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.UpdatedAt(); ok {
 		_spec.SetField(apikey.FieldUpdatedAt, field.TypeTime, value)
 		_node.UpdatedAt = value
-	}
-	if value, ok := _c.mutation.DeletedAt(); ok {
-		_spec.SetField(apikey.FieldDeletedAt, field.TypeTime, value)
-		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.Name(); ok {
 		_spec.SetField(apikey.FieldName, field.TypeString, value)

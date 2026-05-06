@@ -1,6 +1,8 @@
 package schema
 
 import (
+	"time"
+
 	"entgo.io/ent"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
@@ -11,14 +13,14 @@ type StatusPageMonitor struct {
 	ent.Schema
 }
 
-func (StatusPageMonitor) Mixin() []ent.Mixin {
-	return []ent.Mixin{
-		TimeMixin{},
-	}
-}
-
 func (StatusPageMonitor) Fields() []ent.Field {
 	return []ent.Field{
+		field.Time("created_at").
+			Default(time.Now).
+			Immutable(),
+		field.Time("updated_at").
+			Default(time.Now).
+			UpdateDefault(time.Now),
 		field.Int("status_page_id"),
 		field.Int("monitor_id"),
 		field.String("display_name").

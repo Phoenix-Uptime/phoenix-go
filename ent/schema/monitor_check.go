@@ -13,14 +13,14 @@ type MonitorCheck struct {
 	ent.Schema
 }
 
-func (MonitorCheck) Mixin() []ent.Mixin {
-	return []ent.Mixin{
-		TimeMixin{},
-	}
-}
-
 func (MonitorCheck) Fields() []ent.Field {
 	return []ent.Field{
+		field.Time("created_at").
+			Default(time.Now).
+			Immutable(),
+		field.Time("updated_at").
+			Default(time.Now).
+			UpdateDefault(time.Now),
 		field.Int("monitor_id"),
 		field.Enum("status").
 			Values("up", "down", "pending", "maintenance").

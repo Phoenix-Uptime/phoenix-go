@@ -50,20 +50,6 @@ func (_c *MaintenanceWindowCreate) SetNillableUpdatedAt(v *time.Time) *Maintenan
 	return _c
 }
 
-// SetDeletedAt sets the "deleted_at" field.
-func (_c *MaintenanceWindowCreate) SetDeletedAt(v time.Time) *MaintenanceWindowCreate {
-	_c.mutation.SetDeletedAt(v)
-	return _c
-}
-
-// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
-func (_c *MaintenanceWindowCreate) SetNillableDeletedAt(v *time.Time) *MaintenanceWindowCreate {
-	if v != nil {
-		_c.SetDeletedAt(*v)
-	}
-	return _c
-}
-
 // SetUserID sets the "user_id" field.
 func (_c *MaintenanceWindowCreate) SetUserID(v int) *MaintenanceWindowCreate {
 	_c.mutation.SetUserID(v)
@@ -327,10 +313,6 @@ func (_c *MaintenanceWindowCreate) createSpec() (*MaintenanceWindow, *sqlgraph.C
 	if value, ok := _c.mutation.UpdatedAt(); ok {
 		_spec.SetField(maintenancewindow.FieldUpdatedAt, field.TypeTime, value)
 		_node.UpdatedAt = value
-	}
-	if value, ok := _c.mutation.DeletedAt(); ok {
-		_spec.SetField(maintenancewindow.FieldDeletedAt, field.TypeTime, value)
-		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.Title(); ok {
 		_spec.SetField(maintenancewindow.FieldTitle, field.TypeString, value)

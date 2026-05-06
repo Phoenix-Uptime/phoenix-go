@@ -35,26 +35,6 @@ func (_u *APIKeyUpdate) SetUpdatedAt(v time.Time) *APIKeyUpdate {
 	return _u
 }
 
-// SetDeletedAt sets the "deleted_at" field.
-func (_u *APIKeyUpdate) SetDeletedAt(v time.Time) *APIKeyUpdate {
-	_u.mutation.SetDeletedAt(v)
-	return _u
-}
-
-// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
-func (_u *APIKeyUpdate) SetNillableDeletedAt(v *time.Time) *APIKeyUpdate {
-	if v != nil {
-		_u.SetDeletedAt(*v)
-	}
-	return _u
-}
-
-// ClearDeletedAt clears the value of the "deleted_at" field.
-func (_u *APIKeyUpdate) ClearDeletedAt() *APIKeyUpdate {
-	_u.mutation.ClearDeletedAt()
-	return _u
-}
-
 // SetUserID sets the "user_id" field.
 func (_u *APIKeyUpdate) SetUserID(v int) *APIKeyUpdate {
 	_u.mutation.SetUserID(v)
@@ -236,12 +216,6 @@ func (_u *APIKeyUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if value, ok := _u.mutation.UpdatedAt(); ok {
 		_spec.SetField(apikey.FieldUpdatedAt, field.TypeTime, value)
 	}
-	if value, ok := _u.mutation.DeletedAt(); ok {
-		_spec.SetField(apikey.FieldDeletedAt, field.TypeTime, value)
-	}
-	if _u.mutation.DeletedAtCleared() {
-		_spec.ClearField(apikey.FieldDeletedAt, field.TypeTime)
-	}
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(apikey.FieldName, field.TypeString, value)
 	}
@@ -315,26 +289,6 @@ type APIKeyUpdateOne struct {
 // SetUpdatedAt sets the "updated_at" field.
 func (_u *APIKeyUpdateOne) SetUpdatedAt(v time.Time) *APIKeyUpdateOne {
 	_u.mutation.SetUpdatedAt(v)
-	return _u
-}
-
-// SetDeletedAt sets the "deleted_at" field.
-func (_u *APIKeyUpdateOne) SetDeletedAt(v time.Time) *APIKeyUpdateOne {
-	_u.mutation.SetDeletedAt(v)
-	return _u
-}
-
-// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
-func (_u *APIKeyUpdateOne) SetNillableDeletedAt(v *time.Time) *APIKeyUpdateOne {
-	if v != nil {
-		_u.SetDeletedAt(*v)
-	}
-	return _u
-}
-
-// ClearDeletedAt clears the value of the "deleted_at" field.
-func (_u *APIKeyUpdateOne) ClearDeletedAt() *APIKeyUpdateOne {
-	_u.mutation.ClearDeletedAt()
 	return _u
 }
 
@@ -548,12 +502,6 @@ func (_u *APIKeyUpdateOne) sqlSave(ctx context.Context) (_node *APIKey, err erro
 	}
 	if value, ok := _u.mutation.UpdatedAt(); ok {
 		_spec.SetField(apikey.FieldUpdatedAt, field.TypeTime, value)
-	}
-	if value, ok := _u.mutation.DeletedAt(); ok {
-		_spec.SetField(apikey.FieldDeletedAt, field.TypeTime, value)
-	}
-	if _u.mutation.DeletedAtCleared() {
-		_spec.ClearField(apikey.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(apikey.FieldName, field.TypeString, value)

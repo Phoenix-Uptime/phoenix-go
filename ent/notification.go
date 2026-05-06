@@ -23,8 +23,6 @@ type Notification struct {
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
-	// DeletedAt holds the value of the "deleted_at" field.
-	DeletedAt *time.Time `json:"deleted_at,omitempty"`
 	// UserID holds the value of the "user_id" field.
 	UserID int `json:"user_id,omitempty"`
 	// Name holds the value of the "name" field.
@@ -87,7 +85,7 @@ func (*Notification) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullInt64)
 		case notification.FieldName, notification.FieldType:
 			values[i] = new(sql.NullString)
-		case notification.FieldCreatedAt, notification.FieldUpdatedAt, notification.FieldDeletedAt:
+		case notification.FieldCreatedAt, notification.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -121,13 +119,6 @@ func (_m *Notification) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
 			} else if value.Valid {
 				_m.UpdatedAt = value.Time
-			}
-		case notification.FieldDeletedAt:
-			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field deleted_at", values[i])
-			} else if value.Valid {
-				_m.DeletedAt = new(time.Time)
-				*_m.DeletedAt = value.Time
 			}
 		case notification.FieldUserID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -218,11 +209,6 @@ func (_m *Notification) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("updated_at=")
 	builder.WriteString(_m.UpdatedAt.Format(time.ANSIC))
-	builder.WriteString(", ")
-	if v := _m.DeletedAt; v != nil {
-		builder.WriteString("deleted_at=")
-		builder.WriteString(v.Format(time.ANSIC))
-	}
 	builder.WriteString(", ")
 	builder.WriteString("user_id=")
 	builder.WriteString(fmt.Sprintf("%v", _m.UserID))

@@ -50,20 +50,6 @@ func (_c *StatusPageMonitorCreate) SetNillableUpdatedAt(v *time.Time) *StatusPag
 	return _c
 }
 
-// SetDeletedAt sets the "deleted_at" field.
-func (_c *StatusPageMonitorCreate) SetDeletedAt(v time.Time) *StatusPageMonitorCreate {
-	_c.mutation.SetDeletedAt(v)
-	return _c
-}
-
-// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
-func (_c *StatusPageMonitorCreate) SetNillableDeletedAt(v *time.Time) *StatusPageMonitorCreate {
-	if v != nil {
-		_c.SetDeletedAt(*v)
-	}
-	return _c
-}
-
 // SetStatusPageID sets the "status_page_id" field.
 func (_c *StatusPageMonitorCreate) SetStatusPageID(v int) *StatusPageMonitorCreate {
 	_c.mutation.SetStatusPageID(v)
@@ -240,10 +226,6 @@ func (_c *StatusPageMonitorCreate) createSpec() (*StatusPageMonitor, *sqlgraph.C
 	if value, ok := _c.mutation.UpdatedAt(); ok {
 		_spec.SetField(statuspagemonitor.FieldUpdatedAt, field.TypeTime, value)
 		_node.UpdatedAt = value
-	}
-	if value, ok := _c.mutation.DeletedAt(); ok {
-		_spec.SetField(statuspagemonitor.FieldDeletedAt, field.TypeTime, value)
-		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.DisplayName(); ok {
 		_spec.SetField(statuspagemonitor.FieldDisplayName, field.TypeString, value)

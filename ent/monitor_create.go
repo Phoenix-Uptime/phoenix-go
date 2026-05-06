@@ -55,20 +55,6 @@ func (_c *MonitorCreate) SetNillableUpdatedAt(v *time.Time) *MonitorCreate {
 	return _c
 }
 
-// SetDeletedAt sets the "deleted_at" field.
-func (_c *MonitorCreate) SetDeletedAt(v time.Time) *MonitorCreate {
-	_c.mutation.SetDeletedAt(v)
-	return _c
-}
-
-// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
-func (_c *MonitorCreate) SetNillableDeletedAt(v *time.Time) *MonitorCreate {
-	if v != nil {
-		_c.SetDeletedAt(*v)
-	}
-	return _c
-}
-
 // SetUserID sets the "user_id" field.
 func (_c *MonitorCreate) SetUserID(v int) *MonitorCreate {
 	_c.mutation.SetUserID(v)
@@ -642,10 +628,6 @@ func (_c *MonitorCreate) createSpec() (*Monitor, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.UpdatedAt(); ok {
 		_spec.SetField(monitor.FieldUpdatedAt, field.TypeTime, value)
 		_node.UpdatedAt = value
-	}
-	if value, ok := _c.mutation.DeletedAt(); ok {
-		_spec.SetField(monitor.FieldDeletedAt, field.TypeTime, value)
-		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.Name(); ok {
 		_spec.SetField(monitor.FieldName, field.TypeString, value)

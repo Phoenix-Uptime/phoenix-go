@@ -50,20 +50,6 @@ func (_c *NotificationCreate) SetNillableUpdatedAt(v *time.Time) *NotificationCr
 	return _c
 }
 
-// SetDeletedAt sets the "deleted_at" field.
-func (_c *NotificationCreate) SetDeletedAt(v time.Time) *NotificationCreate {
-	_c.mutation.SetDeletedAt(v)
-	return _c
-}
-
-// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
-func (_c *NotificationCreate) SetNillableDeletedAt(v *time.Time) *NotificationCreate {
-	if v != nil {
-		_c.SetDeletedAt(*v)
-	}
-	return _c
-}
-
 // SetUserID sets the "user_id" field.
 func (_c *NotificationCreate) SetUserID(v int) *NotificationCreate {
 	_c.mutation.SetUserID(v)
@@ -258,10 +244,6 @@ func (_c *NotificationCreate) createSpec() (*Notification, *sqlgraph.CreateSpec)
 	if value, ok := _c.mutation.UpdatedAt(); ok {
 		_spec.SetField(notification.FieldUpdatedAt, field.TypeTime, value)
 		_node.UpdatedAt = value
-	}
-	if value, ok := _c.mutation.DeletedAt(); ok {
-		_spec.SetField(notification.FieldDeletedAt, field.TypeTime, value)
-		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.Name(); ok {
 		_spec.SetField(notification.FieldName, field.TypeString, value)

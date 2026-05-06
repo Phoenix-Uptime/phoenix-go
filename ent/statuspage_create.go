@@ -52,20 +52,6 @@ func (_c *StatusPageCreate) SetNillableUpdatedAt(v *time.Time) *StatusPageCreate
 	return _c
 }
 
-// SetDeletedAt sets the "deleted_at" field.
-func (_c *StatusPageCreate) SetDeletedAt(v time.Time) *StatusPageCreate {
-	_c.mutation.SetDeletedAt(v)
-	return _c
-}
-
-// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
-func (_c *StatusPageCreate) SetNillableDeletedAt(v *time.Time) *StatusPageCreate {
-	if v != nil {
-		_c.SetDeletedAt(*v)
-	}
-	return _c
-}
-
 // SetUserID sets the "user_id" field.
 func (_c *StatusPageCreate) SetUserID(v int) *StatusPageCreate {
 	_c.mutation.SetUserID(v)
@@ -445,10 +431,6 @@ func (_c *StatusPageCreate) createSpec() (*StatusPage, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.UpdatedAt(); ok {
 		_spec.SetField(statuspage.FieldUpdatedAt, field.TypeTime, value)
 		_node.UpdatedAt = value
-	}
-	if value, ok := _c.mutation.DeletedAt(); ok {
-		_spec.SetField(statuspage.FieldDeletedAt, field.TypeTime, value)
-		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.Slug(); ok {
 		_spec.SetField(statuspage.FieldSlug, field.TypeString, value)

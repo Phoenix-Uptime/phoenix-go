@@ -36,26 +36,6 @@ func (_u *StatusMessageUpdate) SetUpdatedAt(v time.Time) *StatusMessageUpdate {
 	return _u
 }
 
-// SetDeletedAt sets the "deleted_at" field.
-func (_u *StatusMessageUpdate) SetDeletedAt(v time.Time) *StatusMessageUpdate {
-	_u.mutation.SetDeletedAt(v)
-	return _u
-}
-
-// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
-func (_u *StatusMessageUpdate) SetNillableDeletedAt(v *time.Time) *StatusMessageUpdate {
-	if v != nil {
-		_u.SetDeletedAt(*v)
-	}
-	return _u
-}
-
-// ClearDeletedAt clears the value of the "deleted_at" field.
-func (_u *StatusMessageUpdate) ClearDeletedAt() *StatusMessageUpdate {
-	_u.mutation.ClearDeletedAt()
-	return _u
-}
-
 // SetStatusPageID sets the "status_page_id" field.
 func (_u *StatusMessageUpdate) SetStatusPageID(v int) *StatusMessageUpdate {
 	_u.mutation.SetStatusPageID(v)
@@ -301,12 +281,6 @@ func (_u *StatusMessageUpdate) sqlSave(ctx context.Context) (_node int, err erro
 	if value, ok := _u.mutation.UpdatedAt(); ok {
 		_spec.SetField(statusmessage.FieldUpdatedAt, field.TypeTime, value)
 	}
-	if value, ok := _u.mutation.DeletedAt(); ok {
-		_spec.SetField(statusmessage.FieldDeletedAt, field.TypeTime, value)
-	}
-	if _u.mutation.DeletedAtCleared() {
-		_spec.ClearField(statusmessage.FieldDeletedAt, field.TypeTime)
-	}
 	if value, ok := _u.mutation.GetType(); ok {
 		_spec.SetField(statusmessage.FieldType, field.TypeEnum, value)
 	}
@@ -474,26 +448,6 @@ type StatusMessageUpdateOne struct {
 // SetUpdatedAt sets the "updated_at" field.
 func (_u *StatusMessageUpdateOne) SetUpdatedAt(v time.Time) *StatusMessageUpdateOne {
 	_u.mutation.SetUpdatedAt(v)
-	return _u
-}
-
-// SetDeletedAt sets the "deleted_at" field.
-func (_u *StatusMessageUpdateOne) SetDeletedAt(v time.Time) *StatusMessageUpdateOne {
-	_u.mutation.SetDeletedAt(v)
-	return _u
-}
-
-// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
-func (_u *StatusMessageUpdateOne) SetNillableDeletedAt(v *time.Time) *StatusMessageUpdateOne {
-	if v != nil {
-		_u.SetDeletedAt(*v)
-	}
-	return _u
-}
-
-// ClearDeletedAt clears the value of the "deleted_at" field.
-func (_u *StatusMessageUpdateOne) ClearDeletedAt() *StatusMessageUpdateOne {
-	_u.mutation.ClearDeletedAt()
 	return _u
 }
 
@@ -771,12 +725,6 @@ func (_u *StatusMessageUpdateOne) sqlSave(ctx context.Context) (_node *StatusMes
 	}
 	if value, ok := _u.mutation.UpdatedAt(); ok {
 		_spec.SetField(statusmessage.FieldUpdatedAt, field.TypeTime, value)
-	}
-	if value, ok := _u.mutation.DeletedAt(); ok {
-		_spec.SetField(statusmessage.FieldDeletedAt, field.TypeTime, value)
-	}
-	if _u.mutation.DeletedAtCleared() {
-		_spec.ClearField(statusmessage.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.GetType(); ok {
 		_spec.SetField(statusmessage.FieldType, field.TypeEnum, value)

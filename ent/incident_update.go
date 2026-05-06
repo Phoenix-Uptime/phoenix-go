@@ -38,26 +38,6 @@ func (_u *IncidentUpdate) SetUpdatedAt(v time.Time) *IncidentUpdate {
 	return _u
 }
 
-// SetDeletedAt sets the "deleted_at" field.
-func (_u *IncidentUpdate) SetDeletedAt(v time.Time) *IncidentUpdate {
-	_u.mutation.SetDeletedAt(v)
-	return _u
-}
-
-// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
-func (_u *IncidentUpdate) SetNillableDeletedAt(v *time.Time) *IncidentUpdate {
-	if v != nil {
-		_u.SetDeletedAt(*v)
-	}
-	return _u
-}
-
-// ClearDeletedAt clears the value of the "deleted_at" field.
-func (_u *IncidentUpdate) ClearDeletedAt() *IncidentUpdate {
-	_u.mutation.ClearDeletedAt()
-	return _u
-}
-
 // SetMonitorID sets the "monitor_id" field.
 func (_u *IncidentUpdate) SetMonitorID(v int) *IncidentUpdate {
 	_u.mutation.SetMonitorID(v)
@@ -370,12 +350,6 @@ func (_u *IncidentUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if value, ok := _u.mutation.UpdatedAt(); ok {
 		_spec.SetField(incident.FieldUpdatedAt, field.TypeTime, value)
 	}
-	if value, ok := _u.mutation.DeletedAt(); ok {
-		_spec.SetField(incident.FieldDeletedAt, field.TypeTime, value)
-	}
-	if _u.mutation.DeletedAtCleared() {
-		_spec.ClearField(incident.FieldDeletedAt, field.TypeTime)
-	}
 	if value, ok := _u.mutation.Title(); ok {
 		_spec.SetField(incident.FieldTitle, field.TypeString, value)
 	}
@@ -558,26 +532,6 @@ type IncidentUpdateOne struct {
 // SetUpdatedAt sets the "updated_at" field.
 func (_u *IncidentUpdateOne) SetUpdatedAt(v time.Time) *IncidentUpdateOne {
 	_u.mutation.SetUpdatedAt(v)
-	return _u
-}
-
-// SetDeletedAt sets the "deleted_at" field.
-func (_u *IncidentUpdateOne) SetDeletedAt(v time.Time) *IncidentUpdateOne {
-	_u.mutation.SetDeletedAt(v)
-	return _u
-}
-
-// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
-func (_u *IncidentUpdateOne) SetNillableDeletedAt(v *time.Time) *IncidentUpdateOne {
-	if v != nil {
-		_u.SetDeletedAt(*v)
-	}
-	return _u
-}
-
-// ClearDeletedAt clears the value of the "deleted_at" field.
-func (_u *IncidentUpdateOne) ClearDeletedAt() *IncidentUpdateOne {
-	_u.mutation.ClearDeletedAt()
 	return _u
 }
 
@@ -922,12 +876,6 @@ func (_u *IncidentUpdateOne) sqlSave(ctx context.Context) (_node *Incident, err 
 	}
 	if value, ok := _u.mutation.UpdatedAt(); ok {
 		_spec.SetField(incident.FieldUpdatedAt, field.TypeTime, value)
-	}
-	if value, ok := _u.mutation.DeletedAt(); ok {
-		_spec.SetField(incident.FieldDeletedAt, field.TypeTime, value)
-	}
-	if _u.mutation.DeletedAtCleared() {
-		_spec.ClearField(incident.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.Title(); ok {
 		_spec.SetField(incident.FieldTitle, field.TypeString, value)

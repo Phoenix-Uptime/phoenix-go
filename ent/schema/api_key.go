@@ -1,6 +1,8 @@
 package schema
 
 import (
+	"time"
+
 	"entgo.io/ent"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
@@ -11,14 +13,14 @@ type APIKey struct {
 	ent.Schema
 }
 
-func (APIKey) Mixin() []ent.Mixin {
-	return []ent.Mixin{
-		TimeMixin{},
-	}
-}
-
 func (APIKey) Fields() []ent.Field {
 	return []ent.Field{
+		field.Time("created_at").
+			Default(time.Now).
+			Immutable(),
+		field.Time("updated_at").
+			Default(time.Now).
+			UpdateDefault(time.Now),
 		field.Int("user_id"),
 		field.String("name").
 			NotEmpty(),

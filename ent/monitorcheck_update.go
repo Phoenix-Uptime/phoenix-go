@@ -35,26 +35,6 @@ func (_u *MonitorCheckUpdate) SetUpdatedAt(v time.Time) *MonitorCheckUpdate {
 	return _u
 }
 
-// SetDeletedAt sets the "deleted_at" field.
-func (_u *MonitorCheckUpdate) SetDeletedAt(v time.Time) *MonitorCheckUpdate {
-	_u.mutation.SetDeletedAt(v)
-	return _u
-}
-
-// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
-func (_u *MonitorCheckUpdate) SetNillableDeletedAt(v *time.Time) *MonitorCheckUpdate {
-	if v != nil {
-		_u.SetDeletedAt(*v)
-	}
-	return _u
-}
-
-// ClearDeletedAt clears the value of the "deleted_at" field.
-func (_u *MonitorCheckUpdate) ClearDeletedAt() *MonitorCheckUpdate {
-	_u.mutation.ClearDeletedAt()
-	return _u
-}
-
 // SetMonitorID sets the "monitor_id" field.
 func (_u *MonitorCheckUpdate) SetMonitorID(v int) *MonitorCheckUpdate {
 	_u.mutation.SetMonitorID(v)
@@ -341,12 +321,6 @@ func (_u *MonitorCheckUpdate) sqlSave(ctx context.Context) (_node int, err error
 	if value, ok := _u.mutation.UpdatedAt(); ok {
 		_spec.SetField(monitorcheck.FieldUpdatedAt, field.TypeTime, value)
 	}
-	if value, ok := _u.mutation.DeletedAt(); ok {
-		_spec.SetField(monitorcheck.FieldDeletedAt, field.TypeTime, value)
-	}
-	if _u.mutation.DeletedAtCleared() {
-		_spec.ClearField(monitorcheck.FieldDeletedAt, field.TypeTime)
-	}
 	if value, ok := _u.mutation.Status(); ok {
 		_spec.SetField(monitorcheck.FieldStatus, field.TypeEnum, value)
 	}
@@ -453,26 +427,6 @@ type MonitorCheckUpdateOne struct {
 // SetUpdatedAt sets the "updated_at" field.
 func (_u *MonitorCheckUpdateOne) SetUpdatedAt(v time.Time) *MonitorCheckUpdateOne {
 	_u.mutation.SetUpdatedAt(v)
-	return _u
-}
-
-// SetDeletedAt sets the "deleted_at" field.
-func (_u *MonitorCheckUpdateOne) SetDeletedAt(v time.Time) *MonitorCheckUpdateOne {
-	_u.mutation.SetDeletedAt(v)
-	return _u
-}
-
-// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
-func (_u *MonitorCheckUpdateOne) SetNillableDeletedAt(v *time.Time) *MonitorCheckUpdateOne {
-	if v != nil {
-		_u.SetDeletedAt(*v)
-	}
-	return _u
-}
-
-// ClearDeletedAt clears the value of the "deleted_at" field.
-func (_u *MonitorCheckUpdateOne) ClearDeletedAt() *MonitorCheckUpdateOne {
-	_u.mutation.ClearDeletedAt()
 	return _u
 }
 
@@ -791,12 +745,6 @@ func (_u *MonitorCheckUpdateOne) sqlSave(ctx context.Context) (_node *MonitorChe
 	}
 	if value, ok := _u.mutation.UpdatedAt(); ok {
 		_spec.SetField(monitorcheck.FieldUpdatedAt, field.TypeTime, value)
-	}
-	if value, ok := _u.mutation.DeletedAt(); ok {
-		_spec.SetField(monitorcheck.FieldDeletedAt, field.TypeTime, value)
-	}
-	if _u.mutation.DeletedAtCleared() {
-		_spec.ClearField(monitorcheck.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.Status(); ok {
 		_spec.SetField(monitorcheck.FieldStatus, field.TypeEnum, value)

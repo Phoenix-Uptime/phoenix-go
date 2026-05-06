@@ -36,26 +36,6 @@ func (_u *NotificationUpdate) SetUpdatedAt(v time.Time) *NotificationUpdate {
 	return _u
 }
 
-// SetDeletedAt sets the "deleted_at" field.
-func (_u *NotificationUpdate) SetDeletedAt(v time.Time) *NotificationUpdate {
-	_u.mutation.SetDeletedAt(v)
-	return _u
-}
-
-// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
-func (_u *NotificationUpdate) SetNillableDeletedAt(v *time.Time) *NotificationUpdate {
-	if v != nil {
-		_u.SetDeletedAt(*v)
-	}
-	return _u
-}
-
-// ClearDeletedAt clears the value of the "deleted_at" field.
-func (_u *NotificationUpdate) ClearDeletedAt() *NotificationUpdate {
-	_u.mutation.ClearDeletedAt()
-	return _u
-}
-
 // SetUserID sets the "user_id" field.
 func (_u *NotificationUpdate) SetUserID(v int) *NotificationUpdate {
 	_u.mutation.SetUserID(v)
@@ -259,12 +239,6 @@ func (_u *NotificationUpdate) sqlSave(ctx context.Context) (_node int, err error
 	if value, ok := _u.mutation.UpdatedAt(); ok {
 		_spec.SetField(notification.FieldUpdatedAt, field.TypeTime, value)
 	}
-	if value, ok := _u.mutation.DeletedAt(); ok {
-		_spec.SetField(notification.FieldDeletedAt, field.TypeTime, value)
-	}
-	if _u.mutation.DeletedAtCleared() {
-		_spec.ClearField(notification.FieldDeletedAt, field.TypeTime)
-	}
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(notification.FieldName, field.TypeString, value)
 	}
@@ -380,26 +354,6 @@ type NotificationUpdateOne struct {
 // SetUpdatedAt sets the "updated_at" field.
 func (_u *NotificationUpdateOne) SetUpdatedAt(v time.Time) *NotificationUpdateOne {
 	_u.mutation.SetUpdatedAt(v)
-	return _u
-}
-
-// SetDeletedAt sets the "deleted_at" field.
-func (_u *NotificationUpdateOne) SetDeletedAt(v time.Time) *NotificationUpdateOne {
-	_u.mutation.SetDeletedAt(v)
-	return _u
-}
-
-// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
-func (_u *NotificationUpdateOne) SetNillableDeletedAt(v *time.Time) *NotificationUpdateOne {
-	if v != nil {
-		_u.SetDeletedAt(*v)
-	}
-	return _u
-}
-
-// ClearDeletedAt clears the value of the "deleted_at" field.
-func (_u *NotificationUpdateOne) ClearDeletedAt() *NotificationUpdateOne {
-	_u.mutation.ClearDeletedAt()
 	return _u
 }
 
@@ -635,12 +589,6 @@ func (_u *NotificationUpdateOne) sqlSave(ctx context.Context) (_node *Notificati
 	}
 	if value, ok := _u.mutation.UpdatedAt(); ok {
 		_spec.SetField(notification.FieldUpdatedAt, field.TypeTime, value)
-	}
-	if value, ok := _u.mutation.DeletedAt(); ok {
-		_spec.SetField(notification.FieldDeletedAt, field.TypeTime, value)
-	}
-	if _u.mutation.DeletedAtCleared() {
-		_spec.ClearField(notification.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(notification.FieldName, field.TypeString, value)

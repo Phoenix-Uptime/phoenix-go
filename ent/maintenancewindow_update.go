@@ -36,26 +36,6 @@ func (_u *MaintenanceWindowUpdate) SetUpdatedAt(v time.Time) *MaintenanceWindowU
 	return _u
 }
 
-// SetDeletedAt sets the "deleted_at" field.
-func (_u *MaintenanceWindowUpdate) SetDeletedAt(v time.Time) *MaintenanceWindowUpdate {
-	_u.mutation.SetDeletedAt(v)
-	return _u
-}
-
-// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
-func (_u *MaintenanceWindowUpdate) SetNillableDeletedAt(v *time.Time) *MaintenanceWindowUpdate {
-	if v != nil {
-		_u.SetDeletedAt(*v)
-	}
-	return _u
-}
-
-// ClearDeletedAt clears the value of the "deleted_at" field.
-func (_u *MaintenanceWindowUpdate) ClearDeletedAt() *MaintenanceWindowUpdate {
-	_u.mutation.ClearDeletedAt()
-	return _u
-}
-
 // SetUserID sets the "user_id" field.
 func (_u *MaintenanceWindowUpdate) SetUserID(v int) *MaintenanceWindowUpdate {
 	_u.mutation.SetUserID(v)
@@ -360,12 +340,6 @@ func (_u *MaintenanceWindowUpdate) sqlSave(ctx context.Context) (_node int, err 
 	if value, ok := _u.mutation.UpdatedAt(); ok {
 		_spec.SetField(maintenancewindow.FieldUpdatedAt, field.TypeTime, value)
 	}
-	if value, ok := _u.mutation.DeletedAt(); ok {
-		_spec.SetField(maintenancewindow.FieldDeletedAt, field.TypeTime, value)
-	}
-	if _u.mutation.DeletedAtCleared() {
-		_spec.ClearField(maintenancewindow.FieldDeletedAt, field.TypeTime)
-	}
 	if value, ok := _u.mutation.Title(); ok {
 		_spec.SetField(maintenancewindow.FieldTitle, field.TypeString, value)
 	}
@@ -511,26 +485,6 @@ type MaintenanceWindowUpdateOne struct {
 // SetUpdatedAt sets the "updated_at" field.
 func (_u *MaintenanceWindowUpdateOne) SetUpdatedAt(v time.Time) *MaintenanceWindowUpdateOne {
 	_u.mutation.SetUpdatedAt(v)
-	return _u
-}
-
-// SetDeletedAt sets the "deleted_at" field.
-func (_u *MaintenanceWindowUpdateOne) SetDeletedAt(v time.Time) *MaintenanceWindowUpdateOne {
-	_u.mutation.SetDeletedAt(v)
-	return _u
-}
-
-// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
-func (_u *MaintenanceWindowUpdateOne) SetNillableDeletedAt(v *time.Time) *MaintenanceWindowUpdateOne {
-	if v != nil {
-		_u.SetDeletedAt(*v)
-	}
-	return _u
-}
-
-// ClearDeletedAt clears the value of the "deleted_at" field.
-func (_u *MaintenanceWindowUpdateOne) ClearDeletedAt() *MaintenanceWindowUpdateOne {
-	_u.mutation.ClearDeletedAt()
 	return _u
 }
 
@@ -867,12 +821,6 @@ func (_u *MaintenanceWindowUpdateOne) sqlSave(ctx context.Context) (_node *Maint
 	}
 	if value, ok := _u.mutation.UpdatedAt(); ok {
 		_spec.SetField(maintenancewindow.FieldUpdatedAt, field.TypeTime, value)
-	}
-	if value, ok := _u.mutation.DeletedAt(); ok {
-		_spec.SetField(maintenancewindow.FieldDeletedAt, field.TypeTime, value)
-	}
-	if _u.mutation.DeletedAtCleared() {
-		_spec.ClearField(maintenancewindow.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.Title(); ok {
 		_spec.SetField(maintenancewindow.FieldTitle, field.TypeString, value)

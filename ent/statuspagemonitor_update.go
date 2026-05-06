@@ -36,26 +36,6 @@ func (_u *StatusPageMonitorUpdate) SetUpdatedAt(v time.Time) *StatusPageMonitorU
 	return _u
 }
 
-// SetDeletedAt sets the "deleted_at" field.
-func (_u *StatusPageMonitorUpdate) SetDeletedAt(v time.Time) *StatusPageMonitorUpdate {
-	_u.mutation.SetDeletedAt(v)
-	return _u
-}
-
-// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
-func (_u *StatusPageMonitorUpdate) SetNillableDeletedAt(v *time.Time) *StatusPageMonitorUpdate {
-	if v != nil {
-		_u.SetDeletedAt(*v)
-	}
-	return _u
-}
-
-// ClearDeletedAt clears the value of the "deleted_at" field.
-func (_u *StatusPageMonitorUpdate) ClearDeletedAt() *StatusPageMonitorUpdate {
-	_u.mutation.ClearDeletedAt()
-	return _u
-}
-
 // SetStatusPageID sets the "status_page_id" field.
 func (_u *StatusPageMonitorUpdate) SetStatusPageID(v int) *StatusPageMonitorUpdate {
 	_u.mutation.SetStatusPageID(v)
@@ -228,12 +208,6 @@ func (_u *StatusPageMonitorUpdate) sqlSave(ctx context.Context) (_node int, err 
 	if value, ok := _u.mutation.UpdatedAt(); ok {
 		_spec.SetField(statuspagemonitor.FieldUpdatedAt, field.TypeTime, value)
 	}
-	if value, ok := _u.mutation.DeletedAt(); ok {
-		_spec.SetField(statuspagemonitor.FieldDeletedAt, field.TypeTime, value)
-	}
-	if _u.mutation.DeletedAtCleared() {
-		_spec.ClearField(statuspagemonitor.FieldDeletedAt, field.TypeTime)
-	}
 	if value, ok := _u.mutation.DisplayName(); ok {
 		_spec.SetField(statuspagemonitor.FieldDisplayName, field.TypeString, value)
 	}
@@ -330,26 +304,6 @@ type StatusPageMonitorUpdateOne struct {
 // SetUpdatedAt sets the "updated_at" field.
 func (_u *StatusPageMonitorUpdateOne) SetUpdatedAt(v time.Time) *StatusPageMonitorUpdateOne {
 	_u.mutation.SetUpdatedAt(v)
-	return _u
-}
-
-// SetDeletedAt sets the "deleted_at" field.
-func (_u *StatusPageMonitorUpdateOne) SetDeletedAt(v time.Time) *StatusPageMonitorUpdateOne {
-	_u.mutation.SetDeletedAt(v)
-	return _u
-}
-
-// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
-func (_u *StatusPageMonitorUpdateOne) SetNillableDeletedAt(v *time.Time) *StatusPageMonitorUpdateOne {
-	if v != nil {
-		_u.SetDeletedAt(*v)
-	}
-	return _u
-}
-
-// ClearDeletedAt clears the value of the "deleted_at" field.
-func (_u *StatusPageMonitorUpdateOne) ClearDeletedAt() *StatusPageMonitorUpdateOne {
-	_u.mutation.ClearDeletedAt()
 	return _u
 }
 
@@ -554,12 +508,6 @@ func (_u *StatusPageMonitorUpdateOne) sqlSave(ctx context.Context) (_node *Statu
 	}
 	if value, ok := _u.mutation.UpdatedAt(); ok {
 		_spec.SetField(statuspagemonitor.FieldUpdatedAt, field.TypeTime, value)
-	}
-	if value, ok := _u.mutation.DeletedAt(); ok {
-		_spec.SetField(statuspagemonitor.FieldDeletedAt, field.TypeTime, value)
-	}
-	if _u.mutation.DeletedAtCleared() {
-		_spec.ClearField(statuspagemonitor.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.DisplayName(); ok {
 		_spec.SetField(statuspagemonitor.FieldDisplayName, field.TypeString, value)

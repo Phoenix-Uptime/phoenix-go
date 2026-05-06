@@ -36,26 +36,6 @@ func (_u *TagUpdate) SetUpdatedAt(v time.Time) *TagUpdate {
 	return _u
 }
 
-// SetDeletedAt sets the "deleted_at" field.
-func (_u *TagUpdate) SetDeletedAt(v time.Time) *TagUpdate {
-	_u.mutation.SetDeletedAt(v)
-	return _u
-}
-
-// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
-func (_u *TagUpdate) SetNillableDeletedAt(v *time.Time) *TagUpdate {
-	if v != nil {
-		_u.SetDeletedAt(*v)
-	}
-	return _u
-}
-
-// ClearDeletedAt clears the value of the "deleted_at" field.
-func (_u *TagUpdate) ClearDeletedAt() *TagUpdate {
-	_u.mutation.ClearDeletedAt()
-	return _u
-}
-
 // SetUserID sets the "user_id" field.
 func (_u *TagUpdate) SetUserID(v int) *TagUpdate {
 	_u.mutation.SetUserID(v)
@@ -240,12 +220,6 @@ func (_u *TagUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if value, ok := _u.mutation.UpdatedAt(); ok {
 		_spec.SetField(tag.FieldUpdatedAt, field.TypeTime, value)
 	}
-	if value, ok := _u.mutation.DeletedAt(); ok {
-		_spec.SetField(tag.FieldDeletedAt, field.TypeTime, value)
-	}
-	if _u.mutation.DeletedAtCleared() {
-		_spec.ClearField(tag.FieldDeletedAt, field.TypeTime)
-	}
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(tag.FieldName, field.TypeString, value)
 	}
@@ -358,26 +332,6 @@ type TagUpdateOne struct {
 // SetUpdatedAt sets the "updated_at" field.
 func (_u *TagUpdateOne) SetUpdatedAt(v time.Time) *TagUpdateOne {
 	_u.mutation.SetUpdatedAt(v)
-	return _u
-}
-
-// SetDeletedAt sets the "deleted_at" field.
-func (_u *TagUpdateOne) SetDeletedAt(v time.Time) *TagUpdateOne {
-	_u.mutation.SetDeletedAt(v)
-	return _u
-}
-
-// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
-func (_u *TagUpdateOne) SetNillableDeletedAt(v *time.Time) *TagUpdateOne {
-	if v != nil {
-		_u.SetDeletedAt(*v)
-	}
-	return _u
-}
-
-// ClearDeletedAt clears the value of the "deleted_at" field.
-func (_u *TagUpdateOne) ClearDeletedAt() *TagUpdateOne {
-	_u.mutation.ClearDeletedAt()
 	return _u
 }
 
@@ -594,12 +548,6 @@ func (_u *TagUpdateOne) sqlSave(ctx context.Context) (_node *Tag, err error) {
 	}
 	if value, ok := _u.mutation.UpdatedAt(); ok {
 		_spec.SetField(tag.FieldUpdatedAt, field.TypeTime, value)
-	}
-	if value, ok := _u.mutation.DeletedAt(); ok {
-		_spec.SetField(tag.FieldDeletedAt, field.TypeTime, value)
-	}
-	if _u.mutation.DeletedAtCleared() {
-		_spec.ClearField(tag.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(tag.FieldName, field.TypeString, value)

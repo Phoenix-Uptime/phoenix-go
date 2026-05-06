@@ -13,7 +13,6 @@ var (
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
-		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
 		{Name: "name", Type: field.TypeString},
 		{Name: "key", Type: field.TypeString, Unique: true},
 		{Name: "is_active", Type: field.TypeBool, Default: true},
@@ -29,7 +28,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "api_keys_users_api_keys",
-				Columns:    []*schema.Column{APIKeysColumns[9]},
+				Columns:    []*schema.Column{APIKeysColumns[8]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -38,12 +37,12 @@ var (
 			{
 				Name:    "apikey_user_id",
 				Unique:  false,
-				Columns: []*schema.Column{APIKeysColumns[9]},
+				Columns: []*schema.Column{APIKeysColumns[8]},
 			},
 			{
 				Name:    "apikey_user_id_is_active",
 				Unique:  false,
-				Columns: []*schema.Column{APIKeysColumns[9], APIKeysColumns[6]},
+				Columns: []*schema.Column{APIKeysColumns[8], APIKeysColumns[5]},
 			},
 		},
 	}
@@ -52,7 +51,6 @@ var (
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
-		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
 		{Name: "title", Type: field.TypeString},
 		{Name: "content", Type: field.TypeString, Nullable: true},
 		{Name: "status", Type: field.TypeEnum, Enums: []string{"open", "acknowledged", "resolved"}, Default: "open"},
@@ -72,19 +70,19 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "incidents_monitors_incidents",
-				Columns:    []*schema.Column{IncidentsColumns[11]},
+				Columns:    []*schema.Column{IncidentsColumns[10]},
 				RefColumns: []*schema.Column{MonitorsColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
 				Symbol:     "incidents_status_pages_incidents",
-				Columns:    []*schema.Column{IncidentsColumns[12]},
+				Columns:    []*schema.Column{IncidentsColumns[11]},
 				RefColumns: []*schema.Column{StatusPagesColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:     "incidents_users_resolved_incidents",
-				Columns:    []*schema.Column{IncidentsColumns[13]},
+				Columns:    []*schema.Column{IncidentsColumns[12]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
@@ -93,27 +91,27 @@ var (
 			{
 				Name:    "incident_monitor_id",
 				Unique:  false,
-				Columns: []*schema.Column{IncidentsColumns[11]},
+				Columns: []*schema.Column{IncidentsColumns[10]},
 			},
 			{
 				Name:    "incident_monitor_id_status",
 				Unique:  false,
-				Columns: []*schema.Column{IncidentsColumns[11], IncidentsColumns[6]},
+				Columns: []*schema.Column{IncidentsColumns[10], IncidentsColumns[5]},
 			},
 			{
 				Name:    "incident_status_page_id_status",
 				Unique:  false,
-				Columns: []*schema.Column{IncidentsColumns[12], IncidentsColumns[6]},
+				Columns: []*schema.Column{IncidentsColumns[11], IncidentsColumns[5]},
 			},
 			{
 				Name:    "incident_status_started_at",
 				Unique:  false,
-				Columns: []*schema.Column{IncidentsColumns[6], IncidentsColumns[8]},
+				Columns: []*schema.Column{IncidentsColumns[5], IncidentsColumns[7]},
 			},
 			{
 				Name:    "incident_started_at",
 				Unique:  false,
-				Columns: []*schema.Column{IncidentsColumns[8]},
+				Columns: []*schema.Column{IncidentsColumns[7]},
 			},
 		},
 	}
@@ -122,7 +120,6 @@ var (
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
-		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
 		{Name: "title", Type: field.TypeString},
 		{Name: "description", Type: field.TypeString, Nullable: true},
 		{Name: "is_active", Type: field.TypeBool, Default: true},
@@ -142,7 +139,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "maintenance_windows_users_maintenance_windows",
-				Columns:    []*schema.Column{MaintenanceWindowsColumns[13]},
+				Columns:    []*schema.Column{MaintenanceWindowsColumns[12]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -151,22 +148,22 @@ var (
 			{
 				Name:    "maintenancewindow_user_id",
 				Unique:  false,
-				Columns: []*schema.Column{MaintenanceWindowsColumns[13]},
+				Columns: []*schema.Column{MaintenanceWindowsColumns[12]},
 			},
 			{
 				Name:    "maintenancewindow_user_id_is_active",
 				Unique:  false,
-				Columns: []*schema.Column{MaintenanceWindowsColumns[13], MaintenanceWindowsColumns[6]},
+				Columns: []*schema.Column{MaintenanceWindowsColumns[12], MaintenanceWindowsColumns[5]},
 			},
 			{
 				Name:    "maintenancewindow_strategy_is_active",
 				Unique:  false,
-				Columns: []*schema.Column{MaintenanceWindowsColumns[7], MaintenanceWindowsColumns[6]},
+				Columns: []*schema.Column{MaintenanceWindowsColumns[6], MaintenanceWindowsColumns[5]},
 			},
 			{
 				Name:    "maintenancewindow_start_at_end_at",
 				Unique:  false,
-				Columns: []*schema.Column{MaintenanceWindowsColumns[8], MaintenanceWindowsColumns[9]},
+				Columns: []*schema.Column{MaintenanceWindowsColumns[7], MaintenanceWindowsColumns[8]},
 			},
 		},
 	}
@@ -175,7 +172,6 @@ var (
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
-		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
 		{Name: "name", Type: field.TypeString},
 		{Name: "description", Type: field.TypeString, Nullable: true},
 		{Name: "url", Type: field.TypeString},
@@ -210,7 +206,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "monitors_users_monitors",
-				Columns:    []*schema.Column{MonitorsColumns[28]},
+				Columns:    []*schema.Column{MonitorsColumns[27]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -219,22 +215,22 @@ var (
 			{
 				Name:    "monitor_user_id",
 				Unique:  false,
-				Columns: []*schema.Column{MonitorsColumns[28]},
+				Columns: []*schema.Column{MonitorsColumns[27]},
 			},
 			{
 				Name:    "monitor_user_id_is_active",
 				Unique:  false,
-				Columns: []*schema.Column{MonitorsColumns[28], MonitorsColumns[11]},
+				Columns: []*schema.Column{MonitorsColumns[27], MonitorsColumns[10]},
 			},
 			{
 				Name:    "monitor_user_id_type",
 				Unique:  false,
-				Columns: []*schema.Column{MonitorsColumns[28], MonitorsColumns[10]},
+				Columns: []*schema.Column{MonitorsColumns[27], MonitorsColumns[9]},
 			},
 			{
 				Name:    "monitor_status",
 				Unique:  false,
-				Columns: []*schema.Column{MonitorsColumns[9]},
+				Columns: []*schema.Column{MonitorsColumns[8]},
 			},
 		},
 	}
@@ -243,7 +239,6 @@ var (
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
-		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
 		{Name: "status", Type: field.TypeEnum, Enums: []string{"up", "down", "pending", "maintenance"}, Default: "pending"},
 		{Name: "checked_at", Type: field.TypeTime},
 		{Name: "response_time_ms", Type: field.TypeInt, Default: 0},
@@ -264,7 +259,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "monitor_checks_monitors_checks",
-				Columns:    []*schema.Column{MonitorChecksColumns[14]},
+				Columns:    []*schema.Column{MonitorChecksColumns[13]},
 				RefColumns: []*schema.Column{MonitorsColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -273,22 +268,22 @@ var (
 			{
 				Name:    "monitorcheck_monitor_id",
 				Unique:  false,
-				Columns: []*schema.Column{MonitorChecksColumns[14]},
+				Columns: []*schema.Column{MonitorChecksColumns[13]},
 			},
 			{
 				Name:    "monitorcheck_monitor_id_checked_at",
 				Unique:  false,
-				Columns: []*schema.Column{MonitorChecksColumns[14], MonitorChecksColumns[5]},
+				Columns: []*schema.Column{MonitorChecksColumns[13], MonitorChecksColumns[4]},
 			},
 			{
 				Name:    "monitorcheck_monitor_id_important_checked_at",
 				Unique:  false,
-				Columns: []*schema.Column{MonitorChecksColumns[14], MonitorChecksColumns[12], MonitorChecksColumns[5]},
+				Columns: []*schema.Column{MonitorChecksColumns[13], MonitorChecksColumns[11], MonitorChecksColumns[4]},
 			},
 			{
 				Name:    "monitorcheck_checked_at",
 				Unique:  false,
-				Columns: []*schema.Column{MonitorChecksColumns[5]},
+				Columns: []*schema.Column{MonitorChecksColumns[4]},
 			},
 		},
 	}
@@ -297,7 +292,6 @@ var (
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
-		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
 		{Name: "name", Type: field.TypeString},
 		{Name: "type", Type: field.TypeEnum, Enums: []string{"smtp", "telegram", "webhook", "discord", "slack", "pagerduty", "pushover", "twilio"}},
 		{Name: "is_active", Type: field.TypeBool, Default: true},
@@ -313,7 +307,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "notifications_users_notifications",
-				Columns:    []*schema.Column{NotificationsColumns[9]},
+				Columns:    []*schema.Column{NotificationsColumns[8]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -322,17 +316,17 @@ var (
 			{
 				Name:    "notification_user_id",
 				Unique:  false,
-				Columns: []*schema.Column{NotificationsColumns[9]},
+				Columns: []*schema.Column{NotificationsColumns[8]},
 			},
 			{
 				Name:    "notification_user_id_type",
 				Unique:  false,
-				Columns: []*schema.Column{NotificationsColumns[9], NotificationsColumns[5]},
+				Columns: []*schema.Column{NotificationsColumns[8], NotificationsColumns[4]},
 			},
 			{
 				Name:    "notification_user_id_is_default",
 				Unique:  false,
-				Columns: []*schema.Column{NotificationsColumns[9], NotificationsColumns[7]},
+				Columns: []*schema.Column{NotificationsColumns[8], NotificationsColumns[6]},
 			},
 		},
 	}
@@ -341,7 +335,6 @@ var (
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
-		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
 		{Name: "type", Type: field.TypeEnum, Enums: []string{"issue", "investigating", "identified", "monitoring", "resolved", "maintenance"}},
 		{Name: "title", Type: field.TypeString, Nullable: true},
 		{Name: "content", Type: field.TypeString},
@@ -357,19 +350,19 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "status_messages_incidents_messages",
-				Columns:    []*schema.Column{StatusMessagesColumns[7]},
+				Columns:    []*schema.Column{StatusMessagesColumns[6]},
 				RefColumns: []*schema.Column{IncidentsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:     "status_messages_status_messages_sub_messages",
-				Columns:    []*schema.Column{StatusMessagesColumns[8]},
+				Columns:    []*schema.Column{StatusMessagesColumns[7]},
 				RefColumns: []*schema.Column{StatusMessagesColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:     "status_messages_status_pages_messages",
-				Columns:    []*schema.Column{StatusMessagesColumns[9]},
+				Columns:    []*schema.Column{StatusMessagesColumns[8]},
 				RefColumns: []*schema.Column{StatusPagesColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -378,17 +371,17 @@ var (
 			{
 				Name:    "statusmessage_status_page_id",
 				Unique:  false,
-				Columns: []*schema.Column{StatusMessagesColumns[9]},
+				Columns: []*schema.Column{StatusMessagesColumns[8]},
 			},
 			{
 				Name:    "statusmessage_incident_id",
 				Unique:  false,
-				Columns: []*schema.Column{StatusMessagesColumns[7]},
+				Columns: []*schema.Column{StatusMessagesColumns[6]},
 			},
 			{
 				Name:    "statusmessage_parent_id",
 				Unique:  false,
-				Columns: []*schema.Column{StatusMessagesColumns[8]},
+				Columns: []*schema.Column{StatusMessagesColumns[7]},
 			},
 		},
 	}
@@ -397,7 +390,6 @@ var (
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
-		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
 		{Name: "slug", Type: field.TypeString, Unique: true},
 		{Name: "name", Type: field.TypeString},
 		{Name: "description", Type: field.TypeString, Nullable: true},
@@ -421,7 +413,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "status_pages_users_status_pages",
-				Columns:    []*schema.Column{StatusPagesColumns[17]},
+				Columns:    []*schema.Column{StatusPagesColumns[16]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -430,12 +422,12 @@ var (
 			{
 				Name:    "statuspage_user_id",
 				Unique:  false,
-				Columns: []*schema.Column{StatusPagesColumns[17]},
+				Columns: []*schema.Column{StatusPagesColumns[16]},
 			},
 			{
 				Name:    "statuspage_user_id_slug",
 				Unique:  true,
-				Columns: []*schema.Column{StatusPagesColumns[17], StatusPagesColumns[4]},
+				Columns: []*schema.Column{StatusPagesColumns[16], StatusPagesColumns[3]},
 			},
 		},
 	}
@@ -444,7 +436,6 @@ var (
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
-		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
 		{Name: "display_name", Type: field.TypeString, Nullable: true},
 		{Name: "weight", Type: field.TypeInt, Default: 1000},
 		{Name: "send_url", Type: field.TypeBool, Default: false},
@@ -459,13 +450,13 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "status_page_monitors_monitors_status_page_monitors",
-				Columns:    []*schema.Column{StatusPageMonitorsColumns[7]},
+				Columns:    []*schema.Column{StatusPageMonitorsColumns[6]},
 				RefColumns: []*schema.Column{MonitorsColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
 				Symbol:     "status_page_monitors_status_pages_status_page_monitors",
-				Columns:    []*schema.Column{StatusPageMonitorsColumns[8]},
+				Columns:    []*schema.Column{StatusPageMonitorsColumns[7]},
 				RefColumns: []*schema.Column{StatusPagesColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -474,22 +465,22 @@ var (
 			{
 				Name:    "statuspagemonitor_status_page_id",
 				Unique:  false,
-				Columns: []*schema.Column{StatusPageMonitorsColumns[8]},
+				Columns: []*schema.Column{StatusPageMonitorsColumns[7]},
 			},
 			{
 				Name:    "statuspagemonitor_monitor_id",
 				Unique:  false,
-				Columns: []*schema.Column{StatusPageMonitorsColumns[7]},
+				Columns: []*schema.Column{StatusPageMonitorsColumns[6]},
 			},
 			{
 				Name:    "statuspagemonitor_status_page_id_monitor_id",
 				Unique:  true,
-				Columns: []*schema.Column{StatusPageMonitorsColumns[8], StatusPageMonitorsColumns[7]},
+				Columns: []*schema.Column{StatusPageMonitorsColumns[7], StatusPageMonitorsColumns[6]},
 			},
 			{
 				Name:    "statuspagemonitor_status_page_id_weight",
 				Unique:  false,
-				Columns: []*schema.Column{StatusPageMonitorsColumns[8], StatusPageMonitorsColumns[5]},
+				Columns: []*schema.Column{StatusPageMonitorsColumns[7], StatusPageMonitorsColumns[4]},
 			},
 		},
 	}
@@ -498,7 +489,6 @@ var (
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
-		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
 		{Name: "name", Type: field.TypeString},
 		{Name: "description", Type: field.TypeString, Nullable: true},
 		{Name: "color", Type: field.TypeString, Nullable: true},
@@ -512,7 +502,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "tags_users_tags",
-				Columns:    []*schema.Column{TagsColumns[7]},
+				Columns:    []*schema.Column{TagsColumns[6]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -521,12 +511,12 @@ var (
 			{
 				Name:    "tag_user_id",
 				Unique:  false,
-				Columns: []*schema.Column{TagsColumns[7]},
+				Columns: []*schema.Column{TagsColumns[6]},
 			},
 			{
 				Name:    "tag_user_id_name",
 				Unique:  true,
-				Columns: []*schema.Column{TagsColumns[7], TagsColumns[4]},
+				Columns: []*schema.Column{TagsColumns[6], TagsColumns[3]},
 			},
 		},
 	}
@@ -535,7 +525,6 @@ var (
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
-		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
 		{Name: "username", Type: field.TypeString, Unique: true},
 		{Name: "email", Type: field.TypeString, Unique: true},
 		{Name: "password", Type: field.TypeString},
@@ -557,17 +546,17 @@ var (
 			{
 				Name:    "user_username",
 				Unique:  false,
-				Columns: []*schema.Column{UsersColumns[4]},
+				Columns: []*schema.Column{UsersColumns[3]},
 			},
 			{
 				Name:    "user_email",
 				Unique:  false,
-				Columns: []*schema.Column{UsersColumns[5]},
+				Columns: []*schema.Column{UsersColumns[4]},
 			},
 			{
 				Name:    "user_api_key",
 				Unique:  false,
-				Columns: []*schema.Column{UsersColumns[7]},
+				Columns: []*schema.Column{UsersColumns[6]},
 			},
 		},
 	}

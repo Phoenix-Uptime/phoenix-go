@@ -50,20 +50,6 @@ func (_c *StatusMessageCreate) SetNillableUpdatedAt(v *time.Time) *StatusMessage
 	return _c
 }
 
-// SetDeletedAt sets the "deleted_at" field.
-func (_c *StatusMessageCreate) SetDeletedAt(v time.Time) *StatusMessageCreate {
-	_c.mutation.SetDeletedAt(v)
-	return _c
-}
-
-// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
-func (_c *StatusMessageCreate) SetNillableDeletedAt(v *time.Time) *StatusMessageCreate {
-	if v != nil {
-		_c.SetDeletedAt(*v)
-	}
-	return _c
-}
-
 // SetStatusPageID sets the "status_page_id" field.
 func (_c *StatusMessageCreate) SetStatusPageID(v int) *StatusMessageCreate {
 	_c.mutation.SetStatusPageID(v)
@@ -262,10 +248,6 @@ func (_c *StatusMessageCreate) createSpec() (*StatusMessage, *sqlgraph.CreateSpe
 	if value, ok := _c.mutation.UpdatedAt(); ok {
 		_spec.SetField(statusmessage.FieldUpdatedAt, field.TypeTime, value)
 		_node.UpdatedAt = value
-	}
-	if value, ok := _c.mutation.DeletedAt(); ok {
-		_spec.SetField(statusmessage.FieldDeletedAt, field.TypeTime, value)
-		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.GetType(); ok {
 		_spec.SetField(statusmessage.FieldType, field.TypeEnum, value)
