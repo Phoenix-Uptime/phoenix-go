@@ -15,12 +15,6 @@ type MonitorStat struct {
 
 func (MonitorStat) Fields() []ent.Field {
 	return []ent.Field{
-		field.Time("created_at").
-			Default(time.Now).
-			Immutable(),
-		field.Time("updated_at").
-			Default(time.Now).
-			UpdateDefault(time.Now),
 		field.Int("monitor_id"),
 		field.Enum("period").
 			Values("hour", "day"),
@@ -45,6 +39,12 @@ func (MonitorStat) Fields() []ent.Field {
 			Nillable(),
 		field.Int("downtime_seconds").
 			Default(0),
+		field.Time("created_at").
+			Default(time.Now).
+			Immutable(),
+		field.Time("updated_at").
+			Default(time.Now).
+			UpdateDefault(time.Now),
 	}
 }
 

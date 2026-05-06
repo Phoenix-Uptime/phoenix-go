@@ -15,12 +15,6 @@ type Notification struct {
 
 func (Notification) Fields() []ent.Field {
 	return []ent.Field{
-		field.Time("created_at").
-			Default(time.Now).
-			Immutable(),
-		field.Time("updated_at").
-			Default(time.Now).
-			UpdateDefault(time.Now),
 		field.Int("user_id"),
 		field.String("name").
 			NotEmpty(),
@@ -33,6 +27,12 @@ func (Notification) Fields() []ent.Field {
 		field.JSON("config", map[string]any{}).
 			Optional().
 			Sensitive(),
+		field.Time("created_at").
+			Default(time.Now).
+			Immutable(),
+		field.Time("updated_at").
+			Default(time.Now).
+			UpdateDefault(time.Now),
 	}
 }
 

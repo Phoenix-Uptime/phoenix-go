@@ -407,12 +407,12 @@ func (_q *IncidentQuery) WithMessages(opts ...func(*StatusMessageQuery)) *Incide
 // Example:
 //
 //	var v []struct {
-//		CreatedAt time.Time `json:"created_at,omitempty"`
+//		MonitorID int `json:"monitor_id,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.Incident.Query().
-//		GroupBy(incident.FieldCreatedAt).
+//		GroupBy(incident.FieldMonitorID).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (_q *IncidentQuery) GroupBy(field string, fields ...string) *IncidentGroupBy {
@@ -430,11 +430,11 @@ func (_q *IncidentQuery) GroupBy(field string, fields ...string) *IncidentGroupB
 // Example:
 //
 //	var v []struct {
-//		CreatedAt time.Time `json:"created_at,omitempty"`
+//		MonitorID int `json:"monitor_id,omitempty"`
 //	}
 //
 //	client.Incident.Query().
-//		Select(incident.FieldCreatedAt).
+//		Select(incident.FieldMonitorID).
 //		Scan(ctx, &v)
 func (_q *IncidentQuery) Select(fields ...string) *IncidentSelect {
 	_q.ctx.Fields = append(_q.ctx.Fields, fields...)

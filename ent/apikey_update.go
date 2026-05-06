@@ -29,12 +29,6 @@ func (_u *APIKeyUpdate) Where(ps ...predicate.APIKey) *APIKeyUpdate {
 	return _u
 }
 
-// SetUpdatedAt sets the "updated_at" field.
-func (_u *APIKeyUpdate) SetUpdatedAt(v time.Time) *APIKeyUpdate {
-	_u.mutation.SetUpdatedAt(v)
-	return _u
-}
-
 // SetUserID sets the "user_id" field.
 func (_u *APIKeyUpdate) SetUserID(v int) *APIKeyUpdate {
 	_u.mutation.SetUserID(v)
@@ -131,6 +125,12 @@ func (_u *APIKeyUpdate) ClearLastUsedAt() *APIKeyUpdate {
 	return _u
 }
 
+// SetUpdatedAt sets the "updated_at" field.
+func (_u *APIKeyUpdate) SetUpdatedAt(v time.Time) *APIKeyUpdate {
+	_u.mutation.SetUpdatedAt(v)
+	return _u
+}
+
 // SetUser sets the "user" edge to the User entity.
 func (_u *APIKeyUpdate) SetUser(v *User) *APIKeyUpdate {
 	return _u.SetUserID(v.ID)
@@ -213,9 +213,6 @@ func (_u *APIKeyUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 			}
 		}
 	}
-	if value, ok := _u.mutation.UpdatedAt(); ok {
-		_spec.SetField(apikey.FieldUpdatedAt, field.TypeTime, value)
-	}
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(apikey.FieldName, field.TypeString, value)
 	}
@@ -236,6 +233,9 @@ func (_u *APIKeyUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if _u.mutation.LastUsedAtCleared() {
 		_spec.ClearField(apikey.FieldLastUsedAt, field.TypeTime)
+	}
+	if value, ok := _u.mutation.UpdatedAt(); ok {
+		_spec.SetField(apikey.FieldUpdatedAt, field.TypeTime, value)
 	}
 	if _u.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -284,12 +284,6 @@ type APIKeyUpdateOne struct {
 	fields   []string
 	hooks    []Hook
 	mutation *APIKeyMutation
-}
-
-// SetUpdatedAt sets the "updated_at" field.
-func (_u *APIKeyUpdateOne) SetUpdatedAt(v time.Time) *APIKeyUpdateOne {
-	_u.mutation.SetUpdatedAt(v)
-	return _u
 }
 
 // SetUserID sets the "user_id" field.
@@ -385,6 +379,12 @@ func (_u *APIKeyUpdateOne) SetNillableLastUsedAt(v *time.Time) *APIKeyUpdateOne 
 // ClearLastUsedAt clears the value of the "last_used_at" field.
 func (_u *APIKeyUpdateOne) ClearLastUsedAt() *APIKeyUpdateOne {
 	_u.mutation.ClearLastUsedAt()
+	return _u
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (_u *APIKeyUpdateOne) SetUpdatedAt(v time.Time) *APIKeyUpdateOne {
+	_u.mutation.SetUpdatedAt(v)
 	return _u
 }
 
@@ -500,9 +500,6 @@ func (_u *APIKeyUpdateOne) sqlSave(ctx context.Context) (_node *APIKey, err erro
 			}
 		}
 	}
-	if value, ok := _u.mutation.UpdatedAt(); ok {
-		_spec.SetField(apikey.FieldUpdatedAt, field.TypeTime, value)
-	}
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(apikey.FieldName, field.TypeString, value)
 	}
@@ -523,6 +520,9 @@ func (_u *APIKeyUpdateOne) sqlSave(ctx context.Context) (_node *APIKey, err erro
 	}
 	if _u.mutation.LastUsedAtCleared() {
 		_spec.ClearField(apikey.FieldLastUsedAt, field.TypeTime)
+	}
+	if value, ok := _u.mutation.UpdatedAt(); ok {
+		_spec.SetField(apikey.FieldUpdatedAt, field.TypeTime, value)
 	}
 	if _u.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{

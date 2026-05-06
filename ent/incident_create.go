@@ -24,34 +24,6 @@ type IncidentCreate struct {
 	hooks    []Hook
 }
 
-// SetCreatedAt sets the "created_at" field.
-func (_c *IncidentCreate) SetCreatedAt(v time.Time) *IncidentCreate {
-	_c.mutation.SetCreatedAt(v)
-	return _c
-}
-
-// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (_c *IncidentCreate) SetNillableCreatedAt(v *time.Time) *IncidentCreate {
-	if v != nil {
-		_c.SetCreatedAt(*v)
-	}
-	return _c
-}
-
-// SetUpdatedAt sets the "updated_at" field.
-func (_c *IncidentCreate) SetUpdatedAt(v time.Time) *IncidentCreate {
-	_c.mutation.SetUpdatedAt(v)
-	return _c
-}
-
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (_c *IncidentCreate) SetNillableUpdatedAt(v *time.Time) *IncidentCreate {
-	if v != nil {
-		_c.SetUpdatedAt(*v)
-	}
-	return _c
-}
-
 // SetMonitorID sets the "monitor_id" field.
 func (_c *IncidentCreate) SetMonitorID(v int) *IncidentCreate {
 	_c.mutation.SetMonitorID(v)
@@ -176,6 +148,34 @@ func (_c *IncidentCreate) SetNillableIsPinned(v *bool) *IncidentCreate {
 	return _c
 }
 
+// SetCreatedAt sets the "created_at" field.
+func (_c *IncidentCreate) SetCreatedAt(v time.Time) *IncidentCreate {
+	_c.mutation.SetCreatedAt(v)
+	return _c
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (_c *IncidentCreate) SetNillableCreatedAt(v *time.Time) *IncidentCreate {
+	if v != nil {
+		_c.SetCreatedAt(*v)
+	}
+	return _c
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (_c *IncidentCreate) SetUpdatedAt(v time.Time) *IncidentCreate {
+	_c.mutation.SetUpdatedAt(v)
+	return _c
+}
+
+// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
+func (_c *IncidentCreate) SetNillableUpdatedAt(v *time.Time) *IncidentCreate {
+	if v != nil {
+		_c.SetUpdatedAt(*v)
+	}
+	return _c
+}
+
 // SetMonitor sets the "monitor" edge to the Monitor entity.
 func (_c *IncidentCreate) SetMonitor(v *Monitor) *IncidentCreate {
 	return _c.SetMonitorID(v.ID)
@@ -241,14 +241,6 @@ func (_c *IncidentCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (_c *IncidentCreate) defaults() {
-	if _, ok := _c.mutation.CreatedAt(); !ok {
-		v := incident.DefaultCreatedAt()
-		_c.mutation.SetCreatedAt(v)
-	}
-	if _, ok := _c.mutation.UpdatedAt(); !ok {
-		v := incident.DefaultUpdatedAt()
-		_c.mutation.SetUpdatedAt(v)
-	}
 	if _, ok := _c.mutation.Status(); !ok {
 		v := incident.DefaultStatus
 		_c.mutation.SetStatus(v)
@@ -265,16 +257,18 @@ func (_c *IncidentCreate) defaults() {
 		v := incident.DefaultIsPinned
 		_c.mutation.SetIsPinned(v)
 	}
+	if _, ok := _c.mutation.CreatedAt(); !ok {
+		v := incident.DefaultCreatedAt()
+		_c.mutation.SetCreatedAt(v)
+	}
+	if _, ok := _c.mutation.UpdatedAt(); !ok {
+		v := incident.DefaultUpdatedAt()
+		_c.mutation.SetUpdatedAt(v)
+	}
 }
 
 // check runs all checks and user-defined validators on the builder.
 func (_c *IncidentCreate) check() error {
-	if _, ok := _c.mutation.CreatedAt(); !ok {
-		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Incident.created_at"`)}
-	}
-	if _, ok := _c.mutation.UpdatedAt(); !ok {
-		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "Incident.updated_at"`)}
-	}
 	if _, ok := _c.mutation.MonitorID(); !ok {
 		return &ValidationError{Name: "monitor_id", err: errors.New(`ent: missing required field "Incident.monitor_id"`)}
 	}
@@ -308,6 +302,12 @@ func (_c *IncidentCreate) check() error {
 	if _, ok := _c.mutation.IsPinned(); !ok {
 		return &ValidationError{Name: "is_pinned", err: errors.New(`ent: missing required field "Incident.is_pinned"`)}
 	}
+	if _, ok := _c.mutation.CreatedAt(); !ok {
+		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Incident.created_at"`)}
+	}
+	if _, ok := _c.mutation.UpdatedAt(); !ok {
+		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "Incident.updated_at"`)}
+	}
 	if len(_c.mutation.MonitorIDs()) == 0 {
 		return &ValidationError{Name: "monitor", err: errors.New(`ent: missing required edge "Incident.monitor"`)}
 	}
@@ -337,14 +337,6 @@ func (_c *IncidentCreate) createSpec() (*Incident, *sqlgraph.CreateSpec) {
 		_node = &Incident{config: _c.config}
 		_spec = sqlgraph.NewCreateSpec(incident.Table, sqlgraph.NewFieldSpec(incident.FieldID, field.TypeInt))
 	)
-	if value, ok := _c.mutation.CreatedAt(); ok {
-		_spec.SetField(incident.FieldCreatedAt, field.TypeTime, value)
-		_node.CreatedAt = value
-	}
-	if value, ok := _c.mutation.UpdatedAt(); ok {
-		_spec.SetField(incident.FieldUpdatedAt, field.TypeTime, value)
-		_node.UpdatedAt = value
-	}
 	if value, ok := _c.mutation.Title(); ok {
 		_spec.SetField(incident.FieldTitle, field.TypeString, value)
 		_node.Title = value
@@ -372,6 +364,14 @@ func (_c *IncidentCreate) createSpec() (*Incident, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.IsPinned(); ok {
 		_spec.SetField(incident.FieldIsPinned, field.TypeBool, value)
 		_node.IsPinned = value
+	}
+	if value, ok := _c.mutation.CreatedAt(); ok {
+		_spec.SetField(incident.FieldCreatedAt, field.TypeTime, value)
+		_node.CreatedAt = value
+	}
+	if value, ok := _c.mutation.UpdatedAt(); ok {
+		_spec.SetField(incident.FieldUpdatedAt, field.TypeTime, value)
+		_node.UpdatedAt = value
 	}
 	if nodes := _c.mutation.MonitorIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

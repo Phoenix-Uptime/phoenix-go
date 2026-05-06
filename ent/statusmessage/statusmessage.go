@@ -15,10 +15,6 @@ const (
 	Label = "status_message"
 	// FieldID holds the string denoting the id field in the database.
 	FieldID = "id"
-	// FieldCreatedAt holds the string denoting the created_at field in the database.
-	FieldCreatedAt = "created_at"
-	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
-	FieldUpdatedAt = "updated_at"
 	// FieldStatusPageID holds the string denoting the status_page_id field in the database.
 	FieldStatusPageID = "status_page_id"
 	// FieldIncidentID holds the string denoting the incident_id field in the database.
@@ -31,6 +27,10 @@ const (
 	FieldTitle = "title"
 	// FieldContent holds the string denoting the content field in the database.
 	FieldContent = "content"
+	// FieldCreatedAt holds the string denoting the created_at field in the database.
+	FieldCreatedAt = "created_at"
+	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
+	FieldUpdatedAt = "updated_at"
 	// EdgeStatusPage holds the string denoting the status_page edge name in mutations.
 	EdgeStatusPage = "status_page"
 	// EdgeIncident holds the string denoting the incident edge name in mutations.
@@ -68,14 +68,14 @@ const (
 // Columns holds all SQL columns for statusmessage fields.
 var Columns = []string{
 	FieldID,
-	FieldCreatedAt,
-	FieldUpdatedAt,
 	FieldStatusPageID,
 	FieldIncidentID,
 	FieldParentID,
 	FieldType,
 	FieldTitle,
 	FieldContent,
+	FieldCreatedAt,
+	FieldUpdatedAt,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -89,14 +89,14 @@ func ValidColumn(column string) bool {
 }
 
 var (
+	// ContentValidator is a validator for the "content" field. It is called by the builders before save.
+	ContentValidator func(string) error
 	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
 	DefaultCreatedAt func() time.Time
 	// DefaultUpdatedAt holds the default value on creation for the "updated_at" field.
 	DefaultUpdatedAt func() time.Time
 	// UpdateDefaultUpdatedAt holds the default value on update for the "updated_at" field.
 	UpdateDefaultUpdatedAt func() time.Time
-	// ContentValidator is a validator for the "content" field. It is called by the builders before save.
-	ContentValidator func(string) error
 )
 
 // Type defines the type for the "type" enum field.
@@ -134,16 +134,6 @@ func ByID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldID, opts...).ToFunc()
 }
 
-// ByCreatedAt orders the results by the created_at field.
-func ByCreatedAt(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldCreatedAt, opts...).ToFunc()
-}
-
-// ByUpdatedAt orders the results by the updated_at field.
-func ByUpdatedAt(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldUpdatedAt, opts...).ToFunc()
-}
-
 // ByStatusPageID orders the results by the status_page_id field.
 func ByStatusPageID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldStatusPageID, opts...).ToFunc()
@@ -172,6 +162,16 @@ func ByTitle(opts ...sql.OrderTermOption) OrderOption {
 // ByContent orders the results by the content field.
 func ByContent(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldContent, opts...).ToFunc()
+}
+
+// ByCreatedAt orders the results by the created_at field.
+func ByCreatedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCreatedAt, opts...).ToFunc()
+}
+
+// ByUpdatedAt orders the results by the updated_at field.
+func ByUpdatedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldUpdatedAt, opts...).ToFunc()
 }
 
 // ByStatusPageField orders the results by status_page field.

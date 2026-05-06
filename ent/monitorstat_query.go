@@ -298,12 +298,12 @@ func (_q *MonitorStatQuery) WithMonitor(opts ...func(*MonitorQuery)) *MonitorSta
 // Example:
 //
 //	var v []struct {
-//		CreatedAt time.Time `json:"created_at,omitempty"`
+//		MonitorID int `json:"monitor_id,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.MonitorStat.Query().
-//		GroupBy(monitorstat.FieldCreatedAt).
+//		GroupBy(monitorstat.FieldMonitorID).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (_q *MonitorStatQuery) GroupBy(field string, fields ...string) *MonitorStatGroupBy {
@@ -321,11 +321,11 @@ func (_q *MonitorStatQuery) GroupBy(field string, fields ...string) *MonitorStat
 // Example:
 //
 //	var v []struct {
-//		CreatedAt time.Time `json:"created_at,omitempty"`
+//		MonitorID int `json:"monitor_id,omitempty"`
 //	}
 //
 //	client.MonitorStat.Query().
-//		Select(monitorstat.FieldCreatedAt).
+//		Select(monitorstat.FieldMonitorID).
 //		Scan(ctx, &v)
 func (_q *MonitorStatQuery) Select(fields ...string) *MonitorStatSelect {
 	_q.ctx.Fields = append(_q.ctx.Fields, fields...)

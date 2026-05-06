@@ -22,34 +22,6 @@ type MaintenanceWindowCreate struct {
 	hooks    []Hook
 }
 
-// SetCreatedAt sets the "created_at" field.
-func (_c *MaintenanceWindowCreate) SetCreatedAt(v time.Time) *MaintenanceWindowCreate {
-	_c.mutation.SetCreatedAt(v)
-	return _c
-}
-
-// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (_c *MaintenanceWindowCreate) SetNillableCreatedAt(v *time.Time) *MaintenanceWindowCreate {
-	if v != nil {
-		_c.SetCreatedAt(*v)
-	}
-	return _c
-}
-
-// SetUpdatedAt sets the "updated_at" field.
-func (_c *MaintenanceWindowCreate) SetUpdatedAt(v time.Time) *MaintenanceWindowCreate {
-	_c.mutation.SetUpdatedAt(v)
-	return _c
-}
-
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (_c *MaintenanceWindowCreate) SetNillableUpdatedAt(v *time.Time) *MaintenanceWindowCreate {
-	if v != nil {
-		_c.SetUpdatedAt(*v)
-	}
-	return _c
-}
-
 // SetUserID sets the "user_id" field.
 func (_c *MaintenanceWindowCreate) SetUserID(v int) *MaintenanceWindowCreate {
 	_c.mutation.SetUserID(v)
@@ -174,6 +146,34 @@ func (_c *MaintenanceWindowCreate) SetNillableDurationSeconds(v *int) *Maintenan
 	return _c
 }
 
+// SetCreatedAt sets the "created_at" field.
+func (_c *MaintenanceWindowCreate) SetCreatedAt(v time.Time) *MaintenanceWindowCreate {
+	_c.mutation.SetCreatedAt(v)
+	return _c
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (_c *MaintenanceWindowCreate) SetNillableCreatedAt(v *time.Time) *MaintenanceWindowCreate {
+	if v != nil {
+		_c.SetCreatedAt(*v)
+	}
+	return _c
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (_c *MaintenanceWindowCreate) SetUpdatedAt(v time.Time) *MaintenanceWindowCreate {
+	_c.mutation.SetUpdatedAt(v)
+	return _c
+}
+
+// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
+func (_c *MaintenanceWindowCreate) SetNillableUpdatedAt(v *time.Time) *MaintenanceWindowCreate {
+	if v != nil {
+		_c.SetUpdatedAt(*v)
+	}
+	return _c
+}
+
 // SetUser sets the "user" edge to the User entity.
 func (_c *MaintenanceWindowCreate) SetUser(v *User) *MaintenanceWindowCreate {
 	return _c.SetUserID(v.ID)
@@ -229,14 +229,6 @@ func (_c *MaintenanceWindowCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (_c *MaintenanceWindowCreate) defaults() {
-	if _, ok := _c.mutation.CreatedAt(); !ok {
-		v := maintenancewindow.DefaultCreatedAt()
-		_c.mutation.SetCreatedAt(v)
-	}
-	if _, ok := _c.mutation.UpdatedAt(); !ok {
-		v := maintenancewindow.DefaultUpdatedAt()
-		_c.mutation.SetUpdatedAt(v)
-	}
 	if _, ok := _c.mutation.IsActive(); !ok {
 		v := maintenancewindow.DefaultIsActive
 		_c.mutation.SetIsActive(v)
@@ -245,16 +237,18 @@ func (_c *MaintenanceWindowCreate) defaults() {
 		v := maintenancewindow.DefaultStrategy
 		_c.mutation.SetStrategy(v)
 	}
+	if _, ok := _c.mutation.CreatedAt(); !ok {
+		v := maintenancewindow.DefaultCreatedAt()
+		_c.mutation.SetCreatedAt(v)
+	}
+	if _, ok := _c.mutation.UpdatedAt(); !ok {
+		v := maintenancewindow.DefaultUpdatedAt()
+		_c.mutation.SetUpdatedAt(v)
+	}
 }
 
 // check runs all checks and user-defined validators on the builder.
 func (_c *MaintenanceWindowCreate) check() error {
-	if _, ok := _c.mutation.CreatedAt(); !ok {
-		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "MaintenanceWindow.created_at"`)}
-	}
-	if _, ok := _c.mutation.UpdatedAt(); !ok {
-		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "MaintenanceWindow.updated_at"`)}
-	}
 	if _, ok := _c.mutation.UserID(); !ok {
 		return &ValidationError{Name: "user_id", err: errors.New(`ent: missing required field "MaintenanceWindow.user_id"`)}
 	}
@@ -276,6 +270,12 @@ func (_c *MaintenanceWindowCreate) check() error {
 		if err := maintenancewindow.StrategyValidator(v); err != nil {
 			return &ValidationError{Name: "strategy", err: fmt.Errorf(`ent: validator failed for field "MaintenanceWindow.strategy": %w`, err)}
 		}
+	}
+	if _, ok := _c.mutation.CreatedAt(); !ok {
+		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "MaintenanceWindow.created_at"`)}
+	}
+	if _, ok := _c.mutation.UpdatedAt(); !ok {
+		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "MaintenanceWindow.updated_at"`)}
 	}
 	if len(_c.mutation.UserIDs()) == 0 {
 		return &ValidationError{Name: "user", err: errors.New(`ent: missing required edge "MaintenanceWindow.user"`)}
@@ -306,14 +306,6 @@ func (_c *MaintenanceWindowCreate) createSpec() (*MaintenanceWindow, *sqlgraph.C
 		_node = &MaintenanceWindow{config: _c.config}
 		_spec = sqlgraph.NewCreateSpec(maintenancewindow.Table, sqlgraph.NewFieldSpec(maintenancewindow.FieldID, field.TypeInt))
 	)
-	if value, ok := _c.mutation.CreatedAt(); ok {
-		_spec.SetField(maintenancewindow.FieldCreatedAt, field.TypeTime, value)
-		_node.CreatedAt = value
-	}
-	if value, ok := _c.mutation.UpdatedAt(); ok {
-		_spec.SetField(maintenancewindow.FieldUpdatedAt, field.TypeTime, value)
-		_node.UpdatedAt = value
-	}
 	if value, ok := _c.mutation.Title(); ok {
 		_spec.SetField(maintenancewindow.FieldTitle, field.TypeString, value)
 		_node.Title = value
@@ -349,6 +341,14 @@ func (_c *MaintenanceWindowCreate) createSpec() (*MaintenanceWindow, *sqlgraph.C
 	if value, ok := _c.mutation.DurationSeconds(); ok {
 		_spec.SetField(maintenancewindow.FieldDurationSeconds, field.TypeInt, value)
 		_node.DurationSeconds = &value
+	}
+	if value, ok := _c.mutation.CreatedAt(); ok {
+		_spec.SetField(maintenancewindow.FieldCreatedAt, field.TypeTime, value)
+		_node.CreatedAt = value
+	}
+	if value, ok := _c.mutation.UpdatedAt(); ok {
+		_spec.SetField(maintenancewindow.FieldUpdatedAt, field.TypeTime, value)
+		_node.UpdatedAt = value
 	}
 	if nodes := _c.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

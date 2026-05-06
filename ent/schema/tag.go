@@ -15,12 +15,6 @@ type Tag struct {
 
 func (Tag) Fields() []ent.Field {
 	return []ent.Field{
-		field.Time("created_at").
-			Default(time.Now).
-			Immutable(),
-		field.Time("updated_at").
-			Default(time.Now).
-			UpdateDefault(time.Now),
 		field.Int("user_id"),
 		field.String("name").
 			NotEmpty(),
@@ -30,6 +24,12 @@ func (Tag) Fields() []ent.Field {
 		field.String("color").
 			Optional().
 			Nillable(),
+		field.Time("created_at").
+			Default(time.Now).
+			Immutable(),
+		field.Time("updated_at").
+			Default(time.Now).
+			UpdateDefault(time.Now),
 	}
 }
 

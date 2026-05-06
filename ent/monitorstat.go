@@ -18,10 +18,6 @@ type MonitorStat struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID int `json:"id,omitempty"`
-	// CreatedAt holds the value of the "created_at" field.
-	CreatedAt time.Time `json:"created_at,omitempty"`
-	// UpdatedAt holds the value of the "updated_at" field.
-	UpdatedAt time.Time `json:"updated_at,omitempty"`
 	// MonitorID holds the value of the "monitor_id" field.
 	MonitorID int `json:"monitor_id,omitempty"`
 	// Period holds the value of the "period" field.
@@ -46,6 +42,10 @@ type MonitorStat struct {
 	MaxResponseTimeMs *int `json:"max_response_time_ms,omitempty"`
 	// DowntimeSeconds holds the value of the "downtime_seconds" field.
 	DowntimeSeconds int `json:"downtime_seconds,omitempty"`
+	// CreatedAt holds the value of the "created_at" field.
+	CreatedAt time.Time `json:"created_at,omitempty"`
+	// UpdatedAt holds the value of the "updated_at" field.
+	UpdatedAt time.Time `json:"updated_at,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the MonitorStatQuery when eager-loading is set.
 	Edges        MonitorStatEdges `json:"edges"`
@@ -83,7 +83,7 @@ func (*MonitorStat) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullInt64)
 		case monitorstat.FieldPeriod:
 			values[i] = new(sql.NullString)
-		case monitorstat.FieldCreatedAt, monitorstat.FieldUpdatedAt, monitorstat.FieldPeriodStart:
+		case monitorstat.FieldPeriodStart, monitorstat.FieldCreatedAt, monitorstat.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -106,18 +106,6 @@ func (_m *MonitorStat) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
 			_m.ID = int(value.Int64)
-		case monitorstat.FieldCreatedAt:
-			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field created_at", values[i])
-			} else if value.Valid {
-				_m.CreatedAt = value.Time
-			}
-		case monitorstat.FieldUpdatedAt:
-			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
-			} else if value.Valid {
-				_m.UpdatedAt = value.Time
-			}
 		case monitorstat.FieldMonitorID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field monitor_id", values[i])
@@ -192,6 +180,18 @@ func (_m *MonitorStat) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.DowntimeSeconds = int(value.Int64)
 			}
+		case monitorstat.FieldCreatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field created_at", values[i])
+			} else if value.Valid {
+				_m.CreatedAt = value.Time
+			}
+		case monitorstat.FieldUpdatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
+			} else if value.Valid {
+				_m.UpdatedAt = value.Time
+			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
 		}
@@ -233,12 +233,6 @@ func (_m *MonitorStat) String() string {
 	var builder strings.Builder
 	builder.WriteString("MonitorStat(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", _m.ID))
-	builder.WriteString("created_at=")
-	builder.WriteString(_m.CreatedAt.Format(time.ANSIC))
-	builder.WriteString(", ")
-	builder.WriteString("updated_at=")
-	builder.WriteString(_m.UpdatedAt.Format(time.ANSIC))
-	builder.WriteString(", ")
 	builder.WriteString("monitor_id=")
 	builder.WriteString(fmt.Sprintf("%v", _m.MonitorID))
 	builder.WriteString(", ")
@@ -278,6 +272,12 @@ func (_m *MonitorStat) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("downtime_seconds=")
 	builder.WriteString(fmt.Sprintf("%v", _m.DowntimeSeconds))
+	builder.WriteString(", ")
+	builder.WriteString("created_at=")
+	builder.WriteString(_m.CreatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("updated_at=")
+	builder.WriteString(_m.UpdatedAt.Format(time.ANSIC))
 	builder.WriteByte(')')
 	return builder.String()
 }

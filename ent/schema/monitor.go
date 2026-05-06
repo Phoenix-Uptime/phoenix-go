@@ -16,12 +16,6 @@ type Monitor struct {
 
 func (Monitor) Fields() []ent.Field {
 	return []ent.Field{
-		field.Time("created_at").
-			Default(time.Now).
-			Immutable(),
-		field.Time("updated_at").
-			Default(time.Now).
-			UpdateDefault(time.Now),
 		field.Int("user_id"),
 		field.String("name").
 			NotEmpty(),
@@ -83,6 +77,12 @@ func (Monitor) Fields() []ent.Field {
 			Unique(),
 		field.JSON("config", map[string]any{}).
 			Optional(),
+		field.Time("created_at").
+			Default(time.Now).
+			Immutable(),
+		field.Time("updated_at").
+			Default(time.Now).
+			UpdateDefault(time.Now),
 	}
 }
 

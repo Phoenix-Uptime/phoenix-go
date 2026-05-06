@@ -22,34 +22,6 @@ type TagCreate struct {
 	hooks    []Hook
 }
 
-// SetCreatedAt sets the "created_at" field.
-func (_c *TagCreate) SetCreatedAt(v time.Time) *TagCreate {
-	_c.mutation.SetCreatedAt(v)
-	return _c
-}
-
-// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (_c *TagCreate) SetNillableCreatedAt(v *time.Time) *TagCreate {
-	if v != nil {
-		_c.SetCreatedAt(*v)
-	}
-	return _c
-}
-
-// SetUpdatedAt sets the "updated_at" field.
-func (_c *TagCreate) SetUpdatedAt(v time.Time) *TagCreate {
-	_c.mutation.SetUpdatedAt(v)
-	return _c
-}
-
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (_c *TagCreate) SetNillableUpdatedAt(v *time.Time) *TagCreate {
-	if v != nil {
-		_c.SetUpdatedAt(*v)
-	}
-	return _c
-}
-
 // SetUserID sets the "user_id" field.
 func (_c *TagCreate) SetUserID(v int) *TagCreate {
 	_c.mutation.SetUserID(v)
@@ -86,6 +58,34 @@ func (_c *TagCreate) SetColor(v string) *TagCreate {
 func (_c *TagCreate) SetNillableColor(v *string) *TagCreate {
 	if v != nil {
 		_c.SetColor(*v)
+	}
+	return _c
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (_c *TagCreate) SetCreatedAt(v time.Time) *TagCreate {
+	_c.mutation.SetCreatedAt(v)
+	return _c
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (_c *TagCreate) SetNillableCreatedAt(v *time.Time) *TagCreate {
+	if v != nil {
+		_c.SetCreatedAt(*v)
+	}
+	return _c
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (_c *TagCreate) SetUpdatedAt(v time.Time) *TagCreate {
+	_c.mutation.SetUpdatedAt(v)
+	return _c
+}
+
+// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
+func (_c *TagCreate) SetNillableUpdatedAt(v *time.Time) *TagCreate {
+	if v != nil {
+		_c.SetUpdatedAt(*v)
 	}
 	return _c
 }
@@ -157,12 +157,6 @@ func (_c *TagCreate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (_c *TagCreate) check() error {
-	if _, ok := _c.mutation.CreatedAt(); !ok {
-		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Tag.created_at"`)}
-	}
-	if _, ok := _c.mutation.UpdatedAt(); !ok {
-		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "Tag.updated_at"`)}
-	}
 	if _, ok := _c.mutation.UserID(); !ok {
 		return &ValidationError{Name: "user_id", err: errors.New(`ent: missing required field "Tag.user_id"`)}
 	}
@@ -173,6 +167,12 @@ func (_c *TagCreate) check() error {
 		if err := tag.NameValidator(v); err != nil {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "Tag.name": %w`, err)}
 		}
+	}
+	if _, ok := _c.mutation.CreatedAt(); !ok {
+		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Tag.created_at"`)}
+	}
+	if _, ok := _c.mutation.UpdatedAt(); !ok {
+		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "Tag.updated_at"`)}
 	}
 	if len(_c.mutation.UserIDs()) == 0 {
 		return &ValidationError{Name: "user", err: errors.New(`ent: missing required edge "Tag.user"`)}
@@ -203,14 +203,6 @@ func (_c *TagCreate) createSpec() (*Tag, *sqlgraph.CreateSpec) {
 		_node = &Tag{config: _c.config}
 		_spec = sqlgraph.NewCreateSpec(tag.Table, sqlgraph.NewFieldSpec(tag.FieldID, field.TypeInt))
 	)
-	if value, ok := _c.mutation.CreatedAt(); ok {
-		_spec.SetField(tag.FieldCreatedAt, field.TypeTime, value)
-		_node.CreatedAt = value
-	}
-	if value, ok := _c.mutation.UpdatedAt(); ok {
-		_spec.SetField(tag.FieldUpdatedAt, field.TypeTime, value)
-		_node.UpdatedAt = value
-	}
 	if value, ok := _c.mutation.Name(); ok {
 		_spec.SetField(tag.FieldName, field.TypeString, value)
 		_node.Name = value
@@ -222,6 +214,14 @@ func (_c *TagCreate) createSpec() (*Tag, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.Color(); ok {
 		_spec.SetField(tag.FieldColor, field.TypeString, value)
 		_node.Color = &value
+	}
+	if value, ok := _c.mutation.CreatedAt(); ok {
+		_spec.SetField(tag.FieldCreatedAt, field.TypeTime, value)
+		_node.CreatedAt = value
+	}
+	if value, ok := _c.mutation.UpdatedAt(); ok {
+		_spec.SetField(tag.FieldUpdatedAt, field.TypeTime, value)
+		_node.UpdatedAt = value
 	}
 	if nodes := _c.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

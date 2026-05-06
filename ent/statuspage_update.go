@@ -32,12 +32,6 @@ func (_u *StatusPageUpdate) Where(ps ...predicate.StatusPage) *StatusPageUpdate 
 	return _u
 }
 
-// SetUpdatedAt sets the "updated_at" field.
-func (_u *StatusPageUpdate) SetUpdatedAt(v time.Time) *StatusPageUpdate {
-	_u.mutation.SetUpdatedAt(v)
-	return _u
-}
-
 // SetUserID sets the "user_id" field.
 func (_u *StatusPageUpdate) SetUserID(v int) *StatusPageUpdate {
 	_u.mutation.SetUserID(v)
@@ -265,6 +259,12 @@ func (_u *StatusPageUpdate) AddAutoRefreshInterval(v int) *StatusPageUpdate {
 	return _u
 }
 
+// SetUpdatedAt sets the "updated_at" field.
+func (_u *StatusPageUpdate) SetUpdatedAt(v time.Time) *StatusPageUpdate {
+	_u.mutation.SetUpdatedAt(v)
+	return _u
+}
+
 // SetUser sets the "user" edge to the User entity.
 func (_u *StatusPageUpdate) SetUser(v *User) *StatusPageUpdate {
 	return _u.SetUserID(v.ID)
@@ -455,9 +455,6 @@ func (_u *StatusPageUpdate) sqlSave(ctx context.Context) (_node int, err error) 
 			}
 		}
 	}
-	if value, ok := _u.mutation.UpdatedAt(); ok {
-		_spec.SetField(statuspage.FieldUpdatedAt, field.TypeTime, value)
-	}
 	if value, ok := _u.mutation.Slug(); ok {
 		_spec.SetField(statuspage.FieldSlug, field.TypeString, value)
 	}
@@ -511,6 +508,9 @@ func (_u *StatusPageUpdate) sqlSave(ctx context.Context) (_node int, err error) 
 	}
 	if value, ok := _u.mutation.AddedAutoRefreshInterval(); ok {
 		_spec.AddField(statuspage.FieldAutoRefreshInterval, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.UpdatedAt(); ok {
+		_spec.SetField(statuspage.FieldUpdatedAt, field.TypeTime, value)
 	}
 	if _u.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -694,12 +694,6 @@ type StatusPageUpdateOne struct {
 	fields   []string
 	hooks    []Hook
 	mutation *StatusPageMutation
-}
-
-// SetUpdatedAt sets the "updated_at" field.
-func (_u *StatusPageUpdateOne) SetUpdatedAt(v time.Time) *StatusPageUpdateOne {
-	_u.mutation.SetUpdatedAt(v)
-	return _u
 }
 
 // SetUserID sets the "user_id" field.
@@ -929,6 +923,12 @@ func (_u *StatusPageUpdateOne) AddAutoRefreshInterval(v int) *StatusPageUpdateOn
 	return _u
 }
 
+// SetUpdatedAt sets the "updated_at" field.
+func (_u *StatusPageUpdateOne) SetUpdatedAt(v time.Time) *StatusPageUpdateOne {
+	_u.mutation.SetUpdatedAt(v)
+	return _u
+}
+
 // SetUser sets the "user" edge to the User entity.
 func (_u *StatusPageUpdateOne) SetUser(v *User) *StatusPageUpdateOne {
 	return _u.SetUserID(v.ID)
@@ -1149,9 +1149,6 @@ func (_u *StatusPageUpdateOne) sqlSave(ctx context.Context) (_node *StatusPage, 
 			}
 		}
 	}
-	if value, ok := _u.mutation.UpdatedAt(); ok {
-		_spec.SetField(statuspage.FieldUpdatedAt, field.TypeTime, value)
-	}
 	if value, ok := _u.mutation.Slug(); ok {
 		_spec.SetField(statuspage.FieldSlug, field.TypeString, value)
 	}
@@ -1205,6 +1202,9 @@ func (_u *StatusPageUpdateOne) sqlSave(ctx context.Context) (_node *StatusPage, 
 	}
 	if value, ok := _u.mutation.AddedAutoRefreshInterval(); ok {
 		_spec.AddField(statuspage.FieldAutoRefreshInterval, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.UpdatedAt(); ok {
+		_spec.SetField(statuspage.FieldUpdatedAt, field.TypeTime, value)
 	}
 	if _u.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{

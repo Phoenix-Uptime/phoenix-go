@@ -22,34 +22,6 @@ type NotificationCreate struct {
 	hooks    []Hook
 }
 
-// SetCreatedAt sets the "created_at" field.
-func (_c *NotificationCreate) SetCreatedAt(v time.Time) *NotificationCreate {
-	_c.mutation.SetCreatedAt(v)
-	return _c
-}
-
-// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (_c *NotificationCreate) SetNillableCreatedAt(v *time.Time) *NotificationCreate {
-	if v != nil {
-		_c.SetCreatedAt(*v)
-	}
-	return _c
-}
-
-// SetUpdatedAt sets the "updated_at" field.
-func (_c *NotificationCreate) SetUpdatedAt(v time.Time) *NotificationCreate {
-	_c.mutation.SetUpdatedAt(v)
-	return _c
-}
-
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (_c *NotificationCreate) SetNillableUpdatedAt(v *time.Time) *NotificationCreate {
-	if v != nil {
-		_c.SetUpdatedAt(*v)
-	}
-	return _c
-}
-
 // SetUserID sets the "user_id" field.
 func (_c *NotificationCreate) SetUserID(v int) *NotificationCreate {
 	_c.mutation.SetUserID(v)
@@ -99,6 +71,34 @@ func (_c *NotificationCreate) SetNillableIsDefault(v *bool) *NotificationCreate 
 // SetConfig sets the "config" field.
 func (_c *NotificationCreate) SetConfig(v map[string]interface{}) *NotificationCreate {
 	_c.mutation.SetConfig(v)
+	return _c
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (_c *NotificationCreate) SetCreatedAt(v time.Time) *NotificationCreate {
+	_c.mutation.SetCreatedAt(v)
+	return _c
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (_c *NotificationCreate) SetNillableCreatedAt(v *time.Time) *NotificationCreate {
+	if v != nil {
+		_c.SetCreatedAt(*v)
+	}
+	return _c
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (_c *NotificationCreate) SetUpdatedAt(v time.Time) *NotificationCreate {
+	_c.mutation.SetUpdatedAt(v)
+	return _c
+}
+
+// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
+func (_c *NotificationCreate) SetNillableUpdatedAt(v *time.Time) *NotificationCreate {
+	if v != nil {
+		_c.SetUpdatedAt(*v)
+	}
 	return _c
 }
 
@@ -157,14 +157,6 @@ func (_c *NotificationCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (_c *NotificationCreate) defaults() {
-	if _, ok := _c.mutation.CreatedAt(); !ok {
-		v := notification.DefaultCreatedAt()
-		_c.mutation.SetCreatedAt(v)
-	}
-	if _, ok := _c.mutation.UpdatedAt(); !ok {
-		v := notification.DefaultUpdatedAt()
-		_c.mutation.SetUpdatedAt(v)
-	}
 	if _, ok := _c.mutation.IsActive(); !ok {
 		v := notification.DefaultIsActive
 		_c.mutation.SetIsActive(v)
@@ -173,16 +165,18 @@ func (_c *NotificationCreate) defaults() {
 		v := notification.DefaultIsDefault
 		_c.mutation.SetIsDefault(v)
 	}
+	if _, ok := _c.mutation.CreatedAt(); !ok {
+		v := notification.DefaultCreatedAt()
+		_c.mutation.SetCreatedAt(v)
+	}
+	if _, ok := _c.mutation.UpdatedAt(); !ok {
+		v := notification.DefaultUpdatedAt()
+		_c.mutation.SetUpdatedAt(v)
+	}
 }
 
 // check runs all checks and user-defined validators on the builder.
 func (_c *NotificationCreate) check() error {
-	if _, ok := _c.mutation.CreatedAt(); !ok {
-		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Notification.created_at"`)}
-	}
-	if _, ok := _c.mutation.UpdatedAt(); !ok {
-		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "Notification.updated_at"`)}
-	}
 	if _, ok := _c.mutation.UserID(); !ok {
 		return &ValidationError{Name: "user_id", err: errors.New(`ent: missing required field "Notification.user_id"`)}
 	}
@@ -207,6 +201,12 @@ func (_c *NotificationCreate) check() error {
 	}
 	if _, ok := _c.mutation.IsDefault(); !ok {
 		return &ValidationError{Name: "is_default", err: errors.New(`ent: missing required field "Notification.is_default"`)}
+	}
+	if _, ok := _c.mutation.CreatedAt(); !ok {
+		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Notification.created_at"`)}
+	}
+	if _, ok := _c.mutation.UpdatedAt(); !ok {
+		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "Notification.updated_at"`)}
 	}
 	if len(_c.mutation.UserIDs()) == 0 {
 		return &ValidationError{Name: "user", err: errors.New(`ent: missing required edge "Notification.user"`)}
@@ -237,14 +237,6 @@ func (_c *NotificationCreate) createSpec() (*Notification, *sqlgraph.CreateSpec)
 		_node = &Notification{config: _c.config}
 		_spec = sqlgraph.NewCreateSpec(notification.Table, sqlgraph.NewFieldSpec(notification.FieldID, field.TypeInt))
 	)
-	if value, ok := _c.mutation.CreatedAt(); ok {
-		_spec.SetField(notification.FieldCreatedAt, field.TypeTime, value)
-		_node.CreatedAt = value
-	}
-	if value, ok := _c.mutation.UpdatedAt(); ok {
-		_spec.SetField(notification.FieldUpdatedAt, field.TypeTime, value)
-		_node.UpdatedAt = value
-	}
 	if value, ok := _c.mutation.Name(); ok {
 		_spec.SetField(notification.FieldName, field.TypeString, value)
 		_node.Name = value
@@ -264,6 +256,14 @@ func (_c *NotificationCreate) createSpec() (*Notification, *sqlgraph.CreateSpec)
 	if value, ok := _c.mutation.Config(); ok {
 		_spec.SetField(notification.FieldConfig, field.TypeJSON, value)
 		_node.Config = value
+	}
+	if value, ok := _c.mutation.CreatedAt(); ok {
+		_spec.SetField(notification.FieldCreatedAt, field.TypeTime, value)
+		_node.CreatedAt = value
+	}
+	if value, ok := _c.mutation.UpdatedAt(); ok {
+		_spec.SetField(notification.FieldUpdatedAt, field.TypeTime, value)
+		_node.UpdatedAt = value
 	}
 	if nodes := _c.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

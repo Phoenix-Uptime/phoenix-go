@@ -30,12 +30,6 @@ func (_u *MaintenanceWindowUpdate) Where(ps ...predicate.MaintenanceWindow) *Mai
 	return _u
 }
 
-// SetUpdatedAt sets the "updated_at" field.
-func (_u *MaintenanceWindowUpdate) SetUpdatedAt(v time.Time) *MaintenanceWindowUpdate {
-	_u.mutation.SetUpdatedAt(v)
-	return _u
-}
-
 // SetUserID sets the "user_id" field.
 func (_u *MaintenanceWindowUpdate) SetUserID(v int) *MaintenanceWindowUpdate {
 	_u.mutation.SetUserID(v)
@@ -219,6 +213,12 @@ func (_u *MaintenanceWindowUpdate) ClearDurationSeconds() *MaintenanceWindowUpda
 	return _u
 }
 
+// SetUpdatedAt sets the "updated_at" field.
+func (_u *MaintenanceWindowUpdate) SetUpdatedAt(v time.Time) *MaintenanceWindowUpdate {
+	_u.mutation.SetUpdatedAt(v)
+	return _u
+}
+
 // SetUser sets the "user" edge to the User entity.
 func (_u *MaintenanceWindowUpdate) SetUser(v *User) *MaintenanceWindowUpdate {
 	return _u.SetUserID(v.ID)
@@ -337,9 +337,6 @@ func (_u *MaintenanceWindowUpdate) sqlSave(ctx context.Context) (_node int, err 
 			}
 		}
 	}
-	if value, ok := _u.mutation.UpdatedAt(); ok {
-		_spec.SetField(maintenancewindow.FieldUpdatedAt, field.TypeTime, value)
-	}
 	if value, ok := _u.mutation.Title(); ok {
 		_spec.SetField(maintenancewindow.FieldTitle, field.TypeString, value)
 	}
@@ -387,6 +384,9 @@ func (_u *MaintenanceWindowUpdate) sqlSave(ctx context.Context) (_node int, err 
 	}
 	if _u.mutation.DurationSecondsCleared() {
 		_spec.ClearField(maintenancewindow.FieldDurationSeconds, field.TypeInt)
+	}
+	if value, ok := _u.mutation.UpdatedAt(); ok {
+		_spec.SetField(maintenancewindow.FieldUpdatedAt, field.TypeTime, value)
 	}
 	if _u.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -480,12 +480,6 @@ type MaintenanceWindowUpdateOne struct {
 	fields   []string
 	hooks    []Hook
 	mutation *MaintenanceWindowMutation
-}
-
-// SetUpdatedAt sets the "updated_at" field.
-func (_u *MaintenanceWindowUpdateOne) SetUpdatedAt(v time.Time) *MaintenanceWindowUpdateOne {
-	_u.mutation.SetUpdatedAt(v)
-	return _u
 }
 
 // SetUserID sets the "user_id" field.
@@ -671,6 +665,12 @@ func (_u *MaintenanceWindowUpdateOne) ClearDurationSeconds() *MaintenanceWindowU
 	return _u
 }
 
+// SetUpdatedAt sets the "updated_at" field.
+func (_u *MaintenanceWindowUpdateOne) SetUpdatedAt(v time.Time) *MaintenanceWindowUpdateOne {
+	_u.mutation.SetUpdatedAt(v)
+	return _u
+}
+
 // SetUser sets the "user" edge to the User entity.
 func (_u *MaintenanceWindowUpdateOne) SetUser(v *User) *MaintenanceWindowUpdateOne {
 	return _u.SetUserID(v.ID)
@@ -819,9 +819,6 @@ func (_u *MaintenanceWindowUpdateOne) sqlSave(ctx context.Context) (_node *Maint
 			}
 		}
 	}
-	if value, ok := _u.mutation.UpdatedAt(); ok {
-		_spec.SetField(maintenancewindow.FieldUpdatedAt, field.TypeTime, value)
-	}
 	if value, ok := _u.mutation.Title(); ok {
 		_spec.SetField(maintenancewindow.FieldTitle, field.TypeString, value)
 	}
@@ -869,6 +866,9 @@ func (_u *MaintenanceWindowUpdateOne) sqlSave(ctx context.Context) (_node *Maint
 	}
 	if _u.mutation.DurationSecondsCleared() {
 		_spec.ClearField(maintenancewindow.FieldDurationSeconds, field.TypeInt)
+	}
+	if value, ok := _u.mutation.UpdatedAt(); ok {
+		_spec.SetField(maintenancewindow.FieldUpdatedAt, field.TypeTime, value)
 	}
 	if _u.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{

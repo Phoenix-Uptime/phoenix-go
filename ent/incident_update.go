@@ -32,12 +32,6 @@ func (_u *IncidentUpdate) Where(ps ...predicate.Incident) *IncidentUpdate {
 	return _u
 }
 
-// SetUpdatedAt sets the "updated_at" field.
-func (_u *IncidentUpdate) SetUpdatedAt(v time.Time) *IncidentUpdate {
-	_u.mutation.SetUpdatedAt(v)
-	return _u
-}
-
 // SetMonitorID sets the "monitor_id" field.
 func (_u *IncidentUpdate) SetMonitorID(v int) *IncidentUpdate {
 	_u.mutation.SetMonitorID(v)
@@ -202,6 +196,12 @@ func (_u *IncidentUpdate) SetNillableIsPinned(v *bool) *IncidentUpdate {
 	return _u
 }
 
+// SetUpdatedAt sets the "updated_at" field.
+func (_u *IncidentUpdate) SetUpdatedAt(v time.Time) *IncidentUpdate {
+	_u.mutation.SetUpdatedAt(v)
+	return _u
+}
+
 // SetMonitor sets the "monitor" edge to the Monitor entity.
 func (_u *IncidentUpdate) SetMonitor(v *Monitor) *IncidentUpdate {
 	return _u.SetMonitorID(v.ID)
@@ -347,9 +347,6 @@ func (_u *IncidentUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 			}
 		}
 	}
-	if value, ok := _u.mutation.UpdatedAt(); ok {
-		_spec.SetField(incident.FieldUpdatedAt, field.TypeTime, value)
-	}
 	if value, ok := _u.mutation.Title(); ok {
 		_spec.SetField(incident.FieldTitle, field.TypeString, value)
 	}
@@ -376,6 +373,9 @@ func (_u *IncidentUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if value, ok := _u.mutation.IsPinned(); ok {
 		_spec.SetField(incident.FieldIsPinned, field.TypeBool, value)
+	}
+	if value, ok := _u.mutation.UpdatedAt(); ok {
+		_spec.SetField(incident.FieldUpdatedAt, field.TypeTime, value)
 	}
 	if _u.mutation.MonitorCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -527,12 +527,6 @@ type IncidentUpdateOne struct {
 	fields   []string
 	hooks    []Hook
 	mutation *IncidentMutation
-}
-
-// SetUpdatedAt sets the "updated_at" field.
-func (_u *IncidentUpdateOne) SetUpdatedAt(v time.Time) *IncidentUpdateOne {
-	_u.mutation.SetUpdatedAt(v)
-	return _u
 }
 
 // SetMonitorID sets the "monitor_id" field.
@@ -696,6 +690,12 @@ func (_u *IncidentUpdateOne) SetNillableIsPinned(v *bool) *IncidentUpdateOne {
 	if v != nil {
 		_u.SetIsPinned(*v)
 	}
+	return _u
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (_u *IncidentUpdateOne) SetUpdatedAt(v time.Time) *IncidentUpdateOne {
+	_u.mutation.SetUpdatedAt(v)
 	return _u
 }
 
@@ -874,9 +874,6 @@ func (_u *IncidentUpdateOne) sqlSave(ctx context.Context) (_node *Incident, err 
 			}
 		}
 	}
-	if value, ok := _u.mutation.UpdatedAt(); ok {
-		_spec.SetField(incident.FieldUpdatedAt, field.TypeTime, value)
-	}
 	if value, ok := _u.mutation.Title(); ok {
 		_spec.SetField(incident.FieldTitle, field.TypeString, value)
 	}
@@ -903,6 +900,9 @@ func (_u *IncidentUpdateOne) sqlSave(ctx context.Context) (_node *Incident, err 
 	}
 	if value, ok := _u.mutation.IsPinned(); ok {
 		_spec.SetField(incident.FieldIsPinned, field.TypeBool, value)
+	}
+	if value, ok := _u.mutation.UpdatedAt(); ok {
+		_spec.SetField(incident.FieldUpdatedAt, field.TypeTime, value)
 	}
 	if _u.mutation.MonitorCleared() {
 		edge := &sqlgraph.EdgeSpec{

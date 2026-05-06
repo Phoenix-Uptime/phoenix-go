@@ -335,12 +335,12 @@ func (_q *MaintenanceWindowQuery) WithMonitors(opts ...func(*MonitorQuery)) *Mai
 // Example:
 //
 //	var v []struct {
-//		CreatedAt time.Time `json:"created_at,omitempty"`
+//		UserID int `json:"user_id,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.MaintenanceWindow.Query().
-//		GroupBy(maintenancewindow.FieldCreatedAt).
+//		GroupBy(maintenancewindow.FieldUserID).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (_q *MaintenanceWindowQuery) GroupBy(field string, fields ...string) *MaintenanceWindowGroupBy {
@@ -358,11 +358,11 @@ func (_q *MaintenanceWindowQuery) GroupBy(field string, fields ...string) *Maint
 // Example:
 //
 //	var v []struct {
-//		CreatedAt time.Time `json:"created_at,omitempty"`
+//		UserID int `json:"user_id,omitempty"`
 //	}
 //
 //	client.MaintenanceWindow.Query().
-//		Select(maintenancewindow.FieldCreatedAt).
+//		Select(maintenancewindow.FieldUserID).
 //		Scan(ctx, &v)
 func (_q *MaintenanceWindowQuery) Select(fields ...string) *MaintenanceWindowSelect {
 	_q.ctx.Fields = append(_q.ctx.Fields, fields...)

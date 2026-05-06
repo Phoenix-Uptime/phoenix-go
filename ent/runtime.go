@@ -26,346 +26,346 @@ import (
 func init() {
 	apikeyFields := schema.APIKey{}.Fields()
 	_ = apikeyFields
+	// apikeyDescName is the schema descriptor for name field.
+	apikeyDescName := apikeyFields[1].Descriptor()
+	// apikey.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	apikey.NameValidator = apikeyDescName.Validators[0].(func(string) error)
+	// apikeyDescKey is the schema descriptor for key field.
+	apikeyDescKey := apikeyFields[2].Descriptor()
+	// apikey.KeyValidator is a validator for the "key" field. It is called by the builders before save.
+	apikey.KeyValidator = apikeyDescKey.Validators[0].(func(string) error)
+	// apikeyDescIsActive is the schema descriptor for is_active field.
+	apikeyDescIsActive := apikeyFields[3].Descriptor()
+	// apikey.DefaultIsActive holds the default value on creation for the is_active field.
+	apikey.DefaultIsActive = apikeyDescIsActive.Default.(bool)
 	// apikeyDescCreatedAt is the schema descriptor for created_at field.
-	apikeyDescCreatedAt := apikeyFields[0].Descriptor()
+	apikeyDescCreatedAt := apikeyFields[6].Descriptor()
 	// apikey.DefaultCreatedAt holds the default value on creation for the created_at field.
 	apikey.DefaultCreatedAt = apikeyDescCreatedAt.Default.(func() time.Time)
 	// apikeyDescUpdatedAt is the schema descriptor for updated_at field.
-	apikeyDescUpdatedAt := apikeyFields[1].Descriptor()
+	apikeyDescUpdatedAt := apikeyFields[7].Descriptor()
 	// apikey.DefaultUpdatedAt holds the default value on creation for the updated_at field.
 	apikey.DefaultUpdatedAt = apikeyDescUpdatedAt.Default.(func() time.Time)
 	// apikey.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	apikey.UpdateDefaultUpdatedAt = apikeyDescUpdatedAt.UpdateDefault.(func() time.Time)
-	// apikeyDescName is the schema descriptor for name field.
-	apikeyDescName := apikeyFields[3].Descriptor()
-	// apikey.NameValidator is a validator for the "name" field. It is called by the builders before save.
-	apikey.NameValidator = apikeyDescName.Validators[0].(func(string) error)
-	// apikeyDescKey is the schema descriptor for key field.
-	apikeyDescKey := apikeyFields[4].Descriptor()
-	// apikey.KeyValidator is a validator for the "key" field. It is called by the builders before save.
-	apikey.KeyValidator = apikeyDescKey.Validators[0].(func(string) error)
-	// apikeyDescIsActive is the schema descriptor for is_active field.
-	apikeyDescIsActive := apikeyFields[5].Descriptor()
-	// apikey.DefaultIsActive holds the default value on creation for the is_active field.
-	apikey.DefaultIsActive = apikeyDescIsActive.Default.(bool)
 	incidentFields := schema.Incident{}.Fields()
 	_ = incidentFields
+	// incidentDescTitle is the schema descriptor for title field.
+	incidentDescTitle := incidentFields[3].Descriptor()
+	// incident.TitleValidator is a validator for the "title" field. It is called by the builders before save.
+	incident.TitleValidator = incidentDescTitle.Validators[0].(func(string) error)
+	// incidentDescStartedAt is the schema descriptor for started_at field.
+	incidentDescStartedAt := incidentFields[7].Descriptor()
+	// incident.DefaultStartedAt holds the default value on creation for the started_at field.
+	incident.DefaultStartedAt = incidentDescStartedAt.Default.(func() time.Time)
+	// incidentDescIsPinned is the schema descriptor for is_pinned field.
+	incidentDescIsPinned := incidentFields[9].Descriptor()
+	// incident.DefaultIsPinned holds the default value on creation for the is_pinned field.
+	incident.DefaultIsPinned = incidentDescIsPinned.Default.(bool)
 	// incidentDescCreatedAt is the schema descriptor for created_at field.
-	incidentDescCreatedAt := incidentFields[0].Descriptor()
+	incidentDescCreatedAt := incidentFields[10].Descriptor()
 	// incident.DefaultCreatedAt holds the default value on creation for the created_at field.
 	incident.DefaultCreatedAt = incidentDescCreatedAt.Default.(func() time.Time)
 	// incidentDescUpdatedAt is the schema descriptor for updated_at field.
-	incidentDescUpdatedAt := incidentFields[1].Descriptor()
+	incidentDescUpdatedAt := incidentFields[11].Descriptor()
 	// incident.DefaultUpdatedAt holds the default value on creation for the updated_at field.
 	incident.DefaultUpdatedAt = incidentDescUpdatedAt.Default.(func() time.Time)
 	// incident.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	incident.UpdateDefaultUpdatedAt = incidentDescUpdatedAt.UpdateDefault.(func() time.Time)
-	// incidentDescTitle is the schema descriptor for title field.
-	incidentDescTitle := incidentFields[5].Descriptor()
-	// incident.TitleValidator is a validator for the "title" field. It is called by the builders before save.
-	incident.TitleValidator = incidentDescTitle.Validators[0].(func(string) error)
-	// incidentDescStartedAt is the schema descriptor for started_at field.
-	incidentDescStartedAt := incidentFields[9].Descriptor()
-	// incident.DefaultStartedAt holds the default value on creation for the started_at field.
-	incident.DefaultStartedAt = incidentDescStartedAt.Default.(func() time.Time)
-	// incidentDescIsPinned is the schema descriptor for is_pinned field.
-	incidentDescIsPinned := incidentFields[11].Descriptor()
-	// incident.DefaultIsPinned holds the default value on creation for the is_pinned field.
-	incident.DefaultIsPinned = incidentDescIsPinned.Default.(bool)
 	maintenancewindowFields := schema.MaintenanceWindow{}.Fields()
 	_ = maintenancewindowFields
+	// maintenancewindowDescTitle is the schema descriptor for title field.
+	maintenancewindowDescTitle := maintenancewindowFields[1].Descriptor()
+	// maintenancewindow.TitleValidator is a validator for the "title" field. It is called by the builders before save.
+	maintenancewindow.TitleValidator = maintenancewindowDescTitle.Validators[0].(func(string) error)
+	// maintenancewindowDescIsActive is the schema descriptor for is_active field.
+	maintenancewindowDescIsActive := maintenancewindowFields[3].Descriptor()
+	// maintenancewindow.DefaultIsActive holds the default value on creation for the is_active field.
+	maintenancewindow.DefaultIsActive = maintenancewindowDescIsActive.Default.(bool)
 	// maintenancewindowDescCreatedAt is the schema descriptor for created_at field.
-	maintenancewindowDescCreatedAt := maintenancewindowFields[0].Descriptor()
+	maintenancewindowDescCreatedAt := maintenancewindowFields[10].Descriptor()
 	// maintenancewindow.DefaultCreatedAt holds the default value on creation for the created_at field.
 	maintenancewindow.DefaultCreatedAt = maintenancewindowDescCreatedAt.Default.(func() time.Time)
 	// maintenancewindowDescUpdatedAt is the schema descriptor for updated_at field.
-	maintenancewindowDescUpdatedAt := maintenancewindowFields[1].Descriptor()
+	maintenancewindowDescUpdatedAt := maintenancewindowFields[11].Descriptor()
 	// maintenancewindow.DefaultUpdatedAt holds the default value on creation for the updated_at field.
 	maintenancewindow.DefaultUpdatedAt = maintenancewindowDescUpdatedAt.Default.(func() time.Time)
 	// maintenancewindow.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	maintenancewindow.UpdateDefaultUpdatedAt = maintenancewindowDescUpdatedAt.UpdateDefault.(func() time.Time)
-	// maintenancewindowDescTitle is the schema descriptor for title field.
-	maintenancewindowDescTitle := maintenancewindowFields[3].Descriptor()
-	// maintenancewindow.TitleValidator is a validator for the "title" field. It is called by the builders before save.
-	maintenancewindow.TitleValidator = maintenancewindowDescTitle.Validators[0].(func(string) error)
-	// maintenancewindowDescIsActive is the schema descriptor for is_active field.
-	maintenancewindowDescIsActive := maintenancewindowFields[5].Descriptor()
-	// maintenancewindow.DefaultIsActive holds the default value on creation for the is_active field.
-	maintenancewindow.DefaultIsActive = maintenancewindowDescIsActive.Default.(bool)
 	monitorFields := schema.Monitor{}.Fields()
 	_ = monitorFields
+	// monitorDescName is the schema descriptor for name field.
+	monitorDescName := monitorFields[1].Descriptor()
+	// monitor.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	monitor.NameValidator = monitorDescName.Validators[0].(func(string) error)
+	// monitorDescURL is the schema descriptor for url field.
+	monitorDescURL := monitorFields[3].Descriptor()
+	// monitor.URLValidator is a validator for the "url" field. It is called by the builders before save.
+	monitor.URLValidator = monitorDescURL.Validators[0].(func(string) error)
+	// monitorDescInterval is the schema descriptor for interval field.
+	monitorDescInterval := monitorFields[4].Descriptor()
+	// monitor.DefaultInterval holds the default value on creation for the interval field.
+	monitor.DefaultInterval = monitorDescInterval.Default.(int)
+	// monitorDescTimeout is the schema descriptor for timeout field.
+	monitorDescTimeout := monitorFields[5].Descriptor()
+	// monitor.DefaultTimeout holds the default value on creation for the timeout field.
+	monitor.DefaultTimeout = monitorDescTimeout.Default.(int)
+	// monitorDescIsActive is the schema descriptor for is_active field.
+	monitorDescIsActive := monitorFields[8].Descriptor()
+	// monitor.DefaultIsActive holds the default value on creation for the is_active field.
+	monitor.DefaultIsActive = monitorDescIsActive.Default.(bool)
+	// monitorDescMethod is the schema descriptor for method field.
+	monitorDescMethod := monitorFields[9].Descriptor()
+	// monitor.DefaultMethod holds the default value on creation for the method field.
+	monitor.DefaultMethod = monitorDescMethod.Default.(string)
+	// monitorDescIgnoreTLSErrors is the schema descriptor for ignore_tls_errors field.
+	monitorDescIgnoreTLSErrors := monitorFields[19].Descriptor()
+	// monitor.DefaultIgnoreTLSErrors holds the default value on creation for the ignore_tls_errors field.
+	monitor.DefaultIgnoreTLSErrors = monitorDescIgnoreTLSErrors.Default.(bool)
+	// monitorDescMaxRedirects is the schema descriptor for max_redirects field.
+	monitorDescMaxRedirects := monitorFields[20].Descriptor()
+	// monitor.DefaultMaxRedirects holds the default value on creation for the max_redirects field.
+	monitor.DefaultMaxRedirects = monitorDescMaxRedirects.Default.(int)
+	// monitorDescRetry is the schema descriptor for retry field.
+	monitorDescRetry := monitorFields[21].Descriptor()
+	// monitor.DefaultRetry holds the default value on creation for the retry field.
+	monitor.DefaultRetry = monitorDescRetry.Default.(int)
+	// monitorDescRetryAfter is the schema descriptor for retry_after field.
+	monitorDescRetryAfter := monitorFields[22].Descriptor()
+	// monitor.DefaultRetryAfter holds the default value on creation for the retry_after field.
+	monitor.DefaultRetryAfter = monitorDescRetryAfter.Default.(int)
 	// monitorDescCreatedAt is the schema descriptor for created_at field.
-	monitorDescCreatedAt := monitorFields[0].Descriptor()
+	monitorDescCreatedAt := monitorFields[25].Descriptor()
 	// monitor.DefaultCreatedAt holds the default value on creation for the created_at field.
 	monitor.DefaultCreatedAt = monitorDescCreatedAt.Default.(func() time.Time)
 	// monitorDescUpdatedAt is the schema descriptor for updated_at field.
-	monitorDescUpdatedAt := monitorFields[1].Descriptor()
+	monitorDescUpdatedAt := monitorFields[26].Descriptor()
 	// monitor.DefaultUpdatedAt holds the default value on creation for the updated_at field.
 	monitor.DefaultUpdatedAt = monitorDescUpdatedAt.Default.(func() time.Time)
 	// monitor.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	monitor.UpdateDefaultUpdatedAt = monitorDescUpdatedAt.UpdateDefault.(func() time.Time)
-	// monitorDescName is the schema descriptor for name field.
-	monitorDescName := monitorFields[3].Descriptor()
-	// monitor.NameValidator is a validator for the "name" field. It is called by the builders before save.
-	monitor.NameValidator = monitorDescName.Validators[0].(func(string) error)
-	// monitorDescURL is the schema descriptor for url field.
-	monitorDescURL := monitorFields[5].Descriptor()
-	// monitor.URLValidator is a validator for the "url" field. It is called by the builders before save.
-	monitor.URLValidator = monitorDescURL.Validators[0].(func(string) error)
-	// monitorDescInterval is the schema descriptor for interval field.
-	monitorDescInterval := monitorFields[6].Descriptor()
-	// monitor.DefaultInterval holds the default value on creation for the interval field.
-	monitor.DefaultInterval = monitorDescInterval.Default.(int)
-	// monitorDescTimeout is the schema descriptor for timeout field.
-	monitorDescTimeout := monitorFields[7].Descriptor()
-	// monitor.DefaultTimeout holds the default value on creation for the timeout field.
-	monitor.DefaultTimeout = monitorDescTimeout.Default.(int)
-	// monitorDescIsActive is the schema descriptor for is_active field.
-	monitorDescIsActive := monitorFields[10].Descriptor()
-	// monitor.DefaultIsActive holds the default value on creation for the is_active field.
-	monitor.DefaultIsActive = monitorDescIsActive.Default.(bool)
-	// monitorDescMethod is the schema descriptor for method field.
-	monitorDescMethod := monitorFields[11].Descriptor()
-	// monitor.DefaultMethod holds the default value on creation for the method field.
-	monitor.DefaultMethod = monitorDescMethod.Default.(string)
-	// monitorDescIgnoreTLSErrors is the schema descriptor for ignore_tls_errors field.
-	monitorDescIgnoreTLSErrors := monitorFields[21].Descriptor()
-	// monitor.DefaultIgnoreTLSErrors holds the default value on creation for the ignore_tls_errors field.
-	monitor.DefaultIgnoreTLSErrors = monitorDescIgnoreTLSErrors.Default.(bool)
-	// monitorDescMaxRedirects is the schema descriptor for max_redirects field.
-	monitorDescMaxRedirects := monitorFields[22].Descriptor()
-	// monitor.DefaultMaxRedirects holds the default value on creation for the max_redirects field.
-	monitor.DefaultMaxRedirects = monitorDescMaxRedirects.Default.(int)
-	// monitorDescRetry is the schema descriptor for retry field.
-	monitorDescRetry := monitorFields[23].Descriptor()
-	// monitor.DefaultRetry holds the default value on creation for the retry field.
-	monitor.DefaultRetry = monitorDescRetry.Default.(int)
-	// monitorDescRetryAfter is the schema descriptor for retry_after field.
-	monitorDescRetryAfter := monitorFields[24].Descriptor()
-	// monitor.DefaultRetryAfter holds the default value on creation for the retry_after field.
-	monitor.DefaultRetryAfter = monitorDescRetryAfter.Default.(int)
 	monitorcheckFields := schema.MonitorCheck{}.Fields()
 	_ = monitorcheckFields
+	// monitorcheckDescCheckedAt is the schema descriptor for checked_at field.
+	monitorcheckDescCheckedAt := monitorcheckFields[2].Descriptor()
+	// monitorcheck.DefaultCheckedAt holds the default value on creation for the checked_at field.
+	monitorcheck.DefaultCheckedAt = monitorcheckDescCheckedAt.Default.(func() time.Time)
+	// monitorcheckDescResponseTimeMs is the schema descriptor for response_time_ms field.
+	monitorcheckDescResponseTimeMs := monitorcheckFields[3].Descriptor()
+	// monitorcheck.DefaultResponseTimeMs holds the default value on creation for the response_time_ms field.
+	monitorcheck.DefaultResponseTimeMs = monitorcheckDescResponseTimeMs.Default.(int)
+	// monitorcheckDescRetryCount is the schema descriptor for retry_count field.
+	monitorcheckDescRetryCount := monitorcheckFields[7].Descriptor()
+	// monitorcheck.DefaultRetryCount holds the default value on creation for the retry_count field.
+	monitorcheck.DefaultRetryCount = monitorcheckDescRetryCount.Default.(int)
+	// monitorcheckDescDurationSeconds is the schema descriptor for duration_seconds field.
+	monitorcheckDescDurationSeconds := monitorcheckFields[8].Descriptor()
+	// monitorcheck.DefaultDurationSeconds holds the default value on creation for the duration_seconds field.
+	monitorcheck.DefaultDurationSeconds = monitorcheckDescDurationSeconds.Default.(int)
+	// monitorcheckDescImportant is the schema descriptor for important field.
+	monitorcheckDescImportant := monitorcheckFields[9].Descriptor()
+	// monitorcheck.DefaultImportant holds the default value on creation for the important field.
+	monitorcheck.DefaultImportant = monitorcheckDescImportant.Default.(bool)
 	// monitorcheckDescCreatedAt is the schema descriptor for created_at field.
-	monitorcheckDescCreatedAt := monitorcheckFields[0].Descriptor()
+	monitorcheckDescCreatedAt := monitorcheckFields[11].Descriptor()
 	// monitorcheck.DefaultCreatedAt holds the default value on creation for the created_at field.
 	monitorcheck.DefaultCreatedAt = monitorcheckDescCreatedAt.Default.(func() time.Time)
 	// monitorcheckDescUpdatedAt is the schema descriptor for updated_at field.
-	monitorcheckDescUpdatedAt := monitorcheckFields[1].Descriptor()
+	monitorcheckDescUpdatedAt := monitorcheckFields[12].Descriptor()
 	// monitorcheck.DefaultUpdatedAt holds the default value on creation for the updated_at field.
 	monitorcheck.DefaultUpdatedAt = monitorcheckDescUpdatedAt.Default.(func() time.Time)
 	// monitorcheck.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	monitorcheck.UpdateDefaultUpdatedAt = monitorcheckDescUpdatedAt.UpdateDefault.(func() time.Time)
-	// monitorcheckDescCheckedAt is the schema descriptor for checked_at field.
-	monitorcheckDescCheckedAt := monitorcheckFields[4].Descriptor()
-	// monitorcheck.DefaultCheckedAt holds the default value on creation for the checked_at field.
-	monitorcheck.DefaultCheckedAt = monitorcheckDescCheckedAt.Default.(func() time.Time)
-	// monitorcheckDescResponseTimeMs is the schema descriptor for response_time_ms field.
-	monitorcheckDescResponseTimeMs := monitorcheckFields[5].Descriptor()
-	// monitorcheck.DefaultResponseTimeMs holds the default value on creation for the response_time_ms field.
-	monitorcheck.DefaultResponseTimeMs = monitorcheckDescResponseTimeMs.Default.(int)
-	// monitorcheckDescRetryCount is the schema descriptor for retry_count field.
-	monitorcheckDescRetryCount := monitorcheckFields[9].Descriptor()
-	// monitorcheck.DefaultRetryCount holds the default value on creation for the retry_count field.
-	monitorcheck.DefaultRetryCount = monitorcheckDescRetryCount.Default.(int)
-	// monitorcheckDescDurationSeconds is the schema descriptor for duration_seconds field.
-	monitorcheckDescDurationSeconds := monitorcheckFields[10].Descriptor()
-	// monitorcheck.DefaultDurationSeconds holds the default value on creation for the duration_seconds field.
-	monitorcheck.DefaultDurationSeconds = monitorcheckDescDurationSeconds.Default.(int)
-	// monitorcheckDescImportant is the schema descriptor for important field.
-	monitorcheckDescImportant := monitorcheckFields[11].Descriptor()
-	// monitorcheck.DefaultImportant holds the default value on creation for the important field.
-	monitorcheck.DefaultImportant = monitorcheckDescImportant.Default.(bool)
 	monitorstatFields := schema.MonitorStat{}.Fields()
 	_ = monitorstatFields
+	// monitorstatDescTotalChecks is the schema descriptor for total_checks field.
+	monitorstatDescTotalChecks := monitorstatFields[3].Descriptor()
+	// monitorstat.DefaultTotalChecks holds the default value on creation for the total_checks field.
+	monitorstat.DefaultTotalChecks = monitorstatDescTotalChecks.Default.(int)
+	// monitorstatDescUpChecks is the schema descriptor for up_checks field.
+	monitorstatDescUpChecks := monitorstatFields[4].Descriptor()
+	// monitorstat.DefaultUpChecks holds the default value on creation for the up_checks field.
+	monitorstat.DefaultUpChecks = monitorstatDescUpChecks.Default.(int)
+	// monitorstatDescDownChecks is the schema descriptor for down_checks field.
+	monitorstatDescDownChecks := monitorstatFields[5].Descriptor()
+	// monitorstat.DefaultDownChecks holds the default value on creation for the down_checks field.
+	monitorstat.DefaultDownChecks = monitorstatDescDownChecks.Default.(int)
+	// monitorstatDescMaintenanceChecks is the schema descriptor for maintenance_checks field.
+	monitorstatDescMaintenanceChecks := monitorstatFields[6].Descriptor()
+	// monitorstat.DefaultMaintenanceChecks holds the default value on creation for the maintenance_checks field.
+	monitorstat.DefaultMaintenanceChecks = monitorstatDescMaintenanceChecks.Default.(int)
+	// monitorstatDescUptimePercentage is the schema descriptor for uptime_percentage field.
+	monitorstatDescUptimePercentage := monitorstatFields[7].Descriptor()
+	// monitorstat.DefaultUptimePercentage holds the default value on creation for the uptime_percentage field.
+	monitorstat.DefaultUptimePercentage = monitorstatDescUptimePercentage.Default.(float64)
+	// monitorstatDescAvgResponseTimeMs is the schema descriptor for avg_response_time_ms field.
+	monitorstatDescAvgResponseTimeMs := monitorstatFields[8].Descriptor()
+	// monitorstat.DefaultAvgResponseTimeMs holds the default value on creation for the avg_response_time_ms field.
+	monitorstat.DefaultAvgResponseTimeMs = monitorstatDescAvgResponseTimeMs.Default.(int)
+	// monitorstatDescDowntimeSeconds is the schema descriptor for downtime_seconds field.
+	monitorstatDescDowntimeSeconds := monitorstatFields[11].Descriptor()
+	// monitorstat.DefaultDowntimeSeconds holds the default value on creation for the downtime_seconds field.
+	monitorstat.DefaultDowntimeSeconds = monitorstatDescDowntimeSeconds.Default.(int)
 	// monitorstatDescCreatedAt is the schema descriptor for created_at field.
-	monitorstatDescCreatedAt := monitorstatFields[0].Descriptor()
+	monitorstatDescCreatedAt := monitorstatFields[12].Descriptor()
 	// monitorstat.DefaultCreatedAt holds the default value on creation for the created_at field.
 	monitorstat.DefaultCreatedAt = monitorstatDescCreatedAt.Default.(func() time.Time)
 	// monitorstatDescUpdatedAt is the schema descriptor for updated_at field.
-	monitorstatDescUpdatedAt := monitorstatFields[1].Descriptor()
+	monitorstatDescUpdatedAt := monitorstatFields[13].Descriptor()
 	// monitorstat.DefaultUpdatedAt holds the default value on creation for the updated_at field.
 	monitorstat.DefaultUpdatedAt = monitorstatDescUpdatedAt.Default.(func() time.Time)
 	// monitorstat.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	monitorstat.UpdateDefaultUpdatedAt = monitorstatDescUpdatedAt.UpdateDefault.(func() time.Time)
-	// monitorstatDescTotalChecks is the schema descriptor for total_checks field.
-	monitorstatDescTotalChecks := monitorstatFields[5].Descriptor()
-	// monitorstat.DefaultTotalChecks holds the default value on creation for the total_checks field.
-	monitorstat.DefaultTotalChecks = monitorstatDescTotalChecks.Default.(int)
-	// monitorstatDescUpChecks is the schema descriptor for up_checks field.
-	monitorstatDescUpChecks := monitorstatFields[6].Descriptor()
-	// monitorstat.DefaultUpChecks holds the default value on creation for the up_checks field.
-	monitorstat.DefaultUpChecks = monitorstatDescUpChecks.Default.(int)
-	// monitorstatDescDownChecks is the schema descriptor for down_checks field.
-	monitorstatDescDownChecks := monitorstatFields[7].Descriptor()
-	// monitorstat.DefaultDownChecks holds the default value on creation for the down_checks field.
-	monitorstat.DefaultDownChecks = monitorstatDescDownChecks.Default.(int)
-	// monitorstatDescMaintenanceChecks is the schema descriptor for maintenance_checks field.
-	monitorstatDescMaintenanceChecks := monitorstatFields[8].Descriptor()
-	// monitorstat.DefaultMaintenanceChecks holds the default value on creation for the maintenance_checks field.
-	monitorstat.DefaultMaintenanceChecks = monitorstatDescMaintenanceChecks.Default.(int)
-	// monitorstatDescUptimePercentage is the schema descriptor for uptime_percentage field.
-	monitorstatDescUptimePercentage := monitorstatFields[9].Descriptor()
-	// monitorstat.DefaultUptimePercentage holds the default value on creation for the uptime_percentage field.
-	monitorstat.DefaultUptimePercentage = monitorstatDescUptimePercentage.Default.(float64)
-	// monitorstatDescAvgResponseTimeMs is the schema descriptor for avg_response_time_ms field.
-	monitorstatDescAvgResponseTimeMs := monitorstatFields[10].Descriptor()
-	// monitorstat.DefaultAvgResponseTimeMs holds the default value on creation for the avg_response_time_ms field.
-	monitorstat.DefaultAvgResponseTimeMs = monitorstatDescAvgResponseTimeMs.Default.(int)
-	// monitorstatDescDowntimeSeconds is the schema descriptor for downtime_seconds field.
-	monitorstatDescDowntimeSeconds := monitorstatFields[13].Descriptor()
-	// monitorstat.DefaultDowntimeSeconds holds the default value on creation for the downtime_seconds field.
-	monitorstat.DefaultDowntimeSeconds = monitorstatDescDowntimeSeconds.Default.(int)
 	notificationFields := schema.Notification{}.Fields()
 	_ = notificationFields
+	// notificationDescName is the schema descriptor for name field.
+	notificationDescName := notificationFields[1].Descriptor()
+	// notification.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	notification.NameValidator = notificationDescName.Validators[0].(func(string) error)
+	// notificationDescIsActive is the schema descriptor for is_active field.
+	notificationDescIsActive := notificationFields[3].Descriptor()
+	// notification.DefaultIsActive holds the default value on creation for the is_active field.
+	notification.DefaultIsActive = notificationDescIsActive.Default.(bool)
+	// notificationDescIsDefault is the schema descriptor for is_default field.
+	notificationDescIsDefault := notificationFields[4].Descriptor()
+	// notification.DefaultIsDefault holds the default value on creation for the is_default field.
+	notification.DefaultIsDefault = notificationDescIsDefault.Default.(bool)
 	// notificationDescCreatedAt is the schema descriptor for created_at field.
-	notificationDescCreatedAt := notificationFields[0].Descriptor()
+	notificationDescCreatedAt := notificationFields[6].Descriptor()
 	// notification.DefaultCreatedAt holds the default value on creation for the created_at field.
 	notification.DefaultCreatedAt = notificationDescCreatedAt.Default.(func() time.Time)
 	// notificationDescUpdatedAt is the schema descriptor for updated_at field.
-	notificationDescUpdatedAt := notificationFields[1].Descriptor()
+	notificationDescUpdatedAt := notificationFields[7].Descriptor()
 	// notification.DefaultUpdatedAt holds the default value on creation for the updated_at field.
 	notification.DefaultUpdatedAt = notificationDescUpdatedAt.Default.(func() time.Time)
 	// notification.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	notification.UpdateDefaultUpdatedAt = notificationDescUpdatedAt.UpdateDefault.(func() time.Time)
-	// notificationDescName is the schema descriptor for name field.
-	notificationDescName := notificationFields[3].Descriptor()
-	// notification.NameValidator is a validator for the "name" field. It is called by the builders before save.
-	notification.NameValidator = notificationDescName.Validators[0].(func(string) error)
-	// notificationDescIsActive is the schema descriptor for is_active field.
-	notificationDescIsActive := notificationFields[5].Descriptor()
-	// notification.DefaultIsActive holds the default value on creation for the is_active field.
-	notification.DefaultIsActive = notificationDescIsActive.Default.(bool)
-	// notificationDescIsDefault is the schema descriptor for is_default field.
-	notificationDescIsDefault := notificationFields[6].Descriptor()
-	// notification.DefaultIsDefault holds the default value on creation for the is_default field.
-	notification.DefaultIsDefault = notificationDescIsDefault.Default.(bool)
 	statusmessageFields := schema.StatusMessage{}.Fields()
 	_ = statusmessageFields
+	// statusmessageDescContent is the schema descriptor for content field.
+	statusmessageDescContent := statusmessageFields[5].Descriptor()
+	// statusmessage.ContentValidator is a validator for the "content" field. It is called by the builders before save.
+	statusmessage.ContentValidator = statusmessageDescContent.Validators[0].(func(string) error)
 	// statusmessageDescCreatedAt is the schema descriptor for created_at field.
-	statusmessageDescCreatedAt := statusmessageFields[0].Descriptor()
+	statusmessageDescCreatedAt := statusmessageFields[6].Descriptor()
 	// statusmessage.DefaultCreatedAt holds the default value on creation for the created_at field.
 	statusmessage.DefaultCreatedAt = statusmessageDescCreatedAt.Default.(func() time.Time)
 	// statusmessageDescUpdatedAt is the schema descriptor for updated_at field.
-	statusmessageDescUpdatedAt := statusmessageFields[1].Descriptor()
+	statusmessageDescUpdatedAt := statusmessageFields[7].Descriptor()
 	// statusmessage.DefaultUpdatedAt holds the default value on creation for the updated_at field.
 	statusmessage.DefaultUpdatedAt = statusmessageDescUpdatedAt.Default.(func() time.Time)
 	// statusmessage.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	statusmessage.UpdateDefaultUpdatedAt = statusmessageDescUpdatedAt.UpdateDefault.(func() time.Time)
-	// statusmessageDescContent is the schema descriptor for content field.
-	statusmessageDescContent := statusmessageFields[7].Descriptor()
-	// statusmessage.ContentValidator is a validator for the "content" field. It is called by the builders before save.
-	statusmessage.ContentValidator = statusmessageDescContent.Validators[0].(func(string) error)
 	statuspageFields := schema.StatusPage{}.Fields()
 	_ = statuspageFields
+	// statuspageDescSlug is the schema descriptor for slug field.
+	statuspageDescSlug := statuspageFields[1].Descriptor()
+	// statuspage.SlugValidator is a validator for the "slug" field. It is called by the builders before save.
+	statuspage.SlugValidator = statuspageDescSlug.Validators[0].(func(string) error)
+	// statuspageDescName is the schema descriptor for name field.
+	statuspageDescName := statuspageFields[2].Descriptor()
+	// statuspage.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	statuspage.NameValidator = statuspageDescName.Validators[0].(func(string) error)
+	// statuspageDescIsPublic is the schema descriptor for is_public field.
+	statuspageDescIsPublic := statuspageFields[4].Descriptor()
+	// statuspage.DefaultIsPublic holds the default value on creation for the is_public field.
+	statuspage.DefaultIsPublic = statuspageDescIsPublic.Default.(bool)
+	// statuspageDescTheme is the schema descriptor for theme field.
+	statuspageDescTheme := statuspageFields[6].Descriptor()
+	// statuspage.DefaultTheme holds the default value on creation for the theme field.
+	statuspage.DefaultTheme = statuspageDescTheme.Default.(string)
+	// statuspageDescShowTags is the schema descriptor for show_tags field.
+	statuspageDescShowTags := statuspageFields[9].Descriptor()
+	// statuspage.DefaultShowTags holds the default value on creation for the show_tags field.
+	statuspage.DefaultShowTags = statuspageDescShowTags.Default.(bool)
+	// statuspageDescShowCharts is the schema descriptor for show_charts field.
+	statuspageDescShowCharts := statuspageFields[10].Descriptor()
+	// statuspage.DefaultShowCharts holds the default value on creation for the show_charts field.
+	statuspage.DefaultShowCharts = statuspageDescShowCharts.Default.(bool)
+	// statuspageDescShowUptimePercentage is the schema descriptor for show_uptime_percentage field.
+	statuspageDescShowUptimePercentage := statuspageFields[11].Descriptor()
+	// statuspage.DefaultShowUptimePercentage holds the default value on creation for the show_uptime_percentage field.
+	statuspage.DefaultShowUptimePercentage = statuspageDescShowUptimePercentage.Default.(bool)
+	// statuspageDescShowPoweredBy is the schema descriptor for show_powered_by field.
+	statuspageDescShowPoweredBy := statuspageFields[12].Descriptor()
+	// statuspage.DefaultShowPoweredBy holds the default value on creation for the show_powered_by field.
+	statuspage.DefaultShowPoweredBy = statuspageDescShowPoweredBy.Default.(bool)
+	// statuspageDescAutoRefreshInterval is the schema descriptor for auto_refresh_interval field.
+	statuspageDescAutoRefreshInterval := statuspageFields[13].Descriptor()
+	// statuspage.DefaultAutoRefreshInterval holds the default value on creation for the auto_refresh_interval field.
+	statuspage.DefaultAutoRefreshInterval = statuspageDescAutoRefreshInterval.Default.(int)
 	// statuspageDescCreatedAt is the schema descriptor for created_at field.
-	statuspageDescCreatedAt := statuspageFields[0].Descriptor()
+	statuspageDescCreatedAt := statuspageFields[14].Descriptor()
 	// statuspage.DefaultCreatedAt holds the default value on creation for the created_at field.
 	statuspage.DefaultCreatedAt = statuspageDescCreatedAt.Default.(func() time.Time)
 	// statuspageDescUpdatedAt is the schema descriptor for updated_at field.
-	statuspageDescUpdatedAt := statuspageFields[1].Descriptor()
+	statuspageDescUpdatedAt := statuspageFields[15].Descriptor()
 	// statuspage.DefaultUpdatedAt holds the default value on creation for the updated_at field.
 	statuspage.DefaultUpdatedAt = statuspageDescUpdatedAt.Default.(func() time.Time)
 	// statuspage.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	statuspage.UpdateDefaultUpdatedAt = statuspageDescUpdatedAt.UpdateDefault.(func() time.Time)
-	// statuspageDescSlug is the schema descriptor for slug field.
-	statuspageDescSlug := statuspageFields[3].Descriptor()
-	// statuspage.SlugValidator is a validator for the "slug" field. It is called by the builders before save.
-	statuspage.SlugValidator = statuspageDescSlug.Validators[0].(func(string) error)
-	// statuspageDescName is the schema descriptor for name field.
-	statuspageDescName := statuspageFields[4].Descriptor()
-	// statuspage.NameValidator is a validator for the "name" field. It is called by the builders before save.
-	statuspage.NameValidator = statuspageDescName.Validators[0].(func(string) error)
-	// statuspageDescIsPublic is the schema descriptor for is_public field.
-	statuspageDescIsPublic := statuspageFields[6].Descriptor()
-	// statuspage.DefaultIsPublic holds the default value on creation for the is_public field.
-	statuspage.DefaultIsPublic = statuspageDescIsPublic.Default.(bool)
-	// statuspageDescTheme is the schema descriptor for theme field.
-	statuspageDescTheme := statuspageFields[8].Descriptor()
-	// statuspage.DefaultTheme holds the default value on creation for the theme field.
-	statuspage.DefaultTheme = statuspageDescTheme.Default.(string)
-	// statuspageDescShowTags is the schema descriptor for show_tags field.
-	statuspageDescShowTags := statuspageFields[11].Descriptor()
-	// statuspage.DefaultShowTags holds the default value on creation for the show_tags field.
-	statuspage.DefaultShowTags = statuspageDescShowTags.Default.(bool)
-	// statuspageDescShowCharts is the schema descriptor for show_charts field.
-	statuspageDescShowCharts := statuspageFields[12].Descriptor()
-	// statuspage.DefaultShowCharts holds the default value on creation for the show_charts field.
-	statuspage.DefaultShowCharts = statuspageDescShowCharts.Default.(bool)
-	// statuspageDescShowUptimePercentage is the schema descriptor for show_uptime_percentage field.
-	statuspageDescShowUptimePercentage := statuspageFields[13].Descriptor()
-	// statuspage.DefaultShowUptimePercentage holds the default value on creation for the show_uptime_percentage field.
-	statuspage.DefaultShowUptimePercentage = statuspageDescShowUptimePercentage.Default.(bool)
-	// statuspageDescShowPoweredBy is the schema descriptor for show_powered_by field.
-	statuspageDescShowPoweredBy := statuspageFields[14].Descriptor()
-	// statuspage.DefaultShowPoweredBy holds the default value on creation for the show_powered_by field.
-	statuspage.DefaultShowPoweredBy = statuspageDescShowPoweredBy.Default.(bool)
-	// statuspageDescAutoRefreshInterval is the schema descriptor for auto_refresh_interval field.
-	statuspageDescAutoRefreshInterval := statuspageFields[15].Descriptor()
-	// statuspage.DefaultAutoRefreshInterval holds the default value on creation for the auto_refresh_interval field.
-	statuspage.DefaultAutoRefreshInterval = statuspageDescAutoRefreshInterval.Default.(int)
 	statuspagemonitorFields := schema.StatusPageMonitor{}.Fields()
 	_ = statuspagemonitorFields
+	// statuspagemonitorDescWeight is the schema descriptor for weight field.
+	statuspagemonitorDescWeight := statuspagemonitorFields[3].Descriptor()
+	// statuspagemonitor.DefaultWeight holds the default value on creation for the weight field.
+	statuspagemonitor.DefaultWeight = statuspagemonitorDescWeight.Default.(int)
+	// statuspagemonitorDescSendURL is the schema descriptor for send_url field.
+	statuspagemonitorDescSendURL := statuspagemonitorFields[4].Descriptor()
+	// statuspagemonitor.DefaultSendURL holds the default value on creation for the send_url field.
+	statuspagemonitor.DefaultSendURL = statuspagemonitorDescSendURL.Default.(bool)
 	// statuspagemonitorDescCreatedAt is the schema descriptor for created_at field.
-	statuspagemonitorDescCreatedAt := statuspagemonitorFields[0].Descriptor()
+	statuspagemonitorDescCreatedAt := statuspagemonitorFields[5].Descriptor()
 	// statuspagemonitor.DefaultCreatedAt holds the default value on creation for the created_at field.
 	statuspagemonitor.DefaultCreatedAt = statuspagemonitorDescCreatedAt.Default.(func() time.Time)
 	// statuspagemonitorDescUpdatedAt is the schema descriptor for updated_at field.
-	statuspagemonitorDescUpdatedAt := statuspagemonitorFields[1].Descriptor()
+	statuspagemonitorDescUpdatedAt := statuspagemonitorFields[6].Descriptor()
 	// statuspagemonitor.DefaultUpdatedAt holds the default value on creation for the updated_at field.
 	statuspagemonitor.DefaultUpdatedAt = statuspagemonitorDescUpdatedAt.Default.(func() time.Time)
 	// statuspagemonitor.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	statuspagemonitor.UpdateDefaultUpdatedAt = statuspagemonitorDescUpdatedAt.UpdateDefault.(func() time.Time)
-	// statuspagemonitorDescWeight is the schema descriptor for weight field.
-	statuspagemonitorDescWeight := statuspagemonitorFields[5].Descriptor()
-	// statuspagemonitor.DefaultWeight holds the default value on creation for the weight field.
-	statuspagemonitor.DefaultWeight = statuspagemonitorDescWeight.Default.(int)
-	// statuspagemonitorDescSendURL is the schema descriptor for send_url field.
-	statuspagemonitorDescSendURL := statuspagemonitorFields[6].Descriptor()
-	// statuspagemonitor.DefaultSendURL holds the default value on creation for the send_url field.
-	statuspagemonitor.DefaultSendURL = statuspagemonitorDescSendURL.Default.(bool)
 	tagFields := schema.Tag{}.Fields()
 	_ = tagFields
+	// tagDescName is the schema descriptor for name field.
+	tagDescName := tagFields[1].Descriptor()
+	// tag.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	tag.NameValidator = tagDescName.Validators[0].(func(string) error)
 	// tagDescCreatedAt is the schema descriptor for created_at field.
-	tagDescCreatedAt := tagFields[0].Descriptor()
+	tagDescCreatedAt := tagFields[4].Descriptor()
 	// tag.DefaultCreatedAt holds the default value on creation for the created_at field.
 	tag.DefaultCreatedAt = tagDescCreatedAt.Default.(func() time.Time)
 	// tagDescUpdatedAt is the schema descriptor for updated_at field.
-	tagDescUpdatedAt := tagFields[1].Descriptor()
+	tagDescUpdatedAt := tagFields[5].Descriptor()
 	// tag.DefaultUpdatedAt holds the default value on creation for the updated_at field.
 	tag.DefaultUpdatedAt = tagDescUpdatedAt.Default.(func() time.Time)
 	// tag.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	tag.UpdateDefaultUpdatedAt = tagDescUpdatedAt.UpdateDefault.(func() time.Time)
-	// tagDescName is the schema descriptor for name field.
-	tagDescName := tagFields[3].Descriptor()
-	// tag.NameValidator is a validator for the "name" field. It is called by the builders before save.
-	tag.NameValidator = tagDescName.Validators[0].(func(string) error)
 	userFields := schema.User{}.Fields()
 	_ = userFields
+	// userDescUsername is the schema descriptor for username field.
+	userDescUsername := userFields[0].Descriptor()
+	// user.UsernameValidator is a validator for the "username" field. It is called by the builders before save.
+	user.UsernameValidator = userDescUsername.Validators[0].(func(string) error)
+	// userDescEmail is the schema descriptor for email field.
+	userDescEmail := userFields[1].Descriptor()
+	// user.EmailValidator is a validator for the "email" field. It is called by the builders before save.
+	user.EmailValidator = userDescEmail.Validators[0].(func(string) error)
+	// userDescPassword is the schema descriptor for password field.
+	userDescPassword := userFields[2].Descriptor()
+	// user.PasswordValidator is a validator for the "password" field. It is called by the builders before save.
+	user.PasswordValidator = userDescPassword.Validators[0].(func(string) error)
+	// userDescAPIKey is the schema descriptor for api_key field.
+	userDescAPIKey := userFields[3].Descriptor()
+	// user.APIKeyValidator is a validator for the "api_key" field. It is called by the builders before save.
+	user.APIKeyValidator = userDescAPIKey.Validators[0].(func(string) error)
 	// userDescCreatedAt is the schema descriptor for created_at field.
-	userDescCreatedAt := userFields[0].Descriptor()
+	userDescCreatedAt := userFields[11].Descriptor()
 	// user.DefaultCreatedAt holds the default value on creation for the created_at field.
 	user.DefaultCreatedAt = userDescCreatedAt.Default.(func() time.Time)
 	// userDescUpdatedAt is the schema descriptor for updated_at field.
-	userDescUpdatedAt := userFields[1].Descriptor()
+	userDescUpdatedAt := userFields[12].Descriptor()
 	// user.DefaultUpdatedAt holds the default value on creation for the updated_at field.
 	user.DefaultUpdatedAt = userDescUpdatedAt.Default.(func() time.Time)
 	// user.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	user.UpdateDefaultUpdatedAt = userDescUpdatedAt.UpdateDefault.(func() time.Time)
-	// userDescUsername is the schema descriptor for username field.
-	userDescUsername := userFields[2].Descriptor()
-	// user.UsernameValidator is a validator for the "username" field. It is called by the builders before save.
-	user.UsernameValidator = userDescUsername.Validators[0].(func(string) error)
-	// userDescEmail is the schema descriptor for email field.
-	userDescEmail := userFields[3].Descriptor()
-	// user.EmailValidator is a validator for the "email" field. It is called by the builders before save.
-	user.EmailValidator = userDescEmail.Validators[0].(func(string) error)
-	// userDescPassword is the schema descriptor for password field.
-	userDescPassword := userFields[4].Descriptor()
-	// user.PasswordValidator is a validator for the "password" field. It is called by the builders before save.
-	user.PasswordValidator = userDescPassword.Validators[0].(func(string) error)
-	// userDescAPIKey is the schema descriptor for api_key field.
-	userDescAPIKey := userFields[5].Descriptor()
-	// user.APIKeyValidator is a validator for the "api_key" field. It is called by the builders before save.
-	user.APIKeyValidator = userDescAPIKey.Validators[0].(func(string) error)
 }

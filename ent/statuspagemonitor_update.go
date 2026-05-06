@@ -30,12 +30,6 @@ func (_u *StatusPageMonitorUpdate) Where(ps ...predicate.StatusPageMonitor) *Sta
 	return _u
 }
 
-// SetUpdatedAt sets the "updated_at" field.
-func (_u *StatusPageMonitorUpdate) SetUpdatedAt(v time.Time) *StatusPageMonitorUpdate {
-	_u.mutation.SetUpdatedAt(v)
-	return _u
-}
-
 // SetStatusPageID sets the "status_page_id" field.
 func (_u *StatusPageMonitorUpdate) SetStatusPageID(v int) *StatusPageMonitorUpdate {
 	_u.mutation.SetStatusPageID(v)
@@ -116,6 +110,12 @@ func (_u *StatusPageMonitorUpdate) SetNillableSendURL(v *bool) *StatusPageMonito
 	if v != nil {
 		_u.SetSendURL(*v)
 	}
+	return _u
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (_u *StatusPageMonitorUpdate) SetUpdatedAt(v time.Time) *StatusPageMonitorUpdate {
+	_u.mutation.SetUpdatedAt(v)
 	return _u
 }
 
@@ -205,9 +205,6 @@ func (_u *StatusPageMonitorUpdate) sqlSave(ctx context.Context) (_node int, err 
 			}
 		}
 	}
-	if value, ok := _u.mutation.UpdatedAt(); ok {
-		_spec.SetField(statuspagemonitor.FieldUpdatedAt, field.TypeTime, value)
-	}
 	if value, ok := _u.mutation.DisplayName(); ok {
 		_spec.SetField(statuspagemonitor.FieldDisplayName, field.TypeString, value)
 	}
@@ -222,6 +219,9 @@ func (_u *StatusPageMonitorUpdate) sqlSave(ctx context.Context) (_node int, err 
 	}
 	if value, ok := _u.mutation.SendURL(); ok {
 		_spec.SetField(statuspagemonitor.FieldSendURL, field.TypeBool, value)
+	}
+	if value, ok := _u.mutation.UpdatedAt(); ok {
+		_spec.SetField(statuspagemonitor.FieldUpdatedAt, field.TypeTime, value)
 	}
 	if _u.mutation.StatusPageCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -299,12 +299,6 @@ type StatusPageMonitorUpdateOne struct {
 	fields   []string
 	hooks    []Hook
 	mutation *StatusPageMonitorMutation
-}
-
-// SetUpdatedAt sets the "updated_at" field.
-func (_u *StatusPageMonitorUpdateOne) SetUpdatedAt(v time.Time) *StatusPageMonitorUpdateOne {
-	_u.mutation.SetUpdatedAt(v)
-	return _u
 }
 
 // SetStatusPageID sets the "status_page_id" field.
@@ -387,6 +381,12 @@ func (_u *StatusPageMonitorUpdateOne) SetNillableSendURL(v *bool) *StatusPageMon
 	if v != nil {
 		_u.SetSendURL(*v)
 	}
+	return _u
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (_u *StatusPageMonitorUpdateOne) SetUpdatedAt(v time.Time) *StatusPageMonitorUpdateOne {
+	_u.mutation.SetUpdatedAt(v)
 	return _u
 }
 
@@ -506,9 +506,6 @@ func (_u *StatusPageMonitorUpdateOne) sqlSave(ctx context.Context) (_node *Statu
 			}
 		}
 	}
-	if value, ok := _u.mutation.UpdatedAt(); ok {
-		_spec.SetField(statuspagemonitor.FieldUpdatedAt, field.TypeTime, value)
-	}
 	if value, ok := _u.mutation.DisplayName(); ok {
 		_spec.SetField(statuspagemonitor.FieldDisplayName, field.TypeString, value)
 	}
@@ -523,6 +520,9 @@ func (_u *StatusPageMonitorUpdateOne) sqlSave(ctx context.Context) (_node *Statu
 	}
 	if value, ok := _u.mutation.SendURL(); ok {
 		_spec.SetField(statuspagemonitor.FieldSendURL, field.TypeBool, value)
+	}
+	if value, ok := _u.mutation.UpdatedAt(); ok {
+		_spec.SetField(statuspagemonitor.FieldUpdatedAt, field.TypeTime, value)
 	}
 	if _u.mutation.StatusPageCleared() {
 		edge := &sqlgraph.EdgeSpec{

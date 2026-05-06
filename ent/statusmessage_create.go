@@ -22,34 +22,6 @@ type StatusMessageCreate struct {
 	hooks    []Hook
 }
 
-// SetCreatedAt sets the "created_at" field.
-func (_c *StatusMessageCreate) SetCreatedAt(v time.Time) *StatusMessageCreate {
-	_c.mutation.SetCreatedAt(v)
-	return _c
-}
-
-// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (_c *StatusMessageCreate) SetNillableCreatedAt(v *time.Time) *StatusMessageCreate {
-	if v != nil {
-		_c.SetCreatedAt(*v)
-	}
-	return _c
-}
-
-// SetUpdatedAt sets the "updated_at" field.
-func (_c *StatusMessageCreate) SetUpdatedAt(v time.Time) *StatusMessageCreate {
-	_c.mutation.SetUpdatedAt(v)
-	return _c
-}
-
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (_c *StatusMessageCreate) SetNillableUpdatedAt(v *time.Time) *StatusMessageCreate {
-	if v != nil {
-		_c.SetUpdatedAt(*v)
-	}
-	return _c
-}
-
 // SetStatusPageID sets the "status_page_id" field.
 func (_c *StatusMessageCreate) SetStatusPageID(v int) *StatusMessageCreate {
 	_c.mutation.SetStatusPageID(v)
@@ -107,6 +79,34 @@ func (_c *StatusMessageCreate) SetNillableTitle(v *string) *StatusMessageCreate 
 // SetContent sets the "content" field.
 func (_c *StatusMessageCreate) SetContent(v string) *StatusMessageCreate {
 	_c.mutation.SetContent(v)
+	return _c
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (_c *StatusMessageCreate) SetCreatedAt(v time.Time) *StatusMessageCreate {
+	_c.mutation.SetCreatedAt(v)
+	return _c
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (_c *StatusMessageCreate) SetNillableCreatedAt(v *time.Time) *StatusMessageCreate {
+	if v != nil {
+		_c.SetCreatedAt(*v)
+	}
+	return _c
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (_c *StatusMessageCreate) SetUpdatedAt(v time.Time) *StatusMessageCreate {
+	_c.mutation.SetUpdatedAt(v)
+	return _c
+}
+
+// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
+func (_c *StatusMessageCreate) SetNillableUpdatedAt(v *time.Time) *StatusMessageCreate {
+	if v != nil {
+		_c.SetUpdatedAt(*v)
+	}
 	return _c
 }
 
@@ -187,12 +187,6 @@ func (_c *StatusMessageCreate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (_c *StatusMessageCreate) check() error {
-	if _, ok := _c.mutation.CreatedAt(); !ok {
-		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "StatusMessage.created_at"`)}
-	}
-	if _, ok := _c.mutation.UpdatedAt(); !ok {
-		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "StatusMessage.updated_at"`)}
-	}
 	if _, ok := _c.mutation.StatusPageID(); !ok {
 		return &ValidationError{Name: "status_page_id", err: errors.New(`ent: missing required field "StatusMessage.status_page_id"`)}
 	}
@@ -211,6 +205,12 @@ func (_c *StatusMessageCreate) check() error {
 		if err := statusmessage.ContentValidator(v); err != nil {
 			return &ValidationError{Name: "content", err: fmt.Errorf(`ent: validator failed for field "StatusMessage.content": %w`, err)}
 		}
+	}
+	if _, ok := _c.mutation.CreatedAt(); !ok {
+		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "StatusMessage.created_at"`)}
+	}
+	if _, ok := _c.mutation.UpdatedAt(); !ok {
+		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "StatusMessage.updated_at"`)}
 	}
 	if len(_c.mutation.StatusPageIDs()) == 0 {
 		return &ValidationError{Name: "status_page", err: errors.New(`ent: missing required edge "StatusMessage.status_page"`)}
@@ -241,14 +241,6 @@ func (_c *StatusMessageCreate) createSpec() (*StatusMessage, *sqlgraph.CreateSpe
 		_node = &StatusMessage{config: _c.config}
 		_spec = sqlgraph.NewCreateSpec(statusmessage.Table, sqlgraph.NewFieldSpec(statusmessage.FieldID, field.TypeInt))
 	)
-	if value, ok := _c.mutation.CreatedAt(); ok {
-		_spec.SetField(statusmessage.FieldCreatedAt, field.TypeTime, value)
-		_node.CreatedAt = value
-	}
-	if value, ok := _c.mutation.UpdatedAt(); ok {
-		_spec.SetField(statusmessage.FieldUpdatedAt, field.TypeTime, value)
-		_node.UpdatedAt = value
-	}
 	if value, ok := _c.mutation.GetType(); ok {
 		_spec.SetField(statusmessage.FieldType, field.TypeEnum, value)
 		_node.Type = value
@@ -260,6 +252,14 @@ func (_c *StatusMessageCreate) createSpec() (*StatusMessage, *sqlgraph.CreateSpe
 	if value, ok := _c.mutation.Content(); ok {
 		_spec.SetField(statusmessage.FieldContent, field.TypeString, value)
 		_node.Content = value
+	}
+	if value, ok := _c.mutation.CreatedAt(); ok {
+		_spec.SetField(statusmessage.FieldCreatedAt, field.TypeTime, value)
+		_node.CreatedAt = value
+	}
+	if value, ok := _c.mutation.UpdatedAt(); ok {
+		_spec.SetField(statusmessage.FieldUpdatedAt, field.TypeTime, value)
+		_node.UpdatedAt = value
 	}
 	if nodes := _c.mutation.StatusPageIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

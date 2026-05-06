@@ -24,34 +24,6 @@ type StatusPageCreate struct {
 	hooks    []Hook
 }
 
-// SetCreatedAt sets the "created_at" field.
-func (_c *StatusPageCreate) SetCreatedAt(v time.Time) *StatusPageCreate {
-	_c.mutation.SetCreatedAt(v)
-	return _c
-}
-
-// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (_c *StatusPageCreate) SetNillableCreatedAt(v *time.Time) *StatusPageCreate {
-	if v != nil {
-		_c.SetCreatedAt(*v)
-	}
-	return _c
-}
-
-// SetUpdatedAt sets the "updated_at" field.
-func (_c *StatusPageCreate) SetUpdatedAt(v time.Time) *StatusPageCreate {
-	_c.mutation.SetUpdatedAt(v)
-	return _c
-}
-
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (_c *StatusPageCreate) SetNillableUpdatedAt(v *time.Time) *StatusPageCreate {
-	if v != nil {
-		_c.SetUpdatedAt(*v)
-	}
-	return _c
-}
-
 // SetUserID sets the "user_id" field.
 func (_c *StatusPageCreate) SetUserID(v int) *StatusPageCreate {
 	_c.mutation.SetUserID(v)
@@ -224,6 +196,34 @@ func (_c *StatusPageCreate) SetNillableAutoRefreshInterval(v *int) *StatusPageCr
 	return _c
 }
 
+// SetCreatedAt sets the "created_at" field.
+func (_c *StatusPageCreate) SetCreatedAt(v time.Time) *StatusPageCreate {
+	_c.mutation.SetCreatedAt(v)
+	return _c
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (_c *StatusPageCreate) SetNillableCreatedAt(v *time.Time) *StatusPageCreate {
+	if v != nil {
+		_c.SetCreatedAt(*v)
+	}
+	return _c
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (_c *StatusPageCreate) SetUpdatedAt(v time.Time) *StatusPageCreate {
+	_c.mutation.SetUpdatedAt(v)
+	return _c
+}
+
+// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
+func (_c *StatusPageCreate) SetNillableUpdatedAt(v *time.Time) *StatusPageCreate {
+	if v != nil {
+		_c.SetUpdatedAt(*v)
+	}
+	return _c
+}
+
 // SetUser sets the "user" edge to the User entity.
 func (_c *StatusPageCreate) SetUser(v *User) *StatusPageCreate {
 	return _c.SetUserID(v.ID)
@@ -309,14 +309,6 @@ func (_c *StatusPageCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (_c *StatusPageCreate) defaults() {
-	if _, ok := _c.mutation.CreatedAt(); !ok {
-		v := statuspage.DefaultCreatedAt()
-		_c.mutation.SetCreatedAt(v)
-	}
-	if _, ok := _c.mutation.UpdatedAt(); !ok {
-		v := statuspage.DefaultUpdatedAt()
-		_c.mutation.SetUpdatedAt(v)
-	}
 	if _, ok := _c.mutation.IsPublic(); !ok {
 		v := statuspage.DefaultIsPublic
 		_c.mutation.SetIsPublic(v)
@@ -345,16 +337,18 @@ func (_c *StatusPageCreate) defaults() {
 		v := statuspage.DefaultAutoRefreshInterval
 		_c.mutation.SetAutoRefreshInterval(v)
 	}
+	if _, ok := _c.mutation.CreatedAt(); !ok {
+		v := statuspage.DefaultCreatedAt()
+		_c.mutation.SetCreatedAt(v)
+	}
+	if _, ok := _c.mutation.UpdatedAt(); !ok {
+		v := statuspage.DefaultUpdatedAt()
+		_c.mutation.SetUpdatedAt(v)
+	}
 }
 
 // check runs all checks and user-defined validators on the builder.
 func (_c *StatusPageCreate) check() error {
-	if _, ok := _c.mutation.CreatedAt(); !ok {
-		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "StatusPage.created_at"`)}
-	}
-	if _, ok := _c.mutation.UpdatedAt(); !ok {
-		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "StatusPage.updated_at"`)}
-	}
 	if _, ok := _c.mutation.UserID(); !ok {
 		return &ValidationError{Name: "user_id", err: errors.New(`ent: missing required field "StatusPage.user_id"`)}
 	}
@@ -395,6 +389,12 @@ func (_c *StatusPageCreate) check() error {
 	if _, ok := _c.mutation.AutoRefreshInterval(); !ok {
 		return &ValidationError{Name: "auto_refresh_interval", err: errors.New(`ent: missing required field "StatusPage.auto_refresh_interval"`)}
 	}
+	if _, ok := _c.mutation.CreatedAt(); !ok {
+		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "StatusPage.created_at"`)}
+	}
+	if _, ok := _c.mutation.UpdatedAt(); !ok {
+		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "StatusPage.updated_at"`)}
+	}
 	if len(_c.mutation.UserIDs()) == 0 {
 		return &ValidationError{Name: "user", err: errors.New(`ent: missing required edge "StatusPage.user"`)}
 	}
@@ -424,14 +424,6 @@ func (_c *StatusPageCreate) createSpec() (*StatusPage, *sqlgraph.CreateSpec) {
 		_node = &StatusPage{config: _c.config}
 		_spec = sqlgraph.NewCreateSpec(statuspage.Table, sqlgraph.NewFieldSpec(statuspage.FieldID, field.TypeInt))
 	)
-	if value, ok := _c.mutation.CreatedAt(); ok {
-		_spec.SetField(statuspage.FieldCreatedAt, field.TypeTime, value)
-		_node.CreatedAt = value
-	}
-	if value, ok := _c.mutation.UpdatedAt(); ok {
-		_spec.SetField(statuspage.FieldUpdatedAt, field.TypeTime, value)
-		_node.UpdatedAt = value
-	}
 	if value, ok := _c.mutation.Slug(); ok {
 		_spec.SetField(statuspage.FieldSlug, field.TypeString, value)
 		_node.Slug = value
@@ -483,6 +475,14 @@ func (_c *StatusPageCreate) createSpec() (*StatusPage, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.AutoRefreshInterval(); ok {
 		_spec.SetField(statuspage.FieldAutoRefreshInterval, field.TypeInt, value)
 		_node.AutoRefreshInterval = value
+	}
+	if value, ok := _c.mutation.CreatedAt(); ok {
+		_spec.SetField(statuspage.FieldCreatedAt, field.TypeTime, value)
+		_node.CreatedAt = value
+	}
+	if value, ok := _c.mutation.UpdatedAt(); ok {
+		_spec.SetField(statuspage.FieldUpdatedAt, field.TypeTime, value)
+		_node.UpdatedAt = value
 	}
 	if nodes := _c.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

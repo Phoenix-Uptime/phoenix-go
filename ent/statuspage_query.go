@@ -407,12 +407,12 @@ func (_q *StatusPageQuery) WithIncidents(opts ...func(*IncidentQuery)) *StatusPa
 // Example:
 //
 //	var v []struct {
-//		CreatedAt time.Time `json:"created_at,omitempty"`
+//		UserID int `json:"user_id,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.StatusPage.Query().
-//		GroupBy(statuspage.FieldCreatedAt).
+//		GroupBy(statuspage.FieldUserID).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (_q *StatusPageQuery) GroupBy(field string, fields ...string) *StatusPageGroupBy {
@@ -430,11 +430,11 @@ func (_q *StatusPageQuery) GroupBy(field string, fields ...string) *StatusPageGr
 // Example:
 //
 //	var v []struct {
-//		CreatedAt time.Time `json:"created_at,omitempty"`
+//		UserID int `json:"user_id,omitempty"`
 //	}
 //
 //	client.StatusPage.Query().
-//		Select(statuspage.FieldCreatedAt).
+//		Select(statuspage.FieldUserID).
 //		Scan(ctx, &v)
 func (_q *StatusPageQuery) Select(fields ...string) *StatusPageSelect {
 	_q.ctx.Fields = append(_q.ctx.Fields, fields...)

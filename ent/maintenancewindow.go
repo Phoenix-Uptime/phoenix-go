@@ -18,10 +18,6 @@ type MaintenanceWindow struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID int `json:"id,omitempty"`
-	// CreatedAt holds the value of the "created_at" field.
-	CreatedAt time.Time `json:"created_at,omitempty"`
-	// UpdatedAt holds the value of the "updated_at" field.
-	UpdatedAt time.Time `json:"updated_at,omitempty"`
 	// UserID holds the value of the "user_id" field.
 	UserID int `json:"user_id,omitempty"`
 	// Title holds the value of the "title" field.
@@ -42,6 +38,10 @@ type MaintenanceWindow struct {
 	Timezone *string `json:"timezone,omitempty"`
 	// DurationSeconds holds the value of the "duration_seconds" field.
 	DurationSeconds *int `json:"duration_seconds,omitempty"`
+	// CreatedAt holds the value of the "created_at" field.
+	CreatedAt time.Time `json:"created_at,omitempty"`
+	// UpdatedAt holds the value of the "updated_at" field.
+	UpdatedAt time.Time `json:"updated_at,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the MaintenanceWindowQuery when eager-loading is set.
 	Edges        MaintenanceWindowEdges `json:"edges"`
@@ -90,7 +90,7 @@ func (*MaintenanceWindow) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullInt64)
 		case maintenancewindow.FieldTitle, maintenancewindow.FieldDescription, maintenancewindow.FieldStrategy, maintenancewindow.FieldCron, maintenancewindow.FieldTimezone:
 			values[i] = new(sql.NullString)
-		case maintenancewindow.FieldCreatedAt, maintenancewindow.FieldUpdatedAt, maintenancewindow.FieldStartAt, maintenancewindow.FieldEndAt:
+		case maintenancewindow.FieldStartAt, maintenancewindow.FieldEndAt, maintenancewindow.FieldCreatedAt, maintenancewindow.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -113,18 +113,6 @@ func (_m *MaintenanceWindow) assignValues(columns []string, values []any) error 
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
 			_m.ID = int(value.Int64)
-		case maintenancewindow.FieldCreatedAt:
-			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field created_at", values[i])
-			} else if value.Valid {
-				_m.CreatedAt = value.Time
-			}
-		case maintenancewindow.FieldUpdatedAt:
-			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
-			} else if value.Valid {
-				_m.UpdatedAt = value.Time
-			}
 		case maintenancewindow.FieldUserID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field user_id", values[i])
@@ -191,6 +179,18 @@ func (_m *MaintenanceWindow) assignValues(columns []string, values []any) error 
 				_m.DurationSeconds = new(int)
 				*_m.DurationSeconds = int(value.Int64)
 			}
+		case maintenancewindow.FieldCreatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field created_at", values[i])
+			} else if value.Valid {
+				_m.CreatedAt = value.Time
+			}
+		case maintenancewindow.FieldUpdatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
+			} else if value.Valid {
+				_m.UpdatedAt = value.Time
+			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
 		}
@@ -237,12 +237,6 @@ func (_m *MaintenanceWindow) String() string {
 	var builder strings.Builder
 	builder.WriteString("MaintenanceWindow(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", _m.ID))
-	builder.WriteString("created_at=")
-	builder.WriteString(_m.CreatedAt.Format(time.ANSIC))
-	builder.WriteString(", ")
-	builder.WriteString("updated_at=")
-	builder.WriteString(_m.UpdatedAt.Format(time.ANSIC))
-	builder.WriteString(", ")
 	builder.WriteString("user_id=")
 	builder.WriteString(fmt.Sprintf("%v", _m.UserID))
 	builder.WriteString(", ")
@@ -284,6 +278,12 @@ func (_m *MaintenanceWindow) String() string {
 		builder.WriteString("duration_seconds=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
+	builder.WriteString(", ")
+	builder.WriteString("created_at=")
+	builder.WriteString(_m.CreatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("updated_at=")
+	builder.WriteString(_m.UpdatedAt.Format(time.ANSIC))
 	builder.WriteByte(')')
 	return builder.String()
 }

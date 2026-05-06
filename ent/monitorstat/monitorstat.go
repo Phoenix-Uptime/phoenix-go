@@ -15,10 +15,6 @@ const (
 	Label = "monitor_stat"
 	// FieldID holds the string denoting the id field in the database.
 	FieldID = "id"
-	// FieldCreatedAt holds the string denoting the created_at field in the database.
-	FieldCreatedAt = "created_at"
-	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
-	FieldUpdatedAt = "updated_at"
 	// FieldMonitorID holds the string denoting the monitor_id field in the database.
 	FieldMonitorID = "monitor_id"
 	// FieldPeriod holds the string denoting the period field in the database.
@@ -43,6 +39,10 @@ const (
 	FieldMaxResponseTimeMs = "max_response_time_ms"
 	// FieldDowntimeSeconds holds the string denoting the downtime_seconds field in the database.
 	FieldDowntimeSeconds = "downtime_seconds"
+	// FieldCreatedAt holds the string denoting the created_at field in the database.
+	FieldCreatedAt = "created_at"
+	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
+	FieldUpdatedAt = "updated_at"
 	// EdgeMonitor holds the string denoting the monitor edge name in mutations.
 	EdgeMonitor = "monitor"
 	// Table holds the table name of the monitorstat in the database.
@@ -59,8 +59,6 @@ const (
 // Columns holds all SQL columns for monitorstat fields.
 var Columns = []string{
 	FieldID,
-	FieldCreatedAt,
-	FieldUpdatedAt,
 	FieldMonitorID,
 	FieldPeriod,
 	FieldPeriodStart,
@@ -73,6 +71,8 @@ var Columns = []string{
 	FieldMinResponseTimeMs,
 	FieldMaxResponseTimeMs,
 	FieldDowntimeSeconds,
+	FieldCreatedAt,
+	FieldUpdatedAt,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -86,12 +86,6 @@ func ValidColumn(column string) bool {
 }
 
 var (
-	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
-	DefaultCreatedAt func() time.Time
-	// DefaultUpdatedAt holds the default value on creation for the "updated_at" field.
-	DefaultUpdatedAt func() time.Time
-	// UpdateDefaultUpdatedAt holds the default value on update for the "updated_at" field.
-	UpdateDefaultUpdatedAt func() time.Time
 	// DefaultTotalChecks holds the default value on creation for the "total_checks" field.
 	DefaultTotalChecks int
 	// DefaultUpChecks holds the default value on creation for the "up_checks" field.
@@ -106,6 +100,12 @@ var (
 	DefaultAvgResponseTimeMs int
 	// DefaultDowntimeSeconds holds the default value on creation for the "downtime_seconds" field.
 	DefaultDowntimeSeconds int
+	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
+	DefaultCreatedAt func() time.Time
+	// DefaultUpdatedAt holds the default value on creation for the "updated_at" field.
+	DefaultUpdatedAt func() time.Time
+	// UpdateDefaultUpdatedAt holds the default value on update for the "updated_at" field.
+	UpdateDefaultUpdatedAt func() time.Time
 )
 
 // Period defines the type for the "period" enum field.
@@ -137,16 +137,6 @@ type OrderOption func(*sql.Selector)
 // ByID orders the results by the id field.
 func ByID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldID, opts...).ToFunc()
-}
-
-// ByCreatedAt orders the results by the created_at field.
-func ByCreatedAt(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldCreatedAt, opts...).ToFunc()
-}
-
-// ByUpdatedAt orders the results by the updated_at field.
-func ByUpdatedAt(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldUpdatedAt, opts...).ToFunc()
 }
 
 // ByMonitorID orders the results by the monitor_id field.
@@ -207,6 +197,16 @@ func ByMaxResponseTimeMs(opts ...sql.OrderTermOption) OrderOption {
 // ByDowntimeSeconds orders the results by the downtime_seconds field.
 func ByDowntimeSeconds(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldDowntimeSeconds, opts...).ToFunc()
+}
+
+// ByCreatedAt orders the results by the created_at field.
+func ByCreatedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCreatedAt, opts...).ToFunc()
+}
+
+// ByUpdatedAt orders the results by the updated_at field.
+func ByUpdatedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldUpdatedAt, opts...).ToFunc()
 }
 
 // ByMonitorField orders the results by monitor field.

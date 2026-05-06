@@ -15,12 +15,6 @@ type StatusMessage struct {
 
 func (StatusMessage) Fields() []ent.Field {
 	return []ent.Field{
-		field.Time("created_at").
-			Default(time.Now).
-			Immutable(),
-		field.Time("updated_at").
-			Default(time.Now).
-			UpdateDefault(time.Now),
 		field.Int("status_page_id"),
 		field.Int("incident_id").
 			Optional().
@@ -35,6 +29,12 @@ func (StatusMessage) Fields() []ent.Field {
 			Nillable(),
 		field.String("content").
 			NotEmpty(),
+		field.Time("created_at").
+			Default(time.Now).
+			Immutable(),
+		field.Time("updated_at").
+			Default(time.Now).
+			UpdateDefault(time.Now),
 	}
 }
 

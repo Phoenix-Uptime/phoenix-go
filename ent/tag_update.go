@@ -30,12 +30,6 @@ func (_u *TagUpdate) Where(ps ...predicate.Tag) *TagUpdate {
 	return _u
 }
 
-// SetUpdatedAt sets the "updated_at" field.
-func (_u *TagUpdate) SetUpdatedAt(v time.Time) *TagUpdate {
-	_u.mutation.SetUpdatedAt(v)
-	return _u
-}
-
 // SetUserID sets the "user_id" field.
 func (_u *TagUpdate) SetUserID(v int) *TagUpdate {
 	_u.mutation.SetUserID(v)
@@ -101,6 +95,12 @@ func (_u *TagUpdate) SetNillableColor(v *string) *TagUpdate {
 // ClearColor clears the value of the "color" field.
 func (_u *TagUpdate) ClearColor() *TagUpdate {
 	_u.mutation.ClearColor()
+	return _u
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (_u *TagUpdate) SetUpdatedAt(v time.Time) *TagUpdate {
+	_u.mutation.SetUpdatedAt(v)
 	return _u
 }
 
@@ -217,9 +217,6 @@ func (_u *TagUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 			}
 		}
 	}
-	if value, ok := _u.mutation.UpdatedAt(); ok {
-		_spec.SetField(tag.FieldUpdatedAt, field.TypeTime, value)
-	}
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(tag.FieldName, field.TypeString, value)
 	}
@@ -234,6 +231,9 @@ func (_u *TagUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if _u.mutation.ColorCleared() {
 		_spec.ClearField(tag.FieldColor, field.TypeString)
+	}
+	if value, ok := _u.mutation.UpdatedAt(); ok {
+		_spec.SetField(tag.FieldUpdatedAt, field.TypeTime, value)
 	}
 	if _u.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -329,12 +329,6 @@ type TagUpdateOne struct {
 	mutation *TagMutation
 }
 
-// SetUpdatedAt sets the "updated_at" field.
-func (_u *TagUpdateOne) SetUpdatedAt(v time.Time) *TagUpdateOne {
-	_u.mutation.SetUpdatedAt(v)
-	return _u
-}
-
 // SetUserID sets the "user_id" field.
 func (_u *TagUpdateOne) SetUserID(v int) *TagUpdateOne {
 	_u.mutation.SetUserID(v)
@@ -400,6 +394,12 @@ func (_u *TagUpdateOne) SetNillableColor(v *string) *TagUpdateOne {
 // ClearColor clears the value of the "color" field.
 func (_u *TagUpdateOne) ClearColor() *TagUpdateOne {
 	_u.mutation.ClearColor()
+	return _u
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (_u *TagUpdateOne) SetUpdatedAt(v time.Time) *TagUpdateOne {
+	_u.mutation.SetUpdatedAt(v)
 	return _u
 }
 
@@ -546,9 +546,6 @@ func (_u *TagUpdateOne) sqlSave(ctx context.Context) (_node *Tag, err error) {
 			}
 		}
 	}
-	if value, ok := _u.mutation.UpdatedAt(); ok {
-		_spec.SetField(tag.FieldUpdatedAt, field.TypeTime, value)
-	}
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(tag.FieldName, field.TypeString, value)
 	}
@@ -563,6 +560,9 @@ func (_u *TagUpdateOne) sqlSave(ctx context.Context) (_node *Tag, err error) {
 	}
 	if _u.mutation.ColorCleared() {
 		_spec.ClearField(tag.FieldColor, field.TypeString)
+	}
+	if value, ok := _u.mutation.UpdatedAt(); ok {
+		_spec.SetField(tag.FieldUpdatedAt, field.TypeTime, value)
 	}
 	if _u.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{

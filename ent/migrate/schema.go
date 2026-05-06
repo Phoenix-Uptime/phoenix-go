@@ -11,13 +11,13 @@ var (
 	// APIKeysColumns holds the columns for the "api_keys" table.
 	APIKeysColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "created_at", Type: field.TypeTime},
-		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "name", Type: field.TypeString},
 		{Name: "key", Type: field.TypeString, Unique: true},
 		{Name: "is_active", Type: field.TypeBool, Default: true},
 		{Name: "expires_at", Type: field.TypeTime, Nullable: true},
 		{Name: "last_used_at", Type: field.TypeTime, Nullable: true},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "user_id", Type: field.TypeInt},
 	}
 	// APIKeysTable holds the schema information for the "api_keys" table.
@@ -42,15 +42,13 @@ var (
 			{
 				Name:    "apikey_user_id_is_active",
 				Unique:  false,
-				Columns: []*schema.Column{APIKeysColumns[8], APIKeysColumns[5]},
+				Columns: []*schema.Column{APIKeysColumns[8], APIKeysColumns[3]},
 			},
 		},
 	}
 	// IncidentsColumns holds the columns for the "incidents" table.
 	IncidentsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "created_at", Type: field.TypeTime},
-		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "title", Type: field.TypeString},
 		{Name: "content", Type: field.TypeString, Nullable: true},
 		{Name: "status", Type: field.TypeEnum, Enums: []string{"open", "acknowledged", "resolved"}, Default: "open"},
@@ -58,6 +56,8 @@ var (
 		{Name: "started_at", Type: field.TypeTime},
 		{Name: "ended_at", Type: field.TypeTime, Nullable: true},
 		{Name: "is_pinned", Type: field.TypeBool, Default: true},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "monitor_id", Type: field.TypeInt},
 		{Name: "status_page_id", Type: field.TypeInt, Nullable: true},
 		{Name: "resolved_by_id", Type: field.TypeInt, Nullable: true},
@@ -96,30 +96,28 @@ var (
 			{
 				Name:    "incident_monitor_id_status",
 				Unique:  false,
-				Columns: []*schema.Column{IncidentsColumns[10], IncidentsColumns[5]},
+				Columns: []*schema.Column{IncidentsColumns[10], IncidentsColumns[3]},
 			},
 			{
 				Name:    "incident_status_page_id_status",
 				Unique:  false,
-				Columns: []*schema.Column{IncidentsColumns[11], IncidentsColumns[5]},
+				Columns: []*schema.Column{IncidentsColumns[11], IncidentsColumns[3]},
 			},
 			{
 				Name:    "incident_status_started_at",
 				Unique:  false,
-				Columns: []*schema.Column{IncidentsColumns[5], IncidentsColumns[7]},
+				Columns: []*schema.Column{IncidentsColumns[3], IncidentsColumns[5]},
 			},
 			{
 				Name:    "incident_started_at",
 				Unique:  false,
-				Columns: []*schema.Column{IncidentsColumns[7]},
+				Columns: []*schema.Column{IncidentsColumns[5]},
 			},
 		},
 	}
 	// MaintenanceWindowsColumns holds the columns for the "maintenance_windows" table.
 	MaintenanceWindowsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "created_at", Type: field.TypeTime},
-		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "title", Type: field.TypeString},
 		{Name: "description", Type: field.TypeString, Nullable: true},
 		{Name: "is_active", Type: field.TypeBool, Default: true},
@@ -129,6 +127,8 @@ var (
 		{Name: "cron", Type: field.TypeString, Nullable: true},
 		{Name: "timezone", Type: field.TypeString, Nullable: true},
 		{Name: "duration_seconds", Type: field.TypeInt, Nullable: true},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "user_id", Type: field.TypeInt},
 	}
 	// MaintenanceWindowsTable holds the schema information for the "maintenance_windows" table.
@@ -153,25 +153,23 @@ var (
 			{
 				Name:    "maintenancewindow_user_id_is_active",
 				Unique:  false,
-				Columns: []*schema.Column{MaintenanceWindowsColumns[12], MaintenanceWindowsColumns[5]},
+				Columns: []*schema.Column{MaintenanceWindowsColumns[12], MaintenanceWindowsColumns[3]},
 			},
 			{
 				Name:    "maintenancewindow_strategy_is_active",
 				Unique:  false,
-				Columns: []*schema.Column{MaintenanceWindowsColumns[6], MaintenanceWindowsColumns[5]},
+				Columns: []*schema.Column{MaintenanceWindowsColumns[4], MaintenanceWindowsColumns[3]},
 			},
 			{
 				Name:    "maintenancewindow_start_at_end_at",
 				Unique:  false,
-				Columns: []*schema.Column{MaintenanceWindowsColumns[7], MaintenanceWindowsColumns[8]},
+				Columns: []*schema.Column{MaintenanceWindowsColumns[5], MaintenanceWindowsColumns[6]},
 			},
 		},
 	}
 	// MonitorsColumns holds the columns for the "monitors" table.
 	MonitorsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "created_at", Type: field.TypeTime},
-		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "name", Type: field.TypeString},
 		{Name: "description", Type: field.TypeString, Nullable: true},
 		{Name: "url", Type: field.TypeString},
@@ -196,6 +194,8 @@ var (
 		{Name: "retry_after", Type: field.TypeInt, Default: 30},
 		{Name: "push_token", Type: field.TypeString, Unique: true, Nullable: true},
 		{Name: "config", Type: field.TypeJSON, Nullable: true},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "user_id", Type: field.TypeInt},
 	}
 	// MonitorsTable holds the schema information for the "monitors" table.
@@ -220,25 +220,23 @@ var (
 			{
 				Name:    "monitor_user_id_is_active",
 				Unique:  false,
-				Columns: []*schema.Column{MonitorsColumns[27], MonitorsColumns[10]},
+				Columns: []*schema.Column{MonitorsColumns[27], MonitorsColumns[8]},
 			},
 			{
 				Name:    "monitor_user_id_type",
 				Unique:  false,
-				Columns: []*schema.Column{MonitorsColumns[27], MonitorsColumns[9]},
+				Columns: []*schema.Column{MonitorsColumns[27], MonitorsColumns[7]},
 			},
 			{
 				Name:    "monitor_status",
 				Unique:  false,
-				Columns: []*schema.Column{MonitorsColumns[8]},
+				Columns: []*schema.Column{MonitorsColumns[6]},
 			},
 		},
 	}
 	// MonitorChecksColumns holds the columns for the "monitor_checks" table.
 	MonitorChecksColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "created_at", Type: field.TypeTime},
-		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "status", Type: field.TypeEnum, Enums: []string{"up", "down", "pending", "maintenance"}, Default: "pending"},
 		{Name: "checked_at", Type: field.TypeTime},
 		{Name: "response_time_ms", Type: field.TypeInt, Default: 0},
@@ -249,6 +247,8 @@ var (
 		{Name: "duration_seconds", Type: field.TypeInt, Default: 0},
 		{Name: "important", Type: field.TypeBool, Default: false},
 		{Name: "response", Type: field.TypeString, Nullable: true},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "monitor_id", Type: field.TypeInt},
 	}
 	// MonitorChecksTable holds the schema information for the "monitor_checks" table.
@@ -273,25 +273,23 @@ var (
 			{
 				Name:    "monitorcheck_monitor_id_checked_at",
 				Unique:  false,
-				Columns: []*schema.Column{MonitorChecksColumns[13], MonitorChecksColumns[4]},
+				Columns: []*schema.Column{MonitorChecksColumns[13], MonitorChecksColumns[2]},
 			},
 			{
 				Name:    "monitorcheck_monitor_id_important_checked_at",
 				Unique:  false,
-				Columns: []*schema.Column{MonitorChecksColumns[13], MonitorChecksColumns[11], MonitorChecksColumns[4]},
+				Columns: []*schema.Column{MonitorChecksColumns[13], MonitorChecksColumns[9], MonitorChecksColumns[2]},
 			},
 			{
 				Name:    "monitorcheck_checked_at",
 				Unique:  false,
-				Columns: []*schema.Column{MonitorChecksColumns[4]},
+				Columns: []*schema.Column{MonitorChecksColumns[2]},
 			},
 		},
 	}
 	// MonitorStatsColumns holds the columns for the "monitor_stats" table.
 	MonitorStatsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "created_at", Type: field.TypeTime},
-		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "period", Type: field.TypeEnum, Enums: []string{"hour", "day"}},
 		{Name: "period_start", Type: field.TypeTime},
 		{Name: "total_checks", Type: field.TypeInt, Default: 0},
@@ -303,6 +301,8 @@ var (
 		{Name: "min_response_time_ms", Type: field.TypeInt, Nullable: true},
 		{Name: "max_response_time_ms", Type: field.TypeInt, Nullable: true},
 		{Name: "downtime_seconds", Type: field.TypeInt, Default: 0},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "monitor_id", Type: field.TypeInt},
 	}
 	// MonitorStatsTable holds the schema information for the "monitor_stats" table.
@@ -327,25 +327,25 @@ var (
 			{
 				Name:    "monitorstat_period_start",
 				Unique:  false,
-				Columns: []*schema.Column{MonitorStatsColumns[4]},
+				Columns: []*schema.Column{MonitorStatsColumns[2]},
 			},
 			{
 				Name:    "monitorstat_monitor_id_period_period_start",
 				Unique:  true,
-				Columns: []*schema.Column{MonitorStatsColumns[14], MonitorStatsColumns[3], MonitorStatsColumns[4]},
+				Columns: []*schema.Column{MonitorStatsColumns[14], MonitorStatsColumns[1], MonitorStatsColumns[2]},
 			},
 		},
 	}
 	// NotificationsColumns holds the columns for the "notifications" table.
 	NotificationsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "created_at", Type: field.TypeTime},
-		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "name", Type: field.TypeString},
 		{Name: "type", Type: field.TypeEnum, Enums: []string{"smtp", "telegram", "webhook", "discord", "slack", "pagerduty", "pushover", "twilio"}},
 		{Name: "is_active", Type: field.TypeBool, Default: true},
 		{Name: "is_default", Type: field.TypeBool, Default: false},
 		{Name: "config", Type: field.TypeJSON, Nullable: true},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "user_id", Type: field.TypeInt},
 	}
 	// NotificationsTable holds the schema information for the "notifications" table.
@@ -370,23 +370,23 @@ var (
 			{
 				Name:    "notification_user_id_type",
 				Unique:  false,
-				Columns: []*schema.Column{NotificationsColumns[8], NotificationsColumns[4]},
+				Columns: []*schema.Column{NotificationsColumns[8], NotificationsColumns[2]},
 			},
 			{
 				Name:    "notification_user_id_is_default",
 				Unique:  false,
-				Columns: []*schema.Column{NotificationsColumns[8], NotificationsColumns[6]},
+				Columns: []*schema.Column{NotificationsColumns[8], NotificationsColumns[4]},
 			},
 		},
 	}
 	// StatusMessagesColumns holds the columns for the "status_messages" table.
 	StatusMessagesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "created_at", Type: field.TypeTime},
-		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "type", Type: field.TypeEnum, Enums: []string{"issue", "investigating", "identified", "monitoring", "resolved", "maintenance"}},
 		{Name: "title", Type: field.TypeString, Nullable: true},
 		{Name: "content", Type: field.TypeString},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "incident_id", Type: field.TypeInt, Nullable: true},
 		{Name: "parent_id", Type: field.TypeInt, Nullable: true},
 		{Name: "status_page_id", Type: field.TypeInt},
@@ -437,8 +437,6 @@ var (
 	// StatusPagesColumns holds the columns for the "status_pages" table.
 	StatusPagesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "created_at", Type: field.TypeTime},
-		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "slug", Type: field.TypeString, Unique: true},
 		{Name: "name", Type: field.TypeString},
 		{Name: "description", Type: field.TypeString, Nullable: true},
@@ -452,6 +450,8 @@ var (
 		{Name: "show_uptime_percentage", Type: field.TypeBool, Default: true},
 		{Name: "show_powered_by", Type: field.TypeBool, Default: true},
 		{Name: "auto_refresh_interval", Type: field.TypeInt, Default: 300},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "user_id", Type: field.TypeInt},
 	}
 	// StatusPagesTable holds the schema information for the "status_pages" table.
@@ -476,18 +476,18 @@ var (
 			{
 				Name:    "statuspage_user_id_slug",
 				Unique:  true,
-				Columns: []*schema.Column{StatusPagesColumns[16], StatusPagesColumns[3]},
+				Columns: []*schema.Column{StatusPagesColumns[16], StatusPagesColumns[1]},
 			},
 		},
 	}
 	// StatusPageMonitorsColumns holds the columns for the "status_page_monitors" table.
 	StatusPageMonitorsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "created_at", Type: field.TypeTime},
-		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "display_name", Type: field.TypeString, Nullable: true},
 		{Name: "weight", Type: field.TypeInt, Default: 1000},
 		{Name: "send_url", Type: field.TypeBool, Default: false},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "monitor_id", Type: field.TypeInt},
 		{Name: "status_page_id", Type: field.TypeInt},
 	}
@@ -529,18 +529,18 @@ var (
 			{
 				Name:    "statuspagemonitor_status_page_id_weight",
 				Unique:  false,
-				Columns: []*schema.Column{StatusPageMonitorsColumns[7], StatusPageMonitorsColumns[4]},
+				Columns: []*schema.Column{StatusPageMonitorsColumns[7], StatusPageMonitorsColumns[2]},
 			},
 		},
 	}
 	// TagsColumns holds the columns for the "tags" table.
 	TagsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "created_at", Type: field.TypeTime},
-		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "name", Type: field.TypeString},
 		{Name: "description", Type: field.TypeString, Nullable: true},
 		{Name: "color", Type: field.TypeString, Nullable: true},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "user_id", Type: field.TypeInt},
 	}
 	// TagsTable holds the schema information for the "tags" table.
@@ -565,15 +565,13 @@ var (
 			{
 				Name:    "tag_user_id_name",
 				Unique:  true,
-				Columns: []*schema.Column{TagsColumns[6], TagsColumns[3]},
+				Columns: []*schema.Column{TagsColumns[6], TagsColumns[1]},
 			},
 		},
 	}
 	// UsersColumns holds the columns for the "users" table.
 	UsersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "created_at", Type: field.TypeTime},
-		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "username", Type: field.TypeString, Unique: true},
 		{Name: "email", Type: field.TypeString, Unique: true},
 		{Name: "password", Type: field.TypeString},
@@ -585,6 +583,8 @@ var (
 		{Name: "smtp_password", Type: field.TypeString, Nullable: true},
 		{Name: "smtp_use_tls", Type: field.TypeBool, Nullable: true},
 		{Name: "telegram_bot_token", Type: field.TypeString, Nullable: true},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
 	}
 	// UsersTable holds the schema information for the "users" table.
 	UsersTable = &schema.Table{
@@ -595,17 +595,17 @@ var (
 			{
 				Name:    "user_username",
 				Unique:  false,
-				Columns: []*schema.Column{UsersColumns[3]},
+				Columns: []*schema.Column{UsersColumns[1]},
 			},
 			{
 				Name:    "user_email",
 				Unique:  false,
-				Columns: []*schema.Column{UsersColumns[4]},
+				Columns: []*schema.Column{UsersColumns[2]},
 			},
 			{
 				Name:    "user_api_key",
 				Unique:  false,
-				Columns: []*schema.Column{UsersColumns[6]},
+				Columns: []*schema.Column{UsersColumns[4]},
 			},
 		},
 	}

@@ -15,12 +15,6 @@ type MaintenanceWindow struct {
 
 func (MaintenanceWindow) Fields() []ent.Field {
 	return []ent.Field{
-		field.Time("created_at").
-			Default(time.Now).
-			Immutable(),
-		field.Time("updated_at").
-			Default(time.Now).
-			UpdateDefault(time.Now),
 		field.Int("user_id"),
 		field.String("title").
 			NotEmpty(),
@@ -47,6 +41,12 @@ func (MaintenanceWindow) Fields() []ent.Field {
 		field.Int("duration_seconds").
 			Optional().
 			Nillable(),
+		field.Time("created_at").
+			Default(time.Now).
+			Immutable(),
+		field.Time("updated_at").
+			Default(time.Now).
+			UpdateDefault(time.Now),
 	}
 }
 

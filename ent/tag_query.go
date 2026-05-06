@@ -335,12 +335,12 @@ func (_q *TagQuery) WithMonitors(opts ...func(*MonitorQuery)) *TagQuery {
 // Example:
 //
 //	var v []struct {
-//		CreatedAt time.Time `json:"created_at,omitempty"`
+//		UserID int `json:"user_id,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.Tag.Query().
-//		GroupBy(tag.FieldCreatedAt).
+//		GroupBy(tag.FieldUserID).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (_q *TagQuery) GroupBy(field string, fields ...string) *TagGroupBy {
@@ -358,11 +358,11 @@ func (_q *TagQuery) GroupBy(field string, fields ...string) *TagGroupBy {
 // Example:
 //
 //	var v []struct {
-//		CreatedAt time.Time `json:"created_at,omitempty"`
+//		UserID int `json:"user_id,omitempty"`
 //	}
 //
 //	client.Tag.Query().
-//		Select(tag.FieldCreatedAt).
+//		Select(tag.FieldUserID).
 //		Scan(ctx, &v)
 func (_q *TagQuery) Select(fields ...string) *TagSelect {
 	_q.ctx.Fields = append(_q.ctx.Fields, fields...)

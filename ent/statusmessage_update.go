@@ -30,12 +30,6 @@ func (_u *StatusMessageUpdate) Where(ps ...predicate.StatusMessage) *StatusMessa
 	return _u
 }
 
-// SetUpdatedAt sets the "updated_at" field.
-func (_u *StatusMessageUpdate) SetUpdatedAt(v time.Time) *StatusMessageUpdate {
-	_u.mutation.SetUpdatedAt(v)
-	return _u
-}
-
 // SetStatusPageID sets the "status_page_id" field.
 func (_u *StatusMessageUpdate) SetStatusPageID(v int) *StatusMessageUpdate {
 	_u.mutation.SetStatusPageID(v)
@@ -135,6 +129,12 @@ func (_u *StatusMessageUpdate) SetNillableContent(v *string) *StatusMessageUpdat
 	if v != nil {
 		_u.SetContent(*v)
 	}
+	return _u
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (_u *StatusMessageUpdate) SetUpdatedAt(v time.Time) *StatusMessageUpdate {
+	_u.mutation.SetUpdatedAt(v)
 	return _u
 }
 
@@ -278,9 +278,6 @@ func (_u *StatusMessageUpdate) sqlSave(ctx context.Context) (_node int, err erro
 			}
 		}
 	}
-	if value, ok := _u.mutation.UpdatedAt(); ok {
-		_spec.SetField(statusmessage.FieldUpdatedAt, field.TypeTime, value)
-	}
 	if value, ok := _u.mutation.GetType(); ok {
 		_spec.SetField(statusmessage.FieldType, field.TypeEnum, value)
 	}
@@ -292,6 +289,9 @@ func (_u *StatusMessageUpdate) sqlSave(ctx context.Context) (_node int, err erro
 	}
 	if value, ok := _u.mutation.Content(); ok {
 		_spec.SetField(statusmessage.FieldContent, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.UpdatedAt(); ok {
+		_spec.SetField(statusmessage.FieldUpdatedAt, field.TypeTime, value)
 	}
 	if _u.mutation.StatusPageCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -445,12 +445,6 @@ type StatusMessageUpdateOne struct {
 	mutation *StatusMessageMutation
 }
 
-// SetUpdatedAt sets the "updated_at" field.
-func (_u *StatusMessageUpdateOne) SetUpdatedAt(v time.Time) *StatusMessageUpdateOne {
-	_u.mutation.SetUpdatedAt(v)
-	return _u
-}
-
 // SetStatusPageID sets the "status_page_id" field.
 func (_u *StatusMessageUpdateOne) SetStatusPageID(v int) *StatusMessageUpdateOne {
 	_u.mutation.SetStatusPageID(v)
@@ -550,6 +544,12 @@ func (_u *StatusMessageUpdateOne) SetNillableContent(v *string) *StatusMessageUp
 	if v != nil {
 		_u.SetContent(*v)
 	}
+	return _u
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (_u *StatusMessageUpdateOne) SetUpdatedAt(v time.Time) *StatusMessageUpdateOne {
+	_u.mutation.SetUpdatedAt(v)
 	return _u
 }
 
@@ -723,9 +723,6 @@ func (_u *StatusMessageUpdateOne) sqlSave(ctx context.Context) (_node *StatusMes
 			}
 		}
 	}
-	if value, ok := _u.mutation.UpdatedAt(); ok {
-		_spec.SetField(statusmessage.FieldUpdatedAt, field.TypeTime, value)
-	}
 	if value, ok := _u.mutation.GetType(); ok {
 		_spec.SetField(statusmessage.FieldType, field.TypeEnum, value)
 	}
@@ -737,6 +734,9 @@ func (_u *StatusMessageUpdateOne) sqlSave(ctx context.Context) (_node *StatusMes
 	}
 	if value, ok := _u.mutation.Content(); ok {
 		_spec.SetField(statusmessage.FieldContent, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.UpdatedAt(); ok {
+		_spec.SetField(statusmessage.FieldUpdatedAt, field.TypeTime, value)
 	}
 	if _u.mutation.StatusPageCleared() {
 		edge := &sqlgraph.EdgeSpec{

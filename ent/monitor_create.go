@@ -28,34 +28,6 @@ type MonitorCreate struct {
 	hooks    []Hook
 }
 
-// SetCreatedAt sets the "created_at" field.
-func (_c *MonitorCreate) SetCreatedAt(v time.Time) *MonitorCreate {
-	_c.mutation.SetCreatedAt(v)
-	return _c
-}
-
-// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (_c *MonitorCreate) SetNillableCreatedAt(v *time.Time) *MonitorCreate {
-	if v != nil {
-		_c.SetCreatedAt(*v)
-	}
-	return _c
-}
-
-// SetUpdatedAt sets the "updated_at" field.
-func (_c *MonitorCreate) SetUpdatedAt(v time.Time) *MonitorCreate {
-	_c.mutation.SetUpdatedAt(v)
-	return _c
-}
-
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (_c *MonitorCreate) SetNillableUpdatedAt(v *time.Time) *MonitorCreate {
-	if v != nil {
-		_c.SetUpdatedAt(*v)
-	}
-	return _c
-}
-
 // SetUserID sets the "user_id" field.
 func (_c *MonitorCreate) SetUserID(v int) *MonitorCreate {
 	_c.mutation.SetUserID(v)
@@ -350,6 +322,34 @@ func (_c *MonitorCreate) SetConfig(v map[string]interface{}) *MonitorCreate {
 	return _c
 }
 
+// SetCreatedAt sets the "created_at" field.
+func (_c *MonitorCreate) SetCreatedAt(v time.Time) *MonitorCreate {
+	_c.mutation.SetCreatedAt(v)
+	return _c
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (_c *MonitorCreate) SetNillableCreatedAt(v *time.Time) *MonitorCreate {
+	if v != nil {
+		_c.SetCreatedAt(*v)
+	}
+	return _c
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (_c *MonitorCreate) SetUpdatedAt(v time.Time) *MonitorCreate {
+	_c.mutation.SetUpdatedAt(v)
+	return _c
+}
+
+// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
+func (_c *MonitorCreate) SetNillableUpdatedAt(v *time.Time) *MonitorCreate {
+	if v != nil {
+		_c.SetUpdatedAt(*v)
+	}
+	return _c
+}
+
 // SetUser sets the "user" edge to the User entity.
 func (_c *MonitorCreate) SetUser(v *User) *MonitorCreate {
 	return _c.SetUserID(v.ID)
@@ -495,14 +495,6 @@ func (_c *MonitorCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (_c *MonitorCreate) defaults() {
-	if _, ok := _c.mutation.CreatedAt(); !ok {
-		v := monitor.DefaultCreatedAt()
-		_c.mutation.SetCreatedAt(v)
-	}
-	if _, ok := _c.mutation.UpdatedAt(); !ok {
-		v := monitor.DefaultUpdatedAt()
-		_c.mutation.SetUpdatedAt(v)
-	}
 	if _, ok := _c.mutation.Interval(); !ok {
 		v := monitor.DefaultInterval
 		_c.mutation.SetInterval(v)
@@ -539,16 +531,18 @@ func (_c *MonitorCreate) defaults() {
 		v := monitor.DefaultRetryAfter
 		_c.mutation.SetRetryAfter(v)
 	}
+	if _, ok := _c.mutation.CreatedAt(); !ok {
+		v := monitor.DefaultCreatedAt()
+		_c.mutation.SetCreatedAt(v)
+	}
+	if _, ok := _c.mutation.UpdatedAt(); !ok {
+		v := monitor.DefaultUpdatedAt()
+		_c.mutation.SetUpdatedAt(v)
+	}
 }
 
 // check runs all checks and user-defined validators on the builder.
 func (_c *MonitorCreate) check() error {
-	if _, ok := _c.mutation.CreatedAt(); !ok {
-		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Monitor.created_at"`)}
-	}
-	if _, ok := _c.mutation.UpdatedAt(); !ok {
-		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "Monitor.updated_at"`)}
-	}
 	if _, ok := _c.mutation.UserID(); !ok {
 		return &ValidationError{Name: "user_id", err: errors.New(`ent: missing required field "Monitor.user_id"`)}
 	}
@@ -608,6 +602,12 @@ func (_c *MonitorCreate) check() error {
 	if _, ok := _c.mutation.RetryAfter(); !ok {
 		return &ValidationError{Name: "retry_after", err: errors.New(`ent: missing required field "Monitor.retry_after"`)}
 	}
+	if _, ok := _c.mutation.CreatedAt(); !ok {
+		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Monitor.created_at"`)}
+	}
+	if _, ok := _c.mutation.UpdatedAt(); !ok {
+		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "Monitor.updated_at"`)}
+	}
 	if len(_c.mutation.UserIDs()) == 0 {
 		return &ValidationError{Name: "user", err: errors.New(`ent: missing required edge "Monitor.user"`)}
 	}
@@ -637,14 +637,6 @@ func (_c *MonitorCreate) createSpec() (*Monitor, *sqlgraph.CreateSpec) {
 		_node = &Monitor{config: _c.config}
 		_spec = sqlgraph.NewCreateSpec(monitor.Table, sqlgraph.NewFieldSpec(monitor.FieldID, field.TypeInt))
 	)
-	if value, ok := _c.mutation.CreatedAt(); ok {
-		_spec.SetField(monitor.FieldCreatedAt, field.TypeTime, value)
-		_node.CreatedAt = value
-	}
-	if value, ok := _c.mutation.UpdatedAt(); ok {
-		_spec.SetField(monitor.FieldUpdatedAt, field.TypeTime, value)
-		_node.UpdatedAt = value
-	}
 	if value, ok := _c.mutation.Name(); ok {
 		_spec.SetField(monitor.FieldName, field.TypeString, value)
 		_node.Name = value
@@ -740,6 +732,14 @@ func (_c *MonitorCreate) createSpec() (*Monitor, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.Config(); ok {
 		_spec.SetField(monitor.FieldConfig, field.TypeJSON, value)
 		_node.Config = value
+	}
+	if value, ok := _c.mutation.CreatedAt(); ok {
+		_spec.SetField(monitor.FieldCreatedAt, field.TypeTime, value)
+		_node.CreatedAt = value
+	}
+	if value, ok := _c.mutation.UpdatedAt(); ok {
+		_spec.SetField(monitor.FieldUpdatedAt, field.TypeTime, value)
+		_node.UpdatedAt = value
 	}
 	if nodes := _c.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

@@ -16,12 +16,6 @@ type StatusPage struct {
 
 func (StatusPage) Fields() []ent.Field {
 	return []ent.Field{
-		field.Time("created_at").
-			Default(time.Now).
-			Immutable(),
-		field.Time("updated_at").
-			Default(time.Now).
-			UpdateDefault(time.Now),
 		field.Int("user_id"),
 		field.String("slug").
 			NotEmpty().
@@ -55,6 +49,12 @@ func (StatusPage) Fields() []ent.Field {
 			Default(true),
 		field.Int("auto_refresh_interval").
 			Default(300),
+		field.Time("created_at").
+			Default(time.Now).
+			Immutable(),
+		field.Time("updated_at").
+			Default(time.Now).
+			UpdateDefault(time.Now),
 	}
 }
 

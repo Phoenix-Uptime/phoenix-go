@@ -551,12 +551,12 @@ func (_q *MonitorQuery) WithIncidents(opts ...func(*IncidentQuery)) *MonitorQuer
 // Example:
 //
 //	var v []struct {
-//		CreatedAt time.Time `json:"created_at,omitempty"`
+//		UserID int `json:"user_id,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.Monitor.Query().
-//		GroupBy(monitor.FieldCreatedAt).
+//		GroupBy(monitor.FieldUserID).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (_q *MonitorQuery) GroupBy(field string, fields ...string) *MonitorGroupBy {
@@ -574,11 +574,11 @@ func (_q *MonitorQuery) GroupBy(field string, fields ...string) *MonitorGroupBy 
 // Example:
 //
 //	var v []struct {
-//		CreatedAt time.Time `json:"created_at,omitempty"`
+//		UserID int `json:"user_id,omitempty"`
 //	}
 //
 //	client.Monitor.Query().
-//		Select(monitor.FieldCreatedAt).
+//		Select(monitor.FieldUserID).
 //		Scan(ctx, &v)
 func (_q *MonitorQuery) Select(fields ...string) *MonitorSelect {
 	_q.ctx.Fields = append(_q.ctx.Fields, fields...)

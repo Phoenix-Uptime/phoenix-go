@@ -335,12 +335,12 @@ func (_q *NotificationQuery) WithMonitors(opts ...func(*MonitorQuery)) *Notifica
 // Example:
 //
 //	var v []struct {
-//		CreatedAt time.Time `json:"created_at,omitempty"`
+//		UserID int `json:"user_id,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.Notification.Query().
-//		GroupBy(notification.FieldCreatedAt).
+//		GroupBy(notification.FieldUserID).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (_q *NotificationQuery) GroupBy(field string, fields ...string) *NotificationGroupBy {
@@ -358,11 +358,11 @@ func (_q *NotificationQuery) GroupBy(field string, fields ...string) *Notificati
 // Example:
 //
 //	var v []struct {
-//		CreatedAt time.Time `json:"created_at,omitempty"`
+//		UserID int `json:"user_id,omitempty"`
 //	}
 //
 //	client.Notification.Query().
-//		Select(notification.FieldCreatedAt).
+//		Select(notification.FieldUserID).
 //		Scan(ctx, &v)
 func (_q *NotificationQuery) Select(fields ...string) *NotificationSelect {
 	_q.ctx.Fields = append(_q.ctx.Fields, fields...)

@@ -14,10 +14,6 @@ const (
 	Label = "status_page_monitor"
 	// FieldID holds the string denoting the id field in the database.
 	FieldID = "id"
-	// FieldCreatedAt holds the string denoting the created_at field in the database.
-	FieldCreatedAt = "created_at"
-	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
-	FieldUpdatedAt = "updated_at"
 	// FieldStatusPageID holds the string denoting the status_page_id field in the database.
 	FieldStatusPageID = "status_page_id"
 	// FieldMonitorID holds the string denoting the monitor_id field in the database.
@@ -28,6 +24,10 @@ const (
 	FieldWeight = "weight"
 	// FieldSendURL holds the string denoting the send_url field in the database.
 	FieldSendURL = "send_url"
+	// FieldCreatedAt holds the string denoting the created_at field in the database.
+	FieldCreatedAt = "created_at"
+	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
+	FieldUpdatedAt = "updated_at"
 	// EdgeStatusPage holds the string denoting the status_page edge name in mutations.
 	EdgeStatusPage = "status_page"
 	// EdgeMonitor holds the string denoting the monitor edge name in mutations.
@@ -53,13 +53,13 @@ const (
 // Columns holds all SQL columns for statuspagemonitor fields.
 var Columns = []string{
 	FieldID,
-	FieldCreatedAt,
-	FieldUpdatedAt,
 	FieldStatusPageID,
 	FieldMonitorID,
 	FieldDisplayName,
 	FieldWeight,
 	FieldSendURL,
+	FieldCreatedAt,
+	FieldUpdatedAt,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -73,16 +73,16 @@ func ValidColumn(column string) bool {
 }
 
 var (
+	// DefaultWeight holds the default value on creation for the "weight" field.
+	DefaultWeight int
+	// DefaultSendURL holds the default value on creation for the "send_url" field.
+	DefaultSendURL bool
 	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
 	DefaultCreatedAt func() time.Time
 	// DefaultUpdatedAt holds the default value on creation for the "updated_at" field.
 	DefaultUpdatedAt func() time.Time
 	// UpdateDefaultUpdatedAt holds the default value on update for the "updated_at" field.
 	UpdateDefaultUpdatedAt func() time.Time
-	// DefaultWeight holds the default value on creation for the "weight" field.
-	DefaultWeight int
-	// DefaultSendURL holds the default value on creation for the "send_url" field.
-	DefaultSendURL bool
 )
 
 // OrderOption defines the ordering options for the StatusPageMonitor queries.
@@ -91,16 +91,6 @@ type OrderOption func(*sql.Selector)
 // ByID orders the results by the id field.
 func ByID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldID, opts...).ToFunc()
-}
-
-// ByCreatedAt orders the results by the created_at field.
-func ByCreatedAt(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldCreatedAt, opts...).ToFunc()
-}
-
-// ByUpdatedAt orders the results by the updated_at field.
-func ByUpdatedAt(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldUpdatedAt, opts...).ToFunc()
 }
 
 // ByStatusPageID orders the results by the status_page_id field.
@@ -126,6 +116,16 @@ func ByWeight(opts ...sql.OrderTermOption) OrderOption {
 // BySendURL orders the results by the send_url field.
 func BySendURL(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldSendURL, opts...).ToFunc()
+}
+
+// ByCreatedAt orders the results by the created_at field.
+func ByCreatedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCreatedAt, opts...).ToFunc()
+}
+
+// ByUpdatedAt orders the results by the updated_at field.
+func ByUpdatedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldUpdatedAt, opts...).ToFunc()
 }
 
 // ByStatusPageField orders the results by status_page field.

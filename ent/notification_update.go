@@ -30,12 +30,6 @@ func (_u *NotificationUpdate) Where(ps ...predicate.Notification) *NotificationU
 	return _u
 }
 
-// SetUpdatedAt sets the "updated_at" field.
-func (_u *NotificationUpdate) SetUpdatedAt(v time.Time) *NotificationUpdate {
-	_u.mutation.SetUpdatedAt(v)
-	return _u
-}
-
 // SetUserID sets the "user_id" field.
 func (_u *NotificationUpdate) SetUserID(v int) *NotificationUpdate {
 	_u.mutation.SetUserID(v)
@@ -115,6 +109,12 @@ func (_u *NotificationUpdate) SetConfig(v map[string]interface{}) *NotificationU
 // ClearConfig clears the value of the "config" field.
 func (_u *NotificationUpdate) ClearConfig() *NotificationUpdate {
 	_u.mutation.ClearConfig()
+	return _u
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (_u *NotificationUpdate) SetUpdatedAt(v time.Time) *NotificationUpdate {
+	_u.mutation.SetUpdatedAt(v)
 	return _u
 }
 
@@ -236,9 +236,6 @@ func (_u *NotificationUpdate) sqlSave(ctx context.Context) (_node int, err error
 			}
 		}
 	}
-	if value, ok := _u.mutation.UpdatedAt(); ok {
-		_spec.SetField(notification.FieldUpdatedAt, field.TypeTime, value)
-	}
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(notification.FieldName, field.TypeString, value)
 	}
@@ -256,6 +253,9 @@ func (_u *NotificationUpdate) sqlSave(ctx context.Context) (_node int, err error
 	}
 	if _u.mutation.ConfigCleared() {
 		_spec.ClearField(notification.FieldConfig, field.TypeJSON)
+	}
+	if value, ok := _u.mutation.UpdatedAt(); ok {
+		_spec.SetField(notification.FieldUpdatedAt, field.TypeTime, value)
 	}
 	if _u.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -351,12 +351,6 @@ type NotificationUpdateOne struct {
 	mutation *NotificationMutation
 }
 
-// SetUpdatedAt sets the "updated_at" field.
-func (_u *NotificationUpdateOne) SetUpdatedAt(v time.Time) *NotificationUpdateOne {
-	_u.mutation.SetUpdatedAt(v)
-	return _u
-}
-
 // SetUserID sets the "user_id" field.
 func (_u *NotificationUpdateOne) SetUserID(v int) *NotificationUpdateOne {
 	_u.mutation.SetUserID(v)
@@ -436,6 +430,12 @@ func (_u *NotificationUpdateOne) SetConfig(v map[string]interface{}) *Notificati
 // ClearConfig clears the value of the "config" field.
 func (_u *NotificationUpdateOne) ClearConfig() *NotificationUpdateOne {
 	_u.mutation.ClearConfig()
+	return _u
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (_u *NotificationUpdateOne) SetUpdatedAt(v time.Time) *NotificationUpdateOne {
+	_u.mutation.SetUpdatedAt(v)
 	return _u
 }
 
@@ -587,9 +587,6 @@ func (_u *NotificationUpdateOne) sqlSave(ctx context.Context) (_node *Notificati
 			}
 		}
 	}
-	if value, ok := _u.mutation.UpdatedAt(); ok {
-		_spec.SetField(notification.FieldUpdatedAt, field.TypeTime, value)
-	}
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(notification.FieldName, field.TypeString, value)
 	}
@@ -607,6 +604,9 @@ func (_u *NotificationUpdateOne) sqlSave(ctx context.Context) (_node *Notificati
 	}
 	if _u.mutation.ConfigCleared() {
 		_spec.ClearField(notification.FieldConfig, field.TypeJSON)
+	}
+	if value, ok := _u.mutation.UpdatedAt(); ok {
+		_spec.SetField(notification.FieldUpdatedAt, field.TypeTime, value)
 	}
 	if _u.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{

@@ -16,12 +16,6 @@ type Incident struct {
 
 func (Incident) Fields() []ent.Field {
 	return []ent.Field{
-		field.Time("created_at").
-			Default(time.Now).
-			Immutable(),
-		field.Time("updated_at").
-			Default(time.Now).
-			UpdateDefault(time.Now),
 		field.Int("monitor_id"),
 		field.Int("status_page_id").
 			Optional().
@@ -47,6 +41,12 @@ func (Incident) Fields() []ent.Field {
 			Nillable(),
 		field.Bool("is_pinned").
 			Default(true),
+		field.Time("created_at").
+			Default(time.Now).
+			Immutable(),
+		field.Time("updated_at").
+			Default(time.Now).
+			UpdateDefault(time.Now),
 	}
 }
 

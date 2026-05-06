@@ -15,12 +15,6 @@ type StatusPageMonitor struct {
 
 func (StatusPageMonitor) Fields() []ent.Field {
 	return []ent.Field{
-		field.Time("created_at").
-			Default(time.Now).
-			Immutable(),
-		field.Time("updated_at").
-			Default(time.Now).
-			UpdateDefault(time.Now),
 		field.Int("status_page_id"),
 		field.Int("monitor_id"),
 		field.String("display_name").
@@ -30,6 +24,12 @@ func (StatusPageMonitor) Fields() []ent.Field {
 			Default(1000),
 		field.Bool("send_url").
 			Default(false),
+		field.Time("created_at").
+			Default(time.Now).
+			Immutable(),
+		field.Time("updated_at").
+			Default(time.Now).
+			UpdateDefault(time.Now),
 	}
 }
 

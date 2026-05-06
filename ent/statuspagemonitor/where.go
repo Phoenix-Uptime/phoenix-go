@@ -55,16 +55,6 @@ func IDLTE(id int) predicate.StatusPageMonitor {
 	return predicate.StatusPageMonitor(sql.FieldLTE(FieldID, id))
 }
 
-// CreatedAt applies equality check predicate on the "created_at" field. It's identical to CreatedAtEQ.
-func CreatedAt(v time.Time) predicate.StatusPageMonitor {
-	return predicate.StatusPageMonitor(sql.FieldEQ(FieldCreatedAt, v))
-}
-
-// UpdatedAt applies equality check predicate on the "updated_at" field. It's identical to UpdatedAtEQ.
-func UpdatedAt(v time.Time) predicate.StatusPageMonitor {
-	return predicate.StatusPageMonitor(sql.FieldEQ(FieldUpdatedAt, v))
-}
-
 // StatusPageID applies equality check predicate on the "status_page_id" field. It's identical to StatusPageIDEQ.
 func StatusPageID(v int) predicate.StatusPageMonitor {
 	return predicate.StatusPageMonitor(sql.FieldEQ(FieldStatusPageID, v))
@@ -90,84 +80,14 @@ func SendURL(v bool) predicate.StatusPageMonitor {
 	return predicate.StatusPageMonitor(sql.FieldEQ(FieldSendURL, v))
 }
 
-// CreatedAtEQ applies the EQ predicate on the "created_at" field.
-func CreatedAtEQ(v time.Time) predicate.StatusPageMonitor {
+// CreatedAt applies equality check predicate on the "created_at" field. It's identical to CreatedAtEQ.
+func CreatedAt(v time.Time) predicate.StatusPageMonitor {
 	return predicate.StatusPageMonitor(sql.FieldEQ(FieldCreatedAt, v))
 }
 
-// CreatedAtNEQ applies the NEQ predicate on the "created_at" field.
-func CreatedAtNEQ(v time.Time) predicate.StatusPageMonitor {
-	return predicate.StatusPageMonitor(sql.FieldNEQ(FieldCreatedAt, v))
-}
-
-// CreatedAtIn applies the In predicate on the "created_at" field.
-func CreatedAtIn(vs ...time.Time) predicate.StatusPageMonitor {
-	return predicate.StatusPageMonitor(sql.FieldIn(FieldCreatedAt, vs...))
-}
-
-// CreatedAtNotIn applies the NotIn predicate on the "created_at" field.
-func CreatedAtNotIn(vs ...time.Time) predicate.StatusPageMonitor {
-	return predicate.StatusPageMonitor(sql.FieldNotIn(FieldCreatedAt, vs...))
-}
-
-// CreatedAtGT applies the GT predicate on the "created_at" field.
-func CreatedAtGT(v time.Time) predicate.StatusPageMonitor {
-	return predicate.StatusPageMonitor(sql.FieldGT(FieldCreatedAt, v))
-}
-
-// CreatedAtGTE applies the GTE predicate on the "created_at" field.
-func CreatedAtGTE(v time.Time) predicate.StatusPageMonitor {
-	return predicate.StatusPageMonitor(sql.FieldGTE(FieldCreatedAt, v))
-}
-
-// CreatedAtLT applies the LT predicate on the "created_at" field.
-func CreatedAtLT(v time.Time) predicate.StatusPageMonitor {
-	return predicate.StatusPageMonitor(sql.FieldLT(FieldCreatedAt, v))
-}
-
-// CreatedAtLTE applies the LTE predicate on the "created_at" field.
-func CreatedAtLTE(v time.Time) predicate.StatusPageMonitor {
-	return predicate.StatusPageMonitor(sql.FieldLTE(FieldCreatedAt, v))
-}
-
-// UpdatedAtEQ applies the EQ predicate on the "updated_at" field.
-func UpdatedAtEQ(v time.Time) predicate.StatusPageMonitor {
+// UpdatedAt applies equality check predicate on the "updated_at" field. It's identical to UpdatedAtEQ.
+func UpdatedAt(v time.Time) predicate.StatusPageMonitor {
 	return predicate.StatusPageMonitor(sql.FieldEQ(FieldUpdatedAt, v))
-}
-
-// UpdatedAtNEQ applies the NEQ predicate on the "updated_at" field.
-func UpdatedAtNEQ(v time.Time) predicate.StatusPageMonitor {
-	return predicate.StatusPageMonitor(sql.FieldNEQ(FieldUpdatedAt, v))
-}
-
-// UpdatedAtIn applies the In predicate on the "updated_at" field.
-func UpdatedAtIn(vs ...time.Time) predicate.StatusPageMonitor {
-	return predicate.StatusPageMonitor(sql.FieldIn(FieldUpdatedAt, vs...))
-}
-
-// UpdatedAtNotIn applies the NotIn predicate on the "updated_at" field.
-func UpdatedAtNotIn(vs ...time.Time) predicate.StatusPageMonitor {
-	return predicate.StatusPageMonitor(sql.FieldNotIn(FieldUpdatedAt, vs...))
-}
-
-// UpdatedAtGT applies the GT predicate on the "updated_at" field.
-func UpdatedAtGT(v time.Time) predicate.StatusPageMonitor {
-	return predicate.StatusPageMonitor(sql.FieldGT(FieldUpdatedAt, v))
-}
-
-// UpdatedAtGTE applies the GTE predicate on the "updated_at" field.
-func UpdatedAtGTE(v time.Time) predicate.StatusPageMonitor {
-	return predicate.StatusPageMonitor(sql.FieldGTE(FieldUpdatedAt, v))
-}
-
-// UpdatedAtLT applies the LT predicate on the "updated_at" field.
-func UpdatedAtLT(v time.Time) predicate.StatusPageMonitor {
-	return predicate.StatusPageMonitor(sql.FieldLT(FieldUpdatedAt, v))
-}
-
-// UpdatedAtLTE applies the LTE predicate on the "updated_at" field.
-func UpdatedAtLTE(v time.Time) predicate.StatusPageMonitor {
-	return predicate.StatusPageMonitor(sql.FieldLTE(FieldUpdatedAt, v))
 }
 
 // StatusPageIDEQ applies the EQ predicate on the "status_page_id" field.
@@ -333,6 +253,86 @@ func SendURLEQ(v bool) predicate.StatusPageMonitor {
 // SendURLNEQ applies the NEQ predicate on the "send_url" field.
 func SendURLNEQ(v bool) predicate.StatusPageMonitor {
 	return predicate.StatusPageMonitor(sql.FieldNEQ(FieldSendURL, v))
+}
+
+// CreatedAtEQ applies the EQ predicate on the "created_at" field.
+func CreatedAtEQ(v time.Time) predicate.StatusPageMonitor {
+	return predicate.StatusPageMonitor(sql.FieldEQ(FieldCreatedAt, v))
+}
+
+// CreatedAtNEQ applies the NEQ predicate on the "created_at" field.
+func CreatedAtNEQ(v time.Time) predicate.StatusPageMonitor {
+	return predicate.StatusPageMonitor(sql.FieldNEQ(FieldCreatedAt, v))
+}
+
+// CreatedAtIn applies the In predicate on the "created_at" field.
+func CreatedAtIn(vs ...time.Time) predicate.StatusPageMonitor {
+	return predicate.StatusPageMonitor(sql.FieldIn(FieldCreatedAt, vs...))
+}
+
+// CreatedAtNotIn applies the NotIn predicate on the "created_at" field.
+func CreatedAtNotIn(vs ...time.Time) predicate.StatusPageMonitor {
+	return predicate.StatusPageMonitor(sql.FieldNotIn(FieldCreatedAt, vs...))
+}
+
+// CreatedAtGT applies the GT predicate on the "created_at" field.
+func CreatedAtGT(v time.Time) predicate.StatusPageMonitor {
+	return predicate.StatusPageMonitor(sql.FieldGT(FieldCreatedAt, v))
+}
+
+// CreatedAtGTE applies the GTE predicate on the "created_at" field.
+func CreatedAtGTE(v time.Time) predicate.StatusPageMonitor {
+	return predicate.StatusPageMonitor(sql.FieldGTE(FieldCreatedAt, v))
+}
+
+// CreatedAtLT applies the LT predicate on the "created_at" field.
+func CreatedAtLT(v time.Time) predicate.StatusPageMonitor {
+	return predicate.StatusPageMonitor(sql.FieldLT(FieldCreatedAt, v))
+}
+
+// CreatedAtLTE applies the LTE predicate on the "created_at" field.
+func CreatedAtLTE(v time.Time) predicate.StatusPageMonitor {
+	return predicate.StatusPageMonitor(sql.FieldLTE(FieldCreatedAt, v))
+}
+
+// UpdatedAtEQ applies the EQ predicate on the "updated_at" field.
+func UpdatedAtEQ(v time.Time) predicate.StatusPageMonitor {
+	return predicate.StatusPageMonitor(sql.FieldEQ(FieldUpdatedAt, v))
+}
+
+// UpdatedAtNEQ applies the NEQ predicate on the "updated_at" field.
+func UpdatedAtNEQ(v time.Time) predicate.StatusPageMonitor {
+	return predicate.StatusPageMonitor(sql.FieldNEQ(FieldUpdatedAt, v))
+}
+
+// UpdatedAtIn applies the In predicate on the "updated_at" field.
+func UpdatedAtIn(vs ...time.Time) predicate.StatusPageMonitor {
+	return predicate.StatusPageMonitor(sql.FieldIn(FieldUpdatedAt, vs...))
+}
+
+// UpdatedAtNotIn applies the NotIn predicate on the "updated_at" field.
+func UpdatedAtNotIn(vs ...time.Time) predicate.StatusPageMonitor {
+	return predicate.StatusPageMonitor(sql.FieldNotIn(FieldUpdatedAt, vs...))
+}
+
+// UpdatedAtGT applies the GT predicate on the "updated_at" field.
+func UpdatedAtGT(v time.Time) predicate.StatusPageMonitor {
+	return predicate.StatusPageMonitor(sql.FieldGT(FieldUpdatedAt, v))
+}
+
+// UpdatedAtGTE applies the GTE predicate on the "updated_at" field.
+func UpdatedAtGTE(v time.Time) predicate.StatusPageMonitor {
+	return predicate.StatusPageMonitor(sql.FieldGTE(FieldUpdatedAt, v))
+}
+
+// UpdatedAtLT applies the LT predicate on the "updated_at" field.
+func UpdatedAtLT(v time.Time) predicate.StatusPageMonitor {
+	return predicate.StatusPageMonitor(sql.FieldLT(FieldUpdatedAt, v))
+}
+
+// UpdatedAtLTE applies the LTE predicate on the "updated_at" field.
+func UpdatedAtLTE(v time.Time) predicate.StatusPageMonitor {
+	return predicate.StatusPageMonitor(sql.FieldLTE(FieldUpdatedAt, v))
 }
 
 // HasStatusPage applies the HasEdge predicate on the "status_page" edge.

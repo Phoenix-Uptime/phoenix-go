@@ -334,12 +334,12 @@ func (_q *StatusPageMonitorQuery) WithMonitor(opts ...func(*MonitorQuery)) *Stat
 // Example:
 //
 //	var v []struct {
-//		CreatedAt time.Time `json:"created_at,omitempty"`
+//		StatusPageID int `json:"status_page_id,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.StatusPageMonitor.Query().
-//		GroupBy(statuspagemonitor.FieldCreatedAt).
+//		GroupBy(statuspagemonitor.FieldStatusPageID).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (_q *StatusPageMonitorQuery) GroupBy(field string, fields ...string) *StatusPageMonitorGroupBy {
@@ -357,11 +357,11 @@ func (_q *StatusPageMonitorQuery) GroupBy(field string, fields ...string) *Statu
 // Example:
 //
 //	var v []struct {
-//		CreatedAt time.Time `json:"created_at,omitempty"`
+//		StatusPageID int `json:"status_page_id,omitempty"`
 //	}
 //
 //	client.StatusPageMonitor.Query().
-//		Select(statuspagemonitor.FieldCreatedAt).
+//		Select(statuspagemonitor.FieldStatusPageID).
 //		Scan(ctx, &v)
 func (_q *StatusPageMonitorQuery) Select(fields ...string) *StatusPageMonitorSelect {
 	_q.ctx.Fields = append(_q.ctx.Fields, fields...)

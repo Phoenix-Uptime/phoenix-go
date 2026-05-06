@@ -16,12 +16,6 @@ type User struct {
 
 func (User) Fields() []ent.Field {
 	return []ent.Field{
-		field.Time("created_at").
-			Default(time.Now).
-			Immutable(),
-		field.Time("updated_at").
-			Default(time.Now).
-			UpdateDefault(time.Now),
 		field.String("username").
 			NotEmpty().
 			Unique(),
@@ -50,6 +44,12 @@ func (User) Fields() []ent.Field {
 		field.String("telegram_bot_token").
 			Optional().
 			Sensitive(),
+		field.Time("created_at").
+			Default(time.Now).
+			Immutable(),
+		field.Time("updated_at").
+			Default(time.Now).
+			UpdateDefault(time.Now),
 	}
 }
 

@@ -14,10 +14,6 @@ const (
 	Label = "status_page"
 	// FieldID holds the string denoting the id field in the database.
 	FieldID = "id"
-	// FieldCreatedAt holds the string denoting the created_at field in the database.
-	FieldCreatedAt = "created_at"
-	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
-	FieldUpdatedAt = "updated_at"
 	// FieldUserID holds the string denoting the user_id field in the database.
 	FieldUserID = "user_id"
 	// FieldSlug holds the string denoting the slug field in the database.
@@ -46,6 +42,10 @@ const (
 	FieldShowPoweredBy = "show_powered_by"
 	// FieldAutoRefreshInterval holds the string denoting the auto_refresh_interval field in the database.
 	FieldAutoRefreshInterval = "auto_refresh_interval"
+	// FieldCreatedAt holds the string denoting the created_at field in the database.
+	FieldCreatedAt = "created_at"
+	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
+	FieldUpdatedAt = "updated_at"
 	// EdgeUser holds the string denoting the user edge name in mutations.
 	EdgeUser = "user"
 	// EdgeStatusPageMonitors holds the string denoting the status_page_monitors edge name in mutations.
@@ -89,8 +89,6 @@ const (
 // Columns holds all SQL columns for statuspage fields.
 var Columns = []string{
 	FieldID,
-	FieldCreatedAt,
-	FieldUpdatedAt,
 	FieldUserID,
 	FieldSlug,
 	FieldName,
@@ -105,6 +103,8 @@ var Columns = []string{
 	FieldShowUptimePercentage,
 	FieldShowPoweredBy,
 	FieldAutoRefreshInterval,
+	FieldCreatedAt,
+	FieldUpdatedAt,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -118,12 +118,6 @@ func ValidColumn(column string) bool {
 }
 
 var (
-	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
-	DefaultCreatedAt func() time.Time
-	// DefaultUpdatedAt holds the default value on creation for the "updated_at" field.
-	DefaultUpdatedAt func() time.Time
-	// UpdateDefaultUpdatedAt holds the default value on update for the "updated_at" field.
-	UpdateDefaultUpdatedAt func() time.Time
 	// SlugValidator is a validator for the "slug" field. It is called by the builders before save.
 	SlugValidator func(string) error
 	// NameValidator is a validator for the "name" field. It is called by the builders before save.
@@ -142,6 +136,12 @@ var (
 	DefaultShowPoweredBy bool
 	// DefaultAutoRefreshInterval holds the default value on creation for the "auto_refresh_interval" field.
 	DefaultAutoRefreshInterval int
+	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
+	DefaultCreatedAt func() time.Time
+	// DefaultUpdatedAt holds the default value on creation for the "updated_at" field.
+	DefaultUpdatedAt func() time.Time
+	// UpdateDefaultUpdatedAt holds the default value on update for the "updated_at" field.
+	UpdateDefaultUpdatedAt func() time.Time
 )
 
 // OrderOption defines the ordering options for the StatusPage queries.
@@ -150,16 +150,6 @@ type OrderOption func(*sql.Selector)
 // ByID orders the results by the id field.
 func ByID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldID, opts...).ToFunc()
-}
-
-// ByCreatedAt orders the results by the created_at field.
-func ByCreatedAt(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldCreatedAt, opts...).ToFunc()
-}
-
-// ByUpdatedAt orders the results by the updated_at field.
-func ByUpdatedAt(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldUpdatedAt, opts...).ToFunc()
 }
 
 // ByUserID orders the results by the user_id field.
@@ -230,6 +220,16 @@ func ByShowPoweredBy(opts ...sql.OrderTermOption) OrderOption {
 // ByAutoRefreshInterval orders the results by the auto_refresh_interval field.
 func ByAutoRefreshInterval(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldAutoRefreshInterval, opts...).ToFunc()
+}
+
+// ByCreatedAt orders the results by the created_at field.
+func ByCreatedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCreatedAt, opts...).ToFunc()
+}
+
+// ByUpdatedAt orders the results by the updated_at field.
+func ByUpdatedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldUpdatedAt, opts...).ToFunc()
 }
 
 // ByUserField orders the results by user field.

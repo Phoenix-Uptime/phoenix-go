@@ -37,12 +37,6 @@ func (_u *MonitorUpdate) Where(ps ...predicate.Monitor) *MonitorUpdate {
 	return _u
 }
 
-// SetUpdatedAt sets the "updated_at" field.
-func (_u *MonitorUpdate) SetUpdatedAt(v time.Time) *MonitorUpdate {
-	_u.mutation.SetUpdatedAt(v)
-	return _u
-}
-
 // SetUserID sets the "user_id" field.
 func (_u *MonitorUpdate) SetUserID(v int) *MonitorUpdate {
 	_u.mutation.SetUserID(v)
@@ -482,6 +476,12 @@ func (_u *MonitorUpdate) ClearConfig() *MonitorUpdate {
 	return _u
 }
 
+// SetUpdatedAt sets the "updated_at" field.
+func (_u *MonitorUpdate) SetUpdatedAt(v time.Time) *MonitorUpdate {
+	_u.mutation.SetUpdatedAt(v)
+	return _u
+}
+
 // SetUser sets the "user" edge to the User entity.
 func (_u *MonitorUpdate) SetUser(v *User) *MonitorUpdate {
 	return _u.SetUserID(v.ID)
@@ -826,9 +826,6 @@ func (_u *MonitorUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 			}
 		}
 	}
-	if value, ok := _u.mutation.UpdatedAt(); ok {
-		_spec.SetField(monitor.FieldUpdatedAt, field.TypeTime, value)
-	}
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(monitor.FieldName, field.TypeString, value)
 	}
@@ -956,6 +953,9 @@ func (_u *MonitorUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if _u.mutation.ConfigCleared() {
 		_spec.ClearField(monitor.FieldConfig, field.TypeJSON)
+	}
+	if value, ok := _u.mutation.UpdatedAt(); ok {
+		_spec.SetField(monitor.FieldUpdatedAt, field.TypeTime, value)
 	}
 	if _u.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -1319,12 +1319,6 @@ type MonitorUpdateOne struct {
 	fields   []string
 	hooks    []Hook
 	mutation *MonitorMutation
-}
-
-// SetUpdatedAt sets the "updated_at" field.
-func (_u *MonitorUpdateOne) SetUpdatedAt(v time.Time) *MonitorUpdateOne {
-	_u.mutation.SetUpdatedAt(v)
-	return _u
 }
 
 // SetUserID sets the "user_id" field.
@@ -1766,6 +1760,12 @@ func (_u *MonitorUpdateOne) ClearConfig() *MonitorUpdateOne {
 	return _u
 }
 
+// SetUpdatedAt sets the "updated_at" field.
+func (_u *MonitorUpdateOne) SetUpdatedAt(v time.Time) *MonitorUpdateOne {
+	_u.mutation.SetUpdatedAt(v)
+	return _u
+}
+
 // SetUser sets the "user" edge to the User entity.
 func (_u *MonitorUpdateOne) SetUser(v *User) *MonitorUpdateOne {
 	return _u.SetUserID(v.ID)
@@ -2140,9 +2140,6 @@ func (_u *MonitorUpdateOne) sqlSave(ctx context.Context) (_node *Monitor, err er
 			}
 		}
 	}
-	if value, ok := _u.mutation.UpdatedAt(); ok {
-		_spec.SetField(monitor.FieldUpdatedAt, field.TypeTime, value)
-	}
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(monitor.FieldName, field.TypeString, value)
 	}
@@ -2270,6 +2267,9 @@ func (_u *MonitorUpdateOne) sqlSave(ctx context.Context) (_node *Monitor, err er
 	}
 	if _u.mutation.ConfigCleared() {
 		_spec.ClearField(monitor.FieldConfig, field.TypeJSON)
+	}
+	if value, ok := _u.mutation.UpdatedAt(); ok {
+		_spec.SetField(monitor.FieldUpdatedAt, field.TypeTime, value)
 	}
 	if _u.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{

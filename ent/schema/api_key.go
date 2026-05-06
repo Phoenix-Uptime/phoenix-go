@@ -15,12 +15,6 @@ type APIKey struct {
 
 func (APIKey) Fields() []ent.Field {
 	return []ent.Field{
-		field.Time("created_at").
-			Default(time.Now).
-			Immutable(),
-		field.Time("updated_at").
-			Default(time.Now).
-			UpdateDefault(time.Now),
 		field.Int("user_id"),
 		field.String("name").
 			NotEmpty(),
@@ -36,6 +30,12 @@ func (APIKey) Fields() []ent.Field {
 		field.Time("last_used_at").
 			Optional().
 			Nillable(),
+		field.Time("created_at").
+			Default(time.Now).
+			Immutable(),
+		field.Time("updated_at").
+			Default(time.Now).
+			UpdateDefault(time.Now),
 	}
 }
 

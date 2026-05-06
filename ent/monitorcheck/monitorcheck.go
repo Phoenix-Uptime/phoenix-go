@@ -15,10 +15,6 @@ const (
 	Label = "monitor_check"
 	// FieldID holds the string denoting the id field in the database.
 	FieldID = "id"
-	// FieldCreatedAt holds the string denoting the created_at field in the database.
-	FieldCreatedAt = "created_at"
-	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
-	FieldUpdatedAt = "updated_at"
 	// FieldMonitorID holds the string denoting the monitor_id field in the database.
 	FieldMonitorID = "monitor_id"
 	// FieldStatus holds the string denoting the status field in the database.
@@ -41,6 +37,10 @@ const (
 	FieldImportant = "important"
 	// FieldResponse holds the string denoting the response field in the database.
 	FieldResponse = "response"
+	// FieldCreatedAt holds the string denoting the created_at field in the database.
+	FieldCreatedAt = "created_at"
+	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
+	FieldUpdatedAt = "updated_at"
 	// EdgeMonitor holds the string denoting the monitor edge name in mutations.
 	EdgeMonitor = "monitor"
 	// Table holds the table name of the monitorcheck in the database.
@@ -57,8 +57,6 @@ const (
 // Columns holds all SQL columns for monitorcheck fields.
 var Columns = []string{
 	FieldID,
-	FieldCreatedAt,
-	FieldUpdatedAt,
 	FieldMonitorID,
 	FieldStatus,
 	FieldCheckedAt,
@@ -70,6 +68,8 @@ var Columns = []string{
 	FieldDurationSeconds,
 	FieldImportant,
 	FieldResponse,
+	FieldCreatedAt,
+	FieldUpdatedAt,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -83,12 +83,6 @@ func ValidColumn(column string) bool {
 }
 
 var (
-	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
-	DefaultCreatedAt func() time.Time
-	// DefaultUpdatedAt holds the default value on creation for the "updated_at" field.
-	DefaultUpdatedAt func() time.Time
-	// UpdateDefaultUpdatedAt holds the default value on update for the "updated_at" field.
-	UpdateDefaultUpdatedAt func() time.Time
 	// DefaultCheckedAt holds the default value on creation for the "checked_at" field.
 	DefaultCheckedAt func() time.Time
 	// DefaultResponseTimeMs holds the default value on creation for the "response_time_ms" field.
@@ -99,6 +93,12 @@ var (
 	DefaultDurationSeconds int
 	// DefaultImportant holds the default value on creation for the "important" field.
 	DefaultImportant bool
+	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
+	DefaultCreatedAt func() time.Time
+	// DefaultUpdatedAt holds the default value on creation for the "updated_at" field.
+	DefaultUpdatedAt func() time.Time
+	// UpdateDefaultUpdatedAt holds the default value on update for the "updated_at" field.
+	UpdateDefaultUpdatedAt func() time.Time
 )
 
 // Status defines the type for the "status" enum field.
@@ -135,16 +135,6 @@ type OrderOption func(*sql.Selector)
 // ByID orders the results by the id field.
 func ByID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldID, opts...).ToFunc()
-}
-
-// ByCreatedAt orders the results by the created_at field.
-func ByCreatedAt(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldCreatedAt, opts...).ToFunc()
-}
-
-// ByUpdatedAt orders the results by the updated_at field.
-func ByUpdatedAt(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldUpdatedAt, opts...).ToFunc()
 }
 
 // ByMonitorID orders the results by the monitor_id field.
@@ -200,6 +190,16 @@ func ByImportant(opts ...sql.OrderTermOption) OrderOption {
 // ByResponse orders the results by the response field.
 func ByResponse(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldResponse, opts...).ToFunc()
+}
+
+// ByCreatedAt orders the results by the created_at field.
+func ByCreatedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCreatedAt, opts...).ToFunc()
+}
+
+// ByUpdatedAt orders the results by the updated_at field.
+func ByUpdatedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldUpdatedAt, opts...).ToFunc()
 }
 
 // ByMonitorField orders the results by monitor field.

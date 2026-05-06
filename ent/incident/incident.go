@@ -15,10 +15,6 @@ const (
 	Label = "incident"
 	// FieldID holds the string denoting the id field in the database.
 	FieldID = "id"
-	// FieldCreatedAt holds the string denoting the created_at field in the database.
-	FieldCreatedAt = "created_at"
-	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
-	FieldUpdatedAt = "updated_at"
 	// FieldMonitorID holds the string denoting the monitor_id field in the database.
 	FieldMonitorID = "monitor_id"
 	// FieldStatusPageID holds the string denoting the status_page_id field in the database.
@@ -39,6 +35,10 @@ const (
 	FieldEndedAt = "ended_at"
 	// FieldIsPinned holds the string denoting the is_pinned field in the database.
 	FieldIsPinned = "is_pinned"
+	// FieldCreatedAt holds the string denoting the created_at field in the database.
+	FieldCreatedAt = "created_at"
+	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
+	FieldUpdatedAt = "updated_at"
 	// EdgeMonitor holds the string denoting the monitor edge name in mutations.
 	EdgeMonitor = "monitor"
 	// EdgeStatusPage holds the string denoting the status_page edge name in mutations.
@@ -82,8 +82,6 @@ const (
 // Columns holds all SQL columns for incident fields.
 var Columns = []string{
 	FieldID,
-	FieldCreatedAt,
-	FieldUpdatedAt,
 	FieldMonitorID,
 	FieldStatusPageID,
 	FieldResolvedByID,
@@ -94,6 +92,8 @@ var Columns = []string{
 	FieldStartedAt,
 	FieldEndedAt,
 	FieldIsPinned,
+	FieldCreatedAt,
+	FieldUpdatedAt,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -107,18 +107,18 @@ func ValidColumn(column string) bool {
 }
 
 var (
-	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
-	DefaultCreatedAt func() time.Time
-	// DefaultUpdatedAt holds the default value on creation for the "updated_at" field.
-	DefaultUpdatedAt func() time.Time
-	// UpdateDefaultUpdatedAt holds the default value on update for the "updated_at" field.
-	UpdateDefaultUpdatedAt func() time.Time
 	// TitleValidator is a validator for the "title" field. It is called by the builders before save.
 	TitleValidator func(string) error
 	// DefaultStartedAt holds the default value on creation for the "started_at" field.
 	DefaultStartedAt func() time.Time
 	// DefaultIsPinned holds the default value on creation for the "is_pinned" field.
 	DefaultIsPinned bool
+	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
+	DefaultCreatedAt func() time.Time
+	// DefaultUpdatedAt holds the default value on creation for the "updated_at" field.
+	DefaultUpdatedAt func() time.Time
+	// UpdateDefaultUpdatedAt holds the default value on update for the "updated_at" field.
+	UpdateDefaultUpdatedAt func() time.Time
 )
 
 // Status defines the type for the "status" enum field.
@@ -183,16 +183,6 @@ func ByID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldID, opts...).ToFunc()
 }
 
-// ByCreatedAt orders the results by the created_at field.
-func ByCreatedAt(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldCreatedAt, opts...).ToFunc()
-}
-
-// ByUpdatedAt orders the results by the updated_at field.
-func ByUpdatedAt(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldUpdatedAt, opts...).ToFunc()
-}
-
 // ByMonitorID orders the results by the monitor_id field.
 func ByMonitorID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldMonitorID, opts...).ToFunc()
@@ -241,6 +231,16 @@ func ByEndedAt(opts ...sql.OrderTermOption) OrderOption {
 // ByIsPinned orders the results by the is_pinned field.
 func ByIsPinned(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldIsPinned, opts...).ToFunc()
+}
+
+// ByCreatedAt orders the results by the created_at field.
+func ByCreatedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCreatedAt, opts...).ToFunc()
+}
+
+// ByUpdatedAt orders the results by the updated_at field.
+func ByUpdatedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldUpdatedAt, opts...).ToFunc()
 }
 
 // ByMonitorField orders the results by monitor field.

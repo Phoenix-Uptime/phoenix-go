@@ -29,12 +29,6 @@ func (_u *MonitorCheckUpdate) Where(ps ...predicate.MonitorCheck) *MonitorCheckU
 	return _u
 }
 
-// SetUpdatedAt sets the "updated_at" field.
-func (_u *MonitorCheckUpdate) SetUpdatedAt(v time.Time) *MonitorCheckUpdate {
-	_u.mutation.SetUpdatedAt(v)
-	return _u
-}
-
 // SetMonitorID sets the "monitor_id" field.
 func (_u *MonitorCheckUpdate) SetMonitorID(v int) *MonitorCheckUpdate {
 	_u.mutation.SetMonitorID(v)
@@ -241,6 +235,12 @@ func (_u *MonitorCheckUpdate) ClearResponse() *MonitorCheckUpdate {
 	return _u
 }
 
+// SetUpdatedAt sets the "updated_at" field.
+func (_u *MonitorCheckUpdate) SetUpdatedAt(v time.Time) *MonitorCheckUpdate {
+	_u.mutation.SetUpdatedAt(v)
+	return _u
+}
+
 // SetMonitor sets the "monitor" edge to the Monitor entity.
 func (_u *MonitorCheckUpdate) SetMonitor(v *Monitor) *MonitorCheckUpdate {
 	return _u.SetMonitorID(v.ID)
@@ -318,9 +318,6 @@ func (_u *MonitorCheckUpdate) sqlSave(ctx context.Context) (_node int, err error
 			}
 		}
 	}
-	if value, ok := _u.mutation.UpdatedAt(); ok {
-		_spec.SetField(monitorcheck.FieldUpdatedAt, field.TypeTime, value)
-	}
 	if value, ok := _u.mutation.Status(); ok {
 		_spec.SetField(monitorcheck.FieldStatus, field.TypeEnum, value)
 	}
@@ -375,6 +372,9 @@ func (_u *MonitorCheckUpdate) sqlSave(ctx context.Context) (_node int, err error
 	if _u.mutation.ResponseCleared() {
 		_spec.ClearField(monitorcheck.FieldResponse, field.TypeString)
 	}
+	if value, ok := _u.mutation.UpdatedAt(); ok {
+		_spec.SetField(monitorcheck.FieldUpdatedAt, field.TypeTime, value)
+	}
 	if _u.mutation.MonitorCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
@@ -422,12 +422,6 @@ type MonitorCheckUpdateOne struct {
 	fields   []string
 	hooks    []Hook
 	mutation *MonitorCheckMutation
-}
-
-// SetUpdatedAt sets the "updated_at" field.
-func (_u *MonitorCheckUpdateOne) SetUpdatedAt(v time.Time) *MonitorCheckUpdateOne {
-	_u.mutation.SetUpdatedAt(v)
-	return _u
 }
 
 // SetMonitorID sets the "monitor_id" field.
@@ -636,6 +630,12 @@ func (_u *MonitorCheckUpdateOne) ClearResponse() *MonitorCheckUpdateOne {
 	return _u
 }
 
+// SetUpdatedAt sets the "updated_at" field.
+func (_u *MonitorCheckUpdateOne) SetUpdatedAt(v time.Time) *MonitorCheckUpdateOne {
+	_u.mutation.SetUpdatedAt(v)
+	return _u
+}
+
 // SetMonitor sets the "monitor" edge to the Monitor entity.
 func (_u *MonitorCheckUpdateOne) SetMonitor(v *Monitor) *MonitorCheckUpdateOne {
 	return _u.SetMonitorID(v.ID)
@@ -743,9 +743,6 @@ func (_u *MonitorCheckUpdateOne) sqlSave(ctx context.Context) (_node *MonitorChe
 			}
 		}
 	}
-	if value, ok := _u.mutation.UpdatedAt(); ok {
-		_spec.SetField(monitorcheck.FieldUpdatedAt, field.TypeTime, value)
-	}
 	if value, ok := _u.mutation.Status(); ok {
 		_spec.SetField(monitorcheck.FieldStatus, field.TypeEnum, value)
 	}
@@ -799,6 +796,9 @@ func (_u *MonitorCheckUpdateOne) sqlSave(ctx context.Context) (_node *MonitorChe
 	}
 	if _u.mutation.ResponseCleared() {
 		_spec.ClearField(monitorcheck.FieldResponse, field.TypeString)
+	}
+	if value, ok := _u.mutation.UpdatedAt(); ok {
+		_spec.SetField(monitorcheck.FieldUpdatedAt, field.TypeTime, value)
 	}
 	if _u.mutation.MonitorCleared() {
 		edge := &sqlgraph.EdgeSpec{
