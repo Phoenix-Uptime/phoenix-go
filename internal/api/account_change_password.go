@@ -1,7 +1,8 @@
 package api
 
 import (
-	"github.com/Phoenix-Uptime/phoenix-go/internal/models"
+	"github.com/Phoenix-Uptime/phoenix-go/ent"
+	"github.com/Phoenix-Uptime/phoenix-go/internal/database"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v3"
 	"github.com/rs/zerolog/log"
@@ -49,7 +50,7 @@ func ChangePassword(c fiber.Ctx) error {
 		})
 	}
 
-	user := c.Locals("user").(*models.User)
+	user := c.Locals("user").(*ent.User)
 
 	// Check if the current password is correct
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.CurrentPassword)); err != nil {
@@ -70,8 +71,9 @@ func ChangePassword(c fiber.Ctx) error {
 	}
 
 	// Update the user's password
-	user.Password = string(hashedPassword)
-	if err := models.DB.Save(user).Error; err != nil {
+	if err := database.Client.User.UpdateOneID(user.ID).
+		SetPassword(string(hashedPassword)).
+		Exec(c); err != nil {
 		log.Error().Err(err).Msg("Failed to update password")
 		return c.Status(fiber.StatusInternalServerError).JSON(ErrorResponse{
 			Status:  "error",

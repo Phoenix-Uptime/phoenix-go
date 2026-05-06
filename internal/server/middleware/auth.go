@@ -1,7 +1,9 @@
 package middleware
 
 import (
-	"github.com/Phoenix-Uptime/phoenix-go/internal/models"
+	"github.com/Phoenix-Uptime/phoenix-go/ent"
+	entuser "github.com/Phoenix-Uptime/phoenix-go/ent/user"
+	"github.com/Phoenix-Uptime/phoenix-go/internal/database"
 	"github.com/gofiber/fiber/v3"
 	"github.com/rs/zerolog/log"
 )
@@ -22,9 +24,17 @@ func AuthMiddleware(c fiber.Ctx) error {
 	}
 
 	// Find user by API key
-	var user models.User
-	if err := models.DB.Where("api_key = ?", apiKey).First(&user).Error; err != nil {
+	user, err := database.Client.User.Query().
+		Where(entuser.APIKey(apiKey)).
+		Only(c)
+	if err != nil {
 		log.Error().Err(err).Msg("Invalid API key")
+		if !ent.IsNotFound(err) {
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"status":  "error",
+				"message": "Internal server error",
+			})
+		}
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"status":  "error",
 			"message": "Invalid API key",
@@ -32,7 +42,7 @@ func AuthMiddleware(c fiber.Ctx) error {
 	}
 
 	// Attach user to the context for use in subsequent handlers
-	c.Locals("user", &user)
+	c.Locals("user", user)
 
 	// Proceed to the next middleware or handler
 	return c.Next()

@@ -1,7 +1,7 @@
 package api
 
 import (
-	"github.com/Phoenix-Uptime/phoenix-go/internal/models"
+	"github.com/Phoenix-Uptime/phoenix-go/internal/database"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v3"
 	"github.com/google/uuid"
@@ -51,8 +51,8 @@ func Signup(c fiber.Ctx) error {
 		})
 	}
 
-	var userCount int64
-	if err := models.DB.Model(&models.User{}).Count(&userCount).Error; err != nil {
+	userCount, err := database.Client.User.Query().Count(c)
+	if err != nil {
 		log.Error().Err(err).Msg("Failed to check user count")
 		return c.Status(fiber.StatusInternalServerError).JSON(ErrorResponse{
 			Status:  "error",
@@ -80,13 +80,12 @@ func Signup(c fiber.Ctx) error {
 	// Generate a new API key using UUID
 	apiKey := uuid.New().String()
 
-	user := models.User{
-		Username: req.Username,
-		Email:    req.Email,
-		Password: string(hashedPassword),
-		ApiKey:   apiKey,
-	}
-	if err := models.DB.Create(&user).Error; err != nil {
+	if _, err := database.Client.User.Create().
+		SetUsername(req.Username).
+		SetEmail(req.Email).
+		SetPassword(string(hashedPassword)).
+		SetAPIKey(apiKey).
+		Save(c); err != nil {
 		log.Error().Err(err).Msg("Failed to create user")
 		return c.Status(fiber.StatusInternalServerError).JSON(ErrorResponse{
 			Status:  "error",

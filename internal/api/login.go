@@ -1,7 +1,9 @@
 package api
 
 import (
-	"github.com/Phoenix-Uptime/phoenix-go/internal/models"
+	"github.com/Phoenix-Uptime/phoenix-go/ent"
+	entuser "github.com/Phoenix-Uptime/phoenix-go/ent/user"
+	"github.com/Phoenix-Uptime/phoenix-go/internal/database"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v3"
 	"github.com/rs/zerolog/log"
@@ -47,9 +49,17 @@ func Login(c fiber.Ctx) error {
 		})
 	}
 
-	var user models.User
-	if err := models.DB.Where("username = ?", req.Username).First(&user).Error; err != nil {
+	user, err := database.Client.User.Query().
+		Where(entuser.Username(req.Username)).
+		Only(c)
+	if err != nil {
 		log.Error().Err(err).Msg("User not found")
+		if !ent.IsNotFound(err) {
+			return c.Status(fiber.StatusInternalServerError).JSON(ErrorResponse{
+				Status:  "error",
+				Message: "Internal server error",
+			})
+		}
 		return c.Status(fiber.StatusUnauthorized).JSON(ErrorResponse{
 			Status:  "error",
 			Message: "Invalid credentials",
@@ -66,6 +76,6 @@ func Login(c fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(LoginResponse{
 		Status:  "success",
 		Message: "Login successful",
-		ApiKey:  user.ApiKey,
+		ApiKey:  user.APIKey,
 	})
 }

@@ -1,7 +1,7 @@
 package api
 
 import (
-	"github.com/Phoenix-Uptime/phoenix-go/internal/models"
+	"github.com/Phoenix-Uptime/phoenix-go/ent"
 	"github.com/gofiber/fiber/v3"
 )
 
@@ -22,12 +22,12 @@ type UserResponse struct {
 // @Failure 401 {object} ErrorResponse "unauthorized - invalid or missing API key"
 // @Router /account/me [get]
 func GetAccountMe(c fiber.Ctx) error {
-	user := c.Locals("user").(*models.User)
+	user := c.Locals("user").(*ent.User)
 
 	response := UserResponse{
 		Username: user.Username,
 		Email:    user.Email,
-		ApiKey:   user.ApiKey,
+		ApiKey:   user.APIKey,
 	}
 
 	return c.Status(fiber.StatusOK).JSON(response)

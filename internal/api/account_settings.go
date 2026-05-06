@@ -1,6 +1,8 @@
 package api
 
 import (
+	"github.com/Phoenix-Uptime/phoenix-go/ent"
+	"github.com/Phoenix-Uptime/phoenix-go/internal/database"
 	"github.com/Phoenix-Uptime/phoenix-go/internal/models"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v3"
@@ -24,10 +26,10 @@ type SettingsResponse struct {
 // @Failure 500 {object} ErrorResponse "internal server error"
 // @Router /account/settings [get]
 func GetAccountSettings(c fiber.Ctx) error {
-	user := c.Locals("user").(*models.User)
+	user := c.Locals("user").(*ent.User)
 
-	// Ensure settings are loaded
-	if err := models.DB.Preload("SMTPSettings").Preload("TelegramBot").First(user, user.ID).Error; err != nil {
+	user, err := database.Client.User.Get(c, user.ID)
+	if err != nil {
 		log.Error().Err(err).Msg("Failed to load user settings")
 		return c.Status(fiber.StatusInternalServerError).JSON(ErrorResponse{
 			Status:  "error",
@@ -36,8 +38,8 @@ func GetAccountSettings(c fiber.Ctx) error {
 	}
 
 	response := SettingsResponse{
-		SMTPSettings: user.SMTPSettings,
-		TelegramBot:  user.TelegramBot,
+		SMTPSettings: smtpSettingsFromUser(user),
+		TelegramBot:  telegramBotFromUser(user),
 	}
 
 	return c.Status(fiber.StatusOK).JSON(response)
@@ -66,7 +68,7 @@ type UpdateSMTPSettingsRequest struct {
 // @Failure 500 {object} ErrorResponse "internal server error"
 // @Router /account/settings/smtp [post]
 func UpdateSMTPSettings(c fiber.Ctx) error {
-	user := c.Locals("user").(*models.User)
+	user := c.Locals("user").(*ent.User)
 
 	var req UpdateSMTPSettingsRequest
 	if err := c.Bind().Body(&req); err != nil {
@@ -84,16 +86,14 @@ func UpdateSMTPSettings(c fiber.Ctx) error {
 		})
 	}
 
-	user.SMTPSettings = &models.SMTPSettings{
-		SMTPServer:  req.SMTPServer,
-		SMTPPort:    req.SMTPPort,
-		FromAddress: req.FromAddress,
-		Username:    req.Username,
-		Password:    req.Password,
-		UseTLS:      req.UseTLS,
-	}
-
-	if err := models.DB.Save(user).Error; err != nil {
+	if err := database.Client.User.UpdateOneID(user.ID).
+		SetSMTPSMTPServer(req.SMTPServer).
+		SetSMTPSMTPPort(req.SMTPPort).
+		SetSMTPFromAddress(req.FromAddress).
+		SetSMTPUsername(req.Username).
+		SetSMTPPassword(req.Password).
+		SetSMTPUseTLS(req.UseTLS).
+		Exec(c); err != nil {
 		log.Error().Err(err).Msg("Failed to update SMTP settings")
 		return c.Status(fiber.StatusInternalServerError).JSON(ErrorResponse{
 			Status:  "error",
@@ -125,7 +125,7 @@ type UpdateTelegramBotRequest struct {
 // @Failure 500 {object} ErrorResponse "internal server error"
 // @Router /account/settings/telegram [post]
 func UpdateTelegramBotSettings(c fiber.Ctx) error {
-	user := c.Locals("user").(*models.User)
+	user := c.Locals("user").(*ent.User)
 
 	var req UpdateTelegramBotRequest
 	if err := c.Bind().Body(&req); err != nil {
@@ -143,11 +143,9 @@ func UpdateTelegramBotSettings(c fiber.Ctx) error {
 		})
 	}
 
-	user.TelegramBot = &models.TelegramBot{
-		BotToken: req.BotToken,
-	}
-
-	if err := models.DB.Save(user).Error; err != nil {
+	if err := database.Client.User.UpdateOneID(user.ID).
+		SetTelegramBotToken(req.BotToken).
+		Exec(c); err != nil {
 		log.Error().Err(err).Msg("Failed to update Telegram bot settings")
 		return c.Status(fiber.StatusInternalServerError).JSON(ErrorResponse{
 			Status:  "error",
@@ -159,4 +157,34 @@ func UpdateTelegramBotSettings(c fiber.Ctx) error {
 		Status:  "success",
 		Message: "Telegram bot settings updated",
 	})
+}
+
+func smtpSettingsFromUser(user *ent.User) *models.SMTPSettings {
+	if user.SMTPSMTPServer == "" &&
+		user.SMTPSMTPPort == 0 &&
+		user.SMTPFromAddress == "" &&
+		user.SMTPUsername == "" &&
+		user.SMTPPassword == "" &&
+		!user.SMTPUseTLS {
+		return nil
+	}
+
+	return &models.SMTPSettings{
+		SMTPServer:  user.SMTPSMTPServer,
+		SMTPPort:    user.SMTPSMTPPort,
+		FromAddress: user.SMTPFromAddress,
+		Username:    user.SMTPUsername,
+		Password:    user.SMTPPassword,
+		UseTLS:      user.SMTPUseTLS,
+	}
+}
+
+func telegramBotFromUser(user *ent.User) *models.TelegramBot {
+	if user.TelegramBotToken == "" {
+		return nil
+	}
+
+	return &models.TelegramBot{
+		BotToken: user.TelegramBotToken,
+	}
 }
