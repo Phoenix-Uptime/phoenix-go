@@ -351,6 +351,112 @@ definitions:
         minLength: 1
         type: string
     type: object
+  maintenance_windows.CreateMaintenanceWindowRequest:
+    properties:
+      cron:
+        type: string
+      description:
+        type: string
+      duration_seconds:
+        minimum: 1
+        type: integer
+      end_at:
+        type: string
+      is_active:
+        type: boolean
+      monitor_ids:
+        items:
+          type: integer
+        type: array
+      start_at:
+        type: string
+      strategy:
+        enum:
+        - manual
+        - single
+        - recurring
+        - cron
+        type: string
+      timezone:
+        type: string
+      title:
+        minLength: 1
+        type: string
+    required:
+    - title
+    type: object
+  maintenance_windows.MaintenanceWindowListResponse:
+    properties:
+      maintenance_windows:
+        items:
+          $ref: '#/definitions/maintenance_windows.MaintenanceWindowResponse'
+        type: array
+    type: object
+  maintenance_windows.MaintenanceWindowResponse:
+    properties:
+      created_at:
+        type: string
+      cron:
+        type: string
+      description:
+        type: string
+      duration_seconds:
+        type: integer
+      end_at:
+        type: string
+      id:
+        type: integer
+      is_active:
+        type: boolean
+      monitor_ids:
+        items:
+          type: integer
+        type: array
+      start_at:
+        type: string
+      strategy:
+        type: string
+      timezone:
+        type: string
+      title:
+        type: string
+      updated_at:
+        type: string
+      user_id:
+        type: integer
+    type: object
+  maintenance_windows.UpdateMaintenanceWindowRequest:
+    properties:
+      cron:
+        type: string
+      description:
+        type: string
+      duration_seconds:
+        minimum: 0
+        type: integer
+      end_at:
+        type: string
+      is_active:
+        type: boolean
+      monitor_ids:
+        items:
+          type: integer
+        type: array
+      start_at:
+        type: string
+      strategy:
+        enum:
+        - manual
+        - single
+        - recurring
+        - cron
+        type: string
+      timezone:
+        type: string
+      title:
+        minLength: 1
+        type: string
+    type: object
   models.SMTPSettings:
     properties:
       from_address:
@@ -1610,6 +1716,289 @@ paths:
       summary: User Login
       tags:
       - Auth
+  /maintenance-windows:
+    get:
+      consumes:
+      - application/json
+      description: Returns maintenance windows owned by the authenticated user.
+      parameters:
+      - description: Filter by active flag
+        in: query
+        name: is_active
+        type: boolean
+      - description: manual, single, recurring, or cron
+        in: query
+        name: strategy
+        type: string
+      - description: Monitor ID
+        in: query
+        name: monitor_id
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: maintenance window list
+          schema:
+            $ref: '#/definitions/maintenance_windows.MaintenanceWindowListResponse'
+        "400":
+          description: invalid input
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "401":
+          description: unauthorized - invalid or missing API key
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "500":
+          description: internal server error
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+      security:
+      - ApiKeyHeader: []
+      - ApiKeyQuery: []
+      summary: List Maintenance Windows
+      tags:
+      - Maintenance Windows
+    post:
+      consumes:
+      - application/json
+      description: Creates a maintenance window owned by the authenticated user.
+      parameters:
+      - description: maintenance window payload
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/maintenance_windows.CreateMaintenanceWindowRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: created maintenance window
+          schema:
+            $ref: '#/definitions/maintenance_windows.MaintenanceWindowResponse'
+        "400":
+          description: invalid input
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "401":
+          description: unauthorized - invalid or missing API key
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "500":
+          description: internal server error
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+      security:
+      - ApiKeyHeader: []
+      - ApiKeyQuery: []
+      summary: Create Maintenance Window
+      tags:
+      - Maintenance Windows
+  /maintenance-windows/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes one maintenance window owned by the authenticated user.
+      parameters:
+      - description: Maintenance Window ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: maintenance window deleted
+          schema:
+            $ref: '#/definitions/routes.SuccessResponse'
+        "400":
+          description: invalid maintenance window id
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "401":
+          description: unauthorized - invalid or missing API key
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "404":
+          description: maintenance window not found
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "500":
+          description: internal server error
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+      security:
+      - ApiKeyHeader: []
+      - ApiKeyQuery: []
+      summary: Delete Maintenance Window
+      tags:
+      - Maintenance Windows
+    get:
+      consumes:
+      - application/json
+      description: Returns one maintenance window owned by the authenticated user.
+      parameters:
+      - description: Maintenance Window ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: maintenance window
+          schema:
+            $ref: '#/definitions/maintenance_windows.MaintenanceWindowResponse'
+        "400":
+          description: invalid maintenance window id
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "401":
+          description: unauthorized - invalid or missing API key
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "404":
+          description: maintenance window not found
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "500":
+          description: internal server error
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+      security:
+      - ApiKeyHeader: []
+      - ApiKeyQuery: []
+      summary: Get Maintenance Window
+      tags:
+      - Maintenance Windows
+    patch:
+      consumes:
+      - application/json
+      description: Updates one maintenance window owned by the authenticated user.
+      parameters:
+      - description: Maintenance Window ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: maintenance window payload
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/maintenance_windows.UpdateMaintenanceWindowRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: updated maintenance window
+          schema:
+            $ref: '#/definitions/maintenance_windows.MaintenanceWindowResponse'
+        "400":
+          description: invalid input
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "401":
+          description: unauthorized - invalid or missing API key
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "404":
+          description: maintenance window not found
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "500":
+          description: internal server error
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+      security:
+      - ApiKeyHeader: []
+      - ApiKeyQuery: []
+      summary: Update Maintenance Window
+      tags:
+      - Maintenance Windows
+  /maintenance-windows/{id}/activate:
+    post:
+      consumes:
+      - application/json
+      description: Marks one maintenance window active.
+      parameters:
+      - description: Maintenance Window ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: active maintenance window
+          schema:
+            $ref: '#/definitions/maintenance_windows.MaintenanceWindowResponse'
+        "400":
+          description: invalid maintenance window id
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "401":
+          description: unauthorized - invalid or missing API key
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "404":
+          description: maintenance window not found
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "500":
+          description: internal server error
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+      security:
+      - ApiKeyHeader: []
+      - ApiKeyQuery: []
+      summary: Activate Maintenance Window
+      tags:
+      - Maintenance Windows
+  /maintenance-windows/{id}/deactivate:
+    post:
+      consumes:
+      - application/json
+      description: Marks one maintenance window inactive.
+      parameters:
+      - description: Maintenance Window ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: inactive maintenance window
+          schema:
+            $ref: '#/definitions/maintenance_windows.MaintenanceWindowResponse'
+        "400":
+          description: invalid maintenance window id
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "401":
+          description: unauthorized - invalid or missing API key
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "404":
+          description: maintenance window not found
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "500":
+          description: internal server error
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+      security:
+      - ApiKeyHeader: []
+      - ApiKeyQuery: []
+      summary: Deactivate Maintenance Window
+      tags:
+      - Maintenance Windows
   /monitors:
     get:
       consumes:

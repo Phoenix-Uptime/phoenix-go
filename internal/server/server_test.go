@@ -21,6 +21,7 @@ import (
 	alertruleroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/alert_rules"
 	authroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/auth"
 	incidentroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/incidents"
+	maintenancewindowroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/maintenance_windows"
 	monitorroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/monitors"
 	notificationchannelroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/notification_channels"
 	tagroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/tags"
@@ -1108,6 +1109,172 @@ func TestIncidentRoutesCRUDAndState(t *testing.T) {
 	}
 	if deleteResp.StatusCode != http.StatusOK {
 		t.Fatalf("expected delete incident status %d, got %d", http.StatusOK, deleteResp.StatusCode)
+	}
+}
+
+func TestMaintenanceWindowRoutesCRUDAndState(t *testing.T) {
+	cleanup := useTestDatabase(t)
+	defer cleanup()
+
+	app := New()
+	apiKey := signupAndLogin(t, app, "maintenanceuser", "maintenance@example.com", "examplepassword")
+	monitorID := createTestMonitor(t, app, apiKey, "Maintenance Website")
+	startAt := time.Now().UTC().Add(time.Hour).Truncate(time.Second)
+	endAt := startAt.Add(time.Hour)
+
+	createBody, err := json.Marshal(map[string]any{
+		"title":       "Planned maintenance",
+		"description": "Database upgrade",
+		"strategy":    "single",
+		"start_at":    startAt.Format(time.RFC3339),
+		"end_at":      endAt.Format(time.RFC3339),
+		"monitor_ids": []int{monitorID},
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	createReq, err := http.NewRequest(http.MethodPost, "/maintenance-windows", bytes.NewReader(createBody))
+	if err != nil {
+		t.Fatal(err)
+	}
+	createReq.Header.Set("Content-Type", "application/json")
+	createReq.Header.Set("x-api-key", apiKey)
+
+	createResp, err := app.Test(createReq, fiber.TestConfig{Timeout: 0})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if createResp.StatusCode != http.StatusCreated {
+		t.Fatalf("expected create maintenance window status %d, got %d", http.StatusCreated, createResp.StatusCode)
+	}
+	defer createResp.Body.Close()
+
+	var created maintenancewindowroutes.MaintenanceWindowResponse
+	if err := json.NewDecoder(createResp.Body).Decode(&created); err != nil {
+		t.Fatal(err)
+	}
+	if created.ID == 0 || created.Strategy != "single" || len(created.MonitorIDs) != 1 || created.MonitorIDs[0] != monitorID {
+		t.Fatalf("unexpected created maintenance window response: %+v", created)
+	}
+
+	listReq, err := http.NewRequest(http.MethodGet, "/maintenance-windows?strategy=single&monitor_id="+strconv.Itoa(monitorID), nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	listReq.Header.Set("x-api-key", apiKey)
+
+	listResp, err := app.Test(listReq, fiber.TestConfig{Timeout: 0})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if listResp.StatusCode != http.StatusOK {
+		t.Fatalf("expected list maintenance windows status %d, got %d", http.StatusOK, listResp.StatusCode)
+	}
+	defer listResp.Body.Close()
+
+	var list maintenancewindowroutes.MaintenanceWindowListResponse
+	if err := json.NewDecoder(listResp.Body).Decode(&list); err != nil {
+		t.Fatal(err)
+	}
+	if len(list.MaintenanceWindows) != 1 || list.MaintenanceWindows[0].ID != created.ID {
+		t.Fatalf("expected created maintenance window in list, got %+v", list.MaintenanceWindows)
+	}
+
+	updateBody, err := json.Marshal(map[string]any{
+		"title":            "Recurring maintenance",
+		"description":      "",
+		"strategy":         "recurring",
+		"duration_seconds": 1800,
+		"monitor_ids":      []int{},
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	updateReq, err := http.NewRequest(http.MethodPatch, "/maintenance-windows/"+strconv.Itoa(created.ID), bytes.NewReader(updateBody))
+	if err != nil {
+		t.Fatal(err)
+	}
+	updateReq.Header.Set("Content-Type", "application/json")
+	updateReq.Header.Set("x-api-key", apiKey)
+
+	updateResp, err := app.Test(updateReq, fiber.TestConfig{Timeout: 0})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if updateResp.StatusCode != http.StatusOK {
+		t.Fatalf("expected update maintenance window status %d, got %d", http.StatusOK, updateResp.StatusCode)
+	}
+	defer updateResp.Body.Close()
+
+	var updated maintenancewindowroutes.MaintenanceWindowResponse
+	if err := json.NewDecoder(updateResp.Body).Decode(&updated); err != nil {
+		t.Fatal(err)
+	}
+	if updated.Title != "Recurring maintenance" || updated.Strategy != "recurring" || updated.Description != nil || len(updated.MonitorIDs) != 0 {
+		t.Fatalf("unexpected updated maintenance window response: %+v", updated)
+	}
+	if updated.DurationSeconds == nil || *updated.DurationSeconds != 1800 {
+		t.Fatalf("expected duration seconds to be updated, got %+v", updated.DurationSeconds)
+	}
+
+	deactivateReq, err := http.NewRequest(http.MethodPost, "/maintenance-windows/"+strconv.Itoa(created.ID)+"/deactivate", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	deactivateReq.Header.Set("x-api-key", apiKey)
+
+	deactivateResp, err := app.Test(deactivateReq, fiber.TestConfig{Timeout: 0})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if deactivateResp.StatusCode != http.StatusOK {
+		t.Fatalf("expected deactivate maintenance window status %d, got %d", http.StatusOK, deactivateResp.StatusCode)
+	}
+	defer deactivateResp.Body.Close()
+
+	var deactivated maintenancewindowroutes.MaintenanceWindowResponse
+	if err := json.NewDecoder(deactivateResp.Body).Decode(&deactivated); err != nil {
+		t.Fatal(err)
+	}
+	if deactivated.IsActive {
+		t.Fatalf("expected deactivated maintenance window, got %+v", deactivated)
+	}
+
+	activateReq, err := http.NewRequest(http.MethodPost, "/maintenance-windows/"+strconv.Itoa(created.ID)+"/activate", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	activateReq.Header.Set("x-api-key", apiKey)
+
+	activateResp, err := app.Test(activateReq, fiber.TestConfig{Timeout: 0})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if activateResp.StatusCode != http.StatusOK {
+		t.Fatalf("expected activate maintenance window status %d, got %d", http.StatusOK, activateResp.StatusCode)
+	}
+	defer activateResp.Body.Close()
+
+	var activated maintenancewindowroutes.MaintenanceWindowResponse
+	if err := json.NewDecoder(activateResp.Body).Decode(&activated); err != nil {
+		t.Fatal(err)
+	}
+	if !activated.IsActive {
+		t.Fatalf("expected activated maintenance window, got %+v", activated)
+	}
+
+	deleteReq, err := http.NewRequest(http.MethodDelete, "/maintenance-windows/"+strconv.Itoa(created.ID), nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	deleteReq.Header.Set("x-api-key", apiKey)
+
+	deleteResp, err := app.Test(deleteReq, fiber.TestConfig{Timeout: 0})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if deleteResp.StatusCode != http.StatusOK {
+		t.Fatalf("expected delete maintenance window status %d, got %d", http.StatusOK, deleteResp.StatusCode)
 	}
 }
 

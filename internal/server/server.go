@@ -8,6 +8,7 @@ import (
 	authroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/auth"
 	healthroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/health"
 	incidentroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/incidents"
+	maintenancewindowroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/maintenance_windows"
 	monitorroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/monitors"
 	notificationchannelroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/notification_channels"
 	tagroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/tags"
@@ -109,6 +110,17 @@ func New() *fiber.App {
 	incidents.Delete("/:id", incidentroutes.DeleteIncident)
 	incidents.Post("/:id/acknowledge", incidentroutes.AcknowledgeIncident)
 	incidents.Post("/:id/resolve", incidentroutes.ResolveIncident)
+
+	// Maintenance window routes
+	maintenanceWindows := app.Group("/maintenance-windows")
+	maintenanceWindows.Use(middleware.AuthMiddleware)
+	maintenanceWindows.Get("", maintenancewindowroutes.ListMaintenanceWindows)
+	maintenanceWindows.Post("", maintenancewindowroutes.CreateMaintenanceWindow)
+	maintenanceWindows.Get("/:id", maintenancewindowroutes.GetMaintenanceWindow)
+	maintenanceWindows.Patch("/:id", maintenancewindowroutes.UpdateMaintenanceWindow)
+	maintenanceWindows.Delete("/:id", maintenancewindowroutes.DeleteMaintenanceWindow)
+	maintenanceWindows.Post("/:id/activate", maintenancewindowroutes.ActivateMaintenanceWindow)
+	maintenanceWindows.Post("/:id/deactivate", maintenancewindowroutes.DeactivateMaintenanceWindow)
 
 	// Monitor routes
 	monitors := app.Group("/monitors")
