@@ -231,11 +231,11 @@ func init() {
 	// notificationchannel.DefaultIsDefault holds the default value on creation for the is_default field.
 	notificationchannel.DefaultIsDefault = notificationchannelDescIsDefault.Default.(bool)
 	// notificationchannelDescCreatedAt is the schema descriptor for created_at field.
-	notificationchannelDescCreatedAt := notificationchannelFields[6].Descriptor()
+	notificationchannelDescCreatedAt := notificationchannelFields[18].Descriptor()
 	// notificationchannel.DefaultCreatedAt holds the default value on creation for the created_at field.
 	notificationchannel.DefaultCreatedAt = notificationchannelDescCreatedAt.Default.(func() time.Time)
 	// notificationchannelDescUpdatedAt is the schema descriptor for updated_at field.
-	notificationchannelDescUpdatedAt := notificationchannelFields[7].Descriptor()
+	notificationchannelDescUpdatedAt := notificationchannelFields[19].Descriptor()
 	// notificationchannel.DefaultUpdatedAt holds the default value on creation for the updated_at field.
 	notificationchannel.DefaultUpdatedAt = notificationchannelDescUpdatedAt.Default.(func() time.Time)
 	// notificationchannel.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.

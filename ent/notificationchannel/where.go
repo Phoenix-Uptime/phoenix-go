@@ -75,6 +75,71 @@ func IsDefault(v bool) predicate.NotificationChannel {
 	return predicate.NotificationChannel(sql.FieldEQ(FieldIsDefault, v))
 }
 
+// SMTPServer applies equality check predicate on the "smtp_server" field. It's identical to SMTPServerEQ.
+func SMTPServer(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldEQ(FieldSMTPServer, v))
+}
+
+// SMTPPort applies equality check predicate on the "smtp_port" field. It's identical to SMTPPortEQ.
+func SMTPPort(v int) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldEQ(FieldSMTPPort, v))
+}
+
+// SMTPFromAddress applies equality check predicate on the "smtp_from_address" field. It's identical to SMTPFromAddressEQ.
+func SMTPFromAddress(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldEQ(FieldSMTPFromAddress, v))
+}
+
+// SMTPUsername applies equality check predicate on the "smtp_username" field. It's identical to SMTPUsernameEQ.
+func SMTPUsername(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldEQ(FieldSMTPUsername, v))
+}
+
+// SMTPPassword applies equality check predicate on the "smtp_password" field. It's identical to SMTPPasswordEQ.
+func SMTPPassword(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldEQ(FieldSMTPPassword, v))
+}
+
+// SMTPUseTLS applies equality check predicate on the "smtp_use_tls" field. It's identical to SMTPUseTLSEQ.
+func SMTPUseTLS(v bool) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldEQ(FieldSMTPUseTLS, v))
+}
+
+// TelegramBotToken applies equality check predicate on the "telegram_bot_token" field. It's identical to TelegramBotTokenEQ.
+func TelegramBotToken(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldEQ(FieldTelegramBotToken, v))
+}
+
+// TelegramChatID applies equality check predicate on the "telegram_chat_id" field. It's identical to TelegramChatIDEQ.
+func TelegramChatID(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldEQ(FieldTelegramChatID, v))
+}
+
+// WebhookURL applies equality check predicate on the "webhook_url" field. It's identical to WebhookURLEQ.
+func WebhookURL(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldEQ(FieldWebhookURL, v))
+}
+
+// WebhookMethod applies equality check predicate on the "webhook_method" field. It's identical to WebhookMethodEQ.
+func WebhookMethod(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldEQ(FieldWebhookMethod, v))
+}
+
+// NtfyServerURL applies equality check predicate on the "ntfy_server_url" field. It's identical to NtfyServerURLEQ.
+func NtfyServerURL(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldEQ(FieldNtfyServerURL, v))
+}
+
+// NtfyTopic applies equality check predicate on the "ntfy_topic" field. It's identical to NtfyTopicEQ.
+func NtfyTopic(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldEQ(FieldNtfyTopic, v))
+}
+
+// NtfyToken applies equality check predicate on the "ntfy_token" field. It's identical to NtfyTokenEQ.
+func NtfyToken(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldEQ(FieldNtfyToken, v))
+}
+
 // CreatedAt applies equality check predicate on the "created_at" field. It's identical to CreatedAtEQ.
 func CreatedAt(v time.Time) predicate.NotificationChannel {
 	return predicate.NotificationChannel(sql.FieldEQ(FieldCreatedAt, v))
@@ -210,14 +275,899 @@ func IsDefaultNEQ(v bool) predicate.NotificationChannel {
 	return predicate.NotificationChannel(sql.FieldNEQ(FieldIsDefault, v))
 }
 
-// ConfigIsNil applies the IsNil predicate on the "config" field.
-func ConfigIsNil() predicate.NotificationChannel {
-	return predicate.NotificationChannel(sql.FieldIsNull(FieldConfig))
+// SMTPServerEQ applies the EQ predicate on the "smtp_server" field.
+func SMTPServerEQ(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldEQ(FieldSMTPServer, v))
 }
 
-// ConfigNotNil applies the NotNil predicate on the "config" field.
-func ConfigNotNil() predicate.NotificationChannel {
-	return predicate.NotificationChannel(sql.FieldNotNull(FieldConfig))
+// SMTPServerNEQ applies the NEQ predicate on the "smtp_server" field.
+func SMTPServerNEQ(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldNEQ(FieldSMTPServer, v))
+}
+
+// SMTPServerIn applies the In predicate on the "smtp_server" field.
+func SMTPServerIn(vs ...string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldIn(FieldSMTPServer, vs...))
+}
+
+// SMTPServerNotIn applies the NotIn predicate on the "smtp_server" field.
+func SMTPServerNotIn(vs ...string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldNotIn(FieldSMTPServer, vs...))
+}
+
+// SMTPServerGT applies the GT predicate on the "smtp_server" field.
+func SMTPServerGT(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldGT(FieldSMTPServer, v))
+}
+
+// SMTPServerGTE applies the GTE predicate on the "smtp_server" field.
+func SMTPServerGTE(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldGTE(FieldSMTPServer, v))
+}
+
+// SMTPServerLT applies the LT predicate on the "smtp_server" field.
+func SMTPServerLT(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldLT(FieldSMTPServer, v))
+}
+
+// SMTPServerLTE applies the LTE predicate on the "smtp_server" field.
+func SMTPServerLTE(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldLTE(FieldSMTPServer, v))
+}
+
+// SMTPServerContains applies the Contains predicate on the "smtp_server" field.
+func SMTPServerContains(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldContains(FieldSMTPServer, v))
+}
+
+// SMTPServerHasPrefix applies the HasPrefix predicate on the "smtp_server" field.
+func SMTPServerHasPrefix(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldHasPrefix(FieldSMTPServer, v))
+}
+
+// SMTPServerHasSuffix applies the HasSuffix predicate on the "smtp_server" field.
+func SMTPServerHasSuffix(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldHasSuffix(FieldSMTPServer, v))
+}
+
+// SMTPServerIsNil applies the IsNil predicate on the "smtp_server" field.
+func SMTPServerIsNil() predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldIsNull(FieldSMTPServer))
+}
+
+// SMTPServerNotNil applies the NotNil predicate on the "smtp_server" field.
+func SMTPServerNotNil() predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldNotNull(FieldSMTPServer))
+}
+
+// SMTPServerEqualFold applies the EqualFold predicate on the "smtp_server" field.
+func SMTPServerEqualFold(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldEqualFold(FieldSMTPServer, v))
+}
+
+// SMTPServerContainsFold applies the ContainsFold predicate on the "smtp_server" field.
+func SMTPServerContainsFold(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldContainsFold(FieldSMTPServer, v))
+}
+
+// SMTPPortEQ applies the EQ predicate on the "smtp_port" field.
+func SMTPPortEQ(v int) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldEQ(FieldSMTPPort, v))
+}
+
+// SMTPPortNEQ applies the NEQ predicate on the "smtp_port" field.
+func SMTPPortNEQ(v int) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldNEQ(FieldSMTPPort, v))
+}
+
+// SMTPPortIn applies the In predicate on the "smtp_port" field.
+func SMTPPortIn(vs ...int) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldIn(FieldSMTPPort, vs...))
+}
+
+// SMTPPortNotIn applies the NotIn predicate on the "smtp_port" field.
+func SMTPPortNotIn(vs ...int) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldNotIn(FieldSMTPPort, vs...))
+}
+
+// SMTPPortGT applies the GT predicate on the "smtp_port" field.
+func SMTPPortGT(v int) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldGT(FieldSMTPPort, v))
+}
+
+// SMTPPortGTE applies the GTE predicate on the "smtp_port" field.
+func SMTPPortGTE(v int) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldGTE(FieldSMTPPort, v))
+}
+
+// SMTPPortLT applies the LT predicate on the "smtp_port" field.
+func SMTPPortLT(v int) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldLT(FieldSMTPPort, v))
+}
+
+// SMTPPortLTE applies the LTE predicate on the "smtp_port" field.
+func SMTPPortLTE(v int) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldLTE(FieldSMTPPort, v))
+}
+
+// SMTPPortIsNil applies the IsNil predicate on the "smtp_port" field.
+func SMTPPortIsNil() predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldIsNull(FieldSMTPPort))
+}
+
+// SMTPPortNotNil applies the NotNil predicate on the "smtp_port" field.
+func SMTPPortNotNil() predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldNotNull(FieldSMTPPort))
+}
+
+// SMTPFromAddressEQ applies the EQ predicate on the "smtp_from_address" field.
+func SMTPFromAddressEQ(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldEQ(FieldSMTPFromAddress, v))
+}
+
+// SMTPFromAddressNEQ applies the NEQ predicate on the "smtp_from_address" field.
+func SMTPFromAddressNEQ(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldNEQ(FieldSMTPFromAddress, v))
+}
+
+// SMTPFromAddressIn applies the In predicate on the "smtp_from_address" field.
+func SMTPFromAddressIn(vs ...string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldIn(FieldSMTPFromAddress, vs...))
+}
+
+// SMTPFromAddressNotIn applies the NotIn predicate on the "smtp_from_address" field.
+func SMTPFromAddressNotIn(vs ...string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldNotIn(FieldSMTPFromAddress, vs...))
+}
+
+// SMTPFromAddressGT applies the GT predicate on the "smtp_from_address" field.
+func SMTPFromAddressGT(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldGT(FieldSMTPFromAddress, v))
+}
+
+// SMTPFromAddressGTE applies the GTE predicate on the "smtp_from_address" field.
+func SMTPFromAddressGTE(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldGTE(FieldSMTPFromAddress, v))
+}
+
+// SMTPFromAddressLT applies the LT predicate on the "smtp_from_address" field.
+func SMTPFromAddressLT(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldLT(FieldSMTPFromAddress, v))
+}
+
+// SMTPFromAddressLTE applies the LTE predicate on the "smtp_from_address" field.
+func SMTPFromAddressLTE(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldLTE(FieldSMTPFromAddress, v))
+}
+
+// SMTPFromAddressContains applies the Contains predicate on the "smtp_from_address" field.
+func SMTPFromAddressContains(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldContains(FieldSMTPFromAddress, v))
+}
+
+// SMTPFromAddressHasPrefix applies the HasPrefix predicate on the "smtp_from_address" field.
+func SMTPFromAddressHasPrefix(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldHasPrefix(FieldSMTPFromAddress, v))
+}
+
+// SMTPFromAddressHasSuffix applies the HasSuffix predicate on the "smtp_from_address" field.
+func SMTPFromAddressHasSuffix(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldHasSuffix(FieldSMTPFromAddress, v))
+}
+
+// SMTPFromAddressIsNil applies the IsNil predicate on the "smtp_from_address" field.
+func SMTPFromAddressIsNil() predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldIsNull(FieldSMTPFromAddress))
+}
+
+// SMTPFromAddressNotNil applies the NotNil predicate on the "smtp_from_address" field.
+func SMTPFromAddressNotNil() predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldNotNull(FieldSMTPFromAddress))
+}
+
+// SMTPFromAddressEqualFold applies the EqualFold predicate on the "smtp_from_address" field.
+func SMTPFromAddressEqualFold(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldEqualFold(FieldSMTPFromAddress, v))
+}
+
+// SMTPFromAddressContainsFold applies the ContainsFold predicate on the "smtp_from_address" field.
+func SMTPFromAddressContainsFold(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldContainsFold(FieldSMTPFromAddress, v))
+}
+
+// SMTPUsernameEQ applies the EQ predicate on the "smtp_username" field.
+func SMTPUsernameEQ(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldEQ(FieldSMTPUsername, v))
+}
+
+// SMTPUsernameNEQ applies the NEQ predicate on the "smtp_username" field.
+func SMTPUsernameNEQ(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldNEQ(FieldSMTPUsername, v))
+}
+
+// SMTPUsernameIn applies the In predicate on the "smtp_username" field.
+func SMTPUsernameIn(vs ...string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldIn(FieldSMTPUsername, vs...))
+}
+
+// SMTPUsernameNotIn applies the NotIn predicate on the "smtp_username" field.
+func SMTPUsernameNotIn(vs ...string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldNotIn(FieldSMTPUsername, vs...))
+}
+
+// SMTPUsernameGT applies the GT predicate on the "smtp_username" field.
+func SMTPUsernameGT(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldGT(FieldSMTPUsername, v))
+}
+
+// SMTPUsernameGTE applies the GTE predicate on the "smtp_username" field.
+func SMTPUsernameGTE(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldGTE(FieldSMTPUsername, v))
+}
+
+// SMTPUsernameLT applies the LT predicate on the "smtp_username" field.
+func SMTPUsernameLT(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldLT(FieldSMTPUsername, v))
+}
+
+// SMTPUsernameLTE applies the LTE predicate on the "smtp_username" field.
+func SMTPUsernameLTE(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldLTE(FieldSMTPUsername, v))
+}
+
+// SMTPUsernameContains applies the Contains predicate on the "smtp_username" field.
+func SMTPUsernameContains(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldContains(FieldSMTPUsername, v))
+}
+
+// SMTPUsernameHasPrefix applies the HasPrefix predicate on the "smtp_username" field.
+func SMTPUsernameHasPrefix(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldHasPrefix(FieldSMTPUsername, v))
+}
+
+// SMTPUsernameHasSuffix applies the HasSuffix predicate on the "smtp_username" field.
+func SMTPUsernameHasSuffix(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldHasSuffix(FieldSMTPUsername, v))
+}
+
+// SMTPUsernameIsNil applies the IsNil predicate on the "smtp_username" field.
+func SMTPUsernameIsNil() predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldIsNull(FieldSMTPUsername))
+}
+
+// SMTPUsernameNotNil applies the NotNil predicate on the "smtp_username" field.
+func SMTPUsernameNotNil() predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldNotNull(FieldSMTPUsername))
+}
+
+// SMTPUsernameEqualFold applies the EqualFold predicate on the "smtp_username" field.
+func SMTPUsernameEqualFold(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldEqualFold(FieldSMTPUsername, v))
+}
+
+// SMTPUsernameContainsFold applies the ContainsFold predicate on the "smtp_username" field.
+func SMTPUsernameContainsFold(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldContainsFold(FieldSMTPUsername, v))
+}
+
+// SMTPPasswordEQ applies the EQ predicate on the "smtp_password" field.
+func SMTPPasswordEQ(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldEQ(FieldSMTPPassword, v))
+}
+
+// SMTPPasswordNEQ applies the NEQ predicate on the "smtp_password" field.
+func SMTPPasswordNEQ(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldNEQ(FieldSMTPPassword, v))
+}
+
+// SMTPPasswordIn applies the In predicate on the "smtp_password" field.
+func SMTPPasswordIn(vs ...string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldIn(FieldSMTPPassword, vs...))
+}
+
+// SMTPPasswordNotIn applies the NotIn predicate on the "smtp_password" field.
+func SMTPPasswordNotIn(vs ...string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldNotIn(FieldSMTPPassword, vs...))
+}
+
+// SMTPPasswordGT applies the GT predicate on the "smtp_password" field.
+func SMTPPasswordGT(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldGT(FieldSMTPPassword, v))
+}
+
+// SMTPPasswordGTE applies the GTE predicate on the "smtp_password" field.
+func SMTPPasswordGTE(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldGTE(FieldSMTPPassword, v))
+}
+
+// SMTPPasswordLT applies the LT predicate on the "smtp_password" field.
+func SMTPPasswordLT(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldLT(FieldSMTPPassword, v))
+}
+
+// SMTPPasswordLTE applies the LTE predicate on the "smtp_password" field.
+func SMTPPasswordLTE(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldLTE(FieldSMTPPassword, v))
+}
+
+// SMTPPasswordContains applies the Contains predicate on the "smtp_password" field.
+func SMTPPasswordContains(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldContains(FieldSMTPPassword, v))
+}
+
+// SMTPPasswordHasPrefix applies the HasPrefix predicate on the "smtp_password" field.
+func SMTPPasswordHasPrefix(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldHasPrefix(FieldSMTPPassword, v))
+}
+
+// SMTPPasswordHasSuffix applies the HasSuffix predicate on the "smtp_password" field.
+func SMTPPasswordHasSuffix(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldHasSuffix(FieldSMTPPassword, v))
+}
+
+// SMTPPasswordIsNil applies the IsNil predicate on the "smtp_password" field.
+func SMTPPasswordIsNil() predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldIsNull(FieldSMTPPassword))
+}
+
+// SMTPPasswordNotNil applies the NotNil predicate on the "smtp_password" field.
+func SMTPPasswordNotNil() predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldNotNull(FieldSMTPPassword))
+}
+
+// SMTPPasswordEqualFold applies the EqualFold predicate on the "smtp_password" field.
+func SMTPPasswordEqualFold(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldEqualFold(FieldSMTPPassword, v))
+}
+
+// SMTPPasswordContainsFold applies the ContainsFold predicate on the "smtp_password" field.
+func SMTPPasswordContainsFold(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldContainsFold(FieldSMTPPassword, v))
+}
+
+// SMTPUseTLSEQ applies the EQ predicate on the "smtp_use_tls" field.
+func SMTPUseTLSEQ(v bool) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldEQ(FieldSMTPUseTLS, v))
+}
+
+// SMTPUseTLSNEQ applies the NEQ predicate on the "smtp_use_tls" field.
+func SMTPUseTLSNEQ(v bool) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldNEQ(FieldSMTPUseTLS, v))
+}
+
+// SMTPUseTLSIsNil applies the IsNil predicate on the "smtp_use_tls" field.
+func SMTPUseTLSIsNil() predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldIsNull(FieldSMTPUseTLS))
+}
+
+// SMTPUseTLSNotNil applies the NotNil predicate on the "smtp_use_tls" field.
+func SMTPUseTLSNotNil() predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldNotNull(FieldSMTPUseTLS))
+}
+
+// TelegramBotTokenEQ applies the EQ predicate on the "telegram_bot_token" field.
+func TelegramBotTokenEQ(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldEQ(FieldTelegramBotToken, v))
+}
+
+// TelegramBotTokenNEQ applies the NEQ predicate on the "telegram_bot_token" field.
+func TelegramBotTokenNEQ(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldNEQ(FieldTelegramBotToken, v))
+}
+
+// TelegramBotTokenIn applies the In predicate on the "telegram_bot_token" field.
+func TelegramBotTokenIn(vs ...string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldIn(FieldTelegramBotToken, vs...))
+}
+
+// TelegramBotTokenNotIn applies the NotIn predicate on the "telegram_bot_token" field.
+func TelegramBotTokenNotIn(vs ...string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldNotIn(FieldTelegramBotToken, vs...))
+}
+
+// TelegramBotTokenGT applies the GT predicate on the "telegram_bot_token" field.
+func TelegramBotTokenGT(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldGT(FieldTelegramBotToken, v))
+}
+
+// TelegramBotTokenGTE applies the GTE predicate on the "telegram_bot_token" field.
+func TelegramBotTokenGTE(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldGTE(FieldTelegramBotToken, v))
+}
+
+// TelegramBotTokenLT applies the LT predicate on the "telegram_bot_token" field.
+func TelegramBotTokenLT(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldLT(FieldTelegramBotToken, v))
+}
+
+// TelegramBotTokenLTE applies the LTE predicate on the "telegram_bot_token" field.
+func TelegramBotTokenLTE(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldLTE(FieldTelegramBotToken, v))
+}
+
+// TelegramBotTokenContains applies the Contains predicate on the "telegram_bot_token" field.
+func TelegramBotTokenContains(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldContains(FieldTelegramBotToken, v))
+}
+
+// TelegramBotTokenHasPrefix applies the HasPrefix predicate on the "telegram_bot_token" field.
+func TelegramBotTokenHasPrefix(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldHasPrefix(FieldTelegramBotToken, v))
+}
+
+// TelegramBotTokenHasSuffix applies the HasSuffix predicate on the "telegram_bot_token" field.
+func TelegramBotTokenHasSuffix(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldHasSuffix(FieldTelegramBotToken, v))
+}
+
+// TelegramBotTokenIsNil applies the IsNil predicate on the "telegram_bot_token" field.
+func TelegramBotTokenIsNil() predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldIsNull(FieldTelegramBotToken))
+}
+
+// TelegramBotTokenNotNil applies the NotNil predicate on the "telegram_bot_token" field.
+func TelegramBotTokenNotNil() predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldNotNull(FieldTelegramBotToken))
+}
+
+// TelegramBotTokenEqualFold applies the EqualFold predicate on the "telegram_bot_token" field.
+func TelegramBotTokenEqualFold(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldEqualFold(FieldTelegramBotToken, v))
+}
+
+// TelegramBotTokenContainsFold applies the ContainsFold predicate on the "telegram_bot_token" field.
+func TelegramBotTokenContainsFold(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldContainsFold(FieldTelegramBotToken, v))
+}
+
+// TelegramChatIDEQ applies the EQ predicate on the "telegram_chat_id" field.
+func TelegramChatIDEQ(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldEQ(FieldTelegramChatID, v))
+}
+
+// TelegramChatIDNEQ applies the NEQ predicate on the "telegram_chat_id" field.
+func TelegramChatIDNEQ(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldNEQ(FieldTelegramChatID, v))
+}
+
+// TelegramChatIDIn applies the In predicate on the "telegram_chat_id" field.
+func TelegramChatIDIn(vs ...string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldIn(FieldTelegramChatID, vs...))
+}
+
+// TelegramChatIDNotIn applies the NotIn predicate on the "telegram_chat_id" field.
+func TelegramChatIDNotIn(vs ...string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldNotIn(FieldTelegramChatID, vs...))
+}
+
+// TelegramChatIDGT applies the GT predicate on the "telegram_chat_id" field.
+func TelegramChatIDGT(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldGT(FieldTelegramChatID, v))
+}
+
+// TelegramChatIDGTE applies the GTE predicate on the "telegram_chat_id" field.
+func TelegramChatIDGTE(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldGTE(FieldTelegramChatID, v))
+}
+
+// TelegramChatIDLT applies the LT predicate on the "telegram_chat_id" field.
+func TelegramChatIDLT(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldLT(FieldTelegramChatID, v))
+}
+
+// TelegramChatIDLTE applies the LTE predicate on the "telegram_chat_id" field.
+func TelegramChatIDLTE(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldLTE(FieldTelegramChatID, v))
+}
+
+// TelegramChatIDContains applies the Contains predicate on the "telegram_chat_id" field.
+func TelegramChatIDContains(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldContains(FieldTelegramChatID, v))
+}
+
+// TelegramChatIDHasPrefix applies the HasPrefix predicate on the "telegram_chat_id" field.
+func TelegramChatIDHasPrefix(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldHasPrefix(FieldTelegramChatID, v))
+}
+
+// TelegramChatIDHasSuffix applies the HasSuffix predicate on the "telegram_chat_id" field.
+func TelegramChatIDHasSuffix(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldHasSuffix(FieldTelegramChatID, v))
+}
+
+// TelegramChatIDIsNil applies the IsNil predicate on the "telegram_chat_id" field.
+func TelegramChatIDIsNil() predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldIsNull(FieldTelegramChatID))
+}
+
+// TelegramChatIDNotNil applies the NotNil predicate on the "telegram_chat_id" field.
+func TelegramChatIDNotNil() predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldNotNull(FieldTelegramChatID))
+}
+
+// TelegramChatIDEqualFold applies the EqualFold predicate on the "telegram_chat_id" field.
+func TelegramChatIDEqualFold(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldEqualFold(FieldTelegramChatID, v))
+}
+
+// TelegramChatIDContainsFold applies the ContainsFold predicate on the "telegram_chat_id" field.
+func TelegramChatIDContainsFold(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldContainsFold(FieldTelegramChatID, v))
+}
+
+// WebhookURLEQ applies the EQ predicate on the "webhook_url" field.
+func WebhookURLEQ(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldEQ(FieldWebhookURL, v))
+}
+
+// WebhookURLNEQ applies the NEQ predicate on the "webhook_url" field.
+func WebhookURLNEQ(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldNEQ(FieldWebhookURL, v))
+}
+
+// WebhookURLIn applies the In predicate on the "webhook_url" field.
+func WebhookURLIn(vs ...string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldIn(FieldWebhookURL, vs...))
+}
+
+// WebhookURLNotIn applies the NotIn predicate on the "webhook_url" field.
+func WebhookURLNotIn(vs ...string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldNotIn(FieldWebhookURL, vs...))
+}
+
+// WebhookURLGT applies the GT predicate on the "webhook_url" field.
+func WebhookURLGT(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldGT(FieldWebhookURL, v))
+}
+
+// WebhookURLGTE applies the GTE predicate on the "webhook_url" field.
+func WebhookURLGTE(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldGTE(FieldWebhookURL, v))
+}
+
+// WebhookURLLT applies the LT predicate on the "webhook_url" field.
+func WebhookURLLT(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldLT(FieldWebhookURL, v))
+}
+
+// WebhookURLLTE applies the LTE predicate on the "webhook_url" field.
+func WebhookURLLTE(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldLTE(FieldWebhookURL, v))
+}
+
+// WebhookURLContains applies the Contains predicate on the "webhook_url" field.
+func WebhookURLContains(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldContains(FieldWebhookURL, v))
+}
+
+// WebhookURLHasPrefix applies the HasPrefix predicate on the "webhook_url" field.
+func WebhookURLHasPrefix(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldHasPrefix(FieldWebhookURL, v))
+}
+
+// WebhookURLHasSuffix applies the HasSuffix predicate on the "webhook_url" field.
+func WebhookURLHasSuffix(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldHasSuffix(FieldWebhookURL, v))
+}
+
+// WebhookURLIsNil applies the IsNil predicate on the "webhook_url" field.
+func WebhookURLIsNil() predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldIsNull(FieldWebhookURL))
+}
+
+// WebhookURLNotNil applies the NotNil predicate on the "webhook_url" field.
+func WebhookURLNotNil() predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldNotNull(FieldWebhookURL))
+}
+
+// WebhookURLEqualFold applies the EqualFold predicate on the "webhook_url" field.
+func WebhookURLEqualFold(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldEqualFold(FieldWebhookURL, v))
+}
+
+// WebhookURLContainsFold applies the ContainsFold predicate on the "webhook_url" field.
+func WebhookURLContainsFold(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldContainsFold(FieldWebhookURL, v))
+}
+
+// WebhookMethodEQ applies the EQ predicate on the "webhook_method" field.
+func WebhookMethodEQ(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldEQ(FieldWebhookMethod, v))
+}
+
+// WebhookMethodNEQ applies the NEQ predicate on the "webhook_method" field.
+func WebhookMethodNEQ(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldNEQ(FieldWebhookMethod, v))
+}
+
+// WebhookMethodIn applies the In predicate on the "webhook_method" field.
+func WebhookMethodIn(vs ...string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldIn(FieldWebhookMethod, vs...))
+}
+
+// WebhookMethodNotIn applies the NotIn predicate on the "webhook_method" field.
+func WebhookMethodNotIn(vs ...string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldNotIn(FieldWebhookMethod, vs...))
+}
+
+// WebhookMethodGT applies the GT predicate on the "webhook_method" field.
+func WebhookMethodGT(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldGT(FieldWebhookMethod, v))
+}
+
+// WebhookMethodGTE applies the GTE predicate on the "webhook_method" field.
+func WebhookMethodGTE(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldGTE(FieldWebhookMethod, v))
+}
+
+// WebhookMethodLT applies the LT predicate on the "webhook_method" field.
+func WebhookMethodLT(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldLT(FieldWebhookMethod, v))
+}
+
+// WebhookMethodLTE applies the LTE predicate on the "webhook_method" field.
+func WebhookMethodLTE(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldLTE(FieldWebhookMethod, v))
+}
+
+// WebhookMethodContains applies the Contains predicate on the "webhook_method" field.
+func WebhookMethodContains(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldContains(FieldWebhookMethod, v))
+}
+
+// WebhookMethodHasPrefix applies the HasPrefix predicate on the "webhook_method" field.
+func WebhookMethodHasPrefix(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldHasPrefix(FieldWebhookMethod, v))
+}
+
+// WebhookMethodHasSuffix applies the HasSuffix predicate on the "webhook_method" field.
+func WebhookMethodHasSuffix(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldHasSuffix(FieldWebhookMethod, v))
+}
+
+// WebhookMethodIsNil applies the IsNil predicate on the "webhook_method" field.
+func WebhookMethodIsNil() predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldIsNull(FieldWebhookMethod))
+}
+
+// WebhookMethodNotNil applies the NotNil predicate on the "webhook_method" field.
+func WebhookMethodNotNil() predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldNotNull(FieldWebhookMethod))
+}
+
+// WebhookMethodEqualFold applies the EqualFold predicate on the "webhook_method" field.
+func WebhookMethodEqualFold(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldEqualFold(FieldWebhookMethod, v))
+}
+
+// WebhookMethodContainsFold applies the ContainsFold predicate on the "webhook_method" field.
+func WebhookMethodContainsFold(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldContainsFold(FieldWebhookMethod, v))
+}
+
+// NtfyServerURLEQ applies the EQ predicate on the "ntfy_server_url" field.
+func NtfyServerURLEQ(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldEQ(FieldNtfyServerURL, v))
+}
+
+// NtfyServerURLNEQ applies the NEQ predicate on the "ntfy_server_url" field.
+func NtfyServerURLNEQ(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldNEQ(FieldNtfyServerURL, v))
+}
+
+// NtfyServerURLIn applies the In predicate on the "ntfy_server_url" field.
+func NtfyServerURLIn(vs ...string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldIn(FieldNtfyServerURL, vs...))
+}
+
+// NtfyServerURLNotIn applies the NotIn predicate on the "ntfy_server_url" field.
+func NtfyServerURLNotIn(vs ...string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldNotIn(FieldNtfyServerURL, vs...))
+}
+
+// NtfyServerURLGT applies the GT predicate on the "ntfy_server_url" field.
+func NtfyServerURLGT(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldGT(FieldNtfyServerURL, v))
+}
+
+// NtfyServerURLGTE applies the GTE predicate on the "ntfy_server_url" field.
+func NtfyServerURLGTE(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldGTE(FieldNtfyServerURL, v))
+}
+
+// NtfyServerURLLT applies the LT predicate on the "ntfy_server_url" field.
+func NtfyServerURLLT(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldLT(FieldNtfyServerURL, v))
+}
+
+// NtfyServerURLLTE applies the LTE predicate on the "ntfy_server_url" field.
+func NtfyServerURLLTE(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldLTE(FieldNtfyServerURL, v))
+}
+
+// NtfyServerURLContains applies the Contains predicate on the "ntfy_server_url" field.
+func NtfyServerURLContains(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldContains(FieldNtfyServerURL, v))
+}
+
+// NtfyServerURLHasPrefix applies the HasPrefix predicate on the "ntfy_server_url" field.
+func NtfyServerURLHasPrefix(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldHasPrefix(FieldNtfyServerURL, v))
+}
+
+// NtfyServerURLHasSuffix applies the HasSuffix predicate on the "ntfy_server_url" field.
+func NtfyServerURLHasSuffix(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldHasSuffix(FieldNtfyServerURL, v))
+}
+
+// NtfyServerURLIsNil applies the IsNil predicate on the "ntfy_server_url" field.
+func NtfyServerURLIsNil() predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldIsNull(FieldNtfyServerURL))
+}
+
+// NtfyServerURLNotNil applies the NotNil predicate on the "ntfy_server_url" field.
+func NtfyServerURLNotNil() predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldNotNull(FieldNtfyServerURL))
+}
+
+// NtfyServerURLEqualFold applies the EqualFold predicate on the "ntfy_server_url" field.
+func NtfyServerURLEqualFold(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldEqualFold(FieldNtfyServerURL, v))
+}
+
+// NtfyServerURLContainsFold applies the ContainsFold predicate on the "ntfy_server_url" field.
+func NtfyServerURLContainsFold(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldContainsFold(FieldNtfyServerURL, v))
+}
+
+// NtfyTopicEQ applies the EQ predicate on the "ntfy_topic" field.
+func NtfyTopicEQ(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldEQ(FieldNtfyTopic, v))
+}
+
+// NtfyTopicNEQ applies the NEQ predicate on the "ntfy_topic" field.
+func NtfyTopicNEQ(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldNEQ(FieldNtfyTopic, v))
+}
+
+// NtfyTopicIn applies the In predicate on the "ntfy_topic" field.
+func NtfyTopicIn(vs ...string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldIn(FieldNtfyTopic, vs...))
+}
+
+// NtfyTopicNotIn applies the NotIn predicate on the "ntfy_topic" field.
+func NtfyTopicNotIn(vs ...string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldNotIn(FieldNtfyTopic, vs...))
+}
+
+// NtfyTopicGT applies the GT predicate on the "ntfy_topic" field.
+func NtfyTopicGT(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldGT(FieldNtfyTopic, v))
+}
+
+// NtfyTopicGTE applies the GTE predicate on the "ntfy_topic" field.
+func NtfyTopicGTE(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldGTE(FieldNtfyTopic, v))
+}
+
+// NtfyTopicLT applies the LT predicate on the "ntfy_topic" field.
+func NtfyTopicLT(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldLT(FieldNtfyTopic, v))
+}
+
+// NtfyTopicLTE applies the LTE predicate on the "ntfy_topic" field.
+func NtfyTopicLTE(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldLTE(FieldNtfyTopic, v))
+}
+
+// NtfyTopicContains applies the Contains predicate on the "ntfy_topic" field.
+func NtfyTopicContains(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldContains(FieldNtfyTopic, v))
+}
+
+// NtfyTopicHasPrefix applies the HasPrefix predicate on the "ntfy_topic" field.
+func NtfyTopicHasPrefix(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldHasPrefix(FieldNtfyTopic, v))
+}
+
+// NtfyTopicHasSuffix applies the HasSuffix predicate on the "ntfy_topic" field.
+func NtfyTopicHasSuffix(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldHasSuffix(FieldNtfyTopic, v))
+}
+
+// NtfyTopicIsNil applies the IsNil predicate on the "ntfy_topic" field.
+func NtfyTopicIsNil() predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldIsNull(FieldNtfyTopic))
+}
+
+// NtfyTopicNotNil applies the NotNil predicate on the "ntfy_topic" field.
+func NtfyTopicNotNil() predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldNotNull(FieldNtfyTopic))
+}
+
+// NtfyTopicEqualFold applies the EqualFold predicate on the "ntfy_topic" field.
+func NtfyTopicEqualFold(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldEqualFold(FieldNtfyTopic, v))
+}
+
+// NtfyTopicContainsFold applies the ContainsFold predicate on the "ntfy_topic" field.
+func NtfyTopicContainsFold(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldContainsFold(FieldNtfyTopic, v))
+}
+
+// NtfyTokenEQ applies the EQ predicate on the "ntfy_token" field.
+func NtfyTokenEQ(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldEQ(FieldNtfyToken, v))
+}
+
+// NtfyTokenNEQ applies the NEQ predicate on the "ntfy_token" field.
+func NtfyTokenNEQ(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldNEQ(FieldNtfyToken, v))
+}
+
+// NtfyTokenIn applies the In predicate on the "ntfy_token" field.
+func NtfyTokenIn(vs ...string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldIn(FieldNtfyToken, vs...))
+}
+
+// NtfyTokenNotIn applies the NotIn predicate on the "ntfy_token" field.
+func NtfyTokenNotIn(vs ...string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldNotIn(FieldNtfyToken, vs...))
+}
+
+// NtfyTokenGT applies the GT predicate on the "ntfy_token" field.
+func NtfyTokenGT(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldGT(FieldNtfyToken, v))
+}
+
+// NtfyTokenGTE applies the GTE predicate on the "ntfy_token" field.
+func NtfyTokenGTE(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldGTE(FieldNtfyToken, v))
+}
+
+// NtfyTokenLT applies the LT predicate on the "ntfy_token" field.
+func NtfyTokenLT(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldLT(FieldNtfyToken, v))
+}
+
+// NtfyTokenLTE applies the LTE predicate on the "ntfy_token" field.
+func NtfyTokenLTE(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldLTE(FieldNtfyToken, v))
+}
+
+// NtfyTokenContains applies the Contains predicate on the "ntfy_token" field.
+func NtfyTokenContains(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldContains(FieldNtfyToken, v))
+}
+
+// NtfyTokenHasPrefix applies the HasPrefix predicate on the "ntfy_token" field.
+func NtfyTokenHasPrefix(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldHasPrefix(FieldNtfyToken, v))
+}
+
+// NtfyTokenHasSuffix applies the HasSuffix predicate on the "ntfy_token" field.
+func NtfyTokenHasSuffix(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldHasSuffix(FieldNtfyToken, v))
+}
+
+// NtfyTokenIsNil applies the IsNil predicate on the "ntfy_token" field.
+func NtfyTokenIsNil() predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldIsNull(FieldNtfyToken))
+}
+
+// NtfyTokenNotNil applies the NotNil predicate on the "ntfy_token" field.
+func NtfyTokenNotNil() predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldNotNull(FieldNtfyToken))
+}
+
+// NtfyTokenEqualFold applies the EqualFold predicate on the "ntfy_token" field.
+func NtfyTokenEqualFold(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldEqualFold(FieldNtfyToken, v))
+}
+
+// NtfyTokenContainsFold applies the ContainsFold predicate on the "ntfy_token" field.
+func NtfyTokenContainsFold(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldContainsFold(FieldNtfyToken, v))
 }
 
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.

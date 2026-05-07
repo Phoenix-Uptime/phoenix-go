@@ -100,15 +100,270 @@ func (_u *NotificationChannelUpdate) SetNillableIsDefault(v *bool) *Notification
 	return _u
 }
 
-// SetConfig sets the "config" field.
-func (_u *NotificationChannelUpdate) SetConfig(v map[string]interface{}) *NotificationChannelUpdate {
-	_u.mutation.SetConfig(v)
+// SetSMTPServer sets the "smtp_server" field.
+func (_u *NotificationChannelUpdate) SetSMTPServer(v string) *NotificationChannelUpdate {
+	_u.mutation.SetSMTPServer(v)
 	return _u
 }
 
-// ClearConfig clears the value of the "config" field.
-func (_u *NotificationChannelUpdate) ClearConfig() *NotificationChannelUpdate {
-	_u.mutation.ClearConfig()
+// SetNillableSMTPServer sets the "smtp_server" field if the given value is not nil.
+func (_u *NotificationChannelUpdate) SetNillableSMTPServer(v *string) *NotificationChannelUpdate {
+	if v != nil {
+		_u.SetSMTPServer(*v)
+	}
+	return _u
+}
+
+// ClearSMTPServer clears the value of the "smtp_server" field.
+func (_u *NotificationChannelUpdate) ClearSMTPServer() *NotificationChannelUpdate {
+	_u.mutation.ClearSMTPServer()
+	return _u
+}
+
+// SetSMTPPort sets the "smtp_port" field.
+func (_u *NotificationChannelUpdate) SetSMTPPort(v int) *NotificationChannelUpdate {
+	_u.mutation.ResetSMTPPort()
+	_u.mutation.SetSMTPPort(v)
+	return _u
+}
+
+// SetNillableSMTPPort sets the "smtp_port" field if the given value is not nil.
+func (_u *NotificationChannelUpdate) SetNillableSMTPPort(v *int) *NotificationChannelUpdate {
+	if v != nil {
+		_u.SetSMTPPort(*v)
+	}
+	return _u
+}
+
+// AddSMTPPort adds value to the "smtp_port" field.
+func (_u *NotificationChannelUpdate) AddSMTPPort(v int) *NotificationChannelUpdate {
+	_u.mutation.AddSMTPPort(v)
+	return _u
+}
+
+// ClearSMTPPort clears the value of the "smtp_port" field.
+func (_u *NotificationChannelUpdate) ClearSMTPPort() *NotificationChannelUpdate {
+	_u.mutation.ClearSMTPPort()
+	return _u
+}
+
+// SetSMTPFromAddress sets the "smtp_from_address" field.
+func (_u *NotificationChannelUpdate) SetSMTPFromAddress(v string) *NotificationChannelUpdate {
+	_u.mutation.SetSMTPFromAddress(v)
+	return _u
+}
+
+// SetNillableSMTPFromAddress sets the "smtp_from_address" field if the given value is not nil.
+func (_u *NotificationChannelUpdate) SetNillableSMTPFromAddress(v *string) *NotificationChannelUpdate {
+	if v != nil {
+		_u.SetSMTPFromAddress(*v)
+	}
+	return _u
+}
+
+// ClearSMTPFromAddress clears the value of the "smtp_from_address" field.
+func (_u *NotificationChannelUpdate) ClearSMTPFromAddress() *NotificationChannelUpdate {
+	_u.mutation.ClearSMTPFromAddress()
+	return _u
+}
+
+// SetSMTPUsername sets the "smtp_username" field.
+func (_u *NotificationChannelUpdate) SetSMTPUsername(v string) *NotificationChannelUpdate {
+	_u.mutation.SetSMTPUsername(v)
+	return _u
+}
+
+// SetNillableSMTPUsername sets the "smtp_username" field if the given value is not nil.
+func (_u *NotificationChannelUpdate) SetNillableSMTPUsername(v *string) *NotificationChannelUpdate {
+	if v != nil {
+		_u.SetSMTPUsername(*v)
+	}
+	return _u
+}
+
+// ClearSMTPUsername clears the value of the "smtp_username" field.
+func (_u *NotificationChannelUpdate) ClearSMTPUsername() *NotificationChannelUpdate {
+	_u.mutation.ClearSMTPUsername()
+	return _u
+}
+
+// SetSMTPPassword sets the "smtp_password" field.
+func (_u *NotificationChannelUpdate) SetSMTPPassword(v string) *NotificationChannelUpdate {
+	_u.mutation.SetSMTPPassword(v)
+	return _u
+}
+
+// SetNillableSMTPPassword sets the "smtp_password" field if the given value is not nil.
+func (_u *NotificationChannelUpdate) SetNillableSMTPPassword(v *string) *NotificationChannelUpdate {
+	if v != nil {
+		_u.SetSMTPPassword(*v)
+	}
+	return _u
+}
+
+// ClearSMTPPassword clears the value of the "smtp_password" field.
+func (_u *NotificationChannelUpdate) ClearSMTPPassword() *NotificationChannelUpdate {
+	_u.mutation.ClearSMTPPassword()
+	return _u
+}
+
+// SetSMTPUseTLS sets the "smtp_use_tls" field.
+func (_u *NotificationChannelUpdate) SetSMTPUseTLS(v bool) *NotificationChannelUpdate {
+	_u.mutation.SetSMTPUseTLS(v)
+	return _u
+}
+
+// SetNillableSMTPUseTLS sets the "smtp_use_tls" field if the given value is not nil.
+func (_u *NotificationChannelUpdate) SetNillableSMTPUseTLS(v *bool) *NotificationChannelUpdate {
+	if v != nil {
+		_u.SetSMTPUseTLS(*v)
+	}
+	return _u
+}
+
+// ClearSMTPUseTLS clears the value of the "smtp_use_tls" field.
+func (_u *NotificationChannelUpdate) ClearSMTPUseTLS() *NotificationChannelUpdate {
+	_u.mutation.ClearSMTPUseTLS()
+	return _u
+}
+
+// SetTelegramBotToken sets the "telegram_bot_token" field.
+func (_u *NotificationChannelUpdate) SetTelegramBotToken(v string) *NotificationChannelUpdate {
+	_u.mutation.SetTelegramBotToken(v)
+	return _u
+}
+
+// SetNillableTelegramBotToken sets the "telegram_bot_token" field if the given value is not nil.
+func (_u *NotificationChannelUpdate) SetNillableTelegramBotToken(v *string) *NotificationChannelUpdate {
+	if v != nil {
+		_u.SetTelegramBotToken(*v)
+	}
+	return _u
+}
+
+// ClearTelegramBotToken clears the value of the "telegram_bot_token" field.
+func (_u *NotificationChannelUpdate) ClearTelegramBotToken() *NotificationChannelUpdate {
+	_u.mutation.ClearTelegramBotToken()
+	return _u
+}
+
+// SetTelegramChatID sets the "telegram_chat_id" field.
+func (_u *NotificationChannelUpdate) SetTelegramChatID(v string) *NotificationChannelUpdate {
+	_u.mutation.SetTelegramChatID(v)
+	return _u
+}
+
+// SetNillableTelegramChatID sets the "telegram_chat_id" field if the given value is not nil.
+func (_u *NotificationChannelUpdate) SetNillableTelegramChatID(v *string) *NotificationChannelUpdate {
+	if v != nil {
+		_u.SetTelegramChatID(*v)
+	}
+	return _u
+}
+
+// ClearTelegramChatID clears the value of the "telegram_chat_id" field.
+func (_u *NotificationChannelUpdate) ClearTelegramChatID() *NotificationChannelUpdate {
+	_u.mutation.ClearTelegramChatID()
+	return _u
+}
+
+// SetWebhookURL sets the "webhook_url" field.
+func (_u *NotificationChannelUpdate) SetWebhookURL(v string) *NotificationChannelUpdate {
+	_u.mutation.SetWebhookURL(v)
+	return _u
+}
+
+// SetNillableWebhookURL sets the "webhook_url" field if the given value is not nil.
+func (_u *NotificationChannelUpdate) SetNillableWebhookURL(v *string) *NotificationChannelUpdate {
+	if v != nil {
+		_u.SetWebhookURL(*v)
+	}
+	return _u
+}
+
+// ClearWebhookURL clears the value of the "webhook_url" field.
+func (_u *NotificationChannelUpdate) ClearWebhookURL() *NotificationChannelUpdate {
+	_u.mutation.ClearWebhookURL()
+	return _u
+}
+
+// SetWebhookMethod sets the "webhook_method" field.
+func (_u *NotificationChannelUpdate) SetWebhookMethod(v string) *NotificationChannelUpdate {
+	_u.mutation.SetWebhookMethod(v)
+	return _u
+}
+
+// SetNillableWebhookMethod sets the "webhook_method" field if the given value is not nil.
+func (_u *NotificationChannelUpdate) SetNillableWebhookMethod(v *string) *NotificationChannelUpdate {
+	if v != nil {
+		_u.SetWebhookMethod(*v)
+	}
+	return _u
+}
+
+// ClearWebhookMethod clears the value of the "webhook_method" field.
+func (_u *NotificationChannelUpdate) ClearWebhookMethod() *NotificationChannelUpdate {
+	_u.mutation.ClearWebhookMethod()
+	return _u
+}
+
+// SetNtfyServerURL sets the "ntfy_server_url" field.
+func (_u *NotificationChannelUpdate) SetNtfyServerURL(v string) *NotificationChannelUpdate {
+	_u.mutation.SetNtfyServerURL(v)
+	return _u
+}
+
+// SetNillableNtfyServerURL sets the "ntfy_server_url" field if the given value is not nil.
+func (_u *NotificationChannelUpdate) SetNillableNtfyServerURL(v *string) *NotificationChannelUpdate {
+	if v != nil {
+		_u.SetNtfyServerURL(*v)
+	}
+	return _u
+}
+
+// ClearNtfyServerURL clears the value of the "ntfy_server_url" field.
+func (_u *NotificationChannelUpdate) ClearNtfyServerURL() *NotificationChannelUpdate {
+	_u.mutation.ClearNtfyServerURL()
+	return _u
+}
+
+// SetNtfyTopic sets the "ntfy_topic" field.
+func (_u *NotificationChannelUpdate) SetNtfyTopic(v string) *NotificationChannelUpdate {
+	_u.mutation.SetNtfyTopic(v)
+	return _u
+}
+
+// SetNillableNtfyTopic sets the "ntfy_topic" field if the given value is not nil.
+func (_u *NotificationChannelUpdate) SetNillableNtfyTopic(v *string) *NotificationChannelUpdate {
+	if v != nil {
+		_u.SetNtfyTopic(*v)
+	}
+	return _u
+}
+
+// ClearNtfyTopic clears the value of the "ntfy_topic" field.
+func (_u *NotificationChannelUpdate) ClearNtfyTopic() *NotificationChannelUpdate {
+	_u.mutation.ClearNtfyTopic()
+	return _u
+}
+
+// SetNtfyToken sets the "ntfy_token" field.
+func (_u *NotificationChannelUpdate) SetNtfyToken(v string) *NotificationChannelUpdate {
+	_u.mutation.SetNtfyToken(v)
+	return _u
+}
+
+// SetNillableNtfyToken sets the "ntfy_token" field if the given value is not nil.
+func (_u *NotificationChannelUpdate) SetNillableNtfyToken(v *string) *NotificationChannelUpdate {
+	if v != nil {
+		_u.SetNtfyToken(*v)
+	}
+	return _u
+}
+
+// ClearNtfyToken clears the value of the "ntfy_token" field.
+func (_u *NotificationChannelUpdate) ClearNtfyToken() *NotificationChannelUpdate {
+	_u.mutation.ClearNtfyToken()
 	return _u
 }
 
@@ -248,11 +503,86 @@ func (_u *NotificationChannelUpdate) sqlSave(ctx context.Context) (_node int, er
 	if value, ok := _u.mutation.IsDefault(); ok {
 		_spec.SetField(notificationchannel.FieldIsDefault, field.TypeBool, value)
 	}
-	if value, ok := _u.mutation.Config(); ok {
-		_spec.SetField(notificationchannel.FieldConfig, field.TypeJSON, value)
+	if value, ok := _u.mutation.SMTPServer(); ok {
+		_spec.SetField(notificationchannel.FieldSMTPServer, field.TypeString, value)
 	}
-	if _u.mutation.ConfigCleared() {
-		_spec.ClearField(notificationchannel.FieldConfig, field.TypeJSON)
+	if _u.mutation.SMTPServerCleared() {
+		_spec.ClearField(notificationchannel.FieldSMTPServer, field.TypeString)
+	}
+	if value, ok := _u.mutation.SMTPPort(); ok {
+		_spec.SetField(notificationchannel.FieldSMTPPort, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedSMTPPort(); ok {
+		_spec.AddField(notificationchannel.FieldSMTPPort, field.TypeInt, value)
+	}
+	if _u.mutation.SMTPPortCleared() {
+		_spec.ClearField(notificationchannel.FieldSMTPPort, field.TypeInt)
+	}
+	if value, ok := _u.mutation.SMTPFromAddress(); ok {
+		_spec.SetField(notificationchannel.FieldSMTPFromAddress, field.TypeString, value)
+	}
+	if _u.mutation.SMTPFromAddressCleared() {
+		_spec.ClearField(notificationchannel.FieldSMTPFromAddress, field.TypeString)
+	}
+	if value, ok := _u.mutation.SMTPUsername(); ok {
+		_spec.SetField(notificationchannel.FieldSMTPUsername, field.TypeString, value)
+	}
+	if _u.mutation.SMTPUsernameCleared() {
+		_spec.ClearField(notificationchannel.FieldSMTPUsername, field.TypeString)
+	}
+	if value, ok := _u.mutation.SMTPPassword(); ok {
+		_spec.SetField(notificationchannel.FieldSMTPPassword, field.TypeString, value)
+	}
+	if _u.mutation.SMTPPasswordCleared() {
+		_spec.ClearField(notificationchannel.FieldSMTPPassword, field.TypeString)
+	}
+	if value, ok := _u.mutation.SMTPUseTLS(); ok {
+		_spec.SetField(notificationchannel.FieldSMTPUseTLS, field.TypeBool, value)
+	}
+	if _u.mutation.SMTPUseTLSCleared() {
+		_spec.ClearField(notificationchannel.FieldSMTPUseTLS, field.TypeBool)
+	}
+	if value, ok := _u.mutation.TelegramBotToken(); ok {
+		_spec.SetField(notificationchannel.FieldTelegramBotToken, field.TypeString, value)
+	}
+	if _u.mutation.TelegramBotTokenCleared() {
+		_spec.ClearField(notificationchannel.FieldTelegramBotToken, field.TypeString)
+	}
+	if value, ok := _u.mutation.TelegramChatID(); ok {
+		_spec.SetField(notificationchannel.FieldTelegramChatID, field.TypeString, value)
+	}
+	if _u.mutation.TelegramChatIDCleared() {
+		_spec.ClearField(notificationchannel.FieldTelegramChatID, field.TypeString)
+	}
+	if value, ok := _u.mutation.WebhookURL(); ok {
+		_spec.SetField(notificationchannel.FieldWebhookURL, field.TypeString, value)
+	}
+	if _u.mutation.WebhookURLCleared() {
+		_spec.ClearField(notificationchannel.FieldWebhookURL, field.TypeString)
+	}
+	if value, ok := _u.mutation.WebhookMethod(); ok {
+		_spec.SetField(notificationchannel.FieldWebhookMethod, field.TypeString, value)
+	}
+	if _u.mutation.WebhookMethodCleared() {
+		_spec.ClearField(notificationchannel.FieldWebhookMethod, field.TypeString)
+	}
+	if value, ok := _u.mutation.NtfyServerURL(); ok {
+		_spec.SetField(notificationchannel.FieldNtfyServerURL, field.TypeString, value)
+	}
+	if _u.mutation.NtfyServerURLCleared() {
+		_spec.ClearField(notificationchannel.FieldNtfyServerURL, field.TypeString)
+	}
+	if value, ok := _u.mutation.NtfyTopic(); ok {
+		_spec.SetField(notificationchannel.FieldNtfyTopic, field.TypeString, value)
+	}
+	if _u.mutation.NtfyTopicCleared() {
+		_spec.ClearField(notificationchannel.FieldNtfyTopic, field.TypeString)
+	}
+	if value, ok := _u.mutation.NtfyToken(); ok {
+		_spec.SetField(notificationchannel.FieldNtfyToken, field.TypeString, value)
+	}
+	if _u.mutation.NtfyTokenCleared() {
+		_spec.ClearField(notificationchannel.FieldNtfyToken, field.TypeString)
 	}
 	if value, ok := _u.mutation.UpdatedAt(); ok {
 		_spec.SetField(notificationchannel.FieldUpdatedAt, field.TypeTime, value)
@@ -421,15 +751,270 @@ func (_u *NotificationChannelUpdateOne) SetNillableIsDefault(v *bool) *Notificat
 	return _u
 }
 
-// SetConfig sets the "config" field.
-func (_u *NotificationChannelUpdateOne) SetConfig(v map[string]interface{}) *NotificationChannelUpdateOne {
-	_u.mutation.SetConfig(v)
+// SetSMTPServer sets the "smtp_server" field.
+func (_u *NotificationChannelUpdateOne) SetSMTPServer(v string) *NotificationChannelUpdateOne {
+	_u.mutation.SetSMTPServer(v)
 	return _u
 }
 
-// ClearConfig clears the value of the "config" field.
-func (_u *NotificationChannelUpdateOne) ClearConfig() *NotificationChannelUpdateOne {
-	_u.mutation.ClearConfig()
+// SetNillableSMTPServer sets the "smtp_server" field if the given value is not nil.
+func (_u *NotificationChannelUpdateOne) SetNillableSMTPServer(v *string) *NotificationChannelUpdateOne {
+	if v != nil {
+		_u.SetSMTPServer(*v)
+	}
+	return _u
+}
+
+// ClearSMTPServer clears the value of the "smtp_server" field.
+func (_u *NotificationChannelUpdateOne) ClearSMTPServer() *NotificationChannelUpdateOne {
+	_u.mutation.ClearSMTPServer()
+	return _u
+}
+
+// SetSMTPPort sets the "smtp_port" field.
+func (_u *NotificationChannelUpdateOne) SetSMTPPort(v int) *NotificationChannelUpdateOne {
+	_u.mutation.ResetSMTPPort()
+	_u.mutation.SetSMTPPort(v)
+	return _u
+}
+
+// SetNillableSMTPPort sets the "smtp_port" field if the given value is not nil.
+func (_u *NotificationChannelUpdateOne) SetNillableSMTPPort(v *int) *NotificationChannelUpdateOne {
+	if v != nil {
+		_u.SetSMTPPort(*v)
+	}
+	return _u
+}
+
+// AddSMTPPort adds value to the "smtp_port" field.
+func (_u *NotificationChannelUpdateOne) AddSMTPPort(v int) *NotificationChannelUpdateOne {
+	_u.mutation.AddSMTPPort(v)
+	return _u
+}
+
+// ClearSMTPPort clears the value of the "smtp_port" field.
+func (_u *NotificationChannelUpdateOne) ClearSMTPPort() *NotificationChannelUpdateOne {
+	_u.mutation.ClearSMTPPort()
+	return _u
+}
+
+// SetSMTPFromAddress sets the "smtp_from_address" field.
+func (_u *NotificationChannelUpdateOne) SetSMTPFromAddress(v string) *NotificationChannelUpdateOne {
+	_u.mutation.SetSMTPFromAddress(v)
+	return _u
+}
+
+// SetNillableSMTPFromAddress sets the "smtp_from_address" field if the given value is not nil.
+func (_u *NotificationChannelUpdateOne) SetNillableSMTPFromAddress(v *string) *NotificationChannelUpdateOne {
+	if v != nil {
+		_u.SetSMTPFromAddress(*v)
+	}
+	return _u
+}
+
+// ClearSMTPFromAddress clears the value of the "smtp_from_address" field.
+func (_u *NotificationChannelUpdateOne) ClearSMTPFromAddress() *NotificationChannelUpdateOne {
+	_u.mutation.ClearSMTPFromAddress()
+	return _u
+}
+
+// SetSMTPUsername sets the "smtp_username" field.
+func (_u *NotificationChannelUpdateOne) SetSMTPUsername(v string) *NotificationChannelUpdateOne {
+	_u.mutation.SetSMTPUsername(v)
+	return _u
+}
+
+// SetNillableSMTPUsername sets the "smtp_username" field if the given value is not nil.
+func (_u *NotificationChannelUpdateOne) SetNillableSMTPUsername(v *string) *NotificationChannelUpdateOne {
+	if v != nil {
+		_u.SetSMTPUsername(*v)
+	}
+	return _u
+}
+
+// ClearSMTPUsername clears the value of the "smtp_username" field.
+func (_u *NotificationChannelUpdateOne) ClearSMTPUsername() *NotificationChannelUpdateOne {
+	_u.mutation.ClearSMTPUsername()
+	return _u
+}
+
+// SetSMTPPassword sets the "smtp_password" field.
+func (_u *NotificationChannelUpdateOne) SetSMTPPassword(v string) *NotificationChannelUpdateOne {
+	_u.mutation.SetSMTPPassword(v)
+	return _u
+}
+
+// SetNillableSMTPPassword sets the "smtp_password" field if the given value is not nil.
+func (_u *NotificationChannelUpdateOne) SetNillableSMTPPassword(v *string) *NotificationChannelUpdateOne {
+	if v != nil {
+		_u.SetSMTPPassword(*v)
+	}
+	return _u
+}
+
+// ClearSMTPPassword clears the value of the "smtp_password" field.
+func (_u *NotificationChannelUpdateOne) ClearSMTPPassword() *NotificationChannelUpdateOne {
+	_u.mutation.ClearSMTPPassword()
+	return _u
+}
+
+// SetSMTPUseTLS sets the "smtp_use_tls" field.
+func (_u *NotificationChannelUpdateOne) SetSMTPUseTLS(v bool) *NotificationChannelUpdateOne {
+	_u.mutation.SetSMTPUseTLS(v)
+	return _u
+}
+
+// SetNillableSMTPUseTLS sets the "smtp_use_tls" field if the given value is not nil.
+func (_u *NotificationChannelUpdateOne) SetNillableSMTPUseTLS(v *bool) *NotificationChannelUpdateOne {
+	if v != nil {
+		_u.SetSMTPUseTLS(*v)
+	}
+	return _u
+}
+
+// ClearSMTPUseTLS clears the value of the "smtp_use_tls" field.
+func (_u *NotificationChannelUpdateOne) ClearSMTPUseTLS() *NotificationChannelUpdateOne {
+	_u.mutation.ClearSMTPUseTLS()
+	return _u
+}
+
+// SetTelegramBotToken sets the "telegram_bot_token" field.
+func (_u *NotificationChannelUpdateOne) SetTelegramBotToken(v string) *NotificationChannelUpdateOne {
+	_u.mutation.SetTelegramBotToken(v)
+	return _u
+}
+
+// SetNillableTelegramBotToken sets the "telegram_bot_token" field if the given value is not nil.
+func (_u *NotificationChannelUpdateOne) SetNillableTelegramBotToken(v *string) *NotificationChannelUpdateOne {
+	if v != nil {
+		_u.SetTelegramBotToken(*v)
+	}
+	return _u
+}
+
+// ClearTelegramBotToken clears the value of the "telegram_bot_token" field.
+func (_u *NotificationChannelUpdateOne) ClearTelegramBotToken() *NotificationChannelUpdateOne {
+	_u.mutation.ClearTelegramBotToken()
+	return _u
+}
+
+// SetTelegramChatID sets the "telegram_chat_id" field.
+func (_u *NotificationChannelUpdateOne) SetTelegramChatID(v string) *NotificationChannelUpdateOne {
+	_u.mutation.SetTelegramChatID(v)
+	return _u
+}
+
+// SetNillableTelegramChatID sets the "telegram_chat_id" field if the given value is not nil.
+func (_u *NotificationChannelUpdateOne) SetNillableTelegramChatID(v *string) *NotificationChannelUpdateOne {
+	if v != nil {
+		_u.SetTelegramChatID(*v)
+	}
+	return _u
+}
+
+// ClearTelegramChatID clears the value of the "telegram_chat_id" field.
+func (_u *NotificationChannelUpdateOne) ClearTelegramChatID() *NotificationChannelUpdateOne {
+	_u.mutation.ClearTelegramChatID()
+	return _u
+}
+
+// SetWebhookURL sets the "webhook_url" field.
+func (_u *NotificationChannelUpdateOne) SetWebhookURL(v string) *NotificationChannelUpdateOne {
+	_u.mutation.SetWebhookURL(v)
+	return _u
+}
+
+// SetNillableWebhookURL sets the "webhook_url" field if the given value is not nil.
+func (_u *NotificationChannelUpdateOne) SetNillableWebhookURL(v *string) *NotificationChannelUpdateOne {
+	if v != nil {
+		_u.SetWebhookURL(*v)
+	}
+	return _u
+}
+
+// ClearWebhookURL clears the value of the "webhook_url" field.
+func (_u *NotificationChannelUpdateOne) ClearWebhookURL() *NotificationChannelUpdateOne {
+	_u.mutation.ClearWebhookURL()
+	return _u
+}
+
+// SetWebhookMethod sets the "webhook_method" field.
+func (_u *NotificationChannelUpdateOne) SetWebhookMethod(v string) *NotificationChannelUpdateOne {
+	_u.mutation.SetWebhookMethod(v)
+	return _u
+}
+
+// SetNillableWebhookMethod sets the "webhook_method" field if the given value is not nil.
+func (_u *NotificationChannelUpdateOne) SetNillableWebhookMethod(v *string) *NotificationChannelUpdateOne {
+	if v != nil {
+		_u.SetWebhookMethod(*v)
+	}
+	return _u
+}
+
+// ClearWebhookMethod clears the value of the "webhook_method" field.
+func (_u *NotificationChannelUpdateOne) ClearWebhookMethod() *NotificationChannelUpdateOne {
+	_u.mutation.ClearWebhookMethod()
+	return _u
+}
+
+// SetNtfyServerURL sets the "ntfy_server_url" field.
+func (_u *NotificationChannelUpdateOne) SetNtfyServerURL(v string) *NotificationChannelUpdateOne {
+	_u.mutation.SetNtfyServerURL(v)
+	return _u
+}
+
+// SetNillableNtfyServerURL sets the "ntfy_server_url" field if the given value is not nil.
+func (_u *NotificationChannelUpdateOne) SetNillableNtfyServerURL(v *string) *NotificationChannelUpdateOne {
+	if v != nil {
+		_u.SetNtfyServerURL(*v)
+	}
+	return _u
+}
+
+// ClearNtfyServerURL clears the value of the "ntfy_server_url" field.
+func (_u *NotificationChannelUpdateOne) ClearNtfyServerURL() *NotificationChannelUpdateOne {
+	_u.mutation.ClearNtfyServerURL()
+	return _u
+}
+
+// SetNtfyTopic sets the "ntfy_topic" field.
+func (_u *NotificationChannelUpdateOne) SetNtfyTopic(v string) *NotificationChannelUpdateOne {
+	_u.mutation.SetNtfyTopic(v)
+	return _u
+}
+
+// SetNillableNtfyTopic sets the "ntfy_topic" field if the given value is not nil.
+func (_u *NotificationChannelUpdateOne) SetNillableNtfyTopic(v *string) *NotificationChannelUpdateOne {
+	if v != nil {
+		_u.SetNtfyTopic(*v)
+	}
+	return _u
+}
+
+// ClearNtfyTopic clears the value of the "ntfy_topic" field.
+func (_u *NotificationChannelUpdateOne) ClearNtfyTopic() *NotificationChannelUpdateOne {
+	_u.mutation.ClearNtfyTopic()
+	return _u
+}
+
+// SetNtfyToken sets the "ntfy_token" field.
+func (_u *NotificationChannelUpdateOne) SetNtfyToken(v string) *NotificationChannelUpdateOne {
+	_u.mutation.SetNtfyToken(v)
+	return _u
+}
+
+// SetNillableNtfyToken sets the "ntfy_token" field if the given value is not nil.
+func (_u *NotificationChannelUpdateOne) SetNillableNtfyToken(v *string) *NotificationChannelUpdateOne {
+	if v != nil {
+		_u.SetNtfyToken(*v)
+	}
+	return _u
+}
+
+// ClearNtfyToken clears the value of the "ntfy_token" field.
+func (_u *NotificationChannelUpdateOne) ClearNtfyToken() *NotificationChannelUpdateOne {
+	_u.mutation.ClearNtfyToken()
 	return _u
 }
 
@@ -599,11 +1184,86 @@ func (_u *NotificationChannelUpdateOne) sqlSave(ctx context.Context) (_node *Not
 	if value, ok := _u.mutation.IsDefault(); ok {
 		_spec.SetField(notificationchannel.FieldIsDefault, field.TypeBool, value)
 	}
-	if value, ok := _u.mutation.Config(); ok {
-		_spec.SetField(notificationchannel.FieldConfig, field.TypeJSON, value)
+	if value, ok := _u.mutation.SMTPServer(); ok {
+		_spec.SetField(notificationchannel.FieldSMTPServer, field.TypeString, value)
 	}
-	if _u.mutation.ConfigCleared() {
-		_spec.ClearField(notificationchannel.FieldConfig, field.TypeJSON)
+	if _u.mutation.SMTPServerCleared() {
+		_spec.ClearField(notificationchannel.FieldSMTPServer, field.TypeString)
+	}
+	if value, ok := _u.mutation.SMTPPort(); ok {
+		_spec.SetField(notificationchannel.FieldSMTPPort, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedSMTPPort(); ok {
+		_spec.AddField(notificationchannel.FieldSMTPPort, field.TypeInt, value)
+	}
+	if _u.mutation.SMTPPortCleared() {
+		_spec.ClearField(notificationchannel.FieldSMTPPort, field.TypeInt)
+	}
+	if value, ok := _u.mutation.SMTPFromAddress(); ok {
+		_spec.SetField(notificationchannel.FieldSMTPFromAddress, field.TypeString, value)
+	}
+	if _u.mutation.SMTPFromAddressCleared() {
+		_spec.ClearField(notificationchannel.FieldSMTPFromAddress, field.TypeString)
+	}
+	if value, ok := _u.mutation.SMTPUsername(); ok {
+		_spec.SetField(notificationchannel.FieldSMTPUsername, field.TypeString, value)
+	}
+	if _u.mutation.SMTPUsernameCleared() {
+		_spec.ClearField(notificationchannel.FieldSMTPUsername, field.TypeString)
+	}
+	if value, ok := _u.mutation.SMTPPassword(); ok {
+		_spec.SetField(notificationchannel.FieldSMTPPassword, field.TypeString, value)
+	}
+	if _u.mutation.SMTPPasswordCleared() {
+		_spec.ClearField(notificationchannel.FieldSMTPPassword, field.TypeString)
+	}
+	if value, ok := _u.mutation.SMTPUseTLS(); ok {
+		_spec.SetField(notificationchannel.FieldSMTPUseTLS, field.TypeBool, value)
+	}
+	if _u.mutation.SMTPUseTLSCleared() {
+		_spec.ClearField(notificationchannel.FieldSMTPUseTLS, field.TypeBool)
+	}
+	if value, ok := _u.mutation.TelegramBotToken(); ok {
+		_spec.SetField(notificationchannel.FieldTelegramBotToken, field.TypeString, value)
+	}
+	if _u.mutation.TelegramBotTokenCleared() {
+		_spec.ClearField(notificationchannel.FieldTelegramBotToken, field.TypeString)
+	}
+	if value, ok := _u.mutation.TelegramChatID(); ok {
+		_spec.SetField(notificationchannel.FieldTelegramChatID, field.TypeString, value)
+	}
+	if _u.mutation.TelegramChatIDCleared() {
+		_spec.ClearField(notificationchannel.FieldTelegramChatID, field.TypeString)
+	}
+	if value, ok := _u.mutation.WebhookURL(); ok {
+		_spec.SetField(notificationchannel.FieldWebhookURL, field.TypeString, value)
+	}
+	if _u.mutation.WebhookURLCleared() {
+		_spec.ClearField(notificationchannel.FieldWebhookURL, field.TypeString)
+	}
+	if value, ok := _u.mutation.WebhookMethod(); ok {
+		_spec.SetField(notificationchannel.FieldWebhookMethod, field.TypeString, value)
+	}
+	if _u.mutation.WebhookMethodCleared() {
+		_spec.ClearField(notificationchannel.FieldWebhookMethod, field.TypeString)
+	}
+	if value, ok := _u.mutation.NtfyServerURL(); ok {
+		_spec.SetField(notificationchannel.FieldNtfyServerURL, field.TypeString, value)
+	}
+	if _u.mutation.NtfyServerURLCleared() {
+		_spec.ClearField(notificationchannel.FieldNtfyServerURL, field.TypeString)
+	}
+	if value, ok := _u.mutation.NtfyTopic(); ok {
+		_spec.SetField(notificationchannel.FieldNtfyTopic, field.TypeString, value)
+	}
+	if _u.mutation.NtfyTopicCleared() {
+		_spec.ClearField(notificationchannel.FieldNtfyTopic, field.TypeString)
+	}
+	if value, ok := _u.mutation.NtfyToken(); ok {
+		_spec.SetField(notificationchannel.FieldNtfyToken, field.TypeString, value)
+	}
+	if _u.mutation.NtfyTokenCleared() {
+		_spec.ClearField(notificationchannel.FieldNtfyToken, field.TypeString)
 	}
 	if value, ok := _u.mutation.UpdatedAt(); ok {
 		_spec.SetField(notificationchannel.FieldUpdatedAt, field.TypeTime, value)

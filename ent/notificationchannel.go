@@ -3,7 +3,6 @@
 package ent
 
 import (
-	"encoding/json"
 	"fmt"
 	"strings"
 	"time"
@@ -29,8 +28,32 @@ type NotificationChannel struct {
 	IsActive bool `json:"is_active,omitempty"`
 	// IsDefault holds the value of the "is_default" field.
 	IsDefault bool `json:"is_default,omitempty"`
-	// Config holds the value of the "config" field.
-	Config map[string]interface{} `json:"-"`
+	// SMTPServer holds the value of the "smtp_server" field.
+	SMTPServer *string `json:"smtp_server,omitempty"`
+	// SMTPPort holds the value of the "smtp_port" field.
+	SMTPPort *int `json:"smtp_port,omitempty"`
+	// SMTPFromAddress holds the value of the "smtp_from_address" field.
+	SMTPFromAddress *string `json:"smtp_from_address,omitempty"`
+	// SMTPUsername holds the value of the "smtp_username" field.
+	SMTPUsername *string `json:"smtp_username,omitempty"`
+	// SMTPPassword holds the value of the "smtp_password" field.
+	SMTPPassword *string `json:"-"`
+	// SMTPUseTLS holds the value of the "smtp_use_tls" field.
+	SMTPUseTLS *bool `json:"smtp_use_tls,omitempty"`
+	// TelegramBotToken holds the value of the "telegram_bot_token" field.
+	TelegramBotToken *string `json:"-"`
+	// TelegramChatID holds the value of the "telegram_chat_id" field.
+	TelegramChatID *string `json:"telegram_chat_id,omitempty"`
+	// WebhookURL holds the value of the "webhook_url" field.
+	WebhookURL *string `json:"-"`
+	// WebhookMethod holds the value of the "webhook_method" field.
+	WebhookMethod *string `json:"webhook_method,omitempty"`
+	// NtfyServerURL holds the value of the "ntfy_server_url" field.
+	NtfyServerURL *string `json:"ntfy_server_url,omitempty"`
+	// NtfyTopic holds the value of the "ntfy_topic" field.
+	NtfyTopic *string `json:"ntfy_topic,omitempty"`
+	// NtfyToken holds the value of the "ntfy_token" field.
+	NtfyToken *string `json:"-"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
@@ -77,13 +100,11 @@ func (*NotificationChannel) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case notificationchannel.FieldConfig:
-			values[i] = new([]byte)
-		case notificationchannel.FieldIsActive, notificationchannel.FieldIsDefault:
+		case notificationchannel.FieldIsActive, notificationchannel.FieldIsDefault, notificationchannel.FieldSMTPUseTLS:
 			values[i] = new(sql.NullBool)
-		case notificationchannel.FieldID, notificationchannel.FieldUserID:
+		case notificationchannel.FieldID, notificationchannel.FieldUserID, notificationchannel.FieldSMTPPort:
 			values[i] = new(sql.NullInt64)
-		case notificationchannel.FieldName, notificationchannel.FieldType:
+		case notificationchannel.FieldName, notificationchannel.FieldType, notificationchannel.FieldSMTPServer, notificationchannel.FieldSMTPFromAddress, notificationchannel.FieldSMTPUsername, notificationchannel.FieldSMTPPassword, notificationchannel.FieldTelegramBotToken, notificationchannel.FieldTelegramChatID, notificationchannel.FieldWebhookURL, notificationchannel.FieldWebhookMethod, notificationchannel.FieldNtfyServerURL, notificationchannel.FieldNtfyTopic, notificationchannel.FieldNtfyToken:
 			values[i] = new(sql.NullString)
 		case notificationchannel.FieldCreatedAt, notificationchannel.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
@@ -138,13 +159,96 @@ func (_m *NotificationChannel) assignValues(columns []string, values []any) erro
 			} else if value.Valid {
 				_m.IsDefault = value.Bool
 			}
-		case notificationchannel.FieldConfig:
-			if value, ok := values[i].(*[]byte); !ok {
-				return fmt.Errorf("unexpected type %T for field config", values[i])
-			} else if value != nil && len(*value) > 0 {
-				if err := json.Unmarshal(*value, &_m.Config); err != nil {
-					return fmt.Errorf("unmarshal field config: %w", err)
-				}
+		case notificationchannel.FieldSMTPServer:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field smtp_server", values[i])
+			} else if value.Valid {
+				_m.SMTPServer = new(string)
+				*_m.SMTPServer = value.String
+			}
+		case notificationchannel.FieldSMTPPort:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field smtp_port", values[i])
+			} else if value.Valid {
+				_m.SMTPPort = new(int)
+				*_m.SMTPPort = int(value.Int64)
+			}
+		case notificationchannel.FieldSMTPFromAddress:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field smtp_from_address", values[i])
+			} else if value.Valid {
+				_m.SMTPFromAddress = new(string)
+				*_m.SMTPFromAddress = value.String
+			}
+		case notificationchannel.FieldSMTPUsername:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field smtp_username", values[i])
+			} else if value.Valid {
+				_m.SMTPUsername = new(string)
+				*_m.SMTPUsername = value.String
+			}
+		case notificationchannel.FieldSMTPPassword:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field smtp_password", values[i])
+			} else if value.Valid {
+				_m.SMTPPassword = new(string)
+				*_m.SMTPPassword = value.String
+			}
+		case notificationchannel.FieldSMTPUseTLS:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field smtp_use_tls", values[i])
+			} else if value.Valid {
+				_m.SMTPUseTLS = new(bool)
+				*_m.SMTPUseTLS = value.Bool
+			}
+		case notificationchannel.FieldTelegramBotToken:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field telegram_bot_token", values[i])
+			} else if value.Valid {
+				_m.TelegramBotToken = new(string)
+				*_m.TelegramBotToken = value.String
+			}
+		case notificationchannel.FieldTelegramChatID:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field telegram_chat_id", values[i])
+			} else if value.Valid {
+				_m.TelegramChatID = new(string)
+				*_m.TelegramChatID = value.String
+			}
+		case notificationchannel.FieldWebhookURL:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field webhook_url", values[i])
+			} else if value.Valid {
+				_m.WebhookURL = new(string)
+				*_m.WebhookURL = value.String
+			}
+		case notificationchannel.FieldWebhookMethod:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field webhook_method", values[i])
+			} else if value.Valid {
+				_m.WebhookMethod = new(string)
+				*_m.WebhookMethod = value.String
+			}
+		case notificationchannel.FieldNtfyServerURL:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field ntfy_server_url", values[i])
+			} else if value.Valid {
+				_m.NtfyServerURL = new(string)
+				*_m.NtfyServerURL = value.String
+			}
+		case notificationchannel.FieldNtfyTopic:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field ntfy_topic", values[i])
+			} else if value.Valid {
+				_m.NtfyTopic = new(string)
+				*_m.NtfyTopic = value.String
+			}
+		case notificationchannel.FieldNtfyToken:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field ntfy_token", values[i])
+			} else if value.Valid {
+				_m.NtfyToken = new(string)
+				*_m.NtfyToken = value.String
 			}
 		case notificationchannel.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -219,7 +323,58 @@ func (_m *NotificationChannel) String() string {
 	builder.WriteString("is_default=")
 	builder.WriteString(fmt.Sprintf("%v", _m.IsDefault))
 	builder.WriteString(", ")
-	builder.WriteString("config=<sensitive>")
+	if v := _m.SMTPServer; v != nil {
+		builder.WriteString("smtp_server=")
+		builder.WriteString(*v)
+	}
+	builder.WriteString(", ")
+	if v := _m.SMTPPort; v != nil {
+		builder.WriteString("smtp_port=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
+	if v := _m.SMTPFromAddress; v != nil {
+		builder.WriteString("smtp_from_address=")
+		builder.WriteString(*v)
+	}
+	builder.WriteString(", ")
+	if v := _m.SMTPUsername; v != nil {
+		builder.WriteString("smtp_username=")
+		builder.WriteString(*v)
+	}
+	builder.WriteString(", ")
+	builder.WriteString("smtp_password=<sensitive>")
+	builder.WriteString(", ")
+	if v := _m.SMTPUseTLS; v != nil {
+		builder.WriteString("smtp_use_tls=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
+	builder.WriteString("telegram_bot_token=<sensitive>")
+	builder.WriteString(", ")
+	if v := _m.TelegramChatID; v != nil {
+		builder.WriteString("telegram_chat_id=")
+		builder.WriteString(*v)
+	}
+	builder.WriteString(", ")
+	builder.WriteString("webhook_url=<sensitive>")
+	builder.WriteString(", ")
+	if v := _m.WebhookMethod; v != nil {
+		builder.WriteString("webhook_method=")
+		builder.WriteString(*v)
+	}
+	builder.WriteString(", ")
+	if v := _m.NtfyServerURL; v != nil {
+		builder.WriteString("ntfy_server_url=")
+		builder.WriteString(*v)
+	}
+	builder.WriteString(", ")
+	if v := _m.NtfyTopic; v != nil {
+		builder.WriteString("ntfy_topic=")
+		builder.WriteString(*v)
+	}
+	builder.WriteString(", ")
+	builder.WriteString("ntfy_token=<sensitive>")
 	builder.WriteString(", ")
 	builder.WriteString("created_at=")
 	builder.WriteString(_m.CreatedAt.Format(time.ANSIC))

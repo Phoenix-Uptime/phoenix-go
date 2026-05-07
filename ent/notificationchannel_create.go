@@ -68,9 +68,185 @@ func (_c *NotificationChannelCreate) SetNillableIsDefault(v *bool) *Notification
 	return _c
 }
 
-// SetConfig sets the "config" field.
-func (_c *NotificationChannelCreate) SetConfig(v map[string]interface{}) *NotificationChannelCreate {
-	_c.mutation.SetConfig(v)
+// SetSMTPServer sets the "smtp_server" field.
+func (_c *NotificationChannelCreate) SetSMTPServer(v string) *NotificationChannelCreate {
+	_c.mutation.SetSMTPServer(v)
+	return _c
+}
+
+// SetNillableSMTPServer sets the "smtp_server" field if the given value is not nil.
+func (_c *NotificationChannelCreate) SetNillableSMTPServer(v *string) *NotificationChannelCreate {
+	if v != nil {
+		_c.SetSMTPServer(*v)
+	}
+	return _c
+}
+
+// SetSMTPPort sets the "smtp_port" field.
+func (_c *NotificationChannelCreate) SetSMTPPort(v int) *NotificationChannelCreate {
+	_c.mutation.SetSMTPPort(v)
+	return _c
+}
+
+// SetNillableSMTPPort sets the "smtp_port" field if the given value is not nil.
+func (_c *NotificationChannelCreate) SetNillableSMTPPort(v *int) *NotificationChannelCreate {
+	if v != nil {
+		_c.SetSMTPPort(*v)
+	}
+	return _c
+}
+
+// SetSMTPFromAddress sets the "smtp_from_address" field.
+func (_c *NotificationChannelCreate) SetSMTPFromAddress(v string) *NotificationChannelCreate {
+	_c.mutation.SetSMTPFromAddress(v)
+	return _c
+}
+
+// SetNillableSMTPFromAddress sets the "smtp_from_address" field if the given value is not nil.
+func (_c *NotificationChannelCreate) SetNillableSMTPFromAddress(v *string) *NotificationChannelCreate {
+	if v != nil {
+		_c.SetSMTPFromAddress(*v)
+	}
+	return _c
+}
+
+// SetSMTPUsername sets the "smtp_username" field.
+func (_c *NotificationChannelCreate) SetSMTPUsername(v string) *NotificationChannelCreate {
+	_c.mutation.SetSMTPUsername(v)
+	return _c
+}
+
+// SetNillableSMTPUsername sets the "smtp_username" field if the given value is not nil.
+func (_c *NotificationChannelCreate) SetNillableSMTPUsername(v *string) *NotificationChannelCreate {
+	if v != nil {
+		_c.SetSMTPUsername(*v)
+	}
+	return _c
+}
+
+// SetSMTPPassword sets the "smtp_password" field.
+func (_c *NotificationChannelCreate) SetSMTPPassword(v string) *NotificationChannelCreate {
+	_c.mutation.SetSMTPPassword(v)
+	return _c
+}
+
+// SetNillableSMTPPassword sets the "smtp_password" field if the given value is not nil.
+func (_c *NotificationChannelCreate) SetNillableSMTPPassword(v *string) *NotificationChannelCreate {
+	if v != nil {
+		_c.SetSMTPPassword(*v)
+	}
+	return _c
+}
+
+// SetSMTPUseTLS sets the "smtp_use_tls" field.
+func (_c *NotificationChannelCreate) SetSMTPUseTLS(v bool) *NotificationChannelCreate {
+	_c.mutation.SetSMTPUseTLS(v)
+	return _c
+}
+
+// SetNillableSMTPUseTLS sets the "smtp_use_tls" field if the given value is not nil.
+func (_c *NotificationChannelCreate) SetNillableSMTPUseTLS(v *bool) *NotificationChannelCreate {
+	if v != nil {
+		_c.SetSMTPUseTLS(*v)
+	}
+	return _c
+}
+
+// SetTelegramBotToken sets the "telegram_bot_token" field.
+func (_c *NotificationChannelCreate) SetTelegramBotToken(v string) *NotificationChannelCreate {
+	_c.mutation.SetTelegramBotToken(v)
+	return _c
+}
+
+// SetNillableTelegramBotToken sets the "telegram_bot_token" field if the given value is not nil.
+func (_c *NotificationChannelCreate) SetNillableTelegramBotToken(v *string) *NotificationChannelCreate {
+	if v != nil {
+		_c.SetTelegramBotToken(*v)
+	}
+	return _c
+}
+
+// SetTelegramChatID sets the "telegram_chat_id" field.
+func (_c *NotificationChannelCreate) SetTelegramChatID(v string) *NotificationChannelCreate {
+	_c.mutation.SetTelegramChatID(v)
+	return _c
+}
+
+// SetNillableTelegramChatID sets the "telegram_chat_id" field if the given value is not nil.
+func (_c *NotificationChannelCreate) SetNillableTelegramChatID(v *string) *NotificationChannelCreate {
+	if v != nil {
+		_c.SetTelegramChatID(*v)
+	}
+	return _c
+}
+
+// SetWebhookURL sets the "webhook_url" field.
+func (_c *NotificationChannelCreate) SetWebhookURL(v string) *NotificationChannelCreate {
+	_c.mutation.SetWebhookURL(v)
+	return _c
+}
+
+// SetNillableWebhookURL sets the "webhook_url" field if the given value is not nil.
+func (_c *NotificationChannelCreate) SetNillableWebhookURL(v *string) *NotificationChannelCreate {
+	if v != nil {
+		_c.SetWebhookURL(*v)
+	}
+	return _c
+}
+
+// SetWebhookMethod sets the "webhook_method" field.
+func (_c *NotificationChannelCreate) SetWebhookMethod(v string) *NotificationChannelCreate {
+	_c.mutation.SetWebhookMethod(v)
+	return _c
+}
+
+// SetNillableWebhookMethod sets the "webhook_method" field if the given value is not nil.
+func (_c *NotificationChannelCreate) SetNillableWebhookMethod(v *string) *NotificationChannelCreate {
+	if v != nil {
+		_c.SetWebhookMethod(*v)
+	}
+	return _c
+}
+
+// SetNtfyServerURL sets the "ntfy_server_url" field.
+func (_c *NotificationChannelCreate) SetNtfyServerURL(v string) *NotificationChannelCreate {
+	_c.mutation.SetNtfyServerURL(v)
+	return _c
+}
+
+// SetNillableNtfyServerURL sets the "ntfy_server_url" field if the given value is not nil.
+func (_c *NotificationChannelCreate) SetNillableNtfyServerURL(v *string) *NotificationChannelCreate {
+	if v != nil {
+		_c.SetNtfyServerURL(*v)
+	}
+	return _c
+}
+
+// SetNtfyTopic sets the "ntfy_topic" field.
+func (_c *NotificationChannelCreate) SetNtfyTopic(v string) *NotificationChannelCreate {
+	_c.mutation.SetNtfyTopic(v)
+	return _c
+}
+
+// SetNillableNtfyTopic sets the "ntfy_topic" field if the given value is not nil.
+func (_c *NotificationChannelCreate) SetNillableNtfyTopic(v *string) *NotificationChannelCreate {
+	if v != nil {
+		_c.SetNtfyTopic(*v)
+	}
+	return _c
+}
+
+// SetNtfyToken sets the "ntfy_token" field.
+func (_c *NotificationChannelCreate) SetNtfyToken(v string) *NotificationChannelCreate {
+	_c.mutation.SetNtfyToken(v)
+	return _c
+}
+
+// SetNillableNtfyToken sets the "ntfy_token" field if the given value is not nil.
+func (_c *NotificationChannelCreate) SetNillableNtfyToken(v *string) *NotificationChannelCreate {
+	if v != nil {
+		_c.SetNtfyToken(*v)
+	}
 	return _c
 }
 
@@ -253,9 +429,57 @@ func (_c *NotificationChannelCreate) createSpec() (*NotificationChannel, *sqlgra
 		_spec.SetField(notificationchannel.FieldIsDefault, field.TypeBool, value)
 		_node.IsDefault = value
 	}
-	if value, ok := _c.mutation.Config(); ok {
-		_spec.SetField(notificationchannel.FieldConfig, field.TypeJSON, value)
-		_node.Config = value
+	if value, ok := _c.mutation.SMTPServer(); ok {
+		_spec.SetField(notificationchannel.FieldSMTPServer, field.TypeString, value)
+		_node.SMTPServer = &value
+	}
+	if value, ok := _c.mutation.SMTPPort(); ok {
+		_spec.SetField(notificationchannel.FieldSMTPPort, field.TypeInt, value)
+		_node.SMTPPort = &value
+	}
+	if value, ok := _c.mutation.SMTPFromAddress(); ok {
+		_spec.SetField(notificationchannel.FieldSMTPFromAddress, field.TypeString, value)
+		_node.SMTPFromAddress = &value
+	}
+	if value, ok := _c.mutation.SMTPUsername(); ok {
+		_spec.SetField(notificationchannel.FieldSMTPUsername, field.TypeString, value)
+		_node.SMTPUsername = &value
+	}
+	if value, ok := _c.mutation.SMTPPassword(); ok {
+		_spec.SetField(notificationchannel.FieldSMTPPassword, field.TypeString, value)
+		_node.SMTPPassword = &value
+	}
+	if value, ok := _c.mutation.SMTPUseTLS(); ok {
+		_spec.SetField(notificationchannel.FieldSMTPUseTLS, field.TypeBool, value)
+		_node.SMTPUseTLS = &value
+	}
+	if value, ok := _c.mutation.TelegramBotToken(); ok {
+		_spec.SetField(notificationchannel.FieldTelegramBotToken, field.TypeString, value)
+		_node.TelegramBotToken = &value
+	}
+	if value, ok := _c.mutation.TelegramChatID(); ok {
+		_spec.SetField(notificationchannel.FieldTelegramChatID, field.TypeString, value)
+		_node.TelegramChatID = &value
+	}
+	if value, ok := _c.mutation.WebhookURL(); ok {
+		_spec.SetField(notificationchannel.FieldWebhookURL, field.TypeString, value)
+		_node.WebhookURL = &value
+	}
+	if value, ok := _c.mutation.WebhookMethod(); ok {
+		_spec.SetField(notificationchannel.FieldWebhookMethod, field.TypeString, value)
+		_node.WebhookMethod = &value
+	}
+	if value, ok := _c.mutation.NtfyServerURL(); ok {
+		_spec.SetField(notificationchannel.FieldNtfyServerURL, field.TypeString, value)
+		_node.NtfyServerURL = &value
+	}
+	if value, ok := _c.mutation.NtfyTopic(); ok {
+		_spec.SetField(notificationchannel.FieldNtfyTopic, field.TypeString, value)
+		_node.NtfyTopic = &value
+	}
+	if value, ok := _c.mutation.NtfyToken(); ok {
+		_spec.SetField(notificationchannel.FieldNtfyToken, field.TypeString, value)
+		_node.NtfyToken = &value
 	}
 	if value, ok := _c.mutation.CreatedAt(); ok {
 		_spec.SetField(notificationchannel.FieldCreatedAt, field.TypeTime, value)

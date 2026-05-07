@@ -96,14 +96,7 @@ func UpdateSMTPSettings(c fiber.Ctx) error {
 		})
 	}
 
-	if err := upsertDefaultNotificationChannel(c, user.ID, entnotificationchannel.TypeSMTP, "SMTP", map[string]interface{}{
-		"smtp_server":  req.SMTPServer,
-		"smtp_port":    req.SMTPPort,
-		"from_address": req.FromAddress,
-		"username":     req.Username,
-		"password":     req.Password,
-		"use_tls":      req.UseTLS,
-	}); err != nil {
+	if err := upsertDefaultSMTPChannel(c, user.ID, req); err != nil {
 		log.Error().Err(err).Msg("Failed to update SMTP settings")
 		return c.Status(fiber.StatusInternalServerError).JSON(ErrorResponse{
 			Status:  "error",
@@ -153,9 +146,7 @@ func UpdateTelegramBotSettings(c fiber.Ctx) error {
 		})
 	}
 
-	if err := upsertDefaultNotificationChannel(c, user.ID, entnotificationchannel.TypeTelegram, "Telegram", map[string]interface{}{
-		"bot_token": req.BotToken,
-	}); err != nil {
+	if err := upsertDefaultTelegramChannel(c, user.ID, req); err != nil {
 		log.Error().Err(err).Msg("Failed to update Telegram bot settings")
 		return c.Status(fiber.StatusInternalServerError).JSON(ErrorResponse{
 			Status:  "error",
@@ -187,52 +178,91 @@ func defaultNotificationChannel(c fiber.Ctx, userID int, channelType entnotifica
 	return channel, nil
 }
 
-func upsertDefaultNotificationChannel(c fiber.Ctx, userID int, channelType entnotificationchannel.Type, name string, config map[string]interface{}) error {
-	channel, err := defaultNotificationChannel(c, userID, channelType)
+func upsertDefaultSMTPChannel(c fiber.Ctx, userID int, req UpdateSMTPSettingsRequest) error {
+	channel, err := defaultNotificationChannel(c, userID, entnotificationchannel.TypeSMTP)
 	if err != nil {
 		return err
 	}
 	if channel == nil {
 		return database.Client.NotificationChannel.Create().
 			SetUserID(userID).
-			SetName(name).
-			SetType(channelType).
+			SetName("SMTP").
+			SetType(entnotificationchannel.TypeSMTP).
 			SetIsActive(true).
 			SetIsDefault(true).
-			SetConfig(config).
+			SetSMTPServer(req.SMTPServer).
+			SetSMTPPort(req.SMTPPort).
+			SetSMTPFromAddress(req.FromAddress).
+			SetSMTPUsername(req.Username).
+			SetSMTPPassword(req.Password).
+			SetSMTPUseTLS(req.UseTLS).
 			Exec(c)
 	}
 
 	return database.Client.NotificationChannel.UpdateOneID(channel.ID).
-		SetName(name).
+		SetName("SMTP").
 		SetIsActive(true).
 		SetIsDefault(true).
-		SetConfig(config).
+		SetSMTPServer(req.SMTPServer).
+		SetSMTPPort(req.SMTPPort).
+		SetSMTPFromAddress(req.FromAddress).
+		SetSMTPUsername(req.Username).
+		SetSMTPPassword(req.Password).
+		SetSMTPUseTLS(req.UseTLS).
+		Exec(c)
+}
+
+func upsertDefaultTelegramChannel(c fiber.Ctx, userID int, req UpdateTelegramBotRequest) error {
+	channel, err := defaultNotificationChannel(c, userID, entnotificationchannel.TypeTelegram)
+	if err != nil {
+		return err
+	}
+	if channel == nil {
+		return database.Client.NotificationChannel.Create().
+			SetUserID(userID).
+			SetName("Telegram").
+			SetType(entnotificationchannel.TypeTelegram).
+			SetIsActive(true).
+			SetIsDefault(true).
+			SetTelegramBotToken(req.BotToken).
+			Exec(c)
+	}
+
+	return database.Client.NotificationChannel.UpdateOneID(channel.ID).
+		SetName("Telegram").
+		SetIsActive(true).
+		SetIsDefault(true).
+		SetTelegramBotToken(req.BotToken).
 		Exec(c)
 }
 
 func smtpSettingsFromNotificationChannel(channel *ent.NotificationChannel) *models.SMTPSettings {
-	if channel == nil || len(channel.Config) == 0 {
+	if channel == nil ||
+		channel.SMTPServer == nil &&
+			channel.SMTPPort == nil &&
+			channel.SMTPFromAddress == nil &&
+			channel.SMTPUsername == nil &&
+			channel.SMTPPassword == nil &&
+			channel.SMTPUseTLS == nil {
 		return nil
 	}
 
-	config := channel.Config
 	return &models.SMTPSettings{
-		SMTPServer:  stringConfig(config, "smtp_server"),
-		SMTPPort:    intConfig(config, "smtp_port"),
-		FromAddress: stringConfig(config, "from_address"),
-		Username:    stringConfig(config, "username"),
-		Password:    stringConfig(config, "password"),
-		UseTLS:      boolConfig(config, "use_tls"),
+		SMTPServer:  stringValue(channel.SMTPServer),
+		SMTPPort:    intValue(channel.SMTPPort),
+		FromAddress: stringValue(channel.SMTPFromAddress),
+		Username:    stringValue(channel.SMTPUsername),
+		Password:    stringValue(channel.SMTPPassword),
+		UseTLS:      boolValue(channel.SMTPUseTLS),
 	}
 }
 
 func telegramBotFromNotificationChannel(channel *ent.NotificationChannel) *models.TelegramBot {
-	if channel == nil || len(channel.Config) == 0 {
+	if channel == nil || channel.TelegramBotToken == nil {
 		return nil
 	}
 
-	botToken := stringConfig(channel.Config, "bot_token")
+	botToken := stringValue(channel.TelegramBotToken)
 	if botToken == "" {
 		return nil
 	}
@@ -241,31 +271,23 @@ func telegramBotFromNotificationChannel(channel *ent.NotificationChannel) *model
 	}
 }
 
-func stringConfig(config map[string]interface{}, key string) string {
-	value, ok := config[key].(string)
-	if !ok {
+func stringValue(value *string) string {
+	if value == nil {
 		return ""
 	}
-	return value
+	return *value
 }
 
-func intConfig(config map[string]interface{}, key string) int {
-	switch value := config[key].(type) {
-	case int:
-		return value
-	case int64:
-		return int(value)
-	case float64:
-		return int(value)
-	default:
+func intValue(value *int) int {
+	if value == nil {
 		return 0
 	}
+	return *value
 }
 
-func boolConfig(config map[string]interface{}, key string) bool {
-	value, ok := config[key].(bool)
-	if !ok {
+func boolValue(value *bool) bool {
+	if value == nil {
 		return false
 	}
-	return value
+	return *value
 }

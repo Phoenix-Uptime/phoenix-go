@@ -25,8 +25,32 @@ const (
 	FieldIsActive = "is_active"
 	// FieldIsDefault holds the string denoting the is_default field in the database.
 	FieldIsDefault = "is_default"
-	// FieldConfig holds the string denoting the config field in the database.
-	FieldConfig = "config"
+	// FieldSMTPServer holds the string denoting the smtp_server field in the database.
+	FieldSMTPServer = "smtp_server"
+	// FieldSMTPPort holds the string denoting the smtp_port field in the database.
+	FieldSMTPPort = "smtp_port"
+	// FieldSMTPFromAddress holds the string denoting the smtp_from_address field in the database.
+	FieldSMTPFromAddress = "smtp_from_address"
+	// FieldSMTPUsername holds the string denoting the smtp_username field in the database.
+	FieldSMTPUsername = "smtp_username"
+	// FieldSMTPPassword holds the string denoting the smtp_password field in the database.
+	FieldSMTPPassword = "smtp_password"
+	// FieldSMTPUseTLS holds the string denoting the smtp_use_tls field in the database.
+	FieldSMTPUseTLS = "smtp_use_tls"
+	// FieldTelegramBotToken holds the string denoting the telegram_bot_token field in the database.
+	FieldTelegramBotToken = "telegram_bot_token"
+	// FieldTelegramChatID holds the string denoting the telegram_chat_id field in the database.
+	FieldTelegramChatID = "telegram_chat_id"
+	// FieldWebhookURL holds the string denoting the webhook_url field in the database.
+	FieldWebhookURL = "webhook_url"
+	// FieldWebhookMethod holds the string denoting the webhook_method field in the database.
+	FieldWebhookMethod = "webhook_method"
+	// FieldNtfyServerURL holds the string denoting the ntfy_server_url field in the database.
+	FieldNtfyServerURL = "ntfy_server_url"
+	// FieldNtfyTopic holds the string denoting the ntfy_topic field in the database.
+	FieldNtfyTopic = "ntfy_topic"
+	// FieldNtfyToken holds the string denoting the ntfy_token field in the database.
+	FieldNtfyToken = "ntfy_token"
 	// FieldCreatedAt holds the string denoting the created_at field in the database.
 	FieldCreatedAt = "created_at"
 	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
@@ -59,7 +83,19 @@ var Columns = []string{
 	FieldType,
 	FieldIsActive,
 	FieldIsDefault,
-	FieldConfig,
+	FieldSMTPServer,
+	FieldSMTPPort,
+	FieldSMTPFromAddress,
+	FieldSMTPUsername,
+	FieldSMTPPassword,
+	FieldSMTPUseTLS,
+	FieldTelegramBotToken,
+	FieldTelegramChatID,
+	FieldWebhookURL,
+	FieldWebhookMethod,
+	FieldNtfyServerURL,
+	FieldNtfyTopic,
+	FieldNtfyToken,
 	FieldCreatedAt,
 	FieldUpdatedAt,
 }
@@ -100,14 +136,10 @@ type Type string
 
 // Type values.
 const (
-	TypeSMTP      Type = "smtp"
-	TypeTelegram  Type = "telegram"
-	TypeWebhook   Type = "webhook"
-	TypeDiscord   Type = "discord"
-	TypeSlack     Type = "slack"
-	TypePagerduty Type = "pagerduty"
-	TypePushover  Type = "pushover"
-	TypeTwilio    Type = "twilio"
+	TypeSMTP     Type = "smtp"
+	TypeTelegram Type = "telegram"
+	TypeWebhook  Type = "webhook"
+	TypeNtfy     Type = "ntfy"
 )
 
 func (_type Type) String() string {
@@ -117,7 +149,7 @@ func (_type Type) String() string {
 // TypeValidator is a validator for the "type" field enum values. It is called by the builders before save.
 func TypeValidator(_type Type) error {
 	switch _type {
-	case TypeSMTP, TypeTelegram, TypeWebhook, TypeDiscord, TypeSlack, TypePagerduty, TypePushover, TypeTwilio:
+	case TypeSMTP, TypeTelegram, TypeWebhook, TypeNtfy:
 		return nil
 	default:
 		return fmt.Errorf("notificationchannel: invalid enum value for type field: %q", _type)
@@ -155,6 +187,71 @@ func ByIsActive(opts ...sql.OrderTermOption) OrderOption {
 // ByIsDefault orders the results by the is_default field.
 func ByIsDefault(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldIsDefault, opts...).ToFunc()
+}
+
+// BySMTPServer orders the results by the smtp_server field.
+func BySMTPServer(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldSMTPServer, opts...).ToFunc()
+}
+
+// BySMTPPort orders the results by the smtp_port field.
+func BySMTPPort(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldSMTPPort, opts...).ToFunc()
+}
+
+// BySMTPFromAddress orders the results by the smtp_from_address field.
+func BySMTPFromAddress(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldSMTPFromAddress, opts...).ToFunc()
+}
+
+// BySMTPUsername orders the results by the smtp_username field.
+func BySMTPUsername(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldSMTPUsername, opts...).ToFunc()
+}
+
+// BySMTPPassword orders the results by the smtp_password field.
+func BySMTPPassword(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldSMTPPassword, opts...).ToFunc()
+}
+
+// BySMTPUseTLS orders the results by the smtp_use_tls field.
+func BySMTPUseTLS(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldSMTPUseTLS, opts...).ToFunc()
+}
+
+// ByTelegramBotToken orders the results by the telegram_bot_token field.
+func ByTelegramBotToken(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldTelegramBotToken, opts...).ToFunc()
+}
+
+// ByTelegramChatID orders the results by the telegram_chat_id field.
+func ByTelegramChatID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldTelegramChatID, opts...).ToFunc()
+}
+
+// ByWebhookURL orders the results by the webhook_url field.
+func ByWebhookURL(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldWebhookURL, opts...).ToFunc()
+}
+
+// ByWebhookMethod orders the results by the webhook_method field.
+func ByWebhookMethod(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldWebhookMethod, opts...).ToFunc()
+}
+
+// ByNtfyServerURL orders the results by the ntfy_server_url field.
+func ByNtfyServerURL(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldNtfyServerURL, opts...).ToFunc()
+}
+
+// ByNtfyTopic orders the results by the ntfy_topic field.
+func ByNtfyTopic(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldNtfyTopic, opts...).ToFunc()
+}
+
+// ByNtfyToken orders the results by the ntfy_token field.
+func ByNtfyToken(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldNtfyToken, opts...).ToFunc()
 }
 
 // ByCreatedAt orders the results by the created_at field.
