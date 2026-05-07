@@ -47,7 +47,7 @@ type MaintenanceWindowResponse struct {
 // @Router /maintenance-windows/{id} [get]
 func GetMaintenanceWindow(c fiber.Ctx) error {
 	user := c.Locals("user").(*ent.User)
-	id, err := maintenanceWindowID(c)
+	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
 			Status:  "error",
@@ -61,10 +61,6 @@ func GetMaintenanceWindow(c fiber.Ctx) error {
 	}
 
 	return c.Status(fiber.StatusOK).JSON(maintenanceWindowResponse(window))
-}
-
-func maintenanceWindowID(c fiber.Ctx) (int, error) {
-	return strconv.Atoi(c.Params("id"))
 }
 
 func userMaintenanceWindow(c fiber.Ctx, userID int, id int) (*ent.MaintenanceWindow, error) {

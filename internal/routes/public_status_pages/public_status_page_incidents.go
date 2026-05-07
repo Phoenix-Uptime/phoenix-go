@@ -56,10 +56,16 @@ func ListPublicStatusPageIncidents(c fiber.Ctx) error {
 		return err
 	}
 	if !authorized {
-		return publicStatusPagePasswordError(c)
+		return c.Status(fiber.StatusUnauthorized).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Status page password is required",
+		})
 	}
 
-	monitorIDs := publicStatusPageMonitorIDs(page)
+	monitorIDs := make([]int, 0, len(page.Edges.StatusPageMonitors))
+	for _, assignment := range page.Edges.StatusPageMonitors {
+		monitorIDs = append(monitorIDs, assignment.MonitorID)
+	}
 	query := database.Client.Incident.Query().
 		Order(
 			entincident.ByIsPinned(entsql.OrderDesc()),
@@ -118,14 +124,6 @@ func ListPublicStatusPageIncidents(c fiber.Ctx) error {
 	}
 
 	return c.Status(fiber.StatusOK).JSON(response)
-}
-
-func publicStatusPageMonitorIDs(page *ent.StatusPage) []int {
-	ids := make([]int, 0, len(page.Edges.StatusPageMonitors))
-	for _, assignment := range page.Edges.StatusPageMonitors {
-		ids = append(ids, assignment.MonitorID)
-	}
-	return ids
 }
 
 func publicIncidentResponse(incident *ent.Incident) PublicStatusPageIncidentResponse {

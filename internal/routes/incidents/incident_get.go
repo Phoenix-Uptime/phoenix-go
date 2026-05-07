@@ -46,7 +46,7 @@ type IncidentResponse struct {
 // @Router /incidents/{id} [get]
 func GetIncident(c fiber.Ctx) error {
 	user := c.Locals("user").(*ent.User)
-	id, err := incidentID(c)
+	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
 			Status:  "error",
@@ -60,10 +60,6 @@ func GetIncident(c fiber.Ctx) error {
 	}
 
 	return c.Status(fiber.StatusOK).JSON(incidentResponse(incident))
-}
-
-func incidentID(c fiber.Ctx) (int, error) {
-	return strconv.Atoi(c.Params("id"))
 }
 
 func userIncident(c fiber.Ctx, userID int, id int) (*ent.Incident, error) {

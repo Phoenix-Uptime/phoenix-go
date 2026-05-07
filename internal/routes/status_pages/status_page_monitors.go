@@ -8,6 +8,7 @@ import (
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v3"
 	"github.com/rs/zerolog/log"
+	"strconv"
 )
 
 type StatusPageMonitorItem struct {
@@ -41,7 +42,7 @@ type StatusPageMonitorsResponse struct {
 // @Router /status-pages/{id}/monitors [get]
 func ListStatusPageMonitors(c fiber.Ctx) error {
 	user := c.Locals("user").(*ent.User)
-	id, err := statusPageID(c)
+	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
 			Status:  "error",
@@ -83,7 +84,7 @@ func ListStatusPageMonitors(c fiber.Ctx) error {
 // @Router /status-pages/{id}/monitors [put]
 func ReplaceStatusPageMonitors(c fiber.Ctx) error {
 	user := c.Locals("user").(*ent.User)
-	id, err := statusPageID(c)
+	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
 			Status:  "error",

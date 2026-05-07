@@ -6,6 +6,7 @@ import (
 	"github.com/Phoenix-Uptime/phoenix-go/internal/routes"
 	"github.com/gofiber/fiber/v3"
 	"github.com/rs/zerolog/log"
+	"strconv"
 )
 
 // @Summary Delete Status Page
@@ -24,7 +25,7 @@ import (
 // @Router /status-pages/{id} [delete]
 func DeleteStatusPage(c fiber.Ctx) error {
 	user := c.Locals("user").(*ent.User)
-	id, err := statusPageID(c)
+	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
 			Status:  "error",

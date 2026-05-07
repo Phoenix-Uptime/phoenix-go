@@ -1,6 +1,7 @@
 package notification_channels
 
 import (
+	"strconv"
 	"strings"
 
 	"github.com/Phoenix-Uptime/phoenix-go/ent"
@@ -48,7 +49,7 @@ type UpdateNotificationChannelRequest struct {
 // @Router /notification-channels/{id} [patch]
 func UpdateNotificationChannel(c fiber.Ctx) error {
 	user := c.Locals("user").(*ent.User)
-	id, err := notificationChannelID(c)
+	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
 			Status:  "error",

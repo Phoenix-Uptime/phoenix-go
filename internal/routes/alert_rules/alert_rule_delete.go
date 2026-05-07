@@ -6,6 +6,7 @@ import (
 	"github.com/Phoenix-Uptime/phoenix-go/internal/routes"
 	"github.com/gofiber/fiber/v3"
 	"github.com/rs/zerolog/log"
+	"strconv"
 )
 
 // @Summary Delete Alert Rule
@@ -24,7 +25,7 @@ import (
 // @Router /alert-rules/{id} [delete]
 func DeleteAlertRule(c fiber.Ctx) error {
 	user := c.Locals("user").(*ent.User)
-	id, err := alertRuleID(c)
+	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
 			Status:  "error",

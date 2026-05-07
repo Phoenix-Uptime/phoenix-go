@@ -7,6 +7,7 @@ import (
 	"github.com/Phoenix-Uptime/phoenix-go/internal/routes"
 	"github.com/gofiber/fiber/v3"
 	"github.com/rs/zerolog/log"
+	"strconv"
 )
 
 // @Summary Pause Monitor
@@ -47,7 +48,7 @@ func ResumeMonitor(c fiber.Ctx) error {
 
 func setMonitorActiveState(c fiber.Ctx, isActive bool, status entmonitor.Status, failureMessage string) error {
 	user := c.Locals("user").(*ent.User)
-	id, err := monitorID(c)
+	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
 			Status:  "error",

@@ -40,7 +40,7 @@ type APIKeyResponse struct {
 // @Router /api-keys/{id} [get]
 func GetAPIKey(c fiber.Ctx) error {
 	user := c.Locals("user").(*ent.User)
-	id, err := apiKeyID(c)
+	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
 			Status:  "error",
@@ -54,10 +54,6 @@ func GetAPIKey(c fiber.Ctx) error {
 	}
 
 	return c.Status(fiber.StatusOK).JSON(apiKeyResponse(key))
-}
-
-func apiKeyID(c fiber.Ctx) (int, error) {
-	return strconv.Atoi(c.Params("id"))
 }
 
 func userAPIKey(c fiber.Ctx, userID int, id int) (*ent.APIKey, error) {
@@ -84,22 +80,20 @@ func apiKeyLookupError(c fiber.Ctx, err error) error {
 }
 
 func apiKeyResponse(key *ent.APIKey) APIKeyResponse {
+	keyPreview := "..."
+	if len(key.Key) > 12 {
+		keyPreview = key.Key[:8] + "..."
+	}
+
 	return APIKeyResponse{
 		ID:         key.ID,
 		UserID:     key.UserID,
 		Name:       key.Name,
-		KeyPreview: keyPreview(key.Key),
+		KeyPreview: keyPreview,
 		IsActive:   key.IsActive,
 		ExpiresAt:  key.ExpiresAt,
 		LastUsedAt: key.LastUsedAt,
 		CreatedAt:  key.CreatedAt,
 		UpdatedAt:  key.UpdatedAt,
 	}
-}
-
-func keyPreview(key string) string {
-	if len(key) <= 12 {
-		return "..."
-	}
-	return key[:8] + "..."
 }

@@ -6,6 +6,7 @@ import (
 	"github.com/Phoenix-Uptime/phoenix-go/internal/routes"
 	"github.com/gofiber/fiber/v3"
 	"github.com/rs/zerolog/log"
+	"strconv"
 )
 
 // @Summary Activate Maintenance Window
@@ -46,7 +47,7 @@ func DeactivateMaintenanceWindow(c fiber.Ctx) error {
 
 func setMaintenanceWindowActive(c fiber.Ctx, isActive bool) error {
 	user := c.Locals("user").(*ent.User)
-	id, err := maintenanceWindowID(c)
+	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
 			Status:  "error",

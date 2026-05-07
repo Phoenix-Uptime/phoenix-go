@@ -47,7 +47,7 @@ type AlertRuleResponse struct {
 // @Router /alert-rules/{id} [get]
 func GetAlertRule(c fiber.Ctx) error {
 	user := c.Locals("user").(*ent.User)
-	id, err := alertRuleID(c)
+	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
 			Status:  "error",
@@ -61,10 +61,6 @@ func GetAlertRule(c fiber.Ctx) error {
 	}
 
 	return c.Status(fiber.StatusOK).JSON(alertRuleResponse(rule))
-}
-
-func alertRuleID(c fiber.Ctx) (int, error) {
-	return strconv.Atoi(c.Params("id"))
 }
 
 func userAlertRule(c fiber.Ctx, userID int, id int) (*ent.AlertRule, error) {

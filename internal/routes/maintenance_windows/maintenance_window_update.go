@@ -1,6 +1,7 @@
 package maintenance_windows
 
 import (
+	"strconv"
 	"time"
 
 	"github.com/Phoenix-Uptime/phoenix-go/ent"
@@ -42,7 +43,7 @@ type UpdateMaintenanceWindowRequest struct {
 // @Router /maintenance-windows/{id} [patch]
 func UpdateMaintenanceWindow(c fiber.Ctx) error {
 	user := c.Locals("user").(*ent.User)
-	id, err := maintenanceWindowID(c)
+	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
 			Status:  "error",

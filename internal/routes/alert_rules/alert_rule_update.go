@@ -8,6 +8,7 @@ import (
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v3"
 	"github.com/rs/zerolog/log"
+	"strconv"
 )
 
 type UpdateAlertRuleRequest struct {
@@ -39,7 +40,7 @@ type UpdateAlertRuleRequest struct {
 // @Router /alert-rules/{id} [patch]
 func UpdateAlertRule(c fiber.Ctx) error {
 	user := c.Locals("user").(*ent.User)
-	id, err := alertRuleID(c)
+	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
 			Status:  "error",

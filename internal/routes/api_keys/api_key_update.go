@@ -1,6 +1,7 @@
 package api_keys
 
 import (
+	"strconv"
 	"time"
 
 	"github.com/Phoenix-Uptime/phoenix-go/ent"
@@ -35,7 +36,7 @@ type UpdateAPIKeyRequest struct {
 // @Router /api-keys/{id} [patch]
 func UpdateAPIKey(c fiber.Ctx) error {
 	user := c.Locals("user").(*ent.User)
-	id, err := apiKeyID(c)
+	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
 			Status:  "error",

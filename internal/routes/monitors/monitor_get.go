@@ -58,7 +58,7 @@ type MonitorResponse struct {
 // @Router /monitors/{id} [get]
 func GetMonitor(c fiber.Ctx) error {
 	user := c.Locals("user").(*ent.User)
-	id, err := monitorID(c)
+	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
 			Status:  "error",
@@ -72,10 +72,6 @@ func GetMonitor(c fiber.Ctx) error {
 	}
 
 	return c.Status(fiber.StatusOK).JSON(monitorResponse(monitor))
-}
-
-func monitorID(c fiber.Ctx) (int, error) {
-	return strconv.Atoi(c.Params("id"))
 }
 
 func userMonitor(c fiber.Ctx, userID int, id int) (*ent.Monitor, error) {

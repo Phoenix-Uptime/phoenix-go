@@ -50,7 +50,7 @@ type MonitorChecksResponse struct {
 // @Router /monitors/{id}/checks [get]
 func ListMonitorChecks(c fiber.Ctx) error {
 	user := c.Locals("user").(*ent.User)
-	id, err := monitorID(c)
+	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
 			Status:  "error",

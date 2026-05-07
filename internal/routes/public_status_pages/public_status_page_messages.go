@@ -52,7 +52,10 @@ func ListPublicStatusPageMessages(c fiber.Ctx) error {
 		return err
 	}
 	if !authorized {
-		return publicStatusPagePasswordError(c)
+		return c.Status(fiber.StatusUnauthorized).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Status page password is required",
+		})
 	}
 
 	limit := 50

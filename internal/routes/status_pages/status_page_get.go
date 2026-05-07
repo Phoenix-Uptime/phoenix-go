@@ -61,7 +61,7 @@ type StatusPageMonitorResponse struct {
 // @Router /status-pages/{id} [get]
 func GetStatusPage(c fiber.Ctx) error {
 	user := c.Locals("user").(*ent.User)
-	id, err := statusPageID(c)
+	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
 			Status:  "error",
@@ -75,10 +75,6 @@ func GetStatusPage(c fiber.Ctx) error {
 	}
 
 	return c.Status(fiber.StatusOK).JSON(statusPageResponse(page))
-}
-
-func statusPageID(c fiber.Ctx) (int, error) {
-	return strconv.Atoi(c.Params("id"))
 }
 
 func userStatusPage(c fiber.Ctx, userID int, id int) (*ent.StatusPage, error) {

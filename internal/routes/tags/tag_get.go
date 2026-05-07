@@ -38,7 +38,7 @@ type TagResponse struct {
 // @Router /tags/{id} [get]
 func GetTag(c fiber.Ctx) error {
 	user := c.Locals("user").(*ent.User)
-	id, err := tagID(c)
+	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
 			Status:  "error",
@@ -52,10 +52,6 @@ func GetTag(c fiber.Ctx) error {
 	}
 
 	return c.Status(fiber.StatusOK).JSON(tagResponse(tag))
-}
-
-func tagID(c fiber.Ctx) (int, error) {
-	return strconv.Atoi(c.Params("id"))
 }
 
 func userTag(c fiber.Ctx, userID int, id int) (*ent.Tag, error) {

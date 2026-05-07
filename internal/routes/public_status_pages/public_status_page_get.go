@@ -74,7 +74,10 @@ func GetPublicStatusPage(c fiber.Ctx) error {
 		return err
 	}
 	if !authorized {
-		return publicStatusPagePasswordError(c)
+		return c.Status(fiber.StatusUnauthorized).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Status page password is required",
+		})
 	}
 
 	response, err := publicStatusPageResponse(c, page)
@@ -141,13 +144,6 @@ func authorizePublicStatusPage(c fiber.Ctx, page *ent.StatusPage) (bool, error) 
 	return valid, nil
 }
 
-func publicStatusPagePasswordError(c fiber.Ctx) error {
-	return c.Status(fiber.StatusUnauthorized).JSON(routes.ErrorResponse{
-		Status:  "error",
-		Message: "Status page password is required",
-	})
-}
-
 func publicStatusPageLookupError(c fiber.Ctx, err error) error {
 	if ent.IsNotFound(err) {
 		return c.Status(fiber.StatusNotFound).JSON(routes.ErrorResponse{
@@ -195,9 +191,13 @@ func publicStatusPageMonitorResponses(c fiber.Ctx, page *ent.StatusPage) ([]Publ
 			continue
 		}
 
+		name := monitor.Name
+		if assignment.DisplayName != nil && *assignment.DisplayName != "" {
+			name = *assignment.DisplayName
+		}
 		response := PublicStatusPageMonitorResponse{
 			MonitorID:           monitor.ID,
-			Name:                publicMonitorName(assignment, monitor),
+			Name:                name,
 			Description:         monitor.Description,
 			Status:              string(monitor.Status),
 			Type:                string(monitor.Type),
@@ -209,7 +209,10 @@ func publicStatusPageMonitorResponses(c fiber.Ctx, page *ent.StatusPage) ([]Publ
 			response.URL = &monitor.URL
 		}
 
-		check, err := latestMonitorCheck(c, monitor.ID)
+		check, err := database.Client.MonitorCheck.Query().
+			Where(entmonitorcheck.MonitorID(monitor.ID)).
+			Order(entmonitorcheck.ByCheckedAt(entsql.OrderDesc())).
+			First(c)
 		if err != nil && !ent.IsNotFound(err) {
 			return nil, err
 		}
@@ -219,7 +222,13 @@ func publicStatusPageMonitorResponses(c fiber.Ctx, page *ent.StatusPage) ([]Publ
 		}
 
 		if page.ShowUptimePercentage || page.ShowCharts {
-			stat, err := latestMonitorStat(c, monitor.ID)
+			stat, err := database.Client.MonitorStat.Query().
+				Where(
+					entmonitorstat.MonitorID(monitor.ID),
+					entmonitorstat.PeriodEQ(entmonitorstat.PeriodDay),
+				).
+				Order(entmonitorstat.ByPeriodStart(entsql.OrderDesc())).
+				First(c)
 			if err != nil && !ent.IsNotFound(err) {
 				return nil, err
 			}
@@ -234,30 +243,6 @@ func publicStatusPageMonitorResponses(c fiber.Ctx, page *ent.StatusPage) ([]Publ
 		responses = append(responses, response)
 	}
 	return responses, nil
-}
-
-func publicMonitorName(assignment *ent.StatusPageMonitor, monitor *ent.Monitor) string {
-	if assignment.DisplayName != nil && *assignment.DisplayName != "" {
-		return *assignment.DisplayName
-	}
-	return monitor.Name
-}
-
-func latestMonitorCheck(c fiber.Ctx, monitorID int) (*ent.MonitorCheck, error) {
-	return database.Client.MonitorCheck.Query().
-		Where(entmonitorcheck.MonitorID(monitorID)).
-		Order(entmonitorcheck.ByCheckedAt(entsql.OrderDesc())).
-		First(c)
-}
-
-func latestMonitorStat(c fiber.Ctx, monitorID int) (*ent.MonitorStat, error) {
-	return database.Client.MonitorStat.Query().
-		Where(
-			entmonitorstat.MonitorID(monitorID),
-			entmonitorstat.PeriodEQ(entmonitorstat.PeriodDay),
-		).
-		Order(entmonitorstat.ByPeriodStart(entsql.OrderDesc())).
-		First(c)
 }
 
 func publicStatus(monitors []PublicStatusPageMonitorResponse) string {

@@ -52,7 +52,7 @@ type NotificationChannelResponse struct {
 // @Router /notification-channels/{id} [get]
 func GetNotificationChannel(c fiber.Ctx) error {
 	user := c.Locals("user").(*ent.User)
-	id, err := notificationChannelID(c)
+	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
 			Status:  "error",
@@ -66,10 +66,6 @@ func GetNotificationChannel(c fiber.Ctx) error {
 	}
 
 	return c.Status(fiber.StatusOK).JSON(notificationChannelResponse(channel))
-}
-
-func notificationChannelID(c fiber.Ctx) (int, error) {
-	return strconv.Atoi(c.Params("id"))
 }
 
 func userNotificationChannel(c fiber.Ctx, userID int, id int) (*ent.NotificationChannel, error) {

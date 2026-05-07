@@ -1,6 +1,7 @@
 package incidents
 
 import (
+	"strconv"
 	"time"
 
 	"github.com/Phoenix-Uptime/phoenix-go/ent"
@@ -41,7 +42,7 @@ type UpdateIncidentRequest struct {
 // @Router /incidents/{id} [patch]
 func UpdateIncident(c fiber.Ctx) error {
 	user := c.Locals("user").(*ent.User)
-	id, err := incidentID(c)
+	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
 			Status:  "error",
