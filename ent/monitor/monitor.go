@@ -79,6 +79,10 @@ const (
 	EdgeTags = "tags"
 	// EdgeNotificationChannels holds the string denoting the notification_channels edge name in mutations.
 	EdgeNotificationChannels = "notification_channels"
+	// EdgeAlertRules holds the string denoting the alert_rules edge name in mutations.
+	EdgeAlertRules = "alert_rules"
+	// EdgeAlertDeliveries holds the string denoting the alert_deliveries edge name in mutations.
+	EdgeAlertDeliveries = "alert_deliveries"
 	// EdgeStatusPageMonitors holds the string denoting the status_page_monitors edge name in mutations.
 	EdgeStatusPageMonitors = "status_page_monitors"
 	// EdgeMaintenanceWindows holds the string denoting the maintenance_windows edge name in mutations.
@@ -118,6 +122,18 @@ const (
 	// NotificationChannelsInverseTable is the table name for the NotificationChannel entity.
 	// It exists in this package in order to avoid circular dependency with the "notificationchannel" package.
 	NotificationChannelsInverseTable = "notification_channels"
+	// AlertRulesTable is the table that holds the alert_rules relation/edge. The primary key declared below.
+	AlertRulesTable = "alert_rule_monitors"
+	// AlertRulesInverseTable is the table name for the AlertRule entity.
+	// It exists in this package in order to avoid circular dependency with the "alertrule" package.
+	AlertRulesInverseTable = "alert_rules"
+	// AlertDeliveriesTable is the table that holds the alert_deliveries relation/edge.
+	AlertDeliveriesTable = "alert_deliveries"
+	// AlertDeliveriesInverseTable is the table name for the AlertDelivery entity.
+	// It exists in this package in order to avoid circular dependency with the "alertdelivery" package.
+	AlertDeliveriesInverseTable = "alert_deliveries"
+	// AlertDeliveriesColumn is the table column denoting the alert_deliveries relation/edge.
+	AlertDeliveriesColumn = "monitor_id"
 	// StatusPageMonitorsTable is the table that holds the status_page_monitors relation/edge.
 	StatusPageMonitorsTable = "status_page_monitors"
 	// StatusPageMonitorsInverseTable is the table name for the StatusPageMonitor entity.
@@ -178,6 +194,9 @@ var (
 	// NotificationChannelsPrimaryKey and NotificationChannelsColumn2 are the table columns denoting the
 	// primary key for the notification_channels relation (M2M).
 	NotificationChannelsPrimaryKey = []string{"monitor_id", "notification_channel_id"}
+	// AlertRulesPrimaryKey and AlertRulesColumn2 are the table columns denoting the
+	// primary key for the alert_rules relation (M2M).
+	AlertRulesPrimaryKey = []string{"alert_rule_id", "monitor_id"}
 	// MaintenanceWindowsPrimaryKey and MaintenanceWindowsColumn2 are the table columns denoting the
 	// primary key for the maintenance_windows relation (M2M).
 	MaintenanceWindowsPrimaryKey = []string{"maintenance_window_id", "monitor_id"}
@@ -473,6 +492,34 @@ func ByNotificationChannels(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOpt
 	}
 }
 
+// ByAlertRulesCount orders the results by alert_rules count.
+func ByAlertRulesCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newAlertRulesStep(), opts...)
+	}
+}
+
+// ByAlertRules orders the results by alert_rules terms.
+func ByAlertRules(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newAlertRulesStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByAlertDeliveriesCount orders the results by alert_deliveries count.
+func ByAlertDeliveriesCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newAlertDeliveriesStep(), opts...)
+	}
+}
+
+// ByAlertDeliveries orders the results by alert_deliveries terms.
+func ByAlertDeliveries(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newAlertDeliveriesStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
 // ByStatusPageMonitorsCount orders the results by status_page_monitors count.
 func ByStatusPageMonitorsCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
@@ -547,6 +594,20 @@ func newNotificationChannelsStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(NotificationChannelsInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2M, false, NotificationChannelsTable, NotificationChannelsPrimaryKey...),
+	)
+}
+func newAlertRulesStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(AlertRulesInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2M, true, AlertRulesTable, AlertRulesPrimaryKey...),
+	)
+}
+func newAlertDeliveriesStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(AlertDeliveriesInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, AlertDeliveriesTable, AlertDeliveriesColumn),
 	)
 }
 func newStatusPageMonitorsStep() *sqlgraph.Step {

@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/alertdelivery"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/incident"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/monitor"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/predicate"
@@ -232,6 +233,21 @@ func (_u *IncidentUpdate) AddMessages(v ...*StatusMessage) *IncidentUpdate {
 	return _u.AddMessageIDs(ids...)
 }
 
+// AddAlertDeliveryIDs adds the "alert_deliveries" edge to the AlertDelivery entity by IDs.
+func (_u *IncidentUpdate) AddAlertDeliveryIDs(ids ...int) *IncidentUpdate {
+	_u.mutation.AddAlertDeliveryIDs(ids...)
+	return _u
+}
+
+// AddAlertDeliveries adds the "alert_deliveries" edges to the AlertDelivery entity.
+func (_u *IncidentUpdate) AddAlertDeliveries(v ...*AlertDelivery) *IncidentUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddAlertDeliveryIDs(ids...)
+}
+
 // Mutation returns the IncidentMutation object of the builder.
 func (_u *IncidentUpdate) Mutation() *IncidentMutation {
 	return _u.mutation
@@ -274,6 +290,27 @@ func (_u *IncidentUpdate) RemoveMessages(v ...*StatusMessage) *IncidentUpdate {
 		ids[i] = v[i].ID
 	}
 	return _u.RemoveMessageIDs(ids...)
+}
+
+// ClearAlertDeliveries clears all "alert_deliveries" edges to the AlertDelivery entity.
+func (_u *IncidentUpdate) ClearAlertDeliveries() *IncidentUpdate {
+	_u.mutation.ClearAlertDeliveries()
+	return _u
+}
+
+// RemoveAlertDeliveryIDs removes the "alert_deliveries" edge to AlertDelivery entities by IDs.
+func (_u *IncidentUpdate) RemoveAlertDeliveryIDs(ids ...int) *IncidentUpdate {
+	_u.mutation.RemoveAlertDeliveryIDs(ids...)
+	return _u
+}
+
+// RemoveAlertDeliveries removes "alert_deliveries" edges to AlertDelivery entities.
+func (_u *IncidentUpdate) RemoveAlertDeliveries(v ...*AlertDelivery) *IncidentUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveAlertDeliveryIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -509,6 +546,51 @@ func (_u *IncidentUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if _u.mutation.AlertDeliveriesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   incident.AlertDeliveriesTable,
+			Columns: []string{incident.AlertDeliveriesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(alertdelivery.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedAlertDeliveriesIDs(); len(nodes) > 0 && !_u.mutation.AlertDeliveriesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   incident.AlertDeliveriesTable,
+			Columns: []string{incident.AlertDeliveriesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(alertdelivery.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.AlertDeliveriesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   incident.AlertDeliveriesTable,
+			Columns: []string{incident.AlertDeliveriesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(alertdelivery.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{incident.Label}
@@ -729,6 +811,21 @@ func (_u *IncidentUpdateOne) AddMessages(v ...*StatusMessage) *IncidentUpdateOne
 	return _u.AddMessageIDs(ids...)
 }
 
+// AddAlertDeliveryIDs adds the "alert_deliveries" edge to the AlertDelivery entity by IDs.
+func (_u *IncidentUpdateOne) AddAlertDeliveryIDs(ids ...int) *IncidentUpdateOne {
+	_u.mutation.AddAlertDeliveryIDs(ids...)
+	return _u
+}
+
+// AddAlertDeliveries adds the "alert_deliveries" edges to the AlertDelivery entity.
+func (_u *IncidentUpdateOne) AddAlertDeliveries(v ...*AlertDelivery) *IncidentUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddAlertDeliveryIDs(ids...)
+}
+
 // Mutation returns the IncidentMutation object of the builder.
 func (_u *IncidentUpdateOne) Mutation() *IncidentMutation {
 	return _u.mutation
@@ -771,6 +868,27 @@ func (_u *IncidentUpdateOne) RemoveMessages(v ...*StatusMessage) *IncidentUpdate
 		ids[i] = v[i].ID
 	}
 	return _u.RemoveMessageIDs(ids...)
+}
+
+// ClearAlertDeliveries clears all "alert_deliveries" edges to the AlertDelivery entity.
+func (_u *IncidentUpdateOne) ClearAlertDeliveries() *IncidentUpdateOne {
+	_u.mutation.ClearAlertDeliveries()
+	return _u
+}
+
+// RemoveAlertDeliveryIDs removes the "alert_deliveries" edge to AlertDelivery entities by IDs.
+func (_u *IncidentUpdateOne) RemoveAlertDeliveryIDs(ids ...int) *IncidentUpdateOne {
+	_u.mutation.RemoveAlertDeliveryIDs(ids...)
+	return _u
+}
+
+// RemoveAlertDeliveries removes "alert_deliveries" edges to AlertDelivery entities.
+func (_u *IncidentUpdateOne) RemoveAlertDeliveries(v ...*AlertDelivery) *IncidentUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveAlertDeliveryIDs(ids...)
 }
 
 // Where appends a list predicates to the IncidentUpdate builder.
@@ -1029,6 +1147,51 @@ func (_u *IncidentUpdateOne) sqlSave(ctx context.Context) (_node *Incident, err 
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(statusmessage.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.AlertDeliveriesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   incident.AlertDeliveriesTable,
+			Columns: []string{incident.AlertDeliveriesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(alertdelivery.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedAlertDeliveriesIDs(); len(nodes) > 0 && !_u.mutation.AlertDeliveriesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   incident.AlertDeliveriesTable,
+			Columns: []string{incident.AlertDeliveriesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(alertdelivery.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.AlertDeliveriesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   incident.AlertDeliveriesTable,
+			Columns: []string{incident.AlertDeliveriesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(alertdelivery.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

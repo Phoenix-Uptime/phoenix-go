@@ -637,6 +637,29 @@ func HasMessagesWith(preds ...predicate.StatusMessage) predicate.Incident {
 	})
 }
 
+// HasAlertDeliveries applies the HasEdge predicate on the "alert_deliveries" edge.
+func HasAlertDeliveries() predicate.Incident {
+	return predicate.Incident(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, AlertDeliveriesTable, AlertDeliveriesColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasAlertDeliveriesWith applies the HasEdge predicate on the "alert_deliveries" edge with a given conditions (other predicates).
+func HasAlertDeliveriesWith(preds ...predicate.AlertDelivery) predicate.Incident {
+	return predicate.Incident(func(s *sql.Selector) {
+		step := newAlertDeliveriesStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.Incident) predicate.Incident {
 	return predicate.Incident(sql.AndPredicates(predicates...))

@@ -45,6 +45,8 @@ type UserEdges struct {
 	APIKeys []*APIKey `json:"api_keys,omitempty"`
 	// NotificationChannels holds the value of the notification_channels edge.
 	NotificationChannels []*NotificationChannel `json:"notification_channels,omitempty"`
+	// AlertRules holds the value of the alert_rules edge.
+	AlertRules []*AlertRule `json:"alert_rules,omitempty"`
 	// StatusPages holds the value of the status_pages edge.
 	StatusPages []*StatusPage `json:"status_pages,omitempty"`
 	// MaintenanceWindows holds the value of the maintenance_windows edge.
@@ -53,7 +55,7 @@ type UserEdges struct {
 	ResolvedIncidents []*Incident `json:"resolved_incidents,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [7]bool
+	loadedTypes [8]bool
 }
 
 // MonitorsOrErr returns the Monitors value or an error if the edge
@@ -92,10 +94,19 @@ func (e UserEdges) NotificationChannelsOrErr() ([]*NotificationChannel, error) {
 	return nil, &NotLoadedError{edge: "notification_channels"}
 }
 
+// AlertRulesOrErr returns the AlertRules value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) AlertRulesOrErr() ([]*AlertRule, error) {
+	if e.loadedTypes[4] {
+		return e.AlertRules, nil
+	}
+	return nil, &NotLoadedError{edge: "alert_rules"}
+}
+
 // StatusPagesOrErr returns the StatusPages value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) StatusPagesOrErr() ([]*StatusPage, error) {
-	if e.loadedTypes[4] {
+	if e.loadedTypes[5] {
 		return e.StatusPages, nil
 	}
 	return nil, &NotLoadedError{edge: "status_pages"}
@@ -104,7 +115,7 @@ func (e UserEdges) StatusPagesOrErr() ([]*StatusPage, error) {
 // MaintenanceWindowsOrErr returns the MaintenanceWindows value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) MaintenanceWindowsOrErr() ([]*MaintenanceWindow, error) {
-	if e.loadedTypes[5] {
+	if e.loadedTypes[6] {
 		return e.MaintenanceWindows, nil
 	}
 	return nil, &NotLoadedError{edge: "maintenance_windows"}
@@ -113,7 +124,7 @@ func (e UserEdges) MaintenanceWindowsOrErr() ([]*MaintenanceWindow, error) {
 // ResolvedIncidentsOrErr returns the ResolvedIncidents value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) ResolvedIncidentsOrErr() ([]*Incident, error) {
-	if e.loadedTypes[6] {
+	if e.loadedTypes[7] {
 		return e.ResolvedIncidents, nil
 	}
 	return nil, &NotLoadedError{edge: "resolved_incidents"}
@@ -218,6 +229,11 @@ func (_m *User) QueryAPIKeys() *APIKeyQuery {
 // QueryNotificationChannels queries the "notification_channels" edge of the User entity.
 func (_m *User) QueryNotificationChannels() *NotificationChannelQuery {
 	return NewUserClient(_m.config).QueryNotificationChannels(_m)
+}
+
+// QueryAlertRules queries the "alert_rules" edge of the User entity.
+func (_m *User) QueryAlertRules() *AlertRuleQuery {
+	return NewUserClient(_m.config).QueryAlertRules(_m)
 }
 
 // QueryStatusPages queries the "status_pages" edge of the User entity.

@@ -1540,6 +1540,52 @@ func HasNotificationChannelsWith(preds ...predicate.NotificationChannel) predica
 	})
 }
 
+// HasAlertRules applies the HasEdge predicate on the "alert_rules" edge.
+func HasAlertRules() predicate.Monitor {
+	return predicate.Monitor(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, AlertRulesTable, AlertRulesPrimaryKey...),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasAlertRulesWith applies the HasEdge predicate on the "alert_rules" edge with a given conditions (other predicates).
+func HasAlertRulesWith(preds ...predicate.AlertRule) predicate.Monitor {
+	return predicate.Monitor(func(s *sql.Selector) {
+		step := newAlertRulesStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasAlertDeliveries applies the HasEdge predicate on the "alert_deliveries" edge.
+func HasAlertDeliveries() predicate.Monitor {
+	return predicate.Monitor(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, AlertDeliveriesTable, AlertDeliveriesColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasAlertDeliveriesWith applies the HasEdge predicate on the "alert_deliveries" edge with a given conditions (other predicates).
+func HasAlertDeliveriesWith(preds ...predicate.AlertDelivery) predicate.Monitor {
+	return predicate.Monitor(func(s *sql.Selector) {
+		step := newAlertDeliveriesStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // HasStatusPageMonitors applies the HasEdge predicate on the "status_page_monitors" edge.
 func HasStatusPageMonitors() predicate.Monitor {
 	return predicate.Monitor(func(s *sql.Selector) {

@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/alertrule"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/monitor"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/predicate"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/tag"
@@ -124,6 +125,21 @@ func (_u *TagUpdate) AddMonitors(v ...*Monitor) *TagUpdate {
 	return _u.AddMonitorIDs(ids...)
 }
 
+// AddAlertRuleIDs adds the "alert_rules" edge to the AlertRule entity by IDs.
+func (_u *TagUpdate) AddAlertRuleIDs(ids ...int) *TagUpdate {
+	_u.mutation.AddAlertRuleIDs(ids...)
+	return _u
+}
+
+// AddAlertRules adds the "alert_rules" edges to the AlertRule entity.
+func (_u *TagUpdate) AddAlertRules(v ...*AlertRule) *TagUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddAlertRuleIDs(ids...)
+}
+
 // Mutation returns the TagMutation object of the builder.
 func (_u *TagUpdate) Mutation() *TagMutation {
 	return _u.mutation
@@ -154,6 +170,27 @@ func (_u *TagUpdate) RemoveMonitors(v ...*Monitor) *TagUpdate {
 		ids[i] = v[i].ID
 	}
 	return _u.RemoveMonitorIDs(ids...)
+}
+
+// ClearAlertRules clears all "alert_rules" edges to the AlertRule entity.
+func (_u *TagUpdate) ClearAlertRules() *TagUpdate {
+	_u.mutation.ClearAlertRules()
+	return _u
+}
+
+// RemoveAlertRuleIDs removes the "alert_rules" edge to AlertRule entities by IDs.
+func (_u *TagUpdate) RemoveAlertRuleIDs(ids ...int) *TagUpdate {
+	_u.mutation.RemoveAlertRuleIDs(ids...)
+	return _u
+}
+
+// RemoveAlertRules removes "alert_rules" edges to AlertRule entities.
+func (_u *TagUpdate) RemoveAlertRules(v ...*AlertRule) *TagUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveAlertRuleIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -309,6 +346,51 @@ func (_u *TagUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if _u.mutation.AlertRulesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   tag.AlertRulesTable,
+			Columns: tag.AlertRulesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(alertrule.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedAlertRulesIDs(); len(nodes) > 0 && !_u.mutation.AlertRulesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   tag.AlertRulesTable,
+			Columns: tag.AlertRulesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(alertrule.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.AlertRulesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   tag.AlertRulesTable,
+			Columns: tag.AlertRulesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(alertrule.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{tag.Label}
@@ -423,6 +505,21 @@ func (_u *TagUpdateOne) AddMonitors(v ...*Monitor) *TagUpdateOne {
 	return _u.AddMonitorIDs(ids...)
 }
 
+// AddAlertRuleIDs adds the "alert_rules" edge to the AlertRule entity by IDs.
+func (_u *TagUpdateOne) AddAlertRuleIDs(ids ...int) *TagUpdateOne {
+	_u.mutation.AddAlertRuleIDs(ids...)
+	return _u
+}
+
+// AddAlertRules adds the "alert_rules" edges to the AlertRule entity.
+func (_u *TagUpdateOne) AddAlertRules(v ...*AlertRule) *TagUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddAlertRuleIDs(ids...)
+}
+
 // Mutation returns the TagMutation object of the builder.
 func (_u *TagUpdateOne) Mutation() *TagMutation {
 	return _u.mutation
@@ -453,6 +550,27 @@ func (_u *TagUpdateOne) RemoveMonitors(v ...*Monitor) *TagUpdateOne {
 		ids[i] = v[i].ID
 	}
 	return _u.RemoveMonitorIDs(ids...)
+}
+
+// ClearAlertRules clears all "alert_rules" edges to the AlertRule entity.
+func (_u *TagUpdateOne) ClearAlertRules() *TagUpdateOne {
+	_u.mutation.ClearAlertRules()
+	return _u
+}
+
+// RemoveAlertRuleIDs removes the "alert_rules" edge to AlertRule entities by IDs.
+func (_u *TagUpdateOne) RemoveAlertRuleIDs(ids ...int) *TagUpdateOne {
+	_u.mutation.RemoveAlertRuleIDs(ids...)
+	return _u
+}
+
+// RemoveAlertRules removes "alert_rules" edges to AlertRule entities.
+func (_u *TagUpdateOne) RemoveAlertRules(v ...*AlertRule) *TagUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveAlertRuleIDs(ids...)
 }
 
 // Where appends a list predicates to the TagUpdate builder.
@@ -631,6 +749,51 @@ func (_u *TagUpdateOne) sqlSave(ctx context.Context) (_node *Tag, err error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(monitor.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.AlertRulesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   tag.AlertRulesTable,
+			Columns: tag.AlertRulesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(alertrule.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedAlertRulesIDs(); len(nodes) > 0 && !_u.mutation.AlertRulesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   tag.AlertRulesTable,
+			Columns: tag.AlertRulesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(alertrule.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.AlertRulesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   tag.AlertRulesTable,
+			Columns: tag.AlertRulesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(alertrule.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

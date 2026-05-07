@@ -12,6 +12,8 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/alertdelivery"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/alertrule"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/apikey"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/incident"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/maintenancewindow"
@@ -85,6 +87,8 @@ func checkColumn(t, c string) error {
 	initCheck.Do(func() {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{
 			apikey.Table:              apikey.ValidColumn,
+			alertdelivery.Table:       alertdelivery.ValidColumn,
+			alertrule.Table:           alertrule.ValidColumn,
 			incident.Table:            incident.ValidColumn,
 			maintenancewindow.Table:   maintenancewindow.ValidColumn,
 			monitor.Table:             monitor.ValidColumn,

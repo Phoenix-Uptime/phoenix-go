@@ -517,6 +517,29 @@ func HasNotificationChannelsWith(preds ...predicate.NotificationChannel) predica
 	})
 }
 
+// HasAlertRules applies the HasEdge predicate on the "alert_rules" edge.
+func HasAlertRules() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, AlertRulesTable, AlertRulesColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasAlertRulesWith applies the HasEdge predicate on the "alert_rules" edge with a given conditions (other predicates).
+func HasAlertRulesWith(preds ...predicate.AlertRule) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := newAlertRulesStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // HasStatusPages applies the HasEdge predicate on the "status_pages" edge.
 func HasStatusPages() predicate.User {
 	return predicate.User(func(s *sql.Selector) {

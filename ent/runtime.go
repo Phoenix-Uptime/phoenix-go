@@ -5,6 +5,8 @@ package ent
 import (
 	"time"
 
+	"github.com/Phoenix-Uptime/phoenix-go/ent/alertdelivery"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/alertrule"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/apikey"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/incident"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/maintenancewindow"
@@ -48,6 +50,42 @@ func init() {
 	apikey.DefaultUpdatedAt = apikeyDescUpdatedAt.Default.(func() time.Time)
 	// apikey.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	apikey.UpdateDefaultUpdatedAt = apikeyDescUpdatedAt.UpdateDefault.(func() time.Time)
+	alertdeliveryFields := schema.AlertDelivery{}.Fields()
+	_ = alertdeliveryFields
+	// alertdeliveryDescRetryCount is the schema descriptor for retry_count field.
+	alertdeliveryDescRetryCount := alertdeliveryFields[7].Descriptor()
+	// alertdelivery.DefaultRetryCount holds the default value on creation for the retry_count field.
+	alertdelivery.DefaultRetryCount = alertdeliveryDescRetryCount.Default.(int)
+	// alertdeliveryDescCreatedAt is the schema descriptor for created_at field.
+	alertdeliveryDescCreatedAt := alertdeliveryFields[9].Descriptor()
+	// alertdelivery.DefaultCreatedAt holds the default value on creation for the created_at field.
+	alertdelivery.DefaultCreatedAt = alertdeliveryDescCreatedAt.Default.(func() time.Time)
+	// alertdeliveryDescUpdatedAt is the schema descriptor for updated_at field.
+	alertdeliveryDescUpdatedAt := alertdeliveryFields[10].Descriptor()
+	// alertdelivery.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	alertdelivery.DefaultUpdatedAt = alertdeliveryDescUpdatedAt.Default.(func() time.Time)
+	// alertdelivery.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	alertdelivery.UpdateDefaultUpdatedAt = alertdeliveryDescUpdatedAt.UpdateDefault.(func() time.Time)
+	alertruleFields := schema.AlertRule{}.Fields()
+	_ = alertruleFields
+	// alertruleDescName is the schema descriptor for name field.
+	alertruleDescName := alertruleFields[1].Descriptor()
+	// alertrule.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	alertrule.NameValidator = alertruleDescName.Validators[0].(func(string) error)
+	// alertruleDescIsActive is the schema descriptor for is_active field.
+	alertruleDescIsActive := alertruleFields[5].Descriptor()
+	// alertrule.DefaultIsActive holds the default value on creation for the is_active field.
+	alertrule.DefaultIsActive = alertruleDescIsActive.Default.(bool)
+	// alertruleDescCreatedAt is the schema descriptor for created_at field.
+	alertruleDescCreatedAt := alertruleFields[7].Descriptor()
+	// alertrule.DefaultCreatedAt holds the default value on creation for the created_at field.
+	alertrule.DefaultCreatedAt = alertruleDescCreatedAt.Default.(func() time.Time)
+	// alertruleDescUpdatedAt is the schema descriptor for updated_at field.
+	alertruleDescUpdatedAt := alertruleFields[8].Descriptor()
+	// alertrule.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	alertrule.DefaultUpdatedAt = alertruleDescUpdatedAt.Default.(func() time.Time)
+	// alertrule.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	alertrule.UpdateDefaultUpdatedAt = alertruleDescUpdatedAt.UpdateDefault.(func() time.Time)
 	incidentFields := schema.Incident{}.Fields()
 	_ = incidentFields
 	// incidentDescTitle is the schema descriptor for title field.

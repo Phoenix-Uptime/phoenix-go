@@ -91,6 +91,10 @@ type MonitorEdges struct {
 	Tags []*Tag `json:"tags,omitempty"`
 	// NotificationChannels holds the value of the notification_channels edge.
 	NotificationChannels []*NotificationChannel `json:"notification_channels,omitempty"`
+	// AlertRules holds the value of the alert_rules edge.
+	AlertRules []*AlertRule `json:"alert_rules,omitempty"`
+	// AlertDeliveries holds the value of the alert_deliveries edge.
+	AlertDeliveries []*AlertDelivery `json:"alert_deliveries,omitempty"`
 	// StatusPageMonitors holds the value of the status_page_monitors edge.
 	StatusPageMonitors []*StatusPageMonitor `json:"status_page_monitors,omitempty"`
 	// MaintenanceWindows holds the value of the maintenance_windows edge.
@@ -99,7 +103,7 @@ type MonitorEdges struct {
 	Incidents []*Incident `json:"incidents,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [8]bool
+	loadedTypes [10]bool
 }
 
 // UserOrErr returns the User value or an error if the edge
@@ -149,10 +153,28 @@ func (e MonitorEdges) NotificationChannelsOrErr() ([]*NotificationChannel, error
 	return nil, &NotLoadedError{edge: "notification_channels"}
 }
 
+// AlertRulesOrErr returns the AlertRules value or an error if the edge
+// was not loaded in eager-loading.
+func (e MonitorEdges) AlertRulesOrErr() ([]*AlertRule, error) {
+	if e.loadedTypes[5] {
+		return e.AlertRules, nil
+	}
+	return nil, &NotLoadedError{edge: "alert_rules"}
+}
+
+// AlertDeliveriesOrErr returns the AlertDeliveries value or an error if the edge
+// was not loaded in eager-loading.
+func (e MonitorEdges) AlertDeliveriesOrErr() ([]*AlertDelivery, error) {
+	if e.loadedTypes[6] {
+		return e.AlertDeliveries, nil
+	}
+	return nil, &NotLoadedError{edge: "alert_deliveries"}
+}
+
 // StatusPageMonitorsOrErr returns the StatusPageMonitors value or an error if the edge
 // was not loaded in eager-loading.
 func (e MonitorEdges) StatusPageMonitorsOrErr() ([]*StatusPageMonitor, error) {
-	if e.loadedTypes[5] {
+	if e.loadedTypes[7] {
 		return e.StatusPageMonitors, nil
 	}
 	return nil, &NotLoadedError{edge: "status_page_monitors"}
@@ -161,7 +183,7 @@ func (e MonitorEdges) StatusPageMonitorsOrErr() ([]*StatusPageMonitor, error) {
 // MaintenanceWindowsOrErr returns the MaintenanceWindows value or an error if the edge
 // was not loaded in eager-loading.
 func (e MonitorEdges) MaintenanceWindowsOrErr() ([]*MaintenanceWindow, error) {
-	if e.loadedTypes[6] {
+	if e.loadedTypes[8] {
 		return e.MaintenanceWindows, nil
 	}
 	return nil, &NotLoadedError{edge: "maintenance_windows"}
@@ -170,7 +192,7 @@ func (e MonitorEdges) MaintenanceWindowsOrErr() ([]*MaintenanceWindow, error) {
 // IncidentsOrErr returns the Incidents value or an error if the edge
 // was not loaded in eager-loading.
 func (e MonitorEdges) IncidentsOrErr() ([]*Incident, error) {
-	if e.loadedTypes[7] {
+	if e.loadedTypes[9] {
 		return e.Incidents, nil
 	}
 	return nil, &NotLoadedError{edge: "incidents"}
@@ -425,6 +447,16 @@ func (_m *Monitor) QueryTags() *TagQuery {
 // QueryNotificationChannels queries the "notification_channels" edge of the Monitor entity.
 func (_m *Monitor) QueryNotificationChannels() *NotificationChannelQuery {
 	return NewMonitorClient(_m.config).QueryNotificationChannels(_m)
+}
+
+// QueryAlertRules queries the "alert_rules" edge of the Monitor entity.
+func (_m *Monitor) QueryAlertRules() *AlertRuleQuery {
+	return NewMonitorClient(_m.config).QueryAlertRules(_m)
+}
+
+// QueryAlertDeliveries queries the "alert_deliveries" edge of the Monitor entity.
+func (_m *Monitor) QueryAlertDeliveries() *AlertDeliveryQuery {
+	return NewMonitorClient(_m.config).QueryAlertDeliveries(_m)
 }
 
 // QueryStatusPageMonitors queries the "status_page_monitors" edge of the Monitor entity.

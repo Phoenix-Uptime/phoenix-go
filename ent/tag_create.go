@@ -10,6 +10,7 @@ import (
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/alertrule"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/monitor"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/tag"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/user"
@@ -108,6 +109,21 @@ func (_c *TagCreate) AddMonitors(v ...*Monitor) *TagCreate {
 		ids[i] = v[i].ID
 	}
 	return _c.AddMonitorIDs(ids...)
+}
+
+// AddAlertRuleIDs adds the "alert_rules" edge to the AlertRule entity by IDs.
+func (_c *TagCreate) AddAlertRuleIDs(ids ...int) *TagCreate {
+	_c.mutation.AddAlertRuleIDs(ids...)
+	return _c
+}
+
+// AddAlertRules adds the "alert_rules" edges to the AlertRule entity.
+func (_c *TagCreate) AddAlertRules(v ...*AlertRule) *TagCreate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _c.AddAlertRuleIDs(ids...)
 }
 
 // Mutation returns the TagMutation object of the builder.
@@ -249,6 +265,22 @@ func (_c *TagCreate) createSpec() (*Tag, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(monitor.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.AlertRulesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   tag.AlertRulesTable,
+			Columns: tag.AlertRulesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(alertrule.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

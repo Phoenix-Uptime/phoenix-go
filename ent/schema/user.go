@@ -47,6 +47,8 @@ func (User) Edges() []ent.Edge {
 			Annotations(entsql.OnDelete(entsql.Cascade)),
 		edge.To("notification_channels", NotificationChannel.Type).
 			Annotations(entsql.OnDelete(entsql.Cascade)),
+		edge.To("alert_rules", AlertRule.Type).
+			Annotations(entsql.OnDelete(entsql.Cascade)),
 		edge.To("status_pages", StatusPage.Type).
 			Annotations(entsql.OnDelete(entsql.Cascade)),
 		edge.To("maintenance_windows", MaintenanceWindow.Type).

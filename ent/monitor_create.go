@@ -10,6 +10,8 @@ import (
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/alertdelivery"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/alertrule"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/incident"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/maintenancewindow"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/monitor"
@@ -415,6 +417,36 @@ func (_c *MonitorCreate) AddNotificationChannels(v ...*NotificationChannel) *Mon
 	return _c.AddNotificationChannelIDs(ids...)
 }
 
+// AddAlertRuleIDs adds the "alert_rules" edge to the AlertRule entity by IDs.
+func (_c *MonitorCreate) AddAlertRuleIDs(ids ...int) *MonitorCreate {
+	_c.mutation.AddAlertRuleIDs(ids...)
+	return _c
+}
+
+// AddAlertRules adds the "alert_rules" edges to the AlertRule entity.
+func (_c *MonitorCreate) AddAlertRules(v ...*AlertRule) *MonitorCreate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _c.AddAlertRuleIDs(ids...)
+}
+
+// AddAlertDeliveryIDs adds the "alert_deliveries" edge to the AlertDelivery entity by IDs.
+func (_c *MonitorCreate) AddAlertDeliveryIDs(ids ...int) *MonitorCreate {
+	_c.mutation.AddAlertDeliveryIDs(ids...)
+	return _c
+}
+
+// AddAlertDeliveries adds the "alert_deliveries" edges to the AlertDelivery entity.
+func (_c *MonitorCreate) AddAlertDeliveries(v ...*AlertDelivery) *MonitorCreate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _c.AddAlertDeliveryIDs(ids...)
+}
+
 // AddStatusPageMonitorIDs adds the "status_page_monitors" edge to the StatusPageMonitor entity by IDs.
 func (_c *MonitorCreate) AddStatusPageMonitorIDs(ids ...int) *MonitorCreate {
 	_c.mutation.AddStatusPageMonitorIDs(ids...)
@@ -815,6 +847,38 @@ func (_c *MonitorCreate) createSpec() (*Monitor, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(notificationchannel.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.AlertRulesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   monitor.AlertRulesTable,
+			Columns: monitor.AlertRulesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(alertrule.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.AlertDeliveriesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   monitor.AlertDeliveriesTable,
+			Columns: []string{monitor.AlertDeliveriesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(alertdelivery.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

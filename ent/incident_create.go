@@ -10,6 +10,7 @@ import (
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/alertdelivery"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/incident"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/monitor"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/statusmessage"
@@ -204,6 +205,21 @@ func (_c *IncidentCreate) AddMessages(v ...*StatusMessage) *IncidentCreate {
 		ids[i] = v[i].ID
 	}
 	return _c.AddMessageIDs(ids...)
+}
+
+// AddAlertDeliveryIDs adds the "alert_deliveries" edge to the AlertDelivery entity by IDs.
+func (_c *IncidentCreate) AddAlertDeliveryIDs(ids ...int) *IncidentCreate {
+	_c.mutation.AddAlertDeliveryIDs(ids...)
+	return _c
+}
+
+// AddAlertDeliveries adds the "alert_deliveries" edges to the AlertDelivery entity.
+func (_c *IncidentCreate) AddAlertDeliveries(v ...*AlertDelivery) *IncidentCreate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _c.AddAlertDeliveryIDs(ids...)
 }
 
 // Mutation returns the IncidentMutation object of the builder.
@@ -433,6 +449,22 @@ func (_c *IncidentCreate) createSpec() (*Incident, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(statusmessage.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.AlertDeliveriesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   incident.AlertDeliveriesTable,
+			Columns: []string{incident.AlertDeliveriesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(alertdelivery.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

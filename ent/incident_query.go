@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/alertdelivery"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/incident"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/monitor"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/predicate"
@@ -23,14 +24,15 @@ import (
 // IncidentQuery is the builder for querying Incident entities.
 type IncidentQuery struct {
 	config
-	ctx            *QueryContext
-	order          []incident.OrderOption
-	inters         []Interceptor
-	predicates     []predicate.Incident
-	withMonitor    *MonitorQuery
-	withStatusPage *StatusPageQuery
-	withResolvedBy *UserQuery
-	withMessages   *StatusMessageQuery
+	ctx                 *QueryContext
+	order               []incident.OrderOption
+	inters              []Interceptor
+	predicates          []predicate.Incident
+	withMonitor         *MonitorQuery
+	withStatusPage      *StatusPageQuery
+	withResolvedBy      *UserQuery
+	withMessages        *StatusMessageQuery
+	withAlertDeliveries *AlertDeliveryQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -148,6 +150,28 @@ func (_q *IncidentQuery) QueryMessages() *StatusMessageQuery {
 			sqlgraph.From(incident.Table, incident.FieldID, selector),
 			sqlgraph.To(statusmessage.Table, statusmessage.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, incident.MessagesTable, incident.MessagesColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryAlertDeliveries chains the current query on the "alert_deliveries" edge.
+func (_q *IncidentQuery) QueryAlertDeliveries() *AlertDeliveryQuery {
+	query := (&AlertDeliveryClient{config: _q.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := _q.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := _q.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(incident.Table, incident.FieldID, selector),
+			sqlgraph.To(alertdelivery.Table, alertdelivery.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, incident.AlertDeliveriesTable, incident.AlertDeliveriesColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -342,15 +366,16 @@ func (_q *IncidentQuery) Clone() *IncidentQuery {
 		return nil
 	}
 	return &IncidentQuery{
-		config:         _q.config,
-		ctx:            _q.ctx.Clone(),
-		order:          append([]incident.OrderOption{}, _q.order...),
-		inters:         append([]Interceptor{}, _q.inters...),
-		predicates:     append([]predicate.Incident{}, _q.predicates...),
-		withMonitor:    _q.withMonitor.Clone(),
-		withStatusPage: _q.withStatusPage.Clone(),
-		withResolvedBy: _q.withResolvedBy.Clone(),
-		withMessages:   _q.withMessages.Clone(),
+		config:              _q.config,
+		ctx:                 _q.ctx.Clone(),
+		order:               append([]incident.OrderOption{}, _q.order...),
+		inters:              append([]Interceptor{}, _q.inters...),
+		predicates:          append([]predicate.Incident{}, _q.predicates...),
+		withMonitor:         _q.withMonitor.Clone(),
+		withStatusPage:      _q.withStatusPage.Clone(),
+		withResolvedBy:      _q.withResolvedBy.Clone(),
+		withMessages:        _q.withMessages.Clone(),
+		withAlertDeliveries: _q.withAlertDeliveries.Clone(),
 		// clone intermediate query.
 		sql:  _q.sql.Clone(),
 		path: _q.path,
@@ -398,6 +423,17 @@ func (_q *IncidentQuery) WithMessages(opts ...func(*StatusMessageQuery)) *Incide
 		opt(query)
 	}
 	_q.withMessages = query
+	return _q
+}
+
+// WithAlertDeliveries tells the query-builder to eager-load the nodes that are connected to
+// the "alert_deliveries" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *IncidentQuery) WithAlertDeliveries(opts ...func(*AlertDeliveryQuery)) *IncidentQuery {
+	query := (&AlertDeliveryClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	_q.withAlertDeliveries = query
 	return _q
 }
 
@@ -479,11 +515,12 @@ func (_q *IncidentQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Inc
 	var (
 		nodes       = []*Incident{}
 		_spec       = _q.querySpec()
-		loadedTypes = [4]bool{
+		loadedTypes = [5]bool{
 			_q.withMonitor != nil,
 			_q.withStatusPage != nil,
 			_q.withResolvedBy != nil,
 			_q.withMessages != nil,
+			_q.withAlertDeliveries != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -526,6 +563,13 @@ func (_q *IncidentQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Inc
 		if err := _q.loadMessages(ctx, query, nodes,
 			func(n *Incident) { n.Edges.Messages = []*StatusMessage{} },
 			func(n *Incident, e *StatusMessage) { n.Edges.Messages = append(n.Edges.Messages, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := _q.withAlertDeliveries; query != nil {
+		if err := _q.loadAlertDeliveries(ctx, query, nodes,
+			func(n *Incident) { n.Edges.AlertDeliveries = []*AlertDelivery{} },
+			func(n *Incident, e *AlertDelivery) { n.Edges.AlertDeliveries = append(n.Edges.AlertDeliveries, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -640,6 +684,39 @@ func (_q *IncidentQuery) loadMessages(ctx context.Context, query *StatusMessageQ
 	}
 	query.Where(predicate.StatusMessage(func(s *sql.Selector) {
 		s.Where(sql.InValues(s.C(incident.MessagesColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.IncidentID
+		if fk == nil {
+			return fmt.Errorf(`foreign-key "incident_id" is nil for node %v`, n.ID)
+		}
+		node, ok := nodeids[*fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "incident_id" returned %v for node %v`, *fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (_q *IncidentQuery) loadAlertDeliveries(ctx context.Context, query *AlertDeliveryQuery, nodes []*Incident, init func(*Incident), assign func(*Incident, *AlertDelivery)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int]*Incident)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(alertdelivery.FieldIncidentID)
+	}
+	query.Where(predicate.AlertDelivery(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(incident.AlertDeliveriesColumn), fks...))
 	}))
 	neighbors, err := query.All(ctx)
 	if err != nil {

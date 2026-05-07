@@ -46,6 +46,134 @@ var (
 			},
 		},
 	}
+	// AlertDeliveriesColumns holds the columns for the "alert_deliveries" table.
+	AlertDeliveriesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "event", Type: field.TypeEnum, Enums: []string{"down", "recovered", "degraded", "certificate_expiring"}},
+		{Name: "status", Type: field.TypeEnum, Enums: []string{"pending", "sent", "failed", "skipped"}, Default: "pending"},
+		{Name: "error", Type: field.TypeString, Nullable: true},
+		{Name: "retry_count", Type: field.TypeInt, Default: 0},
+		{Name: "sent_at", Type: field.TypeTime, Nullable: true},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "alert_rule_id", Type: field.TypeInt},
+		{Name: "incident_id", Type: field.TypeInt, Nullable: true},
+		{Name: "monitor_id", Type: field.TypeInt, Nullable: true},
+		{Name: "notification_channel_id", Type: field.TypeInt},
+	}
+	// AlertDeliveriesTable holds the schema information for the "alert_deliveries" table.
+	AlertDeliveriesTable = &schema.Table{
+		Name:       "alert_deliveries",
+		Columns:    AlertDeliveriesColumns,
+		PrimaryKey: []*schema.Column{AlertDeliveriesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "alert_deliveries_alert_rules_deliveries",
+				Columns:    []*schema.Column{AlertDeliveriesColumns[8]},
+				RefColumns: []*schema.Column{AlertRulesColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "alert_deliveries_incidents_alert_deliveries",
+				Columns:    []*schema.Column{AlertDeliveriesColumns[9]},
+				RefColumns: []*schema.Column{IncidentsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "alert_deliveries_monitors_alert_deliveries",
+				Columns:    []*schema.Column{AlertDeliveriesColumns[10]},
+				RefColumns: []*schema.Column{MonitorsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "alert_deliveries_notification_channels_alert_deliveries",
+				Columns:    []*schema.Column{AlertDeliveriesColumns[11]},
+				RefColumns: []*schema.Column{NotificationChannelsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "alertdelivery_alert_rule_id",
+				Unique:  false,
+				Columns: []*schema.Column{AlertDeliveriesColumns[8]},
+			},
+			{
+				Name:    "alertdelivery_notification_channel_id",
+				Unique:  false,
+				Columns: []*schema.Column{AlertDeliveriesColumns[11]},
+			},
+			{
+				Name:    "alertdelivery_monitor_id",
+				Unique:  false,
+				Columns: []*schema.Column{AlertDeliveriesColumns[10]},
+			},
+			{
+				Name:    "alertdelivery_incident_id",
+				Unique:  false,
+				Columns: []*schema.Column{AlertDeliveriesColumns[9]},
+			},
+			{
+				Name:    "alertdelivery_status_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{AlertDeliveriesColumns[2], AlertDeliveriesColumns[6]},
+			},
+			{
+				Name:    "alertdelivery_event_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{AlertDeliveriesColumns[1], AlertDeliveriesColumns[6]},
+			},
+		},
+	}
+	// AlertRulesColumns holds the columns for the "alert_rules" table.
+	AlertRulesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "name", Type: field.TypeString},
+		{Name: "description", Type: field.TypeString, Nullable: true},
+		{Name: "event", Type: field.TypeEnum, Enums: []string{"down", "recovered", "degraded", "certificate_expiring"}},
+		{Name: "scope", Type: field.TypeEnum, Enums: []string{"all", "tags", "monitors"}, Default: "all"},
+		{Name: "is_active", Type: field.TypeBool, Default: true},
+		{Name: "resend_interval_seconds", Type: field.TypeInt, Nullable: true},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "user_id", Type: field.TypeInt},
+	}
+	// AlertRulesTable holds the schema information for the "alert_rules" table.
+	AlertRulesTable = &schema.Table{
+		Name:       "alert_rules",
+		Columns:    AlertRulesColumns,
+		PrimaryKey: []*schema.Column{AlertRulesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "alert_rules_users_alert_rules",
+				Columns:    []*schema.Column{AlertRulesColumns[9]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "alertrule_user_id",
+				Unique:  false,
+				Columns: []*schema.Column{AlertRulesColumns[9]},
+			},
+			{
+				Name:    "alertrule_user_id_is_active",
+				Unique:  false,
+				Columns: []*schema.Column{AlertRulesColumns[9], AlertRulesColumns[5]},
+			},
+			{
+				Name:    "alertrule_event_is_active",
+				Unique:  false,
+				Columns: []*schema.Column{AlertRulesColumns[3], AlertRulesColumns[5]},
+			},
+			{
+				Name:    "alertrule_scope",
+				Unique:  false,
+				Columns: []*schema.Column{AlertRulesColumns[4]},
+			},
+		},
+	}
 	// IncidentsColumns holds the columns for the "incidents" table.
 	IncidentsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -614,6 +742,81 @@ var (
 			},
 		},
 	}
+	// AlertRuleTagsColumns holds the columns for the "alert_rule_tags" table.
+	AlertRuleTagsColumns = []*schema.Column{
+		{Name: "alert_rule_id", Type: field.TypeInt},
+		{Name: "tag_id", Type: field.TypeInt},
+	}
+	// AlertRuleTagsTable holds the schema information for the "alert_rule_tags" table.
+	AlertRuleTagsTable = &schema.Table{
+		Name:       "alert_rule_tags",
+		Columns:    AlertRuleTagsColumns,
+		PrimaryKey: []*schema.Column{AlertRuleTagsColumns[0], AlertRuleTagsColumns[1]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "alert_rule_tags_alert_rule_id",
+				Columns:    []*schema.Column{AlertRuleTagsColumns[0]},
+				RefColumns: []*schema.Column{AlertRulesColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "alert_rule_tags_tag_id",
+				Columns:    []*schema.Column{AlertRuleTagsColumns[1]},
+				RefColumns: []*schema.Column{TagsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
+	// AlertRuleMonitorsColumns holds the columns for the "alert_rule_monitors" table.
+	AlertRuleMonitorsColumns = []*schema.Column{
+		{Name: "alert_rule_id", Type: field.TypeInt},
+		{Name: "monitor_id", Type: field.TypeInt},
+	}
+	// AlertRuleMonitorsTable holds the schema information for the "alert_rule_monitors" table.
+	AlertRuleMonitorsTable = &schema.Table{
+		Name:       "alert_rule_monitors",
+		Columns:    AlertRuleMonitorsColumns,
+		PrimaryKey: []*schema.Column{AlertRuleMonitorsColumns[0], AlertRuleMonitorsColumns[1]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "alert_rule_monitors_alert_rule_id",
+				Columns:    []*schema.Column{AlertRuleMonitorsColumns[0]},
+				RefColumns: []*schema.Column{AlertRulesColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "alert_rule_monitors_monitor_id",
+				Columns:    []*schema.Column{AlertRuleMonitorsColumns[1]},
+				RefColumns: []*schema.Column{MonitorsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
+	// AlertRuleNotificationChannelsColumns holds the columns for the "alert_rule_notification_channels" table.
+	AlertRuleNotificationChannelsColumns = []*schema.Column{
+		{Name: "alert_rule_id", Type: field.TypeInt},
+		{Name: "notification_channel_id", Type: field.TypeInt},
+	}
+	// AlertRuleNotificationChannelsTable holds the schema information for the "alert_rule_notification_channels" table.
+	AlertRuleNotificationChannelsTable = &schema.Table{
+		Name:       "alert_rule_notification_channels",
+		Columns:    AlertRuleNotificationChannelsColumns,
+		PrimaryKey: []*schema.Column{AlertRuleNotificationChannelsColumns[0], AlertRuleNotificationChannelsColumns[1]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "alert_rule_notification_channels_alert_rule_id",
+				Columns:    []*schema.Column{AlertRuleNotificationChannelsColumns[0]},
+				RefColumns: []*schema.Column{AlertRulesColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "alert_rule_notification_channels_notification_channel_id",
+				Columns:    []*schema.Column{AlertRuleNotificationChannelsColumns[1]},
+				RefColumns: []*schema.Column{NotificationChannelsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
 	// MonitorMaintenanceWindowsColumns holds the columns for the "monitor_maintenance_windows" table.
 	MonitorMaintenanceWindowsColumns = []*schema.Column{
 		{Name: "maintenance_window_id", Type: field.TypeInt},
@@ -692,6 +895,8 @@ var (
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		APIKeysTable,
+		AlertDeliveriesTable,
+		AlertRulesTable,
 		IncidentsTable,
 		MaintenanceWindowsTable,
 		MonitorsTable,
@@ -703,6 +908,9 @@ var (
 		StatusPageMonitorsTable,
 		TagsTable,
 		UsersTable,
+		AlertRuleTagsTable,
+		AlertRuleMonitorsTable,
+		AlertRuleNotificationChannelsTable,
 		MonitorMaintenanceWindowsTable,
 		MonitorTagsTable,
 		MonitorNotificationChannelsTable,
@@ -711,6 +919,11 @@ var (
 
 func init() {
 	APIKeysTable.ForeignKeys[0].RefTable = UsersTable
+	AlertDeliveriesTable.ForeignKeys[0].RefTable = AlertRulesTable
+	AlertDeliveriesTable.ForeignKeys[1].RefTable = IncidentsTable
+	AlertDeliveriesTable.ForeignKeys[2].RefTable = MonitorsTable
+	AlertDeliveriesTable.ForeignKeys[3].RefTable = NotificationChannelsTable
+	AlertRulesTable.ForeignKeys[0].RefTable = UsersTable
 	IncidentsTable.ForeignKeys[0].RefTable = MonitorsTable
 	IncidentsTable.ForeignKeys[1].RefTable = StatusPagesTable
 	IncidentsTable.ForeignKeys[2].RefTable = UsersTable
@@ -726,6 +939,12 @@ func init() {
 	StatusPageMonitorsTable.ForeignKeys[0].RefTable = MonitorsTable
 	StatusPageMonitorsTable.ForeignKeys[1].RefTable = StatusPagesTable
 	TagsTable.ForeignKeys[0].RefTable = UsersTable
+	AlertRuleTagsTable.ForeignKeys[0].RefTable = AlertRulesTable
+	AlertRuleTagsTable.ForeignKeys[1].RefTable = TagsTable
+	AlertRuleMonitorsTable.ForeignKeys[0].RefTable = AlertRulesTable
+	AlertRuleMonitorsTable.ForeignKeys[1].RefTable = MonitorsTable
+	AlertRuleNotificationChannelsTable.ForeignKeys[0].RefTable = AlertRulesTable
+	AlertRuleNotificationChannelsTable.ForeignKeys[1].RefTable = NotificationChannelsTable
 	MonitorMaintenanceWindowsTable.ForeignKeys[0].RefTable = MaintenanceWindowsTable
 	MonitorMaintenanceWindowsTable.ForeignKeys[1].RefTable = MonitorsTable
 	MonitorTagsTable.ForeignKeys[0].RefTable = MonitorsTable

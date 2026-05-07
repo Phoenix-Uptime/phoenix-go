@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/alertrule"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/monitor"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/predicate"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/tag"
@@ -21,12 +22,13 @@ import (
 // TagQuery is the builder for querying Tag entities.
 type TagQuery struct {
 	config
-	ctx          *QueryContext
-	order        []tag.OrderOption
-	inters       []Interceptor
-	predicates   []predicate.Tag
-	withUser     *UserQuery
-	withMonitors *MonitorQuery
+	ctx            *QueryContext
+	order          []tag.OrderOption
+	inters         []Interceptor
+	predicates     []predicate.Tag
+	withUser       *UserQuery
+	withMonitors   *MonitorQuery
+	withAlertRules *AlertRuleQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -100,6 +102,28 @@ func (_q *TagQuery) QueryMonitors() *MonitorQuery {
 			sqlgraph.From(tag.Table, tag.FieldID, selector),
 			sqlgraph.To(monitor.Table, monitor.FieldID),
 			sqlgraph.Edge(sqlgraph.M2M, true, tag.MonitorsTable, tag.MonitorsPrimaryKey...),
+		)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryAlertRules chains the current query on the "alert_rules" edge.
+func (_q *TagQuery) QueryAlertRules() *AlertRuleQuery {
+	query := (&AlertRuleClient{config: _q.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := _q.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := _q.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(tag.Table, tag.FieldID, selector),
+			sqlgraph.To(alertrule.Table, alertrule.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, tag.AlertRulesTable, tag.AlertRulesPrimaryKey...),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -294,13 +318,14 @@ func (_q *TagQuery) Clone() *TagQuery {
 		return nil
 	}
 	return &TagQuery{
-		config:       _q.config,
-		ctx:          _q.ctx.Clone(),
-		order:        append([]tag.OrderOption{}, _q.order...),
-		inters:       append([]Interceptor{}, _q.inters...),
-		predicates:   append([]predicate.Tag{}, _q.predicates...),
-		withUser:     _q.withUser.Clone(),
-		withMonitors: _q.withMonitors.Clone(),
+		config:         _q.config,
+		ctx:            _q.ctx.Clone(),
+		order:          append([]tag.OrderOption{}, _q.order...),
+		inters:         append([]Interceptor{}, _q.inters...),
+		predicates:     append([]predicate.Tag{}, _q.predicates...),
+		withUser:       _q.withUser.Clone(),
+		withMonitors:   _q.withMonitors.Clone(),
+		withAlertRules: _q.withAlertRules.Clone(),
 		// clone intermediate query.
 		sql:  _q.sql.Clone(),
 		path: _q.path,
@@ -326,6 +351,17 @@ func (_q *TagQuery) WithMonitors(opts ...func(*MonitorQuery)) *TagQuery {
 		opt(query)
 	}
 	_q.withMonitors = query
+	return _q
+}
+
+// WithAlertRules tells the query-builder to eager-load the nodes that are connected to
+// the "alert_rules" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *TagQuery) WithAlertRules(opts ...func(*AlertRuleQuery)) *TagQuery {
+	query := (&AlertRuleClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	_q.withAlertRules = query
 	return _q
 }
 
@@ -407,9 +443,10 @@ func (_q *TagQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Tag, err
 	var (
 		nodes       = []*Tag{}
 		_spec       = _q.querySpec()
-		loadedTypes = [2]bool{
+		loadedTypes = [3]bool{
 			_q.withUser != nil,
 			_q.withMonitors != nil,
+			_q.withAlertRules != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -440,6 +477,13 @@ func (_q *TagQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Tag, err
 		if err := _q.loadMonitors(ctx, query, nodes,
 			func(n *Tag) { n.Edges.Monitors = []*Monitor{} },
 			func(n *Tag, e *Monitor) { n.Edges.Monitors = append(n.Edges.Monitors, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := _q.withAlertRules; query != nil {
+		if err := _q.loadAlertRules(ctx, query, nodes,
+			func(n *Tag) { n.Edges.AlertRules = []*AlertRule{} },
+			func(n *Tag, e *AlertRule) { n.Edges.AlertRules = append(n.Edges.AlertRules, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -529,6 +573,67 @@ func (_q *TagQuery) loadMonitors(ctx context.Context, query *MonitorQuery, nodes
 		nodes, ok := nids[n.ID]
 		if !ok {
 			return fmt.Errorf(`unexpected "monitors" node returned %v`, n.ID)
+		}
+		for kn := range nodes {
+			assign(kn, n)
+		}
+	}
+	return nil
+}
+func (_q *TagQuery) loadAlertRules(ctx context.Context, query *AlertRuleQuery, nodes []*Tag, init func(*Tag), assign func(*Tag, *AlertRule)) error {
+	edgeIDs := make([]driver.Value, len(nodes))
+	byID := make(map[int]*Tag)
+	nids := make(map[int]map[*Tag]struct{})
+	for i, node := range nodes {
+		edgeIDs[i] = node.ID
+		byID[node.ID] = node
+		if init != nil {
+			init(node)
+		}
+	}
+	query.Where(func(s *sql.Selector) {
+		joinT := sql.Table(tag.AlertRulesTable)
+		s.Join(joinT).On(s.C(alertrule.FieldID), joinT.C(tag.AlertRulesPrimaryKey[0]))
+		s.Where(sql.InValues(joinT.C(tag.AlertRulesPrimaryKey[1]), edgeIDs...))
+		columns := s.SelectedColumns()
+		s.Select(joinT.C(tag.AlertRulesPrimaryKey[1]))
+		s.AppendSelect(columns...)
+		s.SetDistinct(false)
+	})
+	if err := query.prepareQuery(ctx); err != nil {
+		return err
+	}
+	qr := QuerierFunc(func(ctx context.Context, q Query) (Value, error) {
+		return query.sqlAll(ctx, func(_ context.Context, spec *sqlgraph.QuerySpec) {
+			assign := spec.Assign
+			values := spec.ScanValues
+			spec.ScanValues = func(columns []string) ([]any, error) {
+				values, err := values(columns[1:])
+				if err != nil {
+					return nil, err
+				}
+				return append([]any{new(sql.NullInt64)}, values...), nil
+			}
+			spec.Assign = func(columns []string, values []any) error {
+				outValue := int(values[0].(*sql.NullInt64).Int64)
+				inValue := int(values[1].(*sql.NullInt64).Int64)
+				if nids[inValue] == nil {
+					nids[inValue] = map[*Tag]struct{}{byID[outValue]: {}}
+					return assign(columns[1:], values[1:])
+				}
+				nids[inValue][byID[outValue]] = struct{}{}
+				return nil
+			}
+		})
+	})
+	neighbors, err := withInterceptors[[]*AlertRule](ctx, query, qr, query.inters)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected "alert_rules" node returned %v`, n.ID)
 		}
 		for kn := range nodes {
 			assign(kn, n)

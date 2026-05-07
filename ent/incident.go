@@ -60,9 +60,11 @@ type IncidentEdges struct {
 	ResolvedBy *User `json:"resolved_by,omitempty"`
 	// Messages holds the value of the messages edge.
 	Messages []*StatusMessage `json:"messages,omitempty"`
+	// AlertDeliveries holds the value of the alert_deliveries edge.
+	AlertDeliveries []*AlertDelivery `json:"alert_deliveries,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [4]bool
+	loadedTypes [5]bool
 }
 
 // MonitorOrErr returns the Monitor value or an error if the edge
@@ -105,6 +107,15 @@ func (e IncidentEdges) MessagesOrErr() ([]*StatusMessage, error) {
 		return e.Messages, nil
 	}
 	return nil, &NotLoadedError{edge: "messages"}
+}
+
+// AlertDeliveriesOrErr returns the AlertDeliveries value or an error if the edge
+// was not loaded in eager-loading.
+func (e IncidentEdges) AlertDeliveriesOrErr() ([]*AlertDelivery, error) {
+	if e.loadedTypes[4] {
+		return e.AlertDeliveries, nil
+	}
+	return nil, &NotLoadedError{edge: "alert_deliveries"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -248,6 +259,11 @@ func (_m *Incident) QueryResolvedBy() *UserQuery {
 // QueryMessages queries the "messages" edge of the Incident entity.
 func (_m *Incident) QueryMessages() *StatusMessageQuery {
 	return NewIncidentClient(_m.config).QueryMessages(_m)
+}
+
+// QueryAlertDeliveries queries the "alert_deliveries" edge of the Incident entity.
+func (_m *Incident) QueryAlertDeliveries() *AlertDeliveryQuery {
+	return NewIncidentClient(_m.config).QueryAlertDeliveries(_m)
 }
 
 // Update returns a builder for updating this Incident.

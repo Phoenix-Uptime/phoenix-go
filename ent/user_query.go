@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/alertrule"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/apikey"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/incident"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/maintenancewindow"
@@ -34,6 +35,7 @@ type UserQuery struct {
 	withTags                 *TagQuery
 	withAPIKeys              *APIKeyQuery
 	withNotificationChannels *NotificationChannelQuery
+	withAlertRules           *AlertRuleQuery
 	withStatusPages          *StatusPageQuery
 	withMaintenanceWindows   *MaintenanceWindowQuery
 	withResolvedIncidents    *IncidentQuery
@@ -154,6 +156,28 @@ func (_q *UserQuery) QueryNotificationChannels() *NotificationChannelQuery {
 			sqlgraph.From(user.Table, user.FieldID, selector),
 			sqlgraph.To(notificationchannel.Table, notificationchannel.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, user.NotificationChannelsTable, user.NotificationChannelsColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryAlertRules chains the current query on the "alert_rules" edge.
+func (_q *UserQuery) QueryAlertRules() *AlertRuleQuery {
+	query := (&AlertRuleClient{config: _q.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := _q.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := _q.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(alertrule.Table, alertrule.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.AlertRulesTable, user.AlertRulesColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -423,6 +447,7 @@ func (_q *UserQuery) Clone() *UserQuery {
 		withTags:                 _q.withTags.Clone(),
 		withAPIKeys:              _q.withAPIKeys.Clone(),
 		withNotificationChannels: _q.withNotificationChannels.Clone(),
+		withAlertRules:           _q.withAlertRules.Clone(),
 		withStatusPages:          _q.withStatusPages.Clone(),
 		withMaintenanceWindows:   _q.withMaintenanceWindows.Clone(),
 		withResolvedIncidents:    _q.withResolvedIncidents.Clone(),
@@ -473,6 +498,17 @@ func (_q *UserQuery) WithNotificationChannels(opts ...func(*NotificationChannelQ
 		opt(query)
 	}
 	_q.withNotificationChannels = query
+	return _q
+}
+
+// WithAlertRules tells the query-builder to eager-load the nodes that are connected to
+// the "alert_rules" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *UserQuery) WithAlertRules(opts ...func(*AlertRuleQuery)) *UserQuery {
+	query := (&AlertRuleClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	_q.withAlertRules = query
 	return _q
 }
 
@@ -587,11 +623,12 @@ func (_q *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 	var (
 		nodes       = []*User{}
 		_spec       = _q.querySpec()
-		loadedTypes = [7]bool{
+		loadedTypes = [8]bool{
 			_q.withMonitors != nil,
 			_q.withTags != nil,
 			_q.withAPIKeys != nil,
 			_q.withNotificationChannels != nil,
+			_q.withAlertRules != nil,
 			_q.withStatusPages != nil,
 			_q.withMaintenanceWindows != nil,
 			_q.withResolvedIncidents != nil,
@@ -642,6 +679,13 @@ func (_q *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 			func(n *User, e *NotificationChannel) {
 				n.Edges.NotificationChannels = append(n.Edges.NotificationChannels, e)
 			}); err != nil {
+			return nil, err
+		}
+	}
+	if query := _q.withAlertRules; query != nil {
+		if err := _q.loadAlertRules(ctx, query, nodes,
+			func(n *User) { n.Edges.AlertRules = []*AlertRule{} },
+			func(n *User, e *AlertRule) { n.Edges.AlertRules = append(n.Edges.AlertRules, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -776,6 +820,36 @@ func (_q *UserQuery) loadNotificationChannels(ctx context.Context, query *Notifi
 	}
 	query.Where(predicate.NotificationChannel(func(s *sql.Selector) {
 		s.Where(sql.InValues(s.C(user.NotificationChannelsColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.UserID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "user_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (_q *UserQuery) loadAlertRules(ctx context.Context, query *AlertRuleQuery, nodes []*User, init func(*User), assign func(*User, *AlertRule)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int]*User)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(alertrule.FieldUserID)
+	}
+	query.Where(predicate.AlertRule(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(user.AlertRulesColumn), fks...))
 	}))
 	neighbors, err := query.All(ctx)
 	if err != nil {

@@ -47,6 +47,8 @@ const (
 	EdgeResolvedBy = "resolved_by"
 	// EdgeMessages holds the string denoting the messages edge name in mutations.
 	EdgeMessages = "messages"
+	// EdgeAlertDeliveries holds the string denoting the alert_deliveries edge name in mutations.
+	EdgeAlertDeliveries = "alert_deliveries"
 	// Table holds the table name of the incident in the database.
 	Table = "incidents"
 	// MonitorTable is the table that holds the monitor relation/edge.
@@ -77,6 +79,13 @@ const (
 	MessagesInverseTable = "status_messages"
 	// MessagesColumn is the table column denoting the messages relation/edge.
 	MessagesColumn = "incident_id"
+	// AlertDeliveriesTable is the table that holds the alert_deliveries relation/edge.
+	AlertDeliveriesTable = "alert_deliveries"
+	// AlertDeliveriesInverseTable is the table name for the AlertDelivery entity.
+	// It exists in this package in order to avoid circular dependency with the "alertdelivery" package.
+	AlertDeliveriesInverseTable = "alert_deliveries"
+	// AlertDeliveriesColumn is the table column denoting the alert_deliveries relation/edge.
+	AlertDeliveriesColumn = "incident_id"
 )
 
 // Columns holds all SQL columns for incident fields.
@@ -277,6 +286,20 @@ func ByMessages(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newMessagesStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByAlertDeliveriesCount orders the results by alert_deliveries count.
+func ByAlertDeliveriesCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newAlertDeliveriesStep(), opts...)
+	}
+}
+
+// ByAlertDeliveries orders the results by alert_deliveries terms.
+func ByAlertDeliveries(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newAlertDeliveriesStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newMonitorStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -303,5 +326,12 @@ func newMessagesStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(MessagesInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, MessagesTable, MessagesColumn),
+	)
+}
+func newAlertDeliveriesStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(AlertDeliveriesInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, AlertDeliveriesTable, AlertDeliveriesColumn),
 	)
 }

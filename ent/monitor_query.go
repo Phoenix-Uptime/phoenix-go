@@ -12,6 +12,8 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/alertdelivery"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/alertrule"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/incident"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/maintenancewindow"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/monitor"
@@ -36,6 +38,8 @@ type MonitorQuery struct {
 	withStats                *MonitorStatQuery
 	withTags                 *TagQuery
 	withNotificationChannels *NotificationChannelQuery
+	withAlertRules           *AlertRuleQuery
+	withAlertDeliveries      *AlertDeliveryQuery
 	withStatusPageMonitors   *StatusPageMonitorQuery
 	withMaintenanceWindows   *MaintenanceWindowQuery
 	withIncidents            *IncidentQuery
@@ -178,6 +182,50 @@ func (_q *MonitorQuery) QueryNotificationChannels() *NotificationChannelQuery {
 			sqlgraph.From(monitor.Table, monitor.FieldID, selector),
 			sqlgraph.To(notificationchannel.Table, notificationchannel.FieldID),
 			sqlgraph.Edge(sqlgraph.M2M, false, monitor.NotificationChannelsTable, monitor.NotificationChannelsPrimaryKey...),
+		)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryAlertRules chains the current query on the "alert_rules" edge.
+func (_q *MonitorQuery) QueryAlertRules() *AlertRuleQuery {
+	query := (&AlertRuleClient{config: _q.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := _q.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := _q.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(monitor.Table, monitor.FieldID, selector),
+			sqlgraph.To(alertrule.Table, alertrule.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, monitor.AlertRulesTable, monitor.AlertRulesPrimaryKey...),
+		)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryAlertDeliveries chains the current query on the "alert_deliveries" edge.
+func (_q *MonitorQuery) QueryAlertDeliveries() *AlertDeliveryQuery {
+	query := (&AlertDeliveryClient{config: _q.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := _q.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := _q.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(monitor.Table, monitor.FieldID, selector),
+			sqlgraph.To(alertdelivery.Table, alertdelivery.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, monitor.AlertDeliveriesTable, monitor.AlertDeliveriesColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -448,6 +496,8 @@ func (_q *MonitorQuery) Clone() *MonitorQuery {
 		withStats:                _q.withStats.Clone(),
 		withTags:                 _q.withTags.Clone(),
 		withNotificationChannels: _q.withNotificationChannels.Clone(),
+		withAlertRules:           _q.withAlertRules.Clone(),
+		withAlertDeliveries:      _q.withAlertDeliveries.Clone(),
 		withStatusPageMonitors:   _q.withStatusPageMonitors.Clone(),
 		withMaintenanceWindows:   _q.withMaintenanceWindows.Clone(),
 		withIncidents:            _q.withIncidents.Clone(),
@@ -509,6 +559,28 @@ func (_q *MonitorQuery) WithNotificationChannels(opts ...func(*NotificationChann
 		opt(query)
 	}
 	_q.withNotificationChannels = query
+	return _q
+}
+
+// WithAlertRules tells the query-builder to eager-load the nodes that are connected to
+// the "alert_rules" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *MonitorQuery) WithAlertRules(opts ...func(*AlertRuleQuery)) *MonitorQuery {
+	query := (&AlertRuleClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	_q.withAlertRules = query
+	return _q
+}
+
+// WithAlertDeliveries tells the query-builder to eager-load the nodes that are connected to
+// the "alert_deliveries" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *MonitorQuery) WithAlertDeliveries(opts ...func(*AlertDeliveryQuery)) *MonitorQuery {
+	query := (&AlertDeliveryClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	_q.withAlertDeliveries = query
 	return _q
 }
 
@@ -623,12 +695,14 @@ func (_q *MonitorQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Moni
 	var (
 		nodes       = []*Monitor{}
 		_spec       = _q.querySpec()
-		loadedTypes = [8]bool{
+		loadedTypes = [10]bool{
 			_q.withUser != nil,
 			_q.withChecks != nil,
 			_q.withStats != nil,
 			_q.withTags != nil,
 			_q.withNotificationChannels != nil,
+			_q.withAlertRules != nil,
+			_q.withAlertDeliveries != nil,
 			_q.withStatusPageMonitors != nil,
 			_q.withMaintenanceWindows != nil,
 			_q.withIncidents != nil,
@@ -685,6 +759,20 @@ func (_q *MonitorQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Moni
 			func(n *Monitor, e *NotificationChannel) {
 				n.Edges.NotificationChannels = append(n.Edges.NotificationChannels, e)
 			}); err != nil {
+			return nil, err
+		}
+	}
+	if query := _q.withAlertRules; query != nil {
+		if err := _q.loadAlertRules(ctx, query, nodes,
+			func(n *Monitor) { n.Edges.AlertRules = []*AlertRule{} },
+			func(n *Monitor, e *AlertRule) { n.Edges.AlertRules = append(n.Edges.AlertRules, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := _q.withAlertDeliveries; query != nil {
+		if err := _q.loadAlertDeliveries(ctx, query, nodes,
+			func(n *Monitor) { n.Edges.AlertDeliveries = []*AlertDelivery{} },
+			func(n *Monitor, e *AlertDelivery) { n.Edges.AlertDeliveries = append(n.Edges.AlertDeliveries, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -924,6 +1012,100 @@ func (_q *MonitorQuery) loadNotificationChannels(ctx context.Context, query *Not
 		for kn := range nodes {
 			assign(kn, n)
 		}
+	}
+	return nil
+}
+func (_q *MonitorQuery) loadAlertRules(ctx context.Context, query *AlertRuleQuery, nodes []*Monitor, init func(*Monitor), assign func(*Monitor, *AlertRule)) error {
+	edgeIDs := make([]driver.Value, len(nodes))
+	byID := make(map[int]*Monitor)
+	nids := make(map[int]map[*Monitor]struct{})
+	for i, node := range nodes {
+		edgeIDs[i] = node.ID
+		byID[node.ID] = node
+		if init != nil {
+			init(node)
+		}
+	}
+	query.Where(func(s *sql.Selector) {
+		joinT := sql.Table(monitor.AlertRulesTable)
+		s.Join(joinT).On(s.C(alertrule.FieldID), joinT.C(monitor.AlertRulesPrimaryKey[0]))
+		s.Where(sql.InValues(joinT.C(monitor.AlertRulesPrimaryKey[1]), edgeIDs...))
+		columns := s.SelectedColumns()
+		s.Select(joinT.C(monitor.AlertRulesPrimaryKey[1]))
+		s.AppendSelect(columns...)
+		s.SetDistinct(false)
+	})
+	if err := query.prepareQuery(ctx); err != nil {
+		return err
+	}
+	qr := QuerierFunc(func(ctx context.Context, q Query) (Value, error) {
+		return query.sqlAll(ctx, func(_ context.Context, spec *sqlgraph.QuerySpec) {
+			assign := spec.Assign
+			values := spec.ScanValues
+			spec.ScanValues = func(columns []string) ([]any, error) {
+				values, err := values(columns[1:])
+				if err != nil {
+					return nil, err
+				}
+				return append([]any{new(sql.NullInt64)}, values...), nil
+			}
+			spec.Assign = func(columns []string, values []any) error {
+				outValue := int(values[0].(*sql.NullInt64).Int64)
+				inValue := int(values[1].(*sql.NullInt64).Int64)
+				if nids[inValue] == nil {
+					nids[inValue] = map[*Monitor]struct{}{byID[outValue]: {}}
+					return assign(columns[1:], values[1:])
+				}
+				nids[inValue][byID[outValue]] = struct{}{}
+				return nil
+			}
+		})
+	})
+	neighbors, err := withInterceptors[[]*AlertRule](ctx, query, qr, query.inters)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected "alert_rules" node returned %v`, n.ID)
+		}
+		for kn := range nodes {
+			assign(kn, n)
+		}
+	}
+	return nil
+}
+func (_q *MonitorQuery) loadAlertDeliveries(ctx context.Context, query *AlertDeliveryQuery, nodes []*Monitor, init func(*Monitor), assign func(*Monitor, *AlertDelivery)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int]*Monitor)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(alertdelivery.FieldMonitorID)
+	}
+	query.Where(predicate.AlertDelivery(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(monitor.AlertDeliveriesColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.MonitorID
+		if fk == nil {
+			return fmt.Errorf(`foreign-key "monitor_id" is nil for node %v`, n.ID)
+		}
+		node, ok := nodeids[*fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "monitor_id" returned %v for node %v`, *fk, n.ID)
+		}
+		assign(node, n)
 	}
 	return nil
 }

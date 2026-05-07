@@ -9,6 +9,12 @@ import (
 // APIKey is the predicate function for apikey builders.
 type APIKey func(*sql.Selector)
 
+// AlertDelivery is the predicate function for alertdelivery builders.
+type AlertDelivery func(*sql.Selector)
+
+// AlertRule is the predicate function for alertrule builders.
+type AlertRule func(*sql.Selector)
+
 // Incident is the predicate function for incident builders.
 type Incident func(*sql.Selector)
 

@@ -10,6 +10,7 @@ import (
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/alertrule"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/apikey"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/incident"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/maintenancewindow"
@@ -137,6 +138,21 @@ func (_c *UserCreate) AddNotificationChannels(v ...*NotificationChannel) *UserCr
 		ids[i] = v[i].ID
 	}
 	return _c.AddNotificationChannelIDs(ids...)
+}
+
+// AddAlertRuleIDs adds the "alert_rules" edge to the AlertRule entity by IDs.
+func (_c *UserCreate) AddAlertRuleIDs(ids ...int) *UserCreate {
+	_c.mutation.AddAlertRuleIDs(ids...)
+	return _c
+}
+
+// AddAlertRules adds the "alert_rules" edges to the AlertRule entity.
+func (_c *UserCreate) AddAlertRules(v ...*AlertRule) *UserCreate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _c.AddAlertRuleIDs(ids...)
 }
 
 // AddStatusPageIDs adds the "status_pages" edge to the StatusPage entity by IDs.
@@ -376,6 +392,22 @@ func (_c *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(notificationchannel.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.AlertRulesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.AlertRulesTable,
+			Columns: []string{user.AlertRulesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(alertrule.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

@@ -446,6 +446,29 @@ func HasMonitorsWith(preds ...predicate.Monitor) predicate.Tag {
 	})
 }
 
+// HasAlertRules applies the HasEdge predicate on the "alert_rules" edge.
+func HasAlertRules() predicate.Tag {
+	return predicate.Tag(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, AlertRulesTable, AlertRulesPrimaryKey...),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasAlertRulesWith applies the HasEdge predicate on the "alert_rules" edge with a given conditions (other predicates).
+func HasAlertRulesWith(preds ...predicate.AlertRule) predicate.Tag {
+	return predicate.Tag(func(s *sql.Selector) {
+		step := newAlertRulesStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.Tag) predicate.Tag {
 	return predicate.Tag(sql.AndPredicates(predicates...))

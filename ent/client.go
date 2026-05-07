@@ -15,6 +15,8 @@ import (
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/alertdelivery"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/alertrule"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/apikey"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/incident"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/maintenancewindow"
@@ -36,6 +38,10 @@ type Client struct {
 	Schema *migrate.Schema
 	// APIKey is the client for interacting with the APIKey builders.
 	APIKey *APIKeyClient
+	// AlertDelivery is the client for interacting with the AlertDelivery builders.
+	AlertDelivery *AlertDeliveryClient
+	// AlertRule is the client for interacting with the AlertRule builders.
+	AlertRule *AlertRuleClient
 	// Incident is the client for interacting with the Incident builders.
 	Incident *IncidentClient
 	// MaintenanceWindow is the client for interacting with the MaintenanceWindow builders.
@@ -70,6 +76,8 @@ func NewClient(opts ...Option) *Client {
 func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
 	c.APIKey = NewAPIKeyClient(c.config)
+	c.AlertDelivery = NewAlertDeliveryClient(c.config)
+	c.AlertRule = NewAlertRuleClient(c.config)
 	c.Incident = NewIncidentClient(c.config)
 	c.MaintenanceWindow = NewMaintenanceWindowClient(c.config)
 	c.Monitor = NewMonitorClient(c.config)
@@ -174,6 +182,8 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		ctx:                 ctx,
 		config:              cfg,
 		APIKey:              NewAPIKeyClient(cfg),
+		AlertDelivery:       NewAlertDeliveryClient(cfg),
+		AlertRule:           NewAlertRuleClient(cfg),
 		Incident:            NewIncidentClient(cfg),
 		MaintenanceWindow:   NewMaintenanceWindowClient(cfg),
 		Monitor:             NewMonitorClient(cfg),
@@ -205,6 +215,8 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		ctx:                 ctx,
 		config:              cfg,
 		APIKey:              NewAPIKeyClient(cfg),
+		AlertDelivery:       NewAlertDeliveryClient(cfg),
+		AlertRule:           NewAlertRuleClient(cfg),
 		Incident:            NewIncidentClient(cfg),
 		MaintenanceWindow:   NewMaintenanceWindowClient(cfg),
 		Monitor:             NewMonitorClient(cfg),
@@ -245,9 +257,9 @@ func (c *Client) Close() error {
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
-		c.APIKey, c.Incident, c.MaintenanceWindow, c.Monitor, c.MonitorCheck,
-		c.MonitorStat, c.NotificationChannel, c.StatusMessage, c.StatusPage,
-		c.StatusPageMonitor, c.Tag, c.User,
+		c.APIKey, c.AlertDelivery, c.AlertRule, c.Incident, c.MaintenanceWindow,
+		c.Monitor, c.MonitorCheck, c.MonitorStat, c.NotificationChannel,
+		c.StatusMessage, c.StatusPage, c.StatusPageMonitor, c.Tag, c.User,
 	} {
 		n.Use(hooks...)
 	}
@@ -257,9 +269,9 @@ func (c *Client) Use(hooks ...Hook) {
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
-		c.APIKey, c.Incident, c.MaintenanceWindow, c.Monitor, c.MonitorCheck,
-		c.MonitorStat, c.NotificationChannel, c.StatusMessage, c.StatusPage,
-		c.StatusPageMonitor, c.Tag, c.User,
+		c.APIKey, c.AlertDelivery, c.AlertRule, c.Incident, c.MaintenanceWindow,
+		c.Monitor, c.MonitorCheck, c.MonitorStat, c.NotificationChannel,
+		c.StatusMessage, c.StatusPage, c.StatusPageMonitor, c.Tag, c.User,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -270,6 +282,10 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 	switch m := m.(type) {
 	case *APIKeyMutation:
 		return c.APIKey.mutate(ctx, m)
+	case *AlertDeliveryMutation:
+		return c.AlertDelivery.mutate(ctx, m)
+	case *AlertRuleMutation:
+		return c.AlertRule.mutate(ctx, m)
 	case *IncidentMutation:
 		return c.Incident.mutate(ctx, m)
 	case *MaintenanceWindowMutation:
@@ -446,6 +462,416 @@ func (c *APIKeyClient) mutate(ctx context.Context, m *APIKeyMutation) (Value, er
 	}
 }
 
+// AlertDeliveryClient is a client for the AlertDelivery schema.
+type AlertDeliveryClient struct {
+	config
+}
+
+// NewAlertDeliveryClient returns a client for the AlertDelivery from the given config.
+func NewAlertDeliveryClient(c config) *AlertDeliveryClient {
+	return &AlertDeliveryClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `alertdelivery.Hooks(f(g(h())))`.
+func (c *AlertDeliveryClient) Use(hooks ...Hook) {
+	c.hooks.AlertDelivery = append(c.hooks.AlertDelivery, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `alertdelivery.Intercept(f(g(h())))`.
+func (c *AlertDeliveryClient) Intercept(interceptors ...Interceptor) {
+	c.inters.AlertDelivery = append(c.inters.AlertDelivery, interceptors...)
+}
+
+// Create returns a builder for creating a AlertDelivery entity.
+func (c *AlertDeliveryClient) Create() *AlertDeliveryCreate {
+	mutation := newAlertDeliveryMutation(c.config, OpCreate)
+	return &AlertDeliveryCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of AlertDelivery entities.
+func (c *AlertDeliveryClient) CreateBulk(builders ...*AlertDeliveryCreate) *AlertDeliveryCreateBulk {
+	return &AlertDeliveryCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *AlertDeliveryClient) MapCreateBulk(slice any, setFunc func(*AlertDeliveryCreate, int)) *AlertDeliveryCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &AlertDeliveryCreateBulk{err: fmt.Errorf("calling to AlertDeliveryClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*AlertDeliveryCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &AlertDeliveryCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for AlertDelivery.
+func (c *AlertDeliveryClient) Update() *AlertDeliveryUpdate {
+	mutation := newAlertDeliveryMutation(c.config, OpUpdate)
+	return &AlertDeliveryUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *AlertDeliveryClient) UpdateOne(_m *AlertDelivery) *AlertDeliveryUpdateOne {
+	mutation := newAlertDeliveryMutation(c.config, OpUpdateOne, withAlertDelivery(_m))
+	return &AlertDeliveryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *AlertDeliveryClient) UpdateOneID(id int) *AlertDeliveryUpdateOne {
+	mutation := newAlertDeliveryMutation(c.config, OpUpdateOne, withAlertDeliveryID(id))
+	return &AlertDeliveryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for AlertDelivery.
+func (c *AlertDeliveryClient) Delete() *AlertDeliveryDelete {
+	mutation := newAlertDeliveryMutation(c.config, OpDelete)
+	return &AlertDeliveryDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *AlertDeliveryClient) DeleteOne(_m *AlertDelivery) *AlertDeliveryDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *AlertDeliveryClient) DeleteOneID(id int) *AlertDeliveryDeleteOne {
+	builder := c.Delete().Where(alertdelivery.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &AlertDeliveryDeleteOne{builder}
+}
+
+// Query returns a query builder for AlertDelivery.
+func (c *AlertDeliveryClient) Query() *AlertDeliveryQuery {
+	return &AlertDeliveryQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeAlertDelivery},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a AlertDelivery entity by its id.
+func (c *AlertDeliveryClient) Get(ctx context.Context, id int) (*AlertDelivery, error) {
+	return c.Query().Where(alertdelivery.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *AlertDeliveryClient) GetX(ctx context.Context, id int) *AlertDelivery {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryAlertRule queries the alert_rule edge of a AlertDelivery.
+func (c *AlertDeliveryClient) QueryAlertRule(_m *AlertDelivery) *AlertRuleQuery {
+	query := (&AlertRuleClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(alertdelivery.Table, alertdelivery.FieldID, id),
+			sqlgraph.To(alertrule.Table, alertrule.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, alertdelivery.AlertRuleTable, alertdelivery.AlertRuleColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryNotificationChannel queries the notification_channel edge of a AlertDelivery.
+func (c *AlertDeliveryClient) QueryNotificationChannel(_m *AlertDelivery) *NotificationChannelQuery {
+	query := (&NotificationChannelClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(alertdelivery.Table, alertdelivery.FieldID, id),
+			sqlgraph.To(notificationchannel.Table, notificationchannel.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, alertdelivery.NotificationChannelTable, alertdelivery.NotificationChannelColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryMonitor queries the monitor edge of a AlertDelivery.
+func (c *AlertDeliveryClient) QueryMonitor(_m *AlertDelivery) *MonitorQuery {
+	query := (&MonitorClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(alertdelivery.Table, alertdelivery.FieldID, id),
+			sqlgraph.To(monitor.Table, monitor.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, alertdelivery.MonitorTable, alertdelivery.MonitorColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryIncident queries the incident edge of a AlertDelivery.
+func (c *AlertDeliveryClient) QueryIncident(_m *AlertDelivery) *IncidentQuery {
+	query := (&IncidentClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(alertdelivery.Table, alertdelivery.FieldID, id),
+			sqlgraph.To(incident.Table, incident.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, alertdelivery.IncidentTable, alertdelivery.IncidentColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *AlertDeliveryClient) Hooks() []Hook {
+	return c.hooks.AlertDelivery
+}
+
+// Interceptors returns the client interceptors.
+func (c *AlertDeliveryClient) Interceptors() []Interceptor {
+	return c.inters.AlertDelivery
+}
+
+func (c *AlertDeliveryClient) mutate(ctx context.Context, m *AlertDeliveryMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&AlertDeliveryCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&AlertDeliveryUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&AlertDeliveryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&AlertDeliveryDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown AlertDelivery mutation op: %q", m.Op())
+	}
+}
+
+// AlertRuleClient is a client for the AlertRule schema.
+type AlertRuleClient struct {
+	config
+}
+
+// NewAlertRuleClient returns a client for the AlertRule from the given config.
+func NewAlertRuleClient(c config) *AlertRuleClient {
+	return &AlertRuleClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `alertrule.Hooks(f(g(h())))`.
+func (c *AlertRuleClient) Use(hooks ...Hook) {
+	c.hooks.AlertRule = append(c.hooks.AlertRule, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `alertrule.Intercept(f(g(h())))`.
+func (c *AlertRuleClient) Intercept(interceptors ...Interceptor) {
+	c.inters.AlertRule = append(c.inters.AlertRule, interceptors...)
+}
+
+// Create returns a builder for creating a AlertRule entity.
+func (c *AlertRuleClient) Create() *AlertRuleCreate {
+	mutation := newAlertRuleMutation(c.config, OpCreate)
+	return &AlertRuleCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of AlertRule entities.
+func (c *AlertRuleClient) CreateBulk(builders ...*AlertRuleCreate) *AlertRuleCreateBulk {
+	return &AlertRuleCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *AlertRuleClient) MapCreateBulk(slice any, setFunc func(*AlertRuleCreate, int)) *AlertRuleCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &AlertRuleCreateBulk{err: fmt.Errorf("calling to AlertRuleClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*AlertRuleCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &AlertRuleCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for AlertRule.
+func (c *AlertRuleClient) Update() *AlertRuleUpdate {
+	mutation := newAlertRuleMutation(c.config, OpUpdate)
+	return &AlertRuleUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *AlertRuleClient) UpdateOne(_m *AlertRule) *AlertRuleUpdateOne {
+	mutation := newAlertRuleMutation(c.config, OpUpdateOne, withAlertRule(_m))
+	return &AlertRuleUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *AlertRuleClient) UpdateOneID(id int) *AlertRuleUpdateOne {
+	mutation := newAlertRuleMutation(c.config, OpUpdateOne, withAlertRuleID(id))
+	return &AlertRuleUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for AlertRule.
+func (c *AlertRuleClient) Delete() *AlertRuleDelete {
+	mutation := newAlertRuleMutation(c.config, OpDelete)
+	return &AlertRuleDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *AlertRuleClient) DeleteOne(_m *AlertRule) *AlertRuleDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *AlertRuleClient) DeleteOneID(id int) *AlertRuleDeleteOne {
+	builder := c.Delete().Where(alertrule.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &AlertRuleDeleteOne{builder}
+}
+
+// Query returns a query builder for AlertRule.
+func (c *AlertRuleClient) Query() *AlertRuleQuery {
+	return &AlertRuleQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeAlertRule},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a AlertRule entity by its id.
+func (c *AlertRuleClient) Get(ctx context.Context, id int) (*AlertRule, error) {
+	return c.Query().Where(alertrule.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *AlertRuleClient) GetX(ctx context.Context, id int) *AlertRule {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryUser queries the user edge of a AlertRule.
+func (c *AlertRuleClient) QueryUser(_m *AlertRule) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(alertrule.Table, alertrule.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, alertrule.UserTable, alertrule.UserColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryTags queries the tags edge of a AlertRule.
+func (c *AlertRuleClient) QueryTags(_m *AlertRule) *TagQuery {
+	query := (&TagClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(alertrule.Table, alertrule.FieldID, id),
+			sqlgraph.To(tag.Table, tag.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, alertrule.TagsTable, alertrule.TagsPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryMonitors queries the monitors edge of a AlertRule.
+func (c *AlertRuleClient) QueryMonitors(_m *AlertRule) *MonitorQuery {
+	query := (&MonitorClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(alertrule.Table, alertrule.FieldID, id),
+			sqlgraph.To(monitor.Table, monitor.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, alertrule.MonitorsTable, alertrule.MonitorsPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryNotificationChannels queries the notification_channels edge of a AlertRule.
+func (c *AlertRuleClient) QueryNotificationChannels(_m *AlertRule) *NotificationChannelQuery {
+	query := (&NotificationChannelClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(alertrule.Table, alertrule.FieldID, id),
+			sqlgraph.To(notificationchannel.Table, notificationchannel.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, alertrule.NotificationChannelsTable, alertrule.NotificationChannelsPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryDeliveries queries the deliveries edge of a AlertRule.
+func (c *AlertRuleClient) QueryDeliveries(_m *AlertRule) *AlertDeliveryQuery {
+	query := (&AlertDeliveryClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(alertrule.Table, alertrule.FieldID, id),
+			sqlgraph.To(alertdelivery.Table, alertdelivery.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, alertrule.DeliveriesTable, alertrule.DeliveriesColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *AlertRuleClient) Hooks() []Hook {
+	return c.hooks.AlertRule
+}
+
+// Interceptors returns the client interceptors.
+func (c *AlertRuleClient) Interceptors() []Interceptor {
+	return c.inters.AlertRule
+}
+
+func (c *AlertRuleClient) mutate(ctx context.Context, m *AlertRuleMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&AlertRuleCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&AlertRuleUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&AlertRuleUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&AlertRuleDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown AlertRule mutation op: %q", m.Op())
+	}
+}
+
 // IncidentClient is a client for the Incident schema.
 type IncidentClient struct {
 	config
@@ -611,6 +1037,22 @@ func (c *IncidentClient) QueryMessages(_m *Incident) *StatusMessageQuery {
 			sqlgraph.From(incident.Table, incident.FieldID, id),
 			sqlgraph.To(statusmessage.Table, statusmessage.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, incident.MessagesTable, incident.MessagesColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryAlertDeliveries queries the alert_deliveries edge of a Incident.
+func (c *IncidentClient) QueryAlertDeliveries(_m *Incident) *AlertDeliveryQuery {
+	query := (&AlertDeliveryClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(incident.Table, incident.FieldID, id),
+			sqlgraph.To(alertdelivery.Table, alertdelivery.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, incident.AlertDeliveriesTable, incident.AlertDeliveriesColumn),
 		)
 		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
 		return fromV, nil
@@ -989,6 +1431,38 @@ func (c *MonitorClient) QueryNotificationChannels(_m *Monitor) *NotificationChan
 			sqlgraph.From(monitor.Table, monitor.FieldID, id),
 			sqlgraph.To(notificationchannel.Table, notificationchannel.FieldID),
 			sqlgraph.Edge(sqlgraph.M2M, false, monitor.NotificationChannelsTable, monitor.NotificationChannelsPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryAlertRules queries the alert_rules edge of a Monitor.
+func (c *MonitorClient) QueryAlertRules(_m *Monitor) *AlertRuleQuery {
+	query := (&AlertRuleClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(monitor.Table, monitor.FieldID, id),
+			sqlgraph.To(alertrule.Table, alertrule.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, monitor.AlertRulesTable, monitor.AlertRulesPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryAlertDeliveries queries the alert_deliveries edge of a Monitor.
+func (c *MonitorClient) QueryAlertDeliveries(_m *Monitor) *AlertDeliveryQuery {
+	query := (&AlertDeliveryClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(monitor.Table, monitor.FieldID, id),
+			sqlgraph.To(alertdelivery.Table, alertdelivery.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, monitor.AlertDeliveriesTable, monitor.AlertDeliveriesColumn),
 		)
 		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
 		return fromV, nil
@@ -1500,6 +1974,38 @@ func (c *NotificationChannelClient) QueryMonitors(_m *NotificationChannel) *Moni
 			sqlgraph.From(notificationchannel.Table, notificationchannel.FieldID, id),
 			sqlgraph.To(monitor.Table, monitor.FieldID),
 			sqlgraph.Edge(sqlgraph.M2M, true, notificationchannel.MonitorsTable, notificationchannel.MonitorsPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryAlertRules queries the alert_rules edge of a NotificationChannel.
+func (c *NotificationChannelClient) QueryAlertRules(_m *NotificationChannel) *AlertRuleQuery {
+	query := (&AlertRuleClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(notificationchannel.Table, notificationchannel.FieldID, id),
+			sqlgraph.To(alertrule.Table, alertrule.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, notificationchannel.AlertRulesTable, notificationchannel.AlertRulesPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryAlertDeliveries queries the alert_deliveries edge of a NotificationChannel.
+func (c *NotificationChannelClient) QueryAlertDeliveries(_m *NotificationChannel) *AlertDeliveryQuery {
+	query := (&AlertDeliveryClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(notificationchannel.Table, notificationchannel.FieldID, id),
+			sqlgraph.To(alertdelivery.Table, alertdelivery.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, notificationchannel.AlertDeliveriesTable, notificationchannel.AlertDeliveriesColumn),
 		)
 		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
 		return fromV, nil
@@ -2231,6 +2737,22 @@ func (c *TagClient) QueryMonitors(_m *Tag) *MonitorQuery {
 	return query
 }
 
+// QueryAlertRules queries the alert_rules edge of a Tag.
+func (c *TagClient) QueryAlertRules(_m *Tag) *AlertRuleQuery {
+	query := (&AlertRuleClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(tag.Table, tag.FieldID, id),
+			sqlgraph.To(alertrule.Table, alertrule.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, tag.AlertRulesTable, tag.AlertRulesPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *TagClient) Hooks() []Hook {
 	return c.hooks.Tag
@@ -2428,6 +2950,22 @@ func (c *UserClient) QueryNotificationChannels(_m *User) *NotificationChannelQue
 	return query
 }
 
+// QueryAlertRules queries the alert_rules edge of a User.
+func (c *UserClient) QueryAlertRules(_m *User) *AlertRuleQuery {
+	query := (&AlertRuleClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(alertrule.Table, alertrule.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.AlertRulesTable, user.AlertRulesColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // QueryStatusPages queries the status_pages edge of a User.
 func (c *UserClient) QueryStatusPages(_m *User) *StatusPageQuery {
 	query := (&StatusPageClient{config: c.config}).Query()
@@ -2504,13 +3042,13 @@ func (c *UserClient) mutate(ctx context.Context, m *UserMutation) (Value, error)
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		APIKey, Incident, MaintenanceWindow, Monitor, MonitorCheck, MonitorStat,
-		NotificationChannel, StatusMessage, StatusPage, StatusPageMonitor, Tag,
-		User []ent.Hook
+		APIKey, AlertDelivery, AlertRule, Incident, MaintenanceWindow, Monitor,
+		MonitorCheck, MonitorStat, NotificationChannel, StatusMessage, StatusPage,
+		StatusPageMonitor, Tag, User []ent.Hook
 	}
 	inters struct {
-		APIKey, Incident, MaintenanceWindow, Monitor, MonitorCheck, MonitorStat,
-		NotificationChannel, StatusMessage, StatusPage, StatusPageMonitor, Tag,
-		User []ent.Interceptor
+		APIKey, AlertDelivery, AlertRule, Incident, MaintenanceWindow, Monitor,
+		MonitorCheck, MonitorStat, NotificationChannel, StatusMessage, StatusPage,
+		StatusPageMonitor, Tag, User []ent.Interceptor
 	}
 )

@@ -59,6 +59,10 @@ const (
 	EdgeUser = "user"
 	// EdgeMonitors holds the string denoting the monitors edge name in mutations.
 	EdgeMonitors = "monitors"
+	// EdgeAlertRules holds the string denoting the alert_rules edge name in mutations.
+	EdgeAlertRules = "alert_rules"
+	// EdgeAlertDeliveries holds the string denoting the alert_deliveries edge name in mutations.
+	EdgeAlertDeliveries = "alert_deliveries"
 	// Table holds the table name of the notificationchannel in the database.
 	Table = "notification_channels"
 	// UserTable is the table that holds the user relation/edge.
@@ -73,6 +77,18 @@ const (
 	// MonitorsInverseTable is the table name for the Monitor entity.
 	// It exists in this package in order to avoid circular dependency with the "monitor" package.
 	MonitorsInverseTable = "monitors"
+	// AlertRulesTable is the table that holds the alert_rules relation/edge. The primary key declared below.
+	AlertRulesTable = "alert_rule_notification_channels"
+	// AlertRulesInverseTable is the table name for the AlertRule entity.
+	// It exists in this package in order to avoid circular dependency with the "alertrule" package.
+	AlertRulesInverseTable = "alert_rules"
+	// AlertDeliveriesTable is the table that holds the alert_deliveries relation/edge.
+	AlertDeliveriesTable = "alert_deliveries"
+	// AlertDeliveriesInverseTable is the table name for the AlertDelivery entity.
+	// It exists in this package in order to avoid circular dependency with the "alertdelivery" package.
+	AlertDeliveriesInverseTable = "alert_deliveries"
+	// AlertDeliveriesColumn is the table column denoting the alert_deliveries relation/edge.
+	AlertDeliveriesColumn = "notification_channel_id"
 )
 
 // Columns holds all SQL columns for notificationchannel fields.
@@ -104,6 +120,9 @@ var (
 	// MonitorsPrimaryKey and MonitorsColumn2 are the table columns denoting the
 	// primary key for the monitors relation (M2M).
 	MonitorsPrimaryKey = []string{"monitor_id", "notification_channel_id"}
+	// AlertRulesPrimaryKey and AlertRulesColumn2 are the table columns denoting the
+	// primary key for the alert_rules relation (M2M).
+	AlertRulesPrimaryKey = []string{"alert_rule_id", "notification_channel_id"}
 )
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -284,6 +303,34 @@ func ByMonitors(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newMonitorsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByAlertRulesCount orders the results by alert_rules count.
+func ByAlertRulesCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newAlertRulesStep(), opts...)
+	}
+}
+
+// ByAlertRules orders the results by alert_rules terms.
+func ByAlertRules(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newAlertRulesStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByAlertDeliveriesCount orders the results by alert_deliveries count.
+func ByAlertDeliveriesCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newAlertDeliveriesStep(), opts...)
+	}
+}
+
+// ByAlertDeliveries orders the results by alert_deliveries terms.
+func ByAlertDeliveries(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newAlertDeliveriesStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newUserStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -296,5 +343,19 @@ func newMonitorsStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(MonitorsInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2M, true, MonitorsTable, MonitorsPrimaryKey...),
+	)
+}
+func newAlertRulesStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(AlertRulesInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2M, true, AlertRulesTable, AlertRulesPrimaryKey...),
+	)
+}
+func newAlertDeliveriesStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(AlertDeliveriesInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, AlertDeliveriesTable, AlertDeliveriesColumn),
 	)
 }

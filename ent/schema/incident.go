@@ -67,6 +67,8 @@ func (Incident) Edges() []ent.Edge {
 			Unique(),
 		edge.To("messages", StatusMessage.Type).
 			Annotations(entsql.OnDelete(entsql.Cascade)),
+		edge.To("alert_deliveries", AlertDelivery.Type).
+			Annotations(entsql.OnDelete(entsql.Cascade)),
 	}
 }
 

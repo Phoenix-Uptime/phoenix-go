@@ -34,6 +34,8 @@ const (
 	EdgeAPIKeys = "api_keys"
 	// EdgeNotificationChannels holds the string denoting the notification_channels edge name in mutations.
 	EdgeNotificationChannels = "notification_channels"
+	// EdgeAlertRules holds the string denoting the alert_rules edge name in mutations.
+	EdgeAlertRules = "alert_rules"
 	// EdgeStatusPages holds the string denoting the status_pages edge name in mutations.
 	EdgeStatusPages = "status_pages"
 	// EdgeMaintenanceWindows holds the string denoting the maintenance_windows edge name in mutations.
@@ -70,6 +72,13 @@ const (
 	NotificationChannelsInverseTable = "notification_channels"
 	// NotificationChannelsColumn is the table column denoting the notification_channels relation/edge.
 	NotificationChannelsColumn = "user_id"
+	// AlertRulesTable is the table that holds the alert_rules relation/edge.
+	AlertRulesTable = "alert_rules"
+	// AlertRulesInverseTable is the table name for the AlertRule entity.
+	// It exists in this package in order to avoid circular dependency with the "alertrule" package.
+	AlertRulesInverseTable = "alert_rules"
+	// AlertRulesColumn is the table column denoting the alert_rules relation/edge.
+	AlertRulesColumn = "user_id"
 	// StatusPagesTable is the table that holds the status_pages relation/edge.
 	StatusPagesTable = "status_pages"
 	// StatusPagesInverseTable is the table name for the StatusPage entity.
@@ -225,6 +234,20 @@ func ByNotificationChannels(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOpt
 	}
 }
 
+// ByAlertRulesCount orders the results by alert_rules count.
+func ByAlertRulesCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newAlertRulesStep(), opts...)
+	}
+}
+
+// ByAlertRules orders the results by alert_rules terms.
+func ByAlertRules(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newAlertRulesStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
 // ByStatusPagesCount orders the results by status_pages count.
 func ByStatusPagesCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
@@ -292,6 +315,13 @@ func newNotificationChannelsStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(NotificationChannelsInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, NotificationChannelsTable, NotificationChannelsColumn),
+	)
+}
+func newAlertRulesStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(AlertRulesInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, AlertRulesTable, AlertRulesColumn),
 	)
 }
 func newStatusPagesStep() *sqlgraph.Step {

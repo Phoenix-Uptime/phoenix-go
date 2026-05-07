@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"entgo.io/ent"
+	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
@@ -85,6 +86,10 @@ func (NotificationChannel) Edges() []ent.Edge {
 			Required(),
 		edge.From("monitors", Monitor.Type).
 			Ref("notification_channels"),
+		edge.From("alert_rules", AlertRule.Type).
+			Ref("notification_channels"),
+		edge.To("alert_deliveries", AlertDelivery.Type).
+			Annotations(entsql.OnDelete(entsql.Cascade)),
 	}
 }
 

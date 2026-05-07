@@ -42,6 +42,8 @@ func (Tag) Edges() []ent.Edge {
 			Required(),
 		edge.From("monitors", Monitor.Type).
 			Ref("tags"),
+		edge.From("alert_rules", AlertRule.Type).
+			Ref("tags"),
 	}
 }
 

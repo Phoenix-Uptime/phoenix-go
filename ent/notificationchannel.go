@@ -70,9 +70,13 @@ type NotificationChannelEdges struct {
 	User *User `json:"user,omitempty"`
 	// Monitors holds the value of the monitors edge.
 	Monitors []*Monitor `json:"monitors,omitempty"`
+	// AlertRules holds the value of the alert_rules edge.
+	AlertRules []*AlertRule `json:"alert_rules,omitempty"`
+	// AlertDeliveries holds the value of the alert_deliveries edge.
+	AlertDeliveries []*AlertDelivery `json:"alert_deliveries,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [2]bool
+	loadedTypes [4]bool
 }
 
 // UserOrErr returns the User value or an error if the edge
@@ -93,6 +97,24 @@ func (e NotificationChannelEdges) MonitorsOrErr() ([]*Monitor, error) {
 		return e.Monitors, nil
 	}
 	return nil, &NotLoadedError{edge: "monitors"}
+}
+
+// AlertRulesOrErr returns the AlertRules value or an error if the edge
+// was not loaded in eager-loading.
+func (e NotificationChannelEdges) AlertRulesOrErr() ([]*AlertRule, error) {
+	if e.loadedTypes[2] {
+		return e.AlertRules, nil
+	}
+	return nil, &NotLoadedError{edge: "alert_rules"}
+}
+
+// AlertDeliveriesOrErr returns the AlertDeliveries value or an error if the edge
+// was not loaded in eager-loading.
+func (e NotificationChannelEdges) AlertDeliveriesOrErr() ([]*AlertDelivery, error) {
+	if e.loadedTypes[3] {
+		return e.AlertDeliveries, nil
+	}
+	return nil, &NotLoadedError{edge: "alert_deliveries"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -283,6 +305,16 @@ func (_m *NotificationChannel) QueryUser() *UserQuery {
 // QueryMonitors queries the "monitors" edge of the NotificationChannel entity.
 func (_m *NotificationChannel) QueryMonitors() *MonitorQuery {
 	return NewNotificationChannelClient(_m.config).QueryMonitors(_m)
+}
+
+// QueryAlertRules queries the "alert_rules" edge of the NotificationChannel entity.
+func (_m *NotificationChannel) QueryAlertRules() *AlertRuleQuery {
+	return NewNotificationChannelClient(_m.config).QueryAlertRules(_m)
+}
+
+// QueryAlertDeliveries queries the "alert_deliveries" edge of the NotificationChannel entity.
+func (_m *NotificationChannel) QueryAlertDeliveries() *AlertDeliveryQuery {
+	return NewNotificationChannelClient(_m.config).QueryAlertDeliveries(_m)
 }
 
 // Update returns a builder for updating this NotificationChannel.

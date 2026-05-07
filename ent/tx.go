@@ -14,6 +14,10 @@ type Tx struct {
 	config
 	// APIKey is the client for interacting with the APIKey builders.
 	APIKey *APIKeyClient
+	// AlertDelivery is the client for interacting with the AlertDelivery builders.
+	AlertDelivery *AlertDeliveryClient
+	// AlertRule is the client for interacting with the AlertRule builders.
+	AlertRule *AlertRuleClient
 	// Incident is the client for interacting with the Incident builders.
 	Incident *IncidentClient
 	// MaintenanceWindow is the client for interacting with the MaintenanceWindow builders.
@@ -168,6 +172,8 @@ func (tx *Tx) Client() *Client {
 
 func (tx *Tx) init() {
 	tx.APIKey = NewAPIKeyClient(tx.config)
+	tx.AlertDelivery = NewAlertDeliveryClient(tx.config)
+	tx.AlertRule = NewAlertRuleClient(tx.config)
 	tx.Incident = NewIncidentClient(tx.config)
 	tx.MaintenanceWindow = NewMaintenanceWindowClient(tx.config)
 	tx.Monitor = NewMonitorClient(tx.config)
