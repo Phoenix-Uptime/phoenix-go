@@ -20,6 +20,7 @@ import (
 	accountroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/account"
 	authroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/auth"
 	monitorroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/monitors"
+	notificationchannelroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/notification_channels"
 	tagroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/tags"
 	"github.com/gofiber/fiber/v3"
 )
@@ -691,6 +692,149 @@ func TestTagRoutesAndMonitorAssignment(t *testing.T) {
 	}
 	if deleteTagResp.StatusCode != http.StatusOK {
 		t.Fatalf("expected delete tag status %d, got %d", http.StatusOK, deleteTagResp.StatusCode)
+	}
+}
+
+func TestNotificationChannelRoutesCRUD(t *testing.T) {
+	cleanup := useTestDatabase(t)
+	defer cleanup()
+
+	app := New()
+	apiKey := signupAndLogin(t, app, "channeluser", "channel@example.com", "examplepassword")
+
+	createBody := []byte(`{"name":"Primary SMTP","type":"smtp","is_default":true,"smtp_server":"smtp.example.com","smtp_port":587,"smtp_from_address":"alerts@example.com","smtp_username":"alerts@example.com","smtp_password":"secret","smtp_use_tls":true}`)
+	createReq, err := http.NewRequest(http.MethodPost, "/notification-channels", bytes.NewReader(createBody))
+	if err != nil {
+		t.Fatal(err)
+	}
+	createReq.Header.Set("Content-Type", "application/json")
+	createReq.Header.Set("x-api-key", apiKey)
+
+	createResp, err := app.Test(createReq, fiber.TestConfig{Timeout: 0})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if createResp.StatusCode != http.StatusCreated {
+		t.Fatalf("expected create notification channel status %d, got %d", http.StatusCreated, createResp.StatusCode)
+	}
+	defer createResp.Body.Close()
+
+	var created notificationchannelroutes.NotificationChannelResponse
+	if err := json.NewDecoder(createResp.Body).Decode(&created); err != nil {
+		t.Fatal(err)
+	}
+	if created.ID == 0 || created.Type != "smtp" || !created.IsDefault || !created.HasSMTPPassword {
+		t.Fatalf("unexpected created notification channel response: %+v", created)
+	}
+
+	createSecondBody := []byte(`{"name":"Secondary SMTP","type":"smtp","is_default":true,"smtp_server":"smtp2.example.com","smtp_port":587,"smtp_from_address":"alerts2@example.com"}`)
+	createSecondReq, err := http.NewRequest(http.MethodPost, "/notification-channels", bytes.NewReader(createSecondBody))
+	if err != nil {
+		t.Fatal(err)
+	}
+	createSecondReq.Header.Set("Content-Type", "application/json")
+	createSecondReq.Header.Set("x-api-key", apiKey)
+
+	createSecondResp, err := app.Test(createSecondReq, fiber.TestConfig{Timeout: 0})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if createSecondResp.StatusCode != http.StatusCreated {
+		t.Fatalf("expected second create notification channel status %d, got %d", http.StatusCreated, createSecondResp.StatusCode)
+	}
+	defer createSecondResp.Body.Close()
+
+	var second notificationchannelroutes.NotificationChannelResponse
+	if err := json.NewDecoder(createSecondResp.Body).Decode(&second); err != nil {
+		t.Fatal(err)
+	}
+	if !second.IsDefault {
+		t.Fatalf("expected second channel to be default, got %+v", second)
+	}
+
+	getFirstReq, err := http.NewRequest(http.MethodGet, "/notification-channels/"+strconv.Itoa(created.ID), nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	getFirstReq.Header.Set("x-api-key", apiKey)
+
+	getFirstResp, err := app.Test(getFirstReq, fiber.TestConfig{Timeout: 0})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if getFirstResp.StatusCode != http.StatusOK {
+		t.Fatalf("expected get notification channel status %d, got %d", http.StatusOK, getFirstResp.StatusCode)
+	}
+	defer getFirstResp.Body.Close()
+
+	var firstAfterSecond notificationchannelroutes.NotificationChannelResponse
+	if err := json.NewDecoder(getFirstResp.Body).Decode(&firstAfterSecond); err != nil {
+		t.Fatal(err)
+	}
+	if firstAfterSecond.IsDefault {
+		t.Fatal("expected first SMTP channel default flag to be cleared")
+	}
+
+	updateBody := []byte(`{"name":"Secondary SMTP Updated","is_active":false,"smtp_password":""}`)
+	updateReq, err := http.NewRequest(http.MethodPatch, "/notification-channels/"+strconv.Itoa(second.ID), bytes.NewReader(updateBody))
+	if err != nil {
+		t.Fatal(err)
+	}
+	updateReq.Header.Set("Content-Type", "application/json")
+	updateReq.Header.Set("x-api-key", apiKey)
+
+	updateResp, err := app.Test(updateReq, fiber.TestConfig{Timeout: 0})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if updateResp.StatusCode != http.StatusOK {
+		t.Fatalf("expected update notification channel status %d, got %d", http.StatusOK, updateResp.StatusCode)
+	}
+	defer updateResp.Body.Close()
+
+	var updated notificationchannelroutes.NotificationChannelResponse
+	if err := json.NewDecoder(updateResp.Body).Decode(&updated); err != nil {
+		t.Fatal(err)
+	}
+	if updated.Name != "Secondary SMTP Updated" || updated.IsActive || updated.HasSMTPPassword {
+		t.Fatalf("unexpected updated notification channel response: %+v", updated)
+	}
+
+	listReq, err := http.NewRequest(http.MethodGet, "/notification-channels?type=smtp", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	listReq.Header.Set("x-api-key", apiKey)
+
+	listResp, err := app.Test(listReq, fiber.TestConfig{Timeout: 0})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if listResp.StatusCode != http.StatusOK {
+		t.Fatalf("expected list notification channels status %d, got %d", http.StatusOK, listResp.StatusCode)
+	}
+	defer listResp.Body.Close()
+
+	var list notificationchannelroutes.NotificationChannelListResponse
+	if err := json.NewDecoder(listResp.Body).Decode(&list); err != nil {
+		t.Fatal(err)
+	}
+	if len(list.NotificationChannels) != 2 {
+		t.Fatalf("expected 2 SMTP notification channels, got %+v", list.NotificationChannels)
+	}
+
+	deleteReq, err := http.NewRequest(http.MethodDelete, "/notification-channels/"+strconv.Itoa(second.ID), nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	deleteReq.Header.Set("x-api-key", apiKey)
+
+	deleteResp, err := app.Test(deleteReq, fiber.TestConfig{Timeout: 0})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if deleteResp.StatusCode != http.StatusOK {
+		t.Fatalf("expected delete notification channel status %d, got %d", http.StatusOK, deleteResp.StatusCode)
 	}
 }
 

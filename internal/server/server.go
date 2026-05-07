@@ -7,6 +7,7 @@ import (
 	authroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/auth"
 	healthroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/health"
 	monitorroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/monitors"
+	notificationchannelroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/notification_channels"
 	tagroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/tags"
 	"github.com/Phoenix-Uptime/phoenix-go/internal/server/middleware"
 	"github.com/gofiber/contrib/v3/swaggo"
@@ -77,6 +78,15 @@ func New() *fiber.App {
 	tags.Get("/:id", tagroutes.GetTag)
 	tags.Patch("/:id", tagroutes.UpdateTag)
 	tags.Delete("/:id", tagroutes.DeleteTag)
+
+	// Notification channel routes
+	notificationChannels := app.Group("/notification-channels")
+	notificationChannels.Use(middleware.AuthMiddleware)
+	notificationChannels.Get("", notificationchannelroutes.ListNotificationChannels)
+	notificationChannels.Post("", notificationchannelroutes.CreateNotificationChannel)
+	notificationChannels.Get("/:id", notificationchannelroutes.GetNotificationChannel)
+	notificationChannels.Patch("/:id", notificationchannelroutes.UpdateNotificationChannel)
+	notificationChannels.Delete("/:id", notificationchannelroutes.DeleteNotificationChannel)
 
 	// Monitor routes
 	monitors := app.Group("/monitors")

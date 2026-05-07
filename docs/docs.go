@@ -1100,6 +1100,318 @@ const docTemplate = `{
                 }
             }
         },
+        "/notification-channels": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyHeader": []
+                    },
+                    {
+                        "ApiKeyQuery": []
+                    }
+                ],
+                "description": "Returns notification channels owned by the authenticated user.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Notification Channels"
+                ],
+                "summary": "List Notification Channels",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "smtp, telegram, webhook, or ntfy",
+                        "name": "type",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "notification channel list",
+                        "schema": {
+                            "$ref": "#/definitions/notification_channels.NotificationChannelListResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "invalid input",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "unauthorized - invalid or missing API key",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyHeader": []
+                    },
+                    {
+                        "ApiKeyQuery": []
+                    }
+                ],
+                "description": "Creates a notification channel owned by the authenticated user.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Notification Channels"
+                ],
+                "summary": "Create Notification Channel",
+                "parameters": [
+                    {
+                        "description": "notification channel payload",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/notification_channels.CreateNotificationChannelRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "created notification channel",
+                        "schema": {
+                            "$ref": "#/definitions/notification_channels.NotificationChannelResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "invalid input",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "unauthorized - invalid or missing API key",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/notification-channels/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyHeader": []
+                    },
+                    {
+                        "ApiKeyQuery": []
+                    }
+                ],
+                "description": "Returns one notification channel owned by the authenticated user.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Notification Channels"
+                ],
+                "summary": "Get Notification Channel",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Notification Channel ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "notification channel",
+                        "schema": {
+                            "$ref": "#/definitions/notification_channels.NotificationChannelResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "invalid notification channel id",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "unauthorized - invalid or missing API key",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "notification channel not found",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyHeader": []
+                    },
+                    {
+                        "ApiKeyQuery": []
+                    }
+                ],
+                "description": "Deletes one notification channel owned by the authenticated user.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Notification Channels"
+                ],
+                "summary": "Delete Notification Channel",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Notification Channel ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "notification channel deleted",
+                        "schema": {
+                            "$ref": "#/definitions/routes.SuccessResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "invalid notification channel id",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "unauthorized - invalid or missing API key",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "notification channel not found",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "security": [
+                    {
+                        "ApiKeyHeader": []
+                    },
+                    {
+                        "ApiKeyQuery": []
+                    }
+                ],
+                "description": "Updates one notification channel owned by the authenticated user.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Notification Channels"
+                ],
+                "summary": "Update Notification Channel",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Notification Channel ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "notification channel payload",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/notification_channels.UpdateNotificationChannelRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "updated notification channel",
+                        "schema": {
+                            "$ref": "#/definitions/notification_channels.NotificationChannelResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "invalid input",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "unauthorized - invalid or missing API key",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "notification channel not found",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/signup": {
             "post": {
                 "description": "Allows a new user to sign up, but only one user can exist.",
@@ -2135,6 +2447,210 @@ const docTemplate = `{
                 "url": {
                     "type": "string",
                     "minLength": 1
+                }
+            }
+        },
+        "notification_channels.CreateNotificationChannelRequest": {
+            "type": "object",
+            "required": [
+                "name",
+                "type"
+            ],
+            "properties": {
+                "is_active": {
+                    "type": "boolean"
+                },
+                "is_default": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "ntfy_server_url": {
+                    "type": "string"
+                },
+                "ntfy_token": {
+                    "type": "string"
+                },
+                "ntfy_topic": {
+                    "type": "string"
+                },
+                "smtp_from_address": {
+                    "type": "string"
+                },
+                "smtp_password": {
+                    "type": "string"
+                },
+                "smtp_port": {
+                    "type": "integer",
+                    "maximum": 65535,
+                    "minimum": 1
+                },
+                "smtp_server": {
+                    "type": "string"
+                },
+                "smtp_use_tls": {
+                    "type": "boolean"
+                },
+                "smtp_username": {
+                    "type": "string"
+                },
+                "telegram_bot_token": {
+                    "type": "string"
+                },
+                "telegram_chat_id": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string",
+                    "enum": [
+                        "smtp",
+                        "telegram",
+                        "webhook",
+                        "ntfy"
+                    ]
+                },
+                "webhook_method": {
+                    "type": "string"
+                },
+                "webhook_url": {
+                    "type": "string"
+                }
+            }
+        },
+        "notification_channels.NotificationChannelListResponse": {
+            "type": "object",
+            "properties": {
+                "notification_channels": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/notification_channels.NotificationChannelResponse"
+                    }
+                }
+            }
+        },
+        "notification_channels.NotificationChannelResponse": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "has_ntfy_token": {
+                    "type": "boolean"
+                },
+                "has_smtp_password": {
+                    "type": "boolean"
+                },
+                "has_telegram_bot_token": {
+                    "type": "boolean"
+                },
+                "has_webhook_url": {
+                    "type": "boolean"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "is_active": {
+                    "type": "boolean"
+                },
+                "is_default": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "ntfy_server_url": {
+                    "type": "string"
+                },
+                "ntfy_topic": {
+                    "type": "string"
+                },
+                "smtp_from_address": {
+                    "type": "string"
+                },
+                "smtp_port": {
+                    "type": "integer"
+                },
+                "smtp_server": {
+                    "type": "string"
+                },
+                "smtp_use_tls": {
+                    "type": "boolean"
+                },
+                "smtp_username": {
+                    "type": "string"
+                },
+                "telegram_chat_id": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "integer"
+                },
+                "webhook_method": {
+                    "type": "string"
+                }
+            }
+        },
+        "notification_channels.UpdateNotificationChannelRequest": {
+            "type": "object",
+            "properties": {
+                "is_active": {
+                    "type": "boolean"
+                },
+                "is_default": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "ntfy_server_url": {
+                    "type": "string"
+                },
+                "ntfy_token": {
+                    "type": "string"
+                },
+                "ntfy_topic": {
+                    "type": "string"
+                },
+                "smtp_from_address": {
+                    "type": "string"
+                },
+                "smtp_password": {
+                    "type": "string"
+                },
+                "smtp_port": {
+                    "type": "integer",
+                    "maximum": 65535,
+                    "minimum": 1
+                },
+                "smtp_server": {
+                    "type": "string"
+                },
+                "smtp_use_tls": {
+                    "type": "boolean"
+                },
+                "smtp_username": {
+                    "type": "string"
+                },
+                "telegram_bot_token": {
+                    "type": "string"
+                },
+                "telegram_chat_id": {
+                    "type": "string"
+                },
+                "webhook_method": {
+                    "type": "string"
+                },
+                "webhook_url": {
+                    "type": "string"
                 }
             }
         },
