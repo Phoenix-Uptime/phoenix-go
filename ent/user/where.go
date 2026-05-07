@@ -70,11 +70,6 @@ func Password(v string) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldPassword, v))
 }
 
-// APIKey applies equality check predicate on the "api_key" field. It's identical to APIKeyEQ.
-func APIKey(v string) predicate.User {
-	return predicate.User(sql.FieldEQ(FieldAPIKey, v))
-}
-
 // CreatedAt applies equality check predicate on the "created_at" field. It's identical to CreatedAtEQ.
 func CreatedAt(v time.Time) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldCreatedAt, v))
@@ -278,71 +273,6 @@ func PasswordEqualFold(v string) predicate.User {
 // PasswordContainsFold applies the ContainsFold predicate on the "password" field.
 func PasswordContainsFold(v string) predicate.User {
 	return predicate.User(sql.FieldContainsFold(FieldPassword, v))
-}
-
-// APIKeyEQ applies the EQ predicate on the "api_key" field.
-func APIKeyEQ(v string) predicate.User {
-	return predicate.User(sql.FieldEQ(FieldAPIKey, v))
-}
-
-// APIKeyNEQ applies the NEQ predicate on the "api_key" field.
-func APIKeyNEQ(v string) predicate.User {
-	return predicate.User(sql.FieldNEQ(FieldAPIKey, v))
-}
-
-// APIKeyIn applies the In predicate on the "api_key" field.
-func APIKeyIn(vs ...string) predicate.User {
-	return predicate.User(sql.FieldIn(FieldAPIKey, vs...))
-}
-
-// APIKeyNotIn applies the NotIn predicate on the "api_key" field.
-func APIKeyNotIn(vs ...string) predicate.User {
-	return predicate.User(sql.FieldNotIn(FieldAPIKey, vs...))
-}
-
-// APIKeyGT applies the GT predicate on the "api_key" field.
-func APIKeyGT(v string) predicate.User {
-	return predicate.User(sql.FieldGT(FieldAPIKey, v))
-}
-
-// APIKeyGTE applies the GTE predicate on the "api_key" field.
-func APIKeyGTE(v string) predicate.User {
-	return predicate.User(sql.FieldGTE(FieldAPIKey, v))
-}
-
-// APIKeyLT applies the LT predicate on the "api_key" field.
-func APIKeyLT(v string) predicate.User {
-	return predicate.User(sql.FieldLT(FieldAPIKey, v))
-}
-
-// APIKeyLTE applies the LTE predicate on the "api_key" field.
-func APIKeyLTE(v string) predicate.User {
-	return predicate.User(sql.FieldLTE(FieldAPIKey, v))
-}
-
-// APIKeyContains applies the Contains predicate on the "api_key" field.
-func APIKeyContains(v string) predicate.User {
-	return predicate.User(sql.FieldContains(FieldAPIKey, v))
-}
-
-// APIKeyHasPrefix applies the HasPrefix predicate on the "api_key" field.
-func APIKeyHasPrefix(v string) predicate.User {
-	return predicate.User(sql.FieldHasPrefix(FieldAPIKey, v))
-}
-
-// APIKeyHasSuffix applies the HasSuffix predicate on the "api_key" field.
-func APIKeyHasSuffix(v string) predicate.User {
-	return predicate.User(sql.FieldHasSuffix(FieldAPIKey, v))
-}
-
-// APIKeyEqualFold applies the EqualFold predicate on the "api_key" field.
-func APIKeyEqualFold(v string) predicate.User {
-	return predicate.User(sql.FieldEqualFold(FieldAPIKey, v))
-}
-
-// APIKeyContainsFold applies the ContainsFold predicate on the "api_key" field.
-func APIKeyContainsFold(v string) predicate.User {
-	return predicate.User(sql.FieldContainsFold(FieldAPIKey, v))
 }
 
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.

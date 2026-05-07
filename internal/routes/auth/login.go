@@ -1,12 +1,16 @@
 package auth
 
 import (
+	"time"
+
 	"github.com/Phoenix-Uptime/phoenix-go/ent"
+	entapikey "github.com/Phoenix-Uptime/phoenix-go/ent/apikey"
 	entuser "github.com/Phoenix-Uptime/phoenix-go/ent/user"
 	"github.com/Phoenix-Uptime/phoenix-go/internal/database"
 	"github.com/Phoenix-Uptime/phoenix-go/internal/routes"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v3"
+	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -74,9 +78,47 @@ func Login(c fiber.Ctx) error {
 		})
 	}
 
+	apiKey, err := activeAPIKey(c, user.ID)
+	if err != nil {
+		log.Error().Err(err).Msg("Failed to load API key")
+		return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Internal server error",
+		})
+	}
+
 	return c.Status(fiber.StatusOK).JSON(LoginResponse{
 		Status:  "success",
 		Message: "Login successful",
-		ApiKey:  user.APIKey,
+		ApiKey:  apiKey,
 	})
+}
+
+func activeAPIKey(c fiber.Ctx, userID int) (string, error) {
+	key, err := database.Client.APIKey.Query().
+		Where(
+			entapikey.UserID(userID),
+			entapikey.IsActive(true),
+			entapikey.Or(
+				entapikey.ExpiresAtIsNil(),
+				entapikey.ExpiresAtGT(time.Now()),
+			),
+		).
+		First(c)
+	if err == nil {
+		return key.Key, nil
+	}
+	if !ent.IsNotFound(err) {
+		return "", err
+	}
+
+	key, err = database.Client.APIKey.Create().
+		SetUserID(userID).
+		SetName("Default").
+		SetKey(uuid.New().String()).
+		Save(c)
+	if err != nil {
+		return "", err
+	}
+	return key.Key, nil
 }

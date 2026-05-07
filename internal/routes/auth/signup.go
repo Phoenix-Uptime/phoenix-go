@@ -78,16 +78,44 @@ func Signup(c fiber.Ctx) error {
 		})
 	}
 
-	// Generate a new API key using UUID
-	apiKey := uuid.New().String()
+	tx, err := database.Client.Tx(c)
+	if err != nil {
+		log.Error().Err(err).Msg("Failed to start signup transaction")
+		return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Internal server error",
+		})
+	}
 
-	if _, err := database.Client.User.Create().
+	user, err := tx.User.Create().
 		SetUsername(req.Username).
 		SetEmail(req.Email).
 		SetPassword(string(hashedPassword)).
-		SetAPIKey(apiKey).
-		Save(c); err != nil {
+		Save(c)
+	if err != nil {
+		_ = tx.Rollback()
 		log.Error().Err(err).Msg("Failed to create user")
+		return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Internal server error",
+		})
+	}
+
+	if _, err := tx.APIKey.Create().
+		SetUserID(user.ID).
+		SetName("Default").
+		SetKey(uuid.New().String()).
+		Save(c); err != nil {
+		_ = tx.Rollback()
+		log.Error().Err(err).Msg("Failed to create default API key")
+		return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Internal server error",
+		})
+	}
+
+	if err := tx.Commit(); err != nil {
+		log.Error().Err(err).Msg("Failed to commit signup transaction")
 		return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
 			Status:  "error",
 			Message: "Internal server error",

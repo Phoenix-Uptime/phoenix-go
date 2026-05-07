@@ -20,8 +20,6 @@ const (
 	FieldEmail = "email"
 	// FieldPassword holds the string denoting the password field in the database.
 	FieldPassword = "password"
-	// FieldAPIKey holds the string denoting the api_key field in the database.
-	FieldAPIKey = "api_key"
 	// FieldCreatedAt holds the string denoting the created_at field in the database.
 	FieldCreatedAt = "created_at"
 	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
@@ -108,7 +106,6 @@ var Columns = []string{
 	FieldUsername,
 	FieldEmail,
 	FieldPassword,
-	FieldAPIKey,
 	FieldCreatedAt,
 	FieldUpdatedAt,
 }
@@ -130,8 +127,6 @@ var (
 	EmailValidator func(string) error
 	// PasswordValidator is a validator for the "password" field. It is called by the builders before save.
 	PasswordValidator func(string) error
-	// APIKeyValidator is a validator for the "api_key" field. It is called by the builders before save.
-	APIKeyValidator func(string) error
 	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
 	DefaultCreatedAt func() time.Time
 	// DefaultUpdatedAt holds the default value on creation for the "updated_at" field.
@@ -161,11 +156,6 @@ func ByEmail(opts ...sql.OrderTermOption) OrderOption {
 // ByPassword orders the results by the password field.
 func ByPassword(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldPassword, opts...).ToFunc()
-}
-
-// ByAPIKey orders the results by the api_key field.
-func ByAPIKey(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldAPIKey, opts...).ToFunc()
 }
 
 // ByCreatedAt orders the results by the created_at field.

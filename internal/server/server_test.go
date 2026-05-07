@@ -224,6 +224,100 @@ func TestAccountSettingsUseNotificationChannelRows(t *testing.T) {
 	}
 }
 
+func TestResetAPIKeyRotatesAPIKeyRows(t *testing.T) {
+	cleanup := useTestDatabase(t)
+	defer cleanup()
+
+	app := New()
+
+	signupBody := []byte(`{"username":"keyuser","email":"key@example.com","password":"examplepassword"}`)
+	signupReq, err := http.NewRequest(http.MethodPost, "/signup", bytes.NewReader(signupBody))
+	if err != nil {
+		t.Fatal(err)
+	}
+	signupReq.Header.Set("Content-Type", "application/json")
+
+	signupResp, err := app.Test(signupReq, fiber.TestConfig{Timeout: 0})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if signupResp.StatusCode != http.StatusCreated {
+		t.Fatalf("expected signup status %d, got %d", http.StatusCreated, signupResp.StatusCode)
+	}
+
+	loginBody := []byte(`{"username":"keyuser","password":"examplepassword"}`)
+	loginReq, err := http.NewRequest(http.MethodPost, "/login", bytes.NewReader(loginBody))
+	if err != nil {
+		t.Fatal(err)
+	}
+	loginReq.Header.Set("Content-Type", "application/json")
+
+	loginResp, err := app.Test(loginReq, fiber.TestConfig{Timeout: 0})
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer loginResp.Body.Close()
+
+	var login authroutes.LoginResponse
+	if err := json.NewDecoder(loginResp.Body).Decode(&login); err != nil {
+		t.Fatal(err)
+	}
+	if login.ApiKey == "" {
+		t.Fatal("expected login response to include api key")
+	}
+
+	resetReq, err := http.NewRequest(http.MethodPost, "/account/reset-api-key", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	resetReq.Header.Set("x-api-key", login.ApiKey)
+
+	resetResp, err := app.Test(resetReq, fiber.TestConfig{Timeout: 0})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if resetResp.StatusCode != http.StatusOK {
+		t.Fatalf("expected reset status %d, got %d", http.StatusOK, resetResp.StatusCode)
+	}
+	defer resetResp.Body.Close()
+
+	var resetBody accountroutes.ResetAPIKeyResponse
+	if err := json.NewDecoder(resetResp.Body).Decode(&resetBody); err != nil {
+		t.Fatal(err)
+	}
+	if resetBody.ApiKey == "" || resetBody.ApiKey == login.ApiKey {
+		t.Fatal("expected reset response to include a new api key")
+	}
+
+	oldKeyReq, err := http.NewRequest(http.MethodGet, "/account/me", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	oldKeyReq.Header.Set("x-api-key", login.ApiKey)
+
+	oldKeyResp, err := app.Test(oldKeyReq, fiber.TestConfig{Timeout: 0})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if oldKeyResp.StatusCode != http.StatusUnauthorized {
+		t.Fatalf("expected old key status %d, got %d", http.StatusUnauthorized, oldKeyResp.StatusCode)
+	}
+
+	newKeyReq, err := http.NewRequest(http.MethodGet, "/account/me", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	newKeyReq.Header.Set("x-api-key", resetBody.ApiKey)
+
+	newKeyResp, err := app.Test(newKeyReq, fiber.TestConfig{Timeout: 0})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if newKeyResp.StatusCode != http.StatusOK {
+		t.Fatalf("expected new key status %d, got %d", http.StatusOK, newKeyResp.StatusCode)
+	}
+}
+
 func useTestDatabase(t *testing.T) func() {
 	t.Helper()
 

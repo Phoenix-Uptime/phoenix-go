@@ -2,6 +2,7 @@ package account
 
 import (
 	"github.com/Phoenix-Uptime/phoenix-go/ent"
+	entapikey "github.com/Phoenix-Uptime/phoenix-go/ent/apikey"
 	"github.com/Phoenix-Uptime/phoenix-go/internal/database"
 	"github.com/Phoenix-Uptime/phoenix-go/internal/routes"
 	"github.com/gofiber/fiber/v3"
@@ -31,10 +32,42 @@ func ResetAPIKey(c fiber.Ctx) error {
 	// Generate a new API key
 	newApiKey := uuid.New().String()
 
-	if err := database.Client.User.UpdateOneID(user.ID).
-		SetAPIKey(newApiKey).
+	tx, err := database.Client.Tx(c)
+	if err != nil {
+		log.Error().Err(err).Msg("Failed to start API key reset transaction")
+		return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Failed to reset API key",
+		})
+	}
+
+	if err := tx.APIKey.Update().
+		Where(entapikey.UserID(user.ID), entapikey.IsActive(true)).
+		SetIsActive(false).
 		Exec(c); err != nil {
+		_ = tx.Rollback()
 		log.Error().Err(err).Msg("Failed to reset API key")
+		return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Failed to reset API key",
+		})
+	}
+
+	if _, err := tx.APIKey.Create().
+		SetUserID(user.ID).
+		SetName("Default").
+		SetKey(newApiKey).
+		Save(c); err != nil {
+		_ = tx.Rollback()
+		log.Error().Err(err).Msg("Failed to create reset API key")
+		return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Failed to reset API key",
+		})
+	}
+
+	if err := tx.Commit(); err != nil {
+		log.Error().Err(err).Msg("Failed to commit API key reset transaction")
 		return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
 			Status:  "error",
 			Message: "Failed to reset API key",

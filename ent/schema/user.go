@@ -25,9 +25,6 @@ func (User) Fields() []ent.Field {
 		field.String("password").
 			Sensitive().
 			NotEmpty(),
-		field.String("api_key").
-			NotEmpty().
-			Unique(),
 		field.Time("created_at").
 			Default(time.Now).
 			Immutable(),
@@ -61,6 +58,5 @@ func (User) Indexes() []ent.Index {
 	return []ent.Index{
 		index.Fields("username"),
 		index.Fields("email"),
-		index.Fields("api_key"),
 	}
 }

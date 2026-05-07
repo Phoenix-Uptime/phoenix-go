@@ -1,8 +1,10 @@
 package middleware
 
 import (
+	"time"
+
 	"github.com/Phoenix-Uptime/phoenix-go/ent"
-	entuser "github.com/Phoenix-Uptime/phoenix-go/ent/user"
+	entapikey "github.com/Phoenix-Uptime/phoenix-go/ent/apikey"
 	"github.com/Phoenix-Uptime/phoenix-go/internal/database"
 	"github.com/gofiber/fiber/v3"
 	"github.com/rs/zerolog/log"
@@ -23,9 +25,15 @@ func AuthMiddleware(c fiber.Ctx) error {
 		})
 	}
 
-	// Find user by API key
-	user, err := database.Client.User.Query().
-		Where(entuser.APIKey(apiKey)).
+	key, err := database.Client.APIKey.Query().
+		Where(
+			entapikey.Key(apiKey),
+			entapikey.IsActive(true),
+			entapikey.Or(
+				entapikey.ExpiresAtIsNil(),
+				entapikey.ExpiresAtGT(time.Now()),
+			),
+		).
 		Only(c)
 	if err != nil {
 		log.Error().Err(err).Msg("Invalid API key")
@@ -39,6 +47,21 @@ func AuthMiddleware(c fiber.Ctx) error {
 			"status":  "error",
 			"message": "Invalid API key",
 		})
+	}
+
+	user, err := key.QueryUser().Only(c)
+	if err != nil {
+		log.Error().Err(err).Msg("Failed to load API key user")
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"status":  "error",
+			"message": "Internal server error",
+		})
+	}
+
+	if err := database.Client.APIKey.UpdateOneID(key.ID).
+		SetLastUsedAt(time.Now()).
+		Exec(c); err != nil {
+		log.Error().Err(err).Msg("Failed to update API key last used timestamp")
 	}
 
 	// Attach user to the context for use in subsequent handlers

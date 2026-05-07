@@ -46,12 +46,6 @@ func (_c *UserCreate) SetPassword(v string) *UserCreate {
 	return _c
 }
 
-// SetAPIKey sets the "api_key" field.
-func (_c *UserCreate) SetAPIKey(v string) *UserCreate {
-	_c.mutation.SetAPIKey(v)
-	return _c
-}
-
 // SetCreatedAt sets the "created_at" field.
 func (_c *UserCreate) SetCreatedAt(v time.Time) *UserCreate {
 	_c.mutation.SetCreatedAt(v)
@@ -271,14 +265,6 @@ func (_c *UserCreate) check() error {
 			return &ValidationError{Name: "password", err: fmt.Errorf(`ent: validator failed for field "User.password": %w`, err)}
 		}
 	}
-	if _, ok := _c.mutation.APIKey(); !ok {
-		return &ValidationError{Name: "api_key", err: errors.New(`ent: missing required field "User.api_key"`)}
-	}
-	if v, ok := _c.mutation.APIKey(); ok {
-		if err := user.APIKeyValidator(v); err != nil {
-			return &ValidationError{Name: "api_key", err: fmt.Errorf(`ent: validator failed for field "User.api_key": %w`, err)}
-		}
-	}
 	if _, ok := _c.mutation.CreatedAt(); !ok {
 		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "User.created_at"`)}
 	}
@@ -322,10 +308,6 @@ func (_c *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.Password(); ok {
 		_spec.SetField(user.FieldPassword, field.TypeString, value)
 		_node.Password = value
-	}
-	if value, ok := _c.mutation.APIKey(); ok {
-		_spec.SetField(user.FieldAPIKey, field.TypeString, value)
-		_node.APIKey = value
 	}
 	if value, ok := _c.mutation.CreatedAt(); ok {
 		_spec.SetField(user.FieldCreatedAt, field.TypeTime, value)

@@ -78,20 +78,6 @@ func (_u *UserUpdate) SetNillablePassword(v *string) *UserUpdate {
 	return _u
 }
 
-// SetAPIKey sets the "api_key" field.
-func (_u *UserUpdate) SetAPIKey(v string) *UserUpdate {
-	_u.mutation.SetAPIKey(v)
-	return _u
-}
-
-// SetNillableAPIKey sets the "api_key" field if the given value is not nil.
-func (_u *UserUpdate) SetNillableAPIKey(v *string) *UserUpdate {
-	if v != nil {
-		_u.SetAPIKey(*v)
-	}
-	return _u
-}
-
 // SetUpdatedAt sets the "updated_at" field.
 func (_u *UserUpdate) SetUpdatedAt(v time.Time) *UserUpdate {
 	_u.mutation.SetUpdatedAt(v)
@@ -444,11 +430,6 @@ func (_u *UserUpdate) check() error {
 			return &ValidationError{Name: "password", err: fmt.Errorf(`ent: validator failed for field "User.password": %w`, err)}
 		}
 	}
-	if v, ok := _u.mutation.APIKey(); ok {
-		if err := user.APIKeyValidator(v); err != nil {
-			return &ValidationError{Name: "api_key", err: fmt.Errorf(`ent: validator failed for field "User.api_key": %w`, err)}
-		}
-	}
 	return nil
 }
 
@@ -472,9 +453,6 @@ func (_u *UserUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if value, ok := _u.mutation.Password(); ok {
 		_spec.SetField(user.FieldPassword, field.TypeString, value)
-	}
-	if value, ok := _u.mutation.APIKey(); ok {
-		_spec.SetField(user.FieldAPIKey, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.UpdatedAt(); ok {
 		_spec.SetField(user.FieldUpdatedAt, field.TypeTime, value)
@@ -901,20 +879,6 @@ func (_u *UserUpdateOne) SetNillablePassword(v *string) *UserUpdateOne {
 	return _u
 }
 
-// SetAPIKey sets the "api_key" field.
-func (_u *UserUpdateOne) SetAPIKey(v string) *UserUpdateOne {
-	_u.mutation.SetAPIKey(v)
-	return _u
-}
-
-// SetNillableAPIKey sets the "api_key" field if the given value is not nil.
-func (_u *UserUpdateOne) SetNillableAPIKey(v *string) *UserUpdateOne {
-	if v != nil {
-		_u.SetAPIKey(*v)
-	}
-	return _u
-}
-
 // SetUpdatedAt sets the "updated_at" field.
 func (_u *UserUpdateOne) SetUpdatedAt(v time.Time) *UserUpdateOne {
 	_u.mutation.SetUpdatedAt(v)
@@ -1280,11 +1244,6 @@ func (_u *UserUpdateOne) check() error {
 			return &ValidationError{Name: "password", err: fmt.Errorf(`ent: validator failed for field "User.password": %w`, err)}
 		}
 	}
-	if v, ok := _u.mutation.APIKey(); ok {
-		if err := user.APIKeyValidator(v); err != nil {
-			return &ValidationError{Name: "api_key", err: fmt.Errorf(`ent: validator failed for field "User.api_key": %w`, err)}
-		}
-	}
 	return nil
 }
 
@@ -1325,9 +1284,6 @@ func (_u *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) {
 	}
 	if value, ok := _u.mutation.Password(); ok {
 		_spec.SetField(user.FieldPassword, field.TypeString, value)
-	}
-	if value, ok := _u.mutation.APIKey(); ok {
-		_spec.SetField(user.FieldAPIKey, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.UpdatedAt(); ok {
 		_spec.SetField(user.FieldUpdatedAt, field.TypeTime, value)
