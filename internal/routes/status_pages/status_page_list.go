@@ -8,6 +8,7 @@ import (
 	entstatuspage "github.com/Phoenix-Uptime/phoenix-go/ent/statuspage"
 	entstatuspagemonitor "github.com/Phoenix-Uptime/phoenix-go/ent/statuspagemonitor"
 	"github.com/Phoenix-Uptime/phoenix-go/internal/database"
+	"github.com/Phoenix-Uptime/phoenix-go/internal/routes"
 	"github.com/gofiber/fiber/v3"
 	"github.com/rs/zerolog/log"
 )
@@ -42,7 +43,10 @@ func ListStatusPages(c fiber.Ctx) error {
 	if isPublic := c.Query("is_public"); isPublic != "" {
 		value, err := strconv.ParseBool(isPublic)
 		if err != nil {
-			return badRequest(c, "Invalid is_public filter")
+			return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+				Status:  "error",
+				Message: "Invalid is_public filter",
+			})
 		}
 		query.Where(entstatuspage.IsPublic(value))
 	}
@@ -50,7 +54,10 @@ func ListStatusPages(c fiber.Ctx) error {
 	pages, err := query.All(c)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to list status pages")
-		return serverError(c, "Failed to list status pages")
+		return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Failed to list status pages",
+		})
 	}
 
 	response := StatusPageListResponse{

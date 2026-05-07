@@ -26,7 +26,10 @@ func DeleteNotificationChannel(c fiber.Ctx) error {
 	user := c.Locals("user").(*ent.User)
 	id, err := notificationChannelID(c)
 	if err != nil {
-		return badRequest(c, "Invalid notification channel id")
+		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Invalid notification channel id",
+		})
 	}
 	if _, err := userNotificationChannel(c, user.ID, id); err != nil {
 		return notificationChannelLookupError(c, err)
@@ -34,7 +37,10 @@ func DeleteNotificationChannel(c fiber.Ctx) error {
 
 	if err := database.Client.NotificationChannel.DeleteOneID(id).Exec(c); err != nil {
 		log.Error().Err(err).Msg("Failed to delete notification channel")
-		return serverError(c, "Failed to delete notification channel")
+		return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Failed to delete notification channel",
+		})
 	}
 
 	return c.Status(fiber.StatusOK).JSON(routes.SuccessResponse{

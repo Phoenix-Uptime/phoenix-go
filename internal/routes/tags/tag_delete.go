@@ -26,7 +26,10 @@ func DeleteTag(c fiber.Ctx) error {
 	user := c.Locals("user").(*ent.User)
 	id, err := tagID(c)
 	if err != nil {
-		return badRequest(c, "Invalid tag id")
+		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Invalid tag id",
+		})
 	}
 	if _, err := userTag(c, user.ID, id); err != nil {
 		return tagLookupError(c, err)
@@ -34,7 +37,10 @@ func DeleteTag(c fiber.Ctx) error {
 
 	if err := database.Client.Tag.DeleteOneID(id).Exec(c); err != nil {
 		log.Error().Err(err).Msg("Failed to delete tag")
-		return serverError(c, "Failed to delete tag")
+		return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Failed to delete tag",
+		})
 	}
 
 	return c.Status(fiber.StatusOK).JSON(routes.SuccessResponse{

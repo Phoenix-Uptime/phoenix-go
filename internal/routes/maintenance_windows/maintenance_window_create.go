@@ -6,6 +6,7 @@ import (
 	"github.com/Phoenix-Uptime/phoenix-go/ent"
 	entmaintenancewindow "github.com/Phoenix-Uptime/phoenix-go/ent/maintenancewindow"
 	"github.com/Phoenix-Uptime/phoenix-go/internal/database"
+	"github.com/Phoenix-Uptime/phoenix-go/internal/routes"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v3"
 	"github.com/rs/zerolog/log"
@@ -42,10 +43,16 @@ func CreateMaintenanceWindow(c fiber.Ctx) error {
 
 	var req CreateMaintenanceWindowRequest
 	if err := c.Bind().Body(&req); err != nil {
-		return badRequest(c, "Invalid request payload")
+		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Invalid request payload",
+		})
 	}
 	if err := validator.New().Struct(&req); err != nil {
-		return badRequest(c, "Invalid input: "+err.Error())
+		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Invalid input: " + err.Error(),
+		})
 	}
 
 	strategy := entmaintenancewindow.StrategySingle
@@ -53,20 +60,32 @@ func CreateMaintenanceWindow(c fiber.Ctx) error {
 		strategy = entmaintenancewindow.Strategy(req.Strategy)
 	}
 	if err := validateSchedule(strategy, req.StartAt, req.EndAt, req.Cron, req.DurationSeconds); err != nil {
-		return badRequest(c, err.Error())
+		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: err.Error(),
+		})
 	}
 
 	monitorIDs, ok := normalizeIDs(req.MonitorIDs)
 	if !ok {
-		return badRequest(c, "Invalid monitor ids")
+		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Invalid monitor ids",
+		})
 	}
 	ok, err := userOwnsMonitorIDs(c, user.ID, monitorIDs)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to validate maintenance window monitors")
-		return serverError(c, "Failed to validate maintenance window")
+		return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Failed to validate maintenance window",
+		})
 	}
 	if !ok {
-		return badRequest(c, "Invalid monitor ids")
+		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Invalid monitor ids",
+		})
 	}
 
 	create := database.Client.MaintenanceWindow.Create().
@@ -101,13 +120,19 @@ func CreateMaintenanceWindow(c fiber.Ctx) error {
 	window, err := create.Save(c)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to create maintenance window")
-		return serverError(c, "Failed to create maintenance window")
+		return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Failed to create maintenance window",
+		})
 	}
 
 	window, err = userMaintenanceWindow(c, user.ID, window.ID)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to reload maintenance window")
-		return serverError(c, "Failed to create maintenance window")
+		return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Failed to create maintenance window",
+		})
 	}
 
 	return c.Status(fiber.StatusCreated).JSON(maintenanceWindowResponse(window))

@@ -5,6 +5,7 @@ import (
 	"github.com/Phoenix-Uptime/phoenix-go/ent"
 	entmonitor "github.com/Phoenix-Uptime/phoenix-go/ent/monitor"
 	"github.com/Phoenix-Uptime/phoenix-go/internal/database"
+	"github.com/Phoenix-Uptime/phoenix-go/internal/routes"
 	"github.com/gofiber/fiber/v3"
 	"github.com/rs/zerolog/log"
 )
@@ -33,7 +34,10 @@ func ListMonitors(c fiber.Ctx) error {
 		All(c)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to list monitors")
-		return serverError(c, "Failed to list monitors")
+		return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Failed to list monitors",
+		})
 	}
 
 	response := MonitorListResponse{

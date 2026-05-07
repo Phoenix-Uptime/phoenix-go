@@ -49,7 +49,10 @@ func GetAlertRule(c fiber.Ctx) error {
 	user := c.Locals("user").(*ent.User)
 	id, err := alertRuleID(c)
 	if err != nil {
-		return badRequest(c, "Invalid alert rule id")
+		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Invalid alert rule id",
+		})
 	}
 
 	rule, err := userAlertRule(c, user.ID, id)
@@ -84,20 +87,9 @@ func alertRuleLookupError(c fiber.Ctx, err error) error {
 		})
 	}
 	log.Error().Err(err).Msg("Failed to load alert rule")
-	return serverError(c, "Failed to load alert rule")
-}
-
-func badRequest(c fiber.Ctx, message string) error {
-	return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
-		Status:  "error",
-		Message: message,
-	})
-}
-
-func serverError(c fiber.Ctx, message string) error {
 	return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
 		Status:  "error",
-		Message: message,
+		Message: "Failed to load alert rule",
 	})
 }
 

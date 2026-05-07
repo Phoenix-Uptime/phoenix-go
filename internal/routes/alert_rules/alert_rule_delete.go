@@ -26,7 +26,10 @@ func DeleteAlertRule(c fiber.Ctx) error {
 	user := c.Locals("user").(*ent.User)
 	id, err := alertRuleID(c)
 	if err != nil {
-		return badRequest(c, "Invalid alert rule id")
+		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Invalid alert rule id",
+		})
 	}
 	if _, err := userAlertRule(c, user.ID, id); err != nil {
 		return alertRuleLookupError(c, err)
@@ -34,7 +37,10 @@ func DeleteAlertRule(c fiber.Ctx) error {
 
 	if err := database.Client.AlertRule.DeleteOneID(id).Exec(c); err != nil {
 		log.Error().Err(err).Msg("Failed to delete alert rule")
-		return serverError(c, "Failed to delete alert rule")
+		return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Failed to delete alert rule",
+		})
 	}
 
 	return c.Status(fiber.StatusOK).JSON(routes.SuccessResponse{

@@ -3,6 +3,7 @@ package status_pages
 import (
 	"github.com/Phoenix-Uptime/phoenix-go/ent"
 	"github.com/Phoenix-Uptime/phoenix-go/internal/database"
+	"github.com/Phoenix-Uptime/phoenix-go/internal/routes"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v3"
 	"github.com/rs/zerolog/log"
@@ -44,7 +45,10 @@ func UpdateStatusPage(c fiber.Ctx) error {
 	user := c.Locals("user").(*ent.User)
 	id, err := statusPageID(c)
 	if err != nil {
-		return badRequest(c, "Invalid status page id")
+		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Invalid status page id",
+		})
 	}
 	if _, err := userStatusPage(c, user.ID, id); err != nil {
 		return statusPageLookupError(c, err)
@@ -52,17 +56,26 @@ func UpdateStatusPage(c fiber.Ctx) error {
 
 	var req UpdateStatusPageRequest
 	if err := c.Bind().Body(&req); err != nil {
-		return badRequest(c, "Invalid request payload")
+		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Invalid request payload",
+		})
 	}
 	if err := validator.New().Struct(&req); err != nil {
-		return badRequest(c, "Invalid input: "+err.Error())
+		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Invalid input: " + err.Error(),
+		})
 	}
 
 	update := database.Client.StatusPage.UpdateOneID(id)
 	if req.Slug != nil {
 		slug, ok := normalizeSlug(*req.Slug)
 		if !ok {
-			return badRequest(c, "Invalid status page slug")
+			return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+				Status:  "error",
+				Message: "Invalid status page slug",
+			})
 		}
 		update.SetSlug(slug)
 	}
@@ -121,16 +134,25 @@ func UpdateStatusPage(c fiber.Ctx) error {
 
 	if _, err := update.Save(c); err != nil {
 		if ent.IsConstraintError(err) {
-			return conflict(c, "Status page slug already exists")
+			return c.Status(fiber.StatusConflict).JSON(routes.ErrorResponse{
+				Status:  "error",
+				Message: "Status page slug already exists",
+			})
 		}
 		log.Error().Err(err).Msg("Failed to update status page")
-		return serverError(c, "Failed to update status page")
+		return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Failed to update status page",
+		})
 	}
 
 	page, err := userStatusPage(c, user.ID, id)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to reload status page")
-		return serverError(c, "Failed to update status page")
+		return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Failed to update status page",
+		})
 	}
 
 	return c.Status(fiber.StatusOK).JSON(statusPageResponse(page))

@@ -6,6 +6,7 @@ import (
 	"github.com/Phoenix-Uptime/phoenix-go/ent"
 	entincident "github.com/Phoenix-Uptime/phoenix-go/ent/incident"
 	"github.com/Phoenix-Uptime/phoenix-go/internal/database"
+	"github.com/Phoenix-Uptime/phoenix-go/internal/routes"
 	"github.com/gofiber/fiber/v3"
 	"github.com/rs/zerolog/log"
 )
@@ -50,7 +51,10 @@ func setIncidentStatus(c fiber.Ctx, status entincident.Status) error {
 	user := c.Locals("user").(*ent.User)
 	id, err := incidentID(c)
 	if err != nil {
-		return badRequest(c, "Invalid incident id")
+		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Invalid incident id",
+		})
 	}
 	if _, err := userIncident(c, user.ID, id); err != nil {
 		return incidentLookupError(c, err)
@@ -66,7 +70,10 @@ func setIncidentStatus(c fiber.Ctx, status entincident.Status) error {
 	incident, err := update.Save(c)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to update incident status")
-		return serverError(c, "Failed to update incident status")
+		return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Failed to update incident status",
+		})
 	}
 
 	return c.Status(fiber.StatusOK).JSON(incidentResponse(incident))

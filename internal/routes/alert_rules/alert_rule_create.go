@@ -6,6 +6,7 @@ import (
 	"github.com/Phoenix-Uptime/phoenix-go/ent"
 	entalertrule "github.com/Phoenix-Uptime/phoenix-go/ent/alertrule"
 	"github.com/Phoenix-Uptime/phoenix-go/internal/database"
+	"github.com/Phoenix-Uptime/phoenix-go/internal/routes"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v3"
 	"github.com/rs/zerolog/log"
@@ -41,10 +42,16 @@ func CreateAlertRule(c fiber.Ctx) error {
 
 	var req CreateAlertRuleRequest
 	if err := c.Bind().Body(&req); err != nil {
-		return badRequest(c, "Invalid request payload")
+		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Invalid request payload",
+		})
 	}
 	if err := validator.New().Struct(&req); err != nil {
-		return badRequest(c, "Invalid input: "+err.Error())
+		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Invalid input: " + err.Error(),
+		})
 	}
 
 	scope := entalertrule.ScopeAll
@@ -53,7 +60,10 @@ func CreateAlertRule(c fiber.Ctx) error {
 	}
 	tagIDs, monitorIDs, channelIDs, err := validateAlertRuleRelationships(c, user.ID, scope, req.TagIDs, req.MonitorIDs, req.NotificationChannelIDs)
 	if err != nil {
-		return badRequest(c, err.Error())
+		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: err.Error(),
+		})
 	}
 
 	create := database.Client.AlertRule.Create().
@@ -81,13 +91,19 @@ func CreateAlertRule(c fiber.Ctx) error {
 	rule, err := create.Save(c)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to create alert rule")
-		return serverError(c, "Failed to create alert rule")
+		return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Failed to create alert rule",
+		})
 	}
 
 	rule, err = userAlertRule(c, user.ID, rule.ID)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to reload alert rule")
-		return serverError(c, "Failed to create alert rule")
+		return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Failed to create alert rule",
+		})
 	}
 
 	return c.Status(fiber.StatusCreated).JSON(alertRuleResponse(rule))

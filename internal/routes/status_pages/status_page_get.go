@@ -63,7 +63,10 @@ func GetStatusPage(c fiber.Ctx) error {
 	user := c.Locals("user").(*ent.User)
 	id, err := statusPageID(c)
 	if err != nil {
-		return badRequest(c, "Invalid status page id")
+		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Invalid status page id",
+		})
 	}
 
 	page, err := userStatusPage(c, user.ID, id)
@@ -98,27 +101,9 @@ func statusPageLookupError(c fiber.Ctx, err error) error {
 		})
 	}
 	log.Error().Err(err).Msg("Failed to load status page")
-	return serverError(c, "Failed to load status page")
-}
-
-func badRequest(c fiber.Ctx, message string) error {
-	return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
-		Status:  "error",
-		Message: message,
-	})
-}
-
-func conflict(c fiber.Ctx, message string) error {
-	return c.Status(fiber.StatusConflict).JSON(routes.ErrorResponse{
-		Status:  "error",
-		Message: message,
-	})
-}
-
-func serverError(c fiber.Ctx, message string) error {
 	return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
 		Status:  "error",
-		Message: message,
+		Message: "Failed to load status page",
 	})
 }
 

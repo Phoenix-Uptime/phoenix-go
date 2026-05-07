@@ -6,6 +6,7 @@ import (
 	"github.com/Phoenix-Uptime/phoenix-go/ent"
 	entincident "github.com/Phoenix-Uptime/phoenix-go/ent/incident"
 	"github.com/Phoenix-Uptime/phoenix-go/internal/database"
+	"github.com/Phoenix-Uptime/phoenix-go/internal/routes"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v3"
 	"github.com/rs/zerolog/log"
@@ -42,7 +43,10 @@ func UpdateIncident(c fiber.Ctx) error {
 	user := c.Locals("user").(*ent.User)
 	id, err := incidentID(c)
 	if err != nil {
-		return badRequest(c, "Invalid incident id")
+		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Invalid incident id",
+		})
 	}
 	if _, err := userIncident(c, user.ID, id); err != nil {
 		return incidentLookupError(c, err)
@@ -50,30 +54,48 @@ func UpdateIncident(c fiber.Ctx) error {
 
 	var req UpdateIncidentRequest
 	if err := c.Bind().Body(&req); err != nil {
-		return badRequest(c, "Invalid request payload")
+		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Invalid request payload",
+		})
 	}
 	if err := validator.New().Struct(&req); err != nil {
-		return badRequest(c, "Invalid input: "+err.Error())
+		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Invalid input: " + err.Error(),
+		})
 	}
 
 	if req.MonitorID != nil {
 		ok, err := userOwnsMonitor(c, user.ID, *req.MonitorID)
 		if err != nil {
 			log.Error().Err(err).Msg("Failed to validate incident monitor")
-			return serverError(c, "Failed to validate incident")
+			return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
+				Status:  "error",
+				Message: "Failed to validate incident",
+			})
 		}
 		if !ok {
-			return badRequest(c, "Invalid monitor id")
+			return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+				Status:  "error",
+				Message: "Invalid monitor id",
+			})
 		}
 	}
 	if req.StatusPageID != nil && *req.StatusPageID > 0 {
 		ok, err := userOwnsStatusPage(c, user.ID, *req.StatusPageID)
 		if err != nil {
 			log.Error().Err(err).Msg("Failed to validate incident status page")
-			return serverError(c, "Failed to validate incident")
+			return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
+				Status:  "error",
+				Message: "Failed to validate incident",
+			})
 		}
 		if !ok {
-			return badRequest(c, "Invalid status page id")
+			return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+				Status:  "error",
+				Message: "Invalid status page id",
+			})
 		}
 	}
 
@@ -127,7 +149,10 @@ func UpdateIncident(c fiber.Ctx) error {
 	incident, err := update.Save(c)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to update incident")
-		return serverError(c, "Failed to update incident")
+		return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Failed to update incident",
+		})
 	}
 
 	return c.Status(fiber.StatusOK).JSON(incidentResponse(incident))

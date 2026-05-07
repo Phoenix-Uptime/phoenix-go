@@ -54,7 +54,10 @@ func GetNotificationChannel(c fiber.Ctx) error {
 	user := c.Locals("user").(*ent.User)
 	id, err := notificationChannelID(c)
 	if err != nil {
-		return badRequest(c, "Invalid notification channel id")
+		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Invalid notification channel id",
+		})
 	}
 
 	channel, err := userNotificationChannel(c, user.ID, id)
@@ -86,20 +89,9 @@ func notificationChannelLookupError(c fiber.Ctx, err error) error {
 		})
 	}
 	log.Error().Err(err).Msg("Failed to load notification channel")
-	return serverError(c, "Failed to load notification channel")
-}
-
-func badRequest(c fiber.Ctx, message string) error {
-	return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
-		Status:  "error",
-		Message: message,
-	})
-}
-
-func serverError(c fiber.Ctx, message string) error {
 	return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
 		Status:  "error",
-		Message: message,
+		Message: "Failed to load notification channel",
 	})
 }
 

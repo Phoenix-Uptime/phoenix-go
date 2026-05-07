@@ -3,6 +3,7 @@ package tags
 import (
 	"github.com/Phoenix-Uptime/phoenix-go/ent"
 	"github.com/Phoenix-Uptime/phoenix-go/internal/database"
+	"github.com/Phoenix-Uptime/phoenix-go/internal/routes"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v3"
 	"github.com/rs/zerolog/log"
@@ -34,7 +35,10 @@ func UpdateTag(c fiber.Ctx) error {
 	user := c.Locals("user").(*ent.User)
 	id, err := tagID(c)
 	if err != nil {
-		return badRequest(c, "Invalid tag id")
+		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Invalid tag id",
+		})
 	}
 	if _, err := userTag(c, user.ID, id); err != nil {
 		return tagLookupError(c, err)
@@ -42,10 +46,16 @@ func UpdateTag(c fiber.Ctx) error {
 
 	var req UpdateTagRequest
 	if err := c.Bind().Body(&req); err != nil {
-		return badRequest(c, "Invalid request payload")
+		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Invalid request payload",
+		})
 	}
 	if err := validator.New().Struct(&req); err != nil {
-		return badRequest(c, "Invalid input: "+err.Error())
+		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Invalid input: " + err.Error(),
+		})
 	}
 
 	update := database.Client.Tag.UpdateOneID(id)
@@ -70,10 +80,16 @@ func UpdateTag(c fiber.Ctx) error {
 	tag, err := update.Save(c)
 	if err != nil {
 		if ent.IsConstraintError(err) {
-			return conflict(c, "Tag already exists")
+			return c.Status(fiber.StatusConflict).JSON(routes.ErrorResponse{
+				Status:  "error",
+				Message: "Tag already exists",
+			})
 		}
 		log.Error().Err(err).Msg("Failed to update tag")
-		return serverError(c, "Failed to update tag")
+		return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Failed to update tag",
+		})
 	}
 
 	return c.Status(fiber.StatusOK).JSON(tagResponse(tag))

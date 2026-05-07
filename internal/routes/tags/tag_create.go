@@ -3,6 +3,7 @@ package tags
 import (
 	"github.com/Phoenix-Uptime/phoenix-go/ent"
 	"github.com/Phoenix-Uptime/phoenix-go/internal/database"
+	"github.com/Phoenix-Uptime/phoenix-go/internal/routes"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v3"
 	"github.com/rs/zerolog/log"
@@ -33,10 +34,16 @@ func CreateTag(c fiber.Ctx) error {
 
 	var req CreateTagRequest
 	if err := c.Bind().Body(&req); err != nil {
-		return badRequest(c, "Invalid request payload")
+		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Invalid request payload",
+		})
 	}
 	if err := validator.New().Struct(&req); err != nil {
-		return badRequest(c, "Invalid input: "+err.Error())
+		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Invalid input: " + err.Error(),
+		})
 	}
 
 	create := database.Client.Tag.Create().
@@ -52,10 +59,16 @@ func CreateTag(c fiber.Ctx) error {
 	tag, err := create.Save(c)
 	if err != nil {
 		if ent.IsConstraintError(err) {
-			return conflict(c, "Tag already exists")
+			return c.Status(fiber.StatusConflict).JSON(routes.ErrorResponse{
+				Status:  "error",
+				Message: "Tag already exists",
+			})
 		}
 		log.Error().Err(err).Msg("Failed to create tag")
-		return serverError(c, "Failed to create tag")
+		return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Failed to create tag",
+		})
 	}
 
 	return c.Status(fiber.StatusCreated).JSON(tagResponse(tag))

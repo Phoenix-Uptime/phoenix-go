@@ -6,6 +6,7 @@ import (
 	"github.com/Phoenix-Uptime/phoenix-go/ent"
 	entnotificationchannel "github.com/Phoenix-Uptime/phoenix-go/ent/notificationchannel"
 	"github.com/Phoenix-Uptime/phoenix-go/internal/database"
+	"github.com/Phoenix-Uptime/phoenix-go/internal/routes"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v3"
 	"github.com/rs/zerolog/log"
@@ -49,7 +50,10 @@ func UpdateNotificationChannel(c fiber.Ctx) error {
 	user := c.Locals("user").(*ent.User)
 	id, err := notificationChannelID(c)
 	if err != nil {
-		return badRequest(c, "Invalid notification channel id")
+		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Invalid notification channel id",
+		})
 	}
 
 	channel, err := userNotificationChannel(c, user.ID, id)
@@ -59,19 +63,31 @@ func UpdateNotificationChannel(c fiber.Ctx) error {
 
 	var req UpdateNotificationChannelRequest
 	if err := c.Bind().Body(&req); err != nil {
-		return badRequest(c, "Invalid request payload")
+		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Invalid request payload",
+		})
 	}
 	if err := validator.New().Struct(&req); err != nil {
-		return badRequest(c, "Invalid input: "+err.Error())
+		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Invalid input: " + err.Error(),
+		})
 	}
 	if req.WebhookMethod != nil && *req.WebhookMethod != "" && !validWebhookMethod(*req.WebhookMethod) {
-		return badRequest(c, "Webhook method is invalid")
+		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Webhook method is invalid",
+		})
 	}
 
 	tx, err := database.Client.Tx(c)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to start notification channel transaction")
-		return serverError(c, "Failed to update notification channel")
+		return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Failed to update notification channel",
+		})
 	}
 
 	if req.IsDefault != nil && *req.IsDefault {
@@ -85,7 +101,10 @@ func UpdateNotificationChannel(c fiber.Ctx) error {
 			Exec(c); err != nil {
 			_ = tx.Rollback()
 			log.Error().Err(err).Msg("Failed to clear default notification channels")
-			return serverError(c, "Failed to update notification channel")
+			return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
+				Status:  "error",
+				Message: "Failed to update notification channel",
+			})
 		}
 	}
 
@@ -191,13 +210,19 @@ func UpdateNotificationChannel(c fiber.Ctx) error {
 	if err != nil {
 		_ = tx.Rollback()
 		log.Error().Err(err).Msg("Failed to update notification channel")
-		return serverError(c, "Failed to update notification channel")
+		return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Failed to update notification channel",
+		})
 	}
 
 	response := notificationChannelResponse(updated)
 	if err := tx.Commit(); err != nil {
 		log.Error().Err(err).Msg("Failed to commit notification channel transaction")
-		return serverError(c, "Failed to update notification channel")
+		return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Failed to update notification channel",
+		})
 	}
 
 	return c.Status(fiber.StatusOK).JSON(response)

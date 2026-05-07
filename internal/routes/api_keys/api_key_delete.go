@@ -26,7 +26,10 @@ func DeleteAPIKey(c fiber.Ctx) error {
 	user := c.Locals("user").(*ent.User)
 	id, err := apiKeyID(c)
 	if err != nil {
-		return badRequest(c, "Invalid API key id")
+		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Invalid API key id",
+		})
 	}
 	if _, err := userAPIKey(c, user.ID, id); err != nil {
 		return apiKeyLookupError(c, err)
@@ -36,7 +39,10 @@ func DeleteAPIKey(c fiber.Ctx) error {
 		SetIsActive(false).
 		Save(c); err != nil {
 		log.Error().Err(err).Msg("Failed to revoke API key")
-		return serverError(c, "Failed to revoke API key")
+		return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Failed to revoke API key",
+		})
 	}
 
 	return c.Status(fiber.StatusOK).JSON(routes.SuccessResponse{

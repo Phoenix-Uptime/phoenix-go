@@ -6,6 +6,7 @@ import (
 	"github.com/Phoenix-Uptime/phoenix-go/ent"
 	entnotificationchannel "github.com/Phoenix-Uptime/phoenix-go/ent/notificationchannel"
 	"github.com/Phoenix-Uptime/phoenix-go/internal/database"
+	"github.com/Phoenix-Uptime/phoenix-go/internal/routes"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v3"
 	"github.com/rs/zerolog/log"
@@ -49,21 +50,33 @@ func CreateNotificationChannel(c fiber.Ctx) error {
 
 	var req CreateNotificationChannelRequest
 	if err := c.Bind().Body(&req); err != nil {
-		return badRequest(c, "Invalid request payload")
+		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Invalid request payload",
+		})
 	}
 	if err := validator.New().Struct(&req); err != nil {
-		return badRequest(c, "Invalid input: "+err.Error())
+		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Invalid input: " + err.Error(),
+		})
 	}
 
 	channelType := entnotificationchannel.Type(req.Type)
 	if err := validateCreateNotificationChannel(req, channelType); err != nil {
-		return badRequest(c, err.Error())
+		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: err.Error(),
+		})
 	}
 
 	tx, err := database.Client.Tx(c)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to start notification channel transaction")
-		return serverError(c, "Failed to create notification channel")
+		return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Failed to create notification channel",
+		})
 	}
 
 	isDefault := req.IsDefault != nil && *req.IsDefault
@@ -77,7 +90,10 @@ func CreateNotificationChannel(c fiber.Ctx) error {
 			Exec(c); err != nil {
 			_ = tx.Rollback()
 			log.Error().Err(err).Msg("Failed to clear default notification channels")
-			return serverError(c, "Failed to create notification channel")
+			return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
+				Status:  "error",
+				Message: "Failed to create notification channel",
+			})
 		}
 	}
 
@@ -133,13 +149,19 @@ func CreateNotificationChannel(c fiber.Ctx) error {
 	if err != nil {
 		_ = tx.Rollback()
 		log.Error().Err(err).Msg("Failed to create notification channel")
-		return serverError(c, "Failed to create notification channel")
+		return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Failed to create notification channel",
+		})
 	}
 
 	response := notificationChannelResponse(channel)
 	if err := tx.Commit(); err != nil {
 		log.Error().Err(err).Msg("Failed to commit notification channel transaction")
-		return serverError(c, "Failed to create notification channel")
+		return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Failed to create notification channel",
+		})
 	}
 
 	return c.Status(fiber.StatusCreated).JSON(response)

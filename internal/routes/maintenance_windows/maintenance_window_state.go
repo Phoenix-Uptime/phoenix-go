@@ -3,6 +3,7 @@ package maintenance_windows
 import (
 	"github.com/Phoenix-Uptime/phoenix-go/ent"
 	"github.com/Phoenix-Uptime/phoenix-go/internal/database"
+	"github.com/Phoenix-Uptime/phoenix-go/internal/routes"
 	"github.com/gofiber/fiber/v3"
 	"github.com/rs/zerolog/log"
 )
@@ -47,7 +48,10 @@ func setMaintenanceWindowActive(c fiber.Ctx, isActive bool) error {
 	user := c.Locals("user").(*ent.User)
 	id, err := maintenanceWindowID(c)
 	if err != nil {
-		return badRequest(c, "Invalid maintenance window id")
+		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Invalid maintenance window id",
+		})
 	}
 	if _, err := userMaintenanceWindow(c, user.ID, id); err != nil {
 		return maintenanceWindowLookupError(c, err)
@@ -55,13 +59,19 @@ func setMaintenanceWindowActive(c fiber.Ctx, isActive bool) error {
 
 	if _, err := database.Client.MaintenanceWindow.UpdateOneID(id).SetIsActive(isActive).Save(c); err != nil {
 		log.Error().Err(err).Msg("Failed to update maintenance window state")
-		return serverError(c, "Failed to update maintenance window state")
+		return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Failed to update maintenance window state",
+		})
 	}
 
 	window, err := userMaintenanceWindow(c, user.ID, id)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to reload maintenance window")
-		return serverError(c, "Failed to update maintenance window state")
+		return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Failed to update maintenance window state",
+		})
 	}
 
 	return c.Status(fiber.StatusOK).JSON(maintenanceWindowResponse(window))

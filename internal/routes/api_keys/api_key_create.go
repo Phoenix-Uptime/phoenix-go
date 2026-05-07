@@ -7,6 +7,7 @@ import (
 
 	"github.com/Phoenix-Uptime/phoenix-go/ent"
 	"github.com/Phoenix-Uptime/phoenix-go/internal/database"
+	"github.com/Phoenix-Uptime/phoenix-go/internal/routes"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v3"
 	"github.com/rs/zerolog/log"
@@ -40,19 +41,31 @@ func CreateAPIKey(c fiber.Ctx) error {
 
 	var req CreateAPIKeyRequest
 	if err := c.Bind().Body(&req); err != nil {
-		return badRequest(c, "Invalid request payload")
+		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Invalid request payload",
+		})
 	}
 	if err := validator.New().Struct(&req); err != nil {
-		return badRequest(c, "Invalid input: "+err.Error())
+		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Invalid input: " + err.Error(),
+		})
 	}
 	if req.ExpiresAt != nil && !req.ExpiresAt.After(time.Now()) {
-		return badRequest(c, "API key expiration must be in the future")
+		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "API key expiration must be in the future",
+		})
 	}
 
 	secret, err := generateAPIKey()
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to generate API key")
-		return serverError(c, "Failed to create API key")
+		return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Failed to create API key",
+		})
 	}
 
 	create := database.Client.APIKey.Create().
@@ -66,7 +79,10 @@ func CreateAPIKey(c fiber.Ctx) error {
 	key, err := create.Save(c)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to create API key")
-		return serverError(c, "Failed to create API key")
+		return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Failed to create API key",
+		})
 	}
 
 	return c.Status(fiber.StatusCreated).JSON(CreateAPIKeyResponse{

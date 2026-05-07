@@ -49,7 +49,10 @@ func GetMaintenanceWindow(c fiber.Ctx) error {
 	user := c.Locals("user").(*ent.User)
 	id, err := maintenanceWindowID(c)
 	if err != nil {
-		return badRequest(c, "Invalid maintenance window id")
+		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Invalid maintenance window id",
+		})
 	}
 
 	window, err := userMaintenanceWindow(c, user.ID, id)
@@ -82,20 +85,9 @@ func maintenanceWindowLookupError(c fiber.Ctx, err error) error {
 		})
 	}
 	log.Error().Err(err).Msg("Failed to load maintenance window")
-	return serverError(c, "Failed to load maintenance window")
-}
-
-func badRequest(c fiber.Ctx, message string) error {
-	return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
-		Status:  "error",
-		Message: message,
-	})
-}
-
-func serverError(c fiber.Ctx, message string) error {
 	return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
 		Status:  "error",
-		Message: message,
+		Message: "Failed to load maintenance window",
 	})
 }
 

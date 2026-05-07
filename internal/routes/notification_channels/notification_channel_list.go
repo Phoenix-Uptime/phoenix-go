@@ -5,6 +5,7 @@ import (
 	"github.com/Phoenix-Uptime/phoenix-go/ent"
 	entnotificationchannel "github.com/Phoenix-Uptime/phoenix-go/ent/notificationchannel"
 	"github.com/Phoenix-Uptime/phoenix-go/internal/database"
+	"github.com/Phoenix-Uptime/phoenix-go/internal/routes"
 	"github.com/gofiber/fiber/v3"
 	"github.com/rs/zerolog/log"
 )
@@ -39,7 +40,10 @@ func ListNotificationChannels(c fiber.Ctx) error {
 	if channelType := c.Query("type"); channelType != "" {
 		typ := entnotificationchannel.Type(channelType)
 		if err := entnotificationchannel.TypeValidator(typ); err != nil {
-			return badRequest(c, "Invalid notification channel type")
+			return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+				Status:  "error",
+				Message: "Invalid notification channel type",
+			})
 		}
 		query.Where(entnotificationchannel.TypeEQ(typ))
 	}
@@ -47,7 +51,10 @@ func ListNotificationChannels(c fiber.Ctx) error {
 	channels, err := query.All(c)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to list notification channels")
-		return serverError(c, "Failed to list notification channels")
+		return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Failed to list notification channels",
+		})
 	}
 
 	response := NotificationChannelListResponse{

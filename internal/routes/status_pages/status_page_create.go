@@ -5,6 +5,7 @@ import (
 
 	"github.com/Phoenix-Uptime/phoenix-go/ent"
 	"github.com/Phoenix-Uptime/phoenix-go/internal/database"
+	"github.com/Phoenix-Uptime/phoenix-go/internal/routes"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v3"
 	"github.com/rs/zerolog/log"
@@ -45,15 +46,24 @@ func CreateStatusPage(c fiber.Ctx) error {
 
 	var req CreateStatusPageRequest
 	if err := c.Bind().Body(&req); err != nil {
-		return badRequest(c, "Invalid request payload")
+		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Invalid request payload",
+		})
 	}
 	if err := validator.New().Struct(&req); err != nil {
-		return badRequest(c, "Invalid input: "+err.Error())
+		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Invalid input: " + err.Error(),
+		})
 	}
 
 	slug, ok := normalizeSlug(req.Slug)
 	if !ok {
-		return badRequest(c, "Invalid status page slug")
+		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Invalid status page slug",
+		})
 	}
 
 	create := database.Client.StatusPage.Create().
@@ -97,16 +107,25 @@ func CreateStatusPage(c fiber.Ctx) error {
 	page, err := create.Save(c)
 	if err != nil {
 		if ent.IsConstraintError(err) {
-			return conflict(c, "Status page slug already exists")
+			return c.Status(fiber.StatusConflict).JSON(routes.ErrorResponse{
+				Status:  "error",
+				Message: "Status page slug already exists",
+			})
 		}
 		log.Error().Err(err).Msg("Failed to create status page")
-		return serverError(c, "Failed to create status page")
+		return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Failed to create status page",
+		})
 	}
 
 	page, err = userStatusPage(c, user.ID, page.ID)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to reload status page")
-		return serverError(c, "Failed to create status page")
+		return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Failed to create status page",
+		})
 	}
 
 	return c.Status(fiber.StatusCreated).JSON(statusPageResponse(page))

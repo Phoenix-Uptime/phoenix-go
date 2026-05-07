@@ -4,6 +4,7 @@ import (
 	"github.com/Phoenix-Uptime/phoenix-go/ent"
 	entalertrule "github.com/Phoenix-Uptime/phoenix-go/ent/alertrule"
 	"github.com/Phoenix-Uptime/phoenix-go/internal/database"
+	"github.com/Phoenix-Uptime/phoenix-go/internal/routes"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v3"
 	"github.com/rs/zerolog/log"
@@ -40,7 +41,10 @@ func UpdateAlertRule(c fiber.Ctx) error {
 	user := c.Locals("user").(*ent.User)
 	id, err := alertRuleID(c)
 	if err != nil {
-		return badRequest(c, "Invalid alert rule id")
+		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Invalid alert rule id",
+		})
 	}
 
 	current, err := userAlertRule(c, user.ID, id)
@@ -50,10 +54,16 @@ func UpdateAlertRule(c fiber.Ctx) error {
 
 	var req UpdateAlertRuleRequest
 	if err := c.Bind().Body(&req); err != nil {
-		return badRequest(c, "Invalid request payload")
+		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Invalid request payload",
+		})
 	}
 	if err := validator.New().Struct(&req); err != nil {
-		return badRequest(c, "Invalid input: "+err.Error())
+		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Invalid input: " + err.Error(),
+		})
 	}
 
 	scope := current.Scope
@@ -75,13 +85,19 @@ func UpdateAlertRule(c fiber.Ctx) error {
 
 	tagIDs, monitorIDs, channelIDs, err = validateAlertRuleRelationships(c, user.ID, scope, tagIDs, monitorIDs, channelIDs)
 	if err != nil {
-		return badRequest(c, err.Error())
+		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: err.Error(),
+		})
 	}
 
 	tx, err := database.Client.Tx(c)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to start alert rule transaction")
-		return serverError(c, "Failed to update alert rule")
+		return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Failed to update alert rule",
+		})
 	}
 
 	update := tx.AlertRule.UpdateOneID(id).
@@ -127,17 +143,26 @@ func UpdateAlertRule(c fiber.Ctx) error {
 	if _, err := update.Save(c); err != nil {
 		_ = tx.Rollback()
 		log.Error().Err(err).Msg("Failed to update alert rule")
-		return serverError(c, "Failed to update alert rule")
+		return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Failed to update alert rule",
+		})
 	}
 	if err := tx.Commit(); err != nil {
 		log.Error().Err(err).Msg("Failed to commit alert rule transaction")
-		return serverError(c, "Failed to update alert rule")
+		return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Failed to update alert rule",
+		})
 	}
 
 	rule, err := userAlertRule(c, user.ID, id)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to reload alert rule")
-		return serverError(c, "Failed to update alert rule")
+		return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Failed to update alert rule",
+		})
 	}
 
 	return c.Status(fiber.StatusOK).JSON(alertRuleResponse(rule))

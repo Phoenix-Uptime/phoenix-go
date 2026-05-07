@@ -26,7 +26,10 @@ func DeleteMaintenanceWindow(c fiber.Ctx) error {
 	user := c.Locals("user").(*ent.User)
 	id, err := maintenanceWindowID(c)
 	if err != nil {
-		return badRequest(c, "Invalid maintenance window id")
+		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Invalid maintenance window id",
+		})
 	}
 	if _, err := userMaintenanceWindow(c, user.ID, id); err != nil {
 		return maintenanceWindowLookupError(c, err)
@@ -34,7 +37,10 @@ func DeleteMaintenanceWindow(c fiber.Ctx) error {
 
 	if err := database.Client.MaintenanceWindow.DeleteOneID(id).Exec(c); err != nil {
 		log.Error().Err(err).Msg("Failed to delete maintenance window")
-		return serverError(c, "Failed to delete maintenance window")
+		return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Failed to delete maintenance window",
+		})
 	}
 
 	return c.Status(fiber.StatusOK).JSON(routes.SuccessResponse{

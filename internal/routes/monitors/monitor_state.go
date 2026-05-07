@@ -4,6 +4,7 @@ import (
 	"github.com/Phoenix-Uptime/phoenix-go/ent"
 	entmonitor "github.com/Phoenix-Uptime/phoenix-go/ent/monitor"
 	"github.com/Phoenix-Uptime/phoenix-go/internal/database"
+	"github.com/Phoenix-Uptime/phoenix-go/internal/routes"
 	"github.com/gofiber/fiber/v3"
 	"github.com/rs/zerolog/log"
 )
@@ -48,7 +49,10 @@ func setMonitorActiveState(c fiber.Ctx, isActive bool, status entmonitor.Status,
 	user := c.Locals("user").(*ent.User)
 	id, err := monitorID(c)
 	if err != nil {
-		return badRequest(c, "Invalid monitor id")
+		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Invalid monitor id",
+		})
 	}
 	if _, err := userMonitor(c, user.ID, id); err != nil {
 		return monitorLookupError(c, err)
@@ -60,7 +64,10 @@ func setMonitorActiveState(c fiber.Ctx, isActive bool, status entmonitor.Status,
 		Save(c)
 	if err != nil {
 		log.Error().Err(err).Msg(failureMessage)
-		return serverError(c, failureMessage)
+		return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: failureMessage,
+		})
 	}
 
 	return c.Status(fiber.StatusOK).JSON(monitorResponse(updated))

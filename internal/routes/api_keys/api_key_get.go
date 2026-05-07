@@ -42,7 +42,10 @@ func GetAPIKey(c fiber.Ctx) error {
 	user := c.Locals("user").(*ent.User)
 	id, err := apiKeyID(c)
 	if err != nil {
-		return badRequest(c, "Invalid API key id")
+		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Invalid API key id",
+		})
 	}
 
 	key, err := userAPIKey(c, user.ID, id)
@@ -74,20 +77,9 @@ func apiKeyLookupError(c fiber.Ctx, err error) error {
 		})
 	}
 	log.Error().Err(err).Msg("Failed to load API key")
-	return serverError(c, "Failed to load API key")
-}
-
-func badRequest(c fiber.Ctx, message string) error {
-	return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
-		Status:  "error",
-		Message: message,
-	})
-}
-
-func serverError(c fiber.Ctx, message string) error {
 	return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
 		Status:  "error",
-		Message: message,
+		Message: "Failed to load API key",
 	})
 }
 

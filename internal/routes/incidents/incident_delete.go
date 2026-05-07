@@ -26,7 +26,10 @@ func DeleteIncident(c fiber.Ctx) error {
 	user := c.Locals("user").(*ent.User)
 	id, err := incidentID(c)
 	if err != nil {
-		return badRequest(c, "Invalid incident id")
+		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Invalid incident id",
+		})
 	}
 	if _, err := userIncident(c, user.ID, id); err != nil {
 		return incidentLookupError(c, err)
@@ -34,7 +37,10 @@ func DeleteIncident(c fiber.Ctx) error {
 
 	if err := database.Client.Incident.DeleteOneID(id).Exec(c); err != nil {
 		log.Error().Err(err).Msg("Failed to delete incident")
-		return serverError(c, "Failed to delete incident")
+		return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Failed to delete incident",
+		})
 	}
 
 	return c.Status(fiber.StatusOK).JSON(routes.SuccessResponse{

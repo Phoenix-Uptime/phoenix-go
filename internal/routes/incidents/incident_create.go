@@ -6,6 +6,7 @@ import (
 	"github.com/Phoenix-Uptime/phoenix-go/ent"
 	entincident "github.com/Phoenix-Uptime/phoenix-go/ent/incident"
 	"github.com/Phoenix-Uptime/phoenix-go/internal/database"
+	"github.com/Phoenix-Uptime/phoenix-go/internal/routes"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v3"
 	"github.com/rs/zerolog/log"
@@ -41,28 +42,46 @@ func CreateIncident(c fiber.Ctx) error {
 
 	var req CreateIncidentRequest
 	if err := c.Bind().Body(&req); err != nil {
-		return badRequest(c, "Invalid request payload")
+		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Invalid request payload",
+		})
 	}
 	if err := validator.New().Struct(&req); err != nil {
-		return badRequest(c, "Invalid input: "+err.Error())
+		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Invalid input: " + err.Error(),
+		})
 	}
 
 	ok, err := userOwnsMonitor(c, user.ID, req.MonitorID)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to validate incident monitor")
-		return serverError(c, "Failed to validate incident")
+		return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Failed to validate incident",
+		})
 	}
 	if !ok {
-		return badRequest(c, "Invalid monitor id")
+		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Invalid monitor id",
+		})
 	}
 	if req.StatusPageID != nil {
 		ok, err := userOwnsStatusPage(c, user.ID, *req.StatusPageID)
 		if err != nil {
 			log.Error().Err(err).Msg("Failed to validate incident status page")
-			return serverError(c, "Failed to validate incident")
+			return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
+				Status:  "error",
+				Message: "Failed to validate incident",
+			})
 		}
 		if !ok {
-			return badRequest(c, "Invalid status page id")
+			return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+				Status:  "error",
+				Message: "Invalid status page id",
+			})
 		}
 	}
 
@@ -102,7 +121,10 @@ func CreateIncident(c fiber.Ctx) error {
 	incident, err := create.Save(c)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to create incident")
-		return serverError(c, "Failed to create incident")
+		return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Failed to create incident",
+		})
 	}
 
 	return c.Status(fiber.StatusCreated).JSON(incidentResponse(incident))

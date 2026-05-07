@@ -5,6 +5,7 @@ import (
 
 	"github.com/Phoenix-Uptime/phoenix-go/ent"
 	"github.com/Phoenix-Uptime/phoenix-go/internal/database"
+	"github.com/Phoenix-Uptime/phoenix-go/internal/routes"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v3"
 	"github.com/rs/zerolog/log"
@@ -36,7 +37,10 @@ func UpdateAPIKey(c fiber.Ctx) error {
 	user := c.Locals("user").(*ent.User)
 	id, err := apiKeyID(c)
 	if err != nil {
-		return badRequest(c, "Invalid API key id")
+		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Invalid API key id",
+		})
 	}
 	if _, err := userAPIKey(c, user.ID, id); err != nil {
 		return apiKeyLookupError(c, err)
@@ -44,13 +48,22 @@ func UpdateAPIKey(c fiber.Ctx) error {
 
 	var req UpdateAPIKeyRequest
 	if err := c.Bind().Body(&req); err != nil {
-		return badRequest(c, "Invalid request payload")
+		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Invalid request payload",
+		})
 	}
 	if err := validator.New().Struct(&req); err != nil {
-		return badRequest(c, "Invalid input: "+err.Error())
+		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Invalid input: " + err.Error(),
+		})
 	}
 	if req.ExpiresAt != nil && !req.ExpiresAt.After(time.Now()) {
-		return badRequest(c, "API key expiration must be in the future")
+		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "API key expiration must be in the future",
+		})
 	}
 
 	update := database.Client.APIKey.UpdateOneID(id)
@@ -69,7 +82,10 @@ func UpdateAPIKey(c fiber.Ctx) error {
 	key, err := update.Save(c)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to update API key")
-		return serverError(c, "Failed to update API key")
+		return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Failed to update API key",
+		})
 	}
 
 	return c.Status(fiber.StatusOK).JSON(apiKeyResponse(key))

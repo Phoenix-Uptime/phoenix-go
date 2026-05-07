@@ -7,6 +7,7 @@ import (
 	"github.com/Phoenix-Uptime/phoenix-go/ent"
 	entapikey "github.com/Phoenix-Uptime/phoenix-go/ent/apikey"
 	"github.com/Phoenix-Uptime/phoenix-go/internal/database"
+	"github.com/Phoenix-Uptime/phoenix-go/internal/routes"
 	"github.com/gofiber/fiber/v3"
 	"github.com/rs/zerolog/log"
 )
@@ -38,7 +39,10 @@ func ListAPIKeys(c fiber.Ctx) error {
 	if isActive := c.Query("is_active"); isActive != "" {
 		value, err := strconv.ParseBool(isActive)
 		if err != nil {
-			return badRequest(c, "Invalid is_active filter")
+			return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+				Status:  "error",
+				Message: "Invalid is_active filter",
+			})
 		}
 		query.Where(entapikey.IsActive(value))
 	}
@@ -46,7 +50,10 @@ func ListAPIKeys(c fiber.Ctx) error {
 	keys, err := query.All(c)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to list API keys")
-		return serverError(c, "Failed to list API keys")
+		return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Failed to list API keys",
+		})
 	}
 
 	response := APIKeyListResponse{

@@ -5,6 +5,7 @@ import (
 	"github.com/Phoenix-Uptime/phoenix-go/ent"
 	enttag "github.com/Phoenix-Uptime/phoenix-go/ent/tag"
 	"github.com/Phoenix-Uptime/phoenix-go/internal/database"
+	"github.com/Phoenix-Uptime/phoenix-go/internal/routes"
 	"github.com/gofiber/fiber/v3"
 	"github.com/rs/zerolog/log"
 )
@@ -33,7 +34,10 @@ func ListTags(c fiber.Ctx) error {
 		All(c)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to list tags")
-		return serverError(c, "Failed to list tags")
+		return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Failed to list tags",
+		})
 	}
 
 	response := TagListResponse{

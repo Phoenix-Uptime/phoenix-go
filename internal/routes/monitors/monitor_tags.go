@@ -5,6 +5,7 @@ import (
 	"github.com/Phoenix-Uptime/phoenix-go/ent"
 	enttag "github.com/Phoenix-Uptime/phoenix-go/ent/tag"
 	"github.com/Phoenix-Uptime/phoenix-go/internal/database"
+	"github.com/Phoenix-Uptime/phoenix-go/internal/routes"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v3"
 	"github.com/rs/zerolog/log"
@@ -43,7 +44,10 @@ func ListMonitorTags(c fiber.Ctx) error {
 	user := c.Locals("user").(*ent.User)
 	id, err := monitorID(c)
 	if err != nil {
-		return badRequest(c, "Invalid monitor id")
+		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Invalid monitor id",
+		})
 	}
 
 	monitor, err := userMonitor(c, user.ID, id)
@@ -56,7 +60,10 @@ func ListMonitorTags(c fiber.Ctx) error {
 		All(c)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to list monitor tags")
-		return serverError(c, "Failed to list monitor tags")
+		return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Failed to list monitor tags",
+		})
 	}
 
 	return c.Status(fiber.StatusOK).JSON(monitorTagsResponse(tags))
@@ -81,7 +88,10 @@ func ReplaceMonitorTags(c fiber.Ctx) error {
 	user := c.Locals("user").(*ent.User)
 	id, err := monitorID(c)
 	if err != nil {
-		return badRequest(c, "Invalid monitor id")
+		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Invalid monitor id",
+		})
 	}
 	if _, err := userMonitor(c, user.ID, id); err != nil {
 		return monitorLookupError(c, err)
@@ -89,17 +99,26 @@ func ReplaceMonitorTags(c fiber.Ctx) error {
 
 	var req ReplaceMonitorTagsRequest
 	if err := c.Bind().Body(&req); err != nil {
-		return badRequest(c, "Invalid request payload")
+		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Invalid request payload",
+		})
 	}
 	if err := validator.New().Struct(&req); err != nil {
-		return badRequest(c, "Invalid input: "+err.Error())
+		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Invalid input: " + err.Error(),
+		})
 	}
 
 	seen := make(map[int]struct{}, len(req.TagIDs))
 	tagIDs := make([]int, 0, len(req.TagIDs))
 	for _, tagID := range req.TagIDs {
 		if tagID < 1 {
-			return badRequest(c, "Invalid tag ids")
+			return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+				Status:  "error",
+				Message: "Invalid tag ids",
+			})
 		}
 		if _, ok := seen[tagID]; ok {
 			continue
@@ -117,10 +136,16 @@ func ReplaceMonitorTags(c fiber.Ctx) error {
 			Count(c)
 		if err != nil {
 			log.Error().Err(err).Msg("Failed to validate monitor tags")
-			return serverError(c, "Failed to validate monitor tags")
+			return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
+				Status:  "error",
+				Message: "Failed to validate monitor tags",
+			})
 		}
 		if count != len(tagIDs) {
-			return badRequest(c, "Invalid tag ids")
+			return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+				Status:  "error",
+				Message: "Invalid tag ids",
+			})
 		}
 	}
 
@@ -130,7 +155,10 @@ func ReplaceMonitorTags(c fiber.Ctx) error {
 	}
 	if err := update.Exec(c); err != nil {
 		log.Error().Err(err).Msg("Failed to update monitor tags")
-		return serverError(c, "Failed to update monitor tags")
+		return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Failed to update monitor tags",
+		})
 	}
 	if len(tagIDs) == 0 {
 		return c.Status(fiber.StatusOK).JSON(MonitorTagsResponse{Tags: []MonitorTagResponse{}})
@@ -145,7 +173,10 @@ func ReplaceMonitorTags(c fiber.Ctx) error {
 		All(c)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to list monitor tags")
-		return serverError(c, "Failed to list monitor tags")
+		return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Failed to list monitor tags",
+		})
 	}
 
 	return c.Status(fiber.StatusOK).JSON(monitorTagsResponse(tags))

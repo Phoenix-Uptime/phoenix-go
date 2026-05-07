@@ -80,7 +80,10 @@ func GetPublicStatusPage(c fiber.Ctx) error {
 	response, err := publicStatusPageResponse(c, page)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to build public status page response")
-		return serverError(c, "Failed to load status page")
+		return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Failed to load status page",
+		})
 	}
 
 	return c.Status(fiber.StatusOK).JSON(response)
@@ -110,7 +113,10 @@ func authorizePublicStatusPage(c fiber.Ctx, page *ent.StatusPage) (bool, error) 
 		Exist(c)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to check status page password")
-		return false, serverError(c, "Failed to load status page")
+		return false, c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Failed to load status page",
+		})
 	}
 	if !protected {
 		return true, nil
@@ -127,7 +133,10 @@ func authorizePublicStatusPage(c fiber.Ctx, page *ent.StatusPage) (bool, error) 
 		Exist(c)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to validate status page password")
-		return false, serverError(c, "Failed to load status page")
+		return false, c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Failed to load status page",
+		})
 	}
 	return valid, nil
 }
@@ -147,20 +156,9 @@ func publicStatusPageLookupError(c fiber.Ctx, err error) error {
 		})
 	}
 	log.Error().Err(err).Msg("Failed to load public status page")
-	return serverError(c, "Failed to load status page")
-}
-
-func badRequest(c fiber.Ctx, message string) error {
-	return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
-		Status:  "error",
-		Message: message,
-	})
-}
-
-func serverError(c fiber.Ctx, message string) error {
 	return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
 		Status:  "error",
-		Message: message,
+		Message: "Failed to load status page",
 	})
 }
 

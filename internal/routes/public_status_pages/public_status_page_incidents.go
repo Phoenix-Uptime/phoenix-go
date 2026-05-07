@@ -8,6 +8,7 @@ import (
 	"github.com/Phoenix-Uptime/phoenix-go/ent"
 	entincident "github.com/Phoenix-Uptime/phoenix-go/ent/incident"
 	"github.com/Phoenix-Uptime/phoenix-go/internal/database"
+	"github.com/Phoenix-Uptime/phoenix-go/internal/routes"
 	"github.com/gofiber/fiber/v3"
 	"github.com/rs/zerolog/log"
 )
@@ -76,7 +77,10 @@ func ListPublicStatusPageIncidents(c fiber.Ctx) error {
 	if status := c.Query("status"); status != "" {
 		incidentStatus := entincident.Status(status)
 		if err := entincident.StatusValidator(incidentStatus); err != nil {
-			return badRequest(c, "Invalid incident status")
+			return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+				Status:  "error",
+				Message: "Invalid incident status",
+			})
 		}
 		query.Where(entincident.StatusEQ(incidentStatus))
 	}
@@ -85,7 +89,10 @@ func ListPublicStatusPageIncidents(c fiber.Ctx) error {
 	if rawLimit := c.Query("limit"); rawLimit != "" {
 		parsedLimit, err := strconv.Atoi(rawLimit)
 		if err != nil || parsedLimit < 1 {
-			return badRequest(c, "Invalid limit")
+			return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+				Status:  "error",
+				Message: "Invalid limit",
+			})
 		}
 		limit = parsedLimit
 	}
@@ -97,7 +104,10 @@ func ListPublicStatusPageIncidents(c fiber.Ctx) error {
 	incidents, err := query.All(c)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to list public status page incidents")
-		return serverError(c, "Failed to list incidents")
+		return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Failed to list incidents",
+		})
 	}
 
 	response := PublicStatusPageIncidentsResponse{

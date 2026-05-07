@@ -60,7 +60,10 @@ func GetMonitor(c fiber.Ctx) error {
 	user := c.Locals("user").(*ent.User)
 	id, err := monitorID(c)
 	if err != nil {
-		return badRequest(c, "Invalid monitor id")
+		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Invalid monitor id",
+		})
 	}
 
 	monitor, err := userMonitor(c, user.ID, id)
@@ -92,20 +95,9 @@ func monitorLookupError(c fiber.Ctx, err error) error {
 		})
 	}
 	log.Error().Err(err).Msg("Failed to load monitor")
-	return serverError(c, "Failed to load monitor")
-}
-
-func badRequest(c fiber.Ctx, message string) error {
-	return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
-		Status:  "error",
-		Message: message,
-	})
-}
-
-func serverError(c fiber.Ctx, message string) error {
 	return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
 		Status:  "error",
-		Message: message,
+		Message: "Failed to load monitor",
 	})
 }
 

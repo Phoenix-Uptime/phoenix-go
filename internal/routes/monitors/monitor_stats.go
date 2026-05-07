@@ -8,6 +8,7 @@ import (
 	"github.com/Phoenix-Uptime/phoenix-go/ent"
 	entmonitorstat "github.com/Phoenix-Uptime/phoenix-go/ent/monitorstat"
 	"github.com/Phoenix-Uptime/phoenix-go/internal/database"
+	"github.com/Phoenix-Uptime/phoenix-go/internal/routes"
 	"github.com/gofiber/fiber/v3"
 	"github.com/rs/zerolog/log"
 )
@@ -54,7 +55,10 @@ func ListMonitorStats(c fiber.Ctx) error {
 	user := c.Locals("user").(*ent.User)
 	id, err := monitorID(c)
 	if err != nil {
-		return badRequest(c, "Invalid monitor id")
+		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Invalid monitor id",
+		})
 	}
 	if _, err := userMonitor(c, user.ID, id); err != nil {
 		return monitorLookupError(c, err)
@@ -64,7 +68,10 @@ func ListMonitorStats(c fiber.Ctx) error {
 	if rawLimit := c.Query("limit"); rawLimit != "" {
 		parsedLimit, err := strconv.Atoi(rawLimit)
 		if err != nil || parsedLimit < 1 {
-			return badRequest(c, "Invalid limit")
+			return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+				Status:  "error",
+				Message: "Invalid limit",
+			})
 		}
 		limit = parsedLimit
 	}
@@ -80,7 +87,10 @@ func ListMonitorStats(c fiber.Ctx) error {
 	if period := c.Query("period"); period != "" {
 		statPeriod := entmonitorstat.Period(period)
 		if err := entmonitorstat.PeriodValidator(statPeriod); err != nil {
-			return badRequest(c, "Invalid period")
+			return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+				Status:  "error",
+				Message: "Invalid period",
+			})
 		}
 		query.Where(entmonitorstat.PeriodEQ(statPeriod))
 	}
@@ -88,7 +98,10 @@ func ListMonitorStats(c fiber.Ctx) error {
 	stats, err := query.All(c)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to list monitor stats")
-		return serverError(c, "Failed to list monitor stats")
+		return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Failed to list monitor stats",
+		})
 	}
 
 	response := MonitorStatsResponse{

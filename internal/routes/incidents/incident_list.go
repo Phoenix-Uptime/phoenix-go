@@ -8,6 +8,7 @@ import (
 	entincident "github.com/Phoenix-Uptime/phoenix-go/ent/incident"
 	entmonitor "github.com/Phoenix-Uptime/phoenix-go/ent/monitor"
 	"github.com/Phoenix-Uptime/phoenix-go/internal/database"
+	"github.com/Phoenix-Uptime/phoenix-go/internal/routes"
 	"github.com/gofiber/fiber/v3"
 	"github.com/rs/zerolog/log"
 )
@@ -41,21 +42,30 @@ func ListIncidents(c fiber.Ctx) error {
 	if status := c.Query("status"); status != "" {
 		incidentStatus := entincident.Status(status)
 		if err := entincident.StatusValidator(incidentStatus); err != nil {
-			return badRequest(c, "Invalid incident status")
+			return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+				Status:  "error",
+				Message: "Invalid incident status",
+			})
 		}
 		query.Where(entincident.StatusEQ(incidentStatus))
 	}
 	if severity := c.Query("severity"); severity != "" {
 		incidentSeverity := entincident.Severity(severity)
 		if err := entincident.SeverityValidator(incidentSeverity); err != nil {
-			return badRequest(c, "Invalid incident severity")
+			return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+				Status:  "error",
+				Message: "Invalid incident severity",
+			})
 		}
 		query.Where(entincident.SeverityEQ(incidentSeverity))
 	}
 	if rawMonitorID := c.Query("monitor_id"); rawMonitorID != "" {
 		monitorID, err := strconv.Atoi(rawMonitorID)
 		if err != nil || monitorID < 1 {
-			return badRequest(c, "Invalid monitor id")
+			return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+				Status:  "error",
+				Message: "Invalid monitor id",
+			})
 		}
 		query.Where(entincident.MonitorID(monitorID))
 	}
@@ -63,7 +73,10 @@ func ListIncidents(c fiber.Ctx) error {
 	incidents, err := query.All(c)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to list incidents")
-		return serverError(c, "Failed to list incidents")
+		return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Failed to list incidents",
+		})
 	}
 
 	response := IncidentListResponse{

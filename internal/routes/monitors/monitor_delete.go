@@ -26,7 +26,10 @@ func DeleteMonitor(c fiber.Ctx) error {
 	user := c.Locals("user").(*ent.User)
 	id, err := monitorID(c)
 	if err != nil {
-		return badRequest(c, "Invalid monitor id")
+		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Invalid monitor id",
+		})
 	}
 	if _, err := userMonitor(c, user.ID, id); err != nil {
 		return monitorLookupError(c, err)
@@ -34,7 +37,10 @@ func DeleteMonitor(c fiber.Ctx) error {
 
 	if err := database.Client.Monitor.DeleteOneID(id).Exec(c); err != nil {
 		log.Error().Err(err).Msg("Failed to delete monitor")
-		return serverError(c, "Failed to delete monitor")
+		return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Failed to delete monitor",
+		})
 	}
 
 	return c.Status(fiber.StatusOK).JSON(routes.SuccessResponse{

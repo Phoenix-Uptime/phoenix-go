@@ -4,6 +4,7 @@ import (
 	"github.com/Phoenix-Uptime/phoenix-go/ent"
 	entmonitor "github.com/Phoenix-Uptime/phoenix-go/ent/monitor"
 	"github.com/Phoenix-Uptime/phoenix-go/internal/database"
+	"github.com/Phoenix-Uptime/phoenix-go/internal/routes"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v3"
 	"github.com/rs/zerolog/log"
@@ -52,10 +53,16 @@ func CreateMonitor(c fiber.Ctx) error {
 
 	var req CreateMonitorRequest
 	if err := c.Bind().Body(&req); err != nil {
-		return badRequest(c, "Invalid request payload")
+		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Invalid request payload",
+		})
 	}
 	if err := validator.New().Struct(&req); err != nil {
-		return badRequest(c, "Invalid input: "+err.Error())
+		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Invalid input: " + err.Error(),
+		})
 	}
 
 	create := database.Client.Monitor.Create().
@@ -124,7 +131,10 @@ func CreateMonitor(c fiber.Ctx) error {
 	created, err := create.Save(c)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to create monitor")
-		return serverError(c, "Failed to create monitor")
+		return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Failed to create monitor",
+		})
 	}
 
 	return c.Status(fiber.StatusCreated).JSON(monitorResponse(created))

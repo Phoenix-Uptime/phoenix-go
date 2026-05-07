@@ -40,7 +40,10 @@ func GetTag(c fiber.Ctx) error {
 	user := c.Locals("user").(*ent.User)
 	id, err := tagID(c)
 	if err != nil {
-		return badRequest(c, "Invalid tag id")
+		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Invalid tag id",
+		})
 	}
 
 	tag, err := userTag(c, user.ID, id)
@@ -72,27 +75,9 @@ func tagLookupError(c fiber.Ctx, err error) error {
 		})
 	}
 	log.Error().Err(err).Msg("Failed to load tag")
-	return serverError(c, "Failed to load tag")
-}
-
-func badRequest(c fiber.Ctx, message string) error {
-	return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
-		Status:  "error",
-		Message: message,
-	})
-}
-
-func conflict(c fiber.Ctx, message string) error {
-	return c.Status(fiber.StatusConflict).JSON(routes.ErrorResponse{
-		Status:  "error",
-		Message: message,
-	})
-}
-
-func serverError(c fiber.Ctx, message string) error {
 	return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
 		Status:  "error",
-		Message: message,
+		Message: "Failed to load tag",
 	})
 }
 

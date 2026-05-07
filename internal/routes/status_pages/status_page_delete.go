@@ -26,7 +26,10 @@ func DeleteStatusPage(c fiber.Ctx) error {
 	user := c.Locals("user").(*ent.User)
 	id, err := statusPageID(c)
 	if err != nil {
-		return badRequest(c, "Invalid status page id")
+		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Invalid status page id",
+		})
 	}
 	if _, err := userStatusPage(c, user.ID, id); err != nil {
 		return statusPageLookupError(c, err)
@@ -34,7 +37,10 @@ func DeleteStatusPage(c fiber.Ctx) error {
 
 	if err := database.Client.StatusPage.DeleteOneID(id).Exec(c); err != nil {
 		log.Error().Err(err).Msg("Failed to delete status page")
-		return serverError(c, "Failed to delete status page")
+		return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Failed to delete status page",
+		})
 	}
 
 	return c.Status(fiber.StatusOK).JSON(routes.SuccessResponse{

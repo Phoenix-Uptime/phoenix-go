@@ -4,6 +4,7 @@ import (
 	"github.com/Phoenix-Uptime/phoenix-go/ent"
 	entmonitor "github.com/Phoenix-Uptime/phoenix-go/ent/monitor"
 	"github.com/Phoenix-Uptime/phoenix-go/internal/database"
+	"github.com/Phoenix-Uptime/phoenix-go/internal/routes"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v3"
 	"github.com/rs/zerolog/log"
@@ -53,7 +54,10 @@ func UpdateMonitor(c fiber.Ctx) error {
 	user := c.Locals("user").(*ent.User)
 	id, err := monitorID(c)
 	if err != nil {
-		return badRequest(c, "Invalid monitor id")
+		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Invalid monitor id",
+		})
 	}
 	if _, err := userMonitor(c, user.ID, id); err != nil {
 		return monitorLookupError(c, err)
@@ -61,10 +65,16 @@ func UpdateMonitor(c fiber.Ctx) error {
 
 	var req UpdateMonitorRequest
 	if err := c.Bind().Body(&req); err != nil {
-		return badRequest(c, "Invalid request payload")
+		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Invalid request payload",
+		})
 	}
 	if err := validator.New().Struct(&req); err != nil {
-		return badRequest(c, "Invalid input: "+err.Error())
+		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Invalid input: " + err.Error(),
+		})
 	}
 
 	update := database.Client.Monitor.UpdateOneID(id)
@@ -174,7 +184,10 @@ func UpdateMonitor(c fiber.Ctx) error {
 	updated, err := update.Save(c)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to update monitor")
-		return serverError(c, "Failed to update monitor")
+		return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Failed to update monitor",
+		})
 	}
 
 	return c.Status(fiber.StatusOK).JSON(monitorResponse(updated))

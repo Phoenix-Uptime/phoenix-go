@@ -4,6 +4,7 @@ import (
 	"github.com/Phoenix-Uptime/phoenix-go/ent"
 	entstatuspagemonitor "github.com/Phoenix-Uptime/phoenix-go/ent/statuspagemonitor"
 	"github.com/Phoenix-Uptime/phoenix-go/internal/database"
+	"github.com/Phoenix-Uptime/phoenix-go/internal/routes"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v3"
 	"github.com/rs/zerolog/log"
@@ -42,7 +43,10 @@ func ListStatusPageMonitors(c fiber.Ctx) error {
 	user := c.Locals("user").(*ent.User)
 	id, err := statusPageID(c)
 	if err != nil {
-		return badRequest(c, "Invalid status page id")
+		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Invalid status page id",
+		})
 	}
 	if _, err := userStatusPage(c, user.ID, id); err != nil {
 		return statusPageLookupError(c, err)
@@ -51,7 +55,10 @@ func ListStatusPageMonitors(c fiber.Ctx) error {
 	monitors, err := statusPageMonitors(c, id)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to list status page monitors")
-		return serverError(c, "Failed to list status page monitors")
+		return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Failed to list status page monitors",
+		})
 	}
 
 	return c.Status(fiber.StatusOK).JSON(StatusPageMonitorsResponse{
@@ -78,7 +85,10 @@ func ReplaceStatusPageMonitors(c fiber.Ctx) error {
 	user := c.Locals("user").(*ent.User)
 	id, err := statusPageID(c)
 	if err != nil {
-		return badRequest(c, "Invalid status page id")
+		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Invalid status page id",
+		})
 	}
 	if _, err := userStatusPage(c, user.ID, id); err != nil {
 		return statusPageLookupError(c, err)
@@ -86,15 +96,24 @@ func ReplaceStatusPageMonitors(c fiber.Ctx) error {
 
 	var req ReplaceStatusPageMonitorsRequest
 	if err := c.Bind().Body(&req); err != nil {
-		return badRequest(c, "Invalid request payload")
+		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Invalid request payload",
+		})
 	}
 	if err := validator.New().Struct(&req); err != nil {
-		return badRequest(c, "Invalid input: "+err.Error())
+		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Invalid input: " + err.Error(),
+		})
 	}
 
 	items, ok := normalizeMonitorItems(req.Monitors)
 	if !ok {
-		return badRequest(c, "Invalid monitor ids")
+		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Invalid monitor ids",
+		})
 	}
 	monitorIDs := make([]int, 0, len(items))
 	for _, item := range items {
@@ -103,16 +122,25 @@ func ReplaceStatusPageMonitors(c fiber.Ctx) error {
 	ok, err = userOwnsMonitorIDs(c, user.ID, monitorIDs)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to validate status page monitors")
-		return serverError(c, "Failed to validate status page monitors")
+		return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Failed to validate status page monitors",
+		})
 	}
 	if !ok {
-		return badRequest(c, "Invalid monitor ids")
+		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Invalid monitor ids",
+		})
 	}
 
 	tx, err := database.Client.Tx(c)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to start status page monitor transaction")
-		return serverError(c, "Failed to replace status page monitors")
+		return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Failed to replace status page monitors",
+		})
 	}
 
 	if _, err := tx.StatusPageMonitor.Delete().
@@ -120,7 +148,10 @@ func ReplaceStatusPageMonitors(c fiber.Ctx) error {
 		Exec(c); err != nil {
 		_ = tx.Rollback()
 		log.Error().Err(err).Msg("Failed to clear status page monitors")
-		return serverError(c, "Failed to replace status page monitors")
+		return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Failed to replace status page monitors",
+		})
 	}
 
 	for _, item := range items {
@@ -139,19 +170,28 @@ func ReplaceStatusPageMonitors(c fiber.Ctx) error {
 		if _, err := create.Save(c); err != nil {
 			_ = tx.Rollback()
 			log.Error().Err(err).Msg("Failed to create status page monitor")
-			return serverError(c, "Failed to replace status page monitors")
+			return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
+				Status:  "error",
+				Message: "Failed to replace status page monitors",
+			})
 		}
 	}
 
 	if err := tx.Commit(); err != nil {
 		log.Error().Err(err).Msg("Failed to commit status page monitor transaction")
-		return serverError(c, "Failed to replace status page monitors")
+		return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Failed to replace status page monitors",
+		})
 	}
 
 	monitors, err := statusPageMonitors(c, id)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to reload status page monitors")
-		return serverError(c, "Failed to replace status page monitors")
+		return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Failed to replace status page monitors",
+		})
 	}
 
 	return c.Status(fiber.StatusOK).JSON(StatusPageMonitorsResponse{

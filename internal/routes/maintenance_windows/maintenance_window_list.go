@@ -8,6 +8,7 @@ import (
 	entmaintenancewindow "github.com/Phoenix-Uptime/phoenix-go/ent/maintenancewindow"
 	entmonitor "github.com/Phoenix-Uptime/phoenix-go/ent/monitor"
 	"github.com/Phoenix-Uptime/phoenix-go/internal/database"
+	"github.com/Phoenix-Uptime/phoenix-go/internal/routes"
 	"github.com/gofiber/fiber/v3"
 	"github.com/rs/zerolog/log"
 )
@@ -42,21 +43,30 @@ func ListMaintenanceWindows(c fiber.Ctx) error {
 	if rawActive := c.Query("is_active"); rawActive != "" {
 		isActive, err := strconv.ParseBool(rawActive)
 		if err != nil {
-			return badRequest(c, "Invalid is_active value")
+			return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+				Status:  "error",
+				Message: "Invalid is_active value",
+			})
 		}
 		query.Where(entmaintenancewindow.IsActive(isActive))
 	}
 	if rawStrategy := c.Query("strategy"); rawStrategy != "" {
 		strategy := entmaintenancewindow.Strategy(rawStrategy)
 		if err := entmaintenancewindow.StrategyValidator(strategy); err != nil {
-			return badRequest(c, "Invalid maintenance window strategy")
+			return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+				Status:  "error",
+				Message: "Invalid maintenance window strategy",
+			})
 		}
 		query.Where(entmaintenancewindow.StrategyEQ(strategy))
 	}
 	if rawMonitorID := c.Query("monitor_id"); rawMonitorID != "" {
 		monitorID, err := strconv.Atoi(rawMonitorID)
 		if err != nil || monitorID < 1 {
-			return badRequest(c, "Invalid monitor id")
+			return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+				Status:  "error",
+				Message: "Invalid monitor id",
+			})
 		}
 		query.Where(entmaintenancewindow.HasMonitorsWith(entmonitor.ID(monitorID), entmonitor.UserID(user.ID)))
 	}
@@ -64,7 +74,10 @@ func ListMaintenanceWindows(c fiber.Ctx) error {
 	windows, err := query.All(c)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to list maintenance windows")
-		return serverError(c, "Failed to list maintenance windows")
+		return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Failed to list maintenance windows",
+		})
 	}
 
 	response := MaintenanceWindowListResponse{

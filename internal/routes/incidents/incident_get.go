@@ -48,7 +48,10 @@ func GetIncident(c fiber.Ctx) error {
 	user := c.Locals("user").(*ent.User)
 	id, err := incidentID(c)
 	if err != nil {
-		return badRequest(c, "Invalid incident id")
+		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
+			Status:  "error",
+			Message: "Invalid incident id",
+		})
 	}
 
 	incident, err := userIncident(c, user.ID, id)
@@ -98,20 +101,9 @@ func incidentLookupError(c fiber.Ctx, err error) error {
 		})
 	}
 	log.Error().Err(err).Msg("Failed to load incident")
-	return serverError(c, "Failed to load incident")
-}
-
-func badRequest(c fiber.Ctx, message string) error {
-	return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
-		Status:  "error",
-		Message: message,
-	})
-}
-
-func serverError(c fiber.Ctx, message string) error {
 	return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
 		Status:  "error",
-		Message: message,
+		Message: "Failed to load incident",
 	})
 }
 
