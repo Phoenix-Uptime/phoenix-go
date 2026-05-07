@@ -7,6 +7,7 @@ import (
 	alertruleroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/alert_rules"
 	authroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/auth"
 	healthroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/health"
+	incidentroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/incidents"
 	monitorroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/monitors"
 	notificationchannelroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/notification_channels"
 	tagroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/tags"
@@ -97,6 +98,17 @@ func New() *fiber.App {
 	alertRules.Get("/:id", alertruleroutes.GetAlertRule)
 	alertRules.Patch("/:id", alertruleroutes.UpdateAlertRule)
 	alertRules.Delete("/:id", alertruleroutes.DeleteAlertRule)
+
+	// Incident routes
+	incidents := app.Group("/incidents")
+	incidents.Use(middleware.AuthMiddleware)
+	incidents.Get("", incidentroutes.ListIncidents)
+	incidents.Post("", incidentroutes.CreateIncident)
+	incidents.Get("/:id", incidentroutes.GetIncident)
+	incidents.Patch("/:id", incidentroutes.UpdateIncident)
+	incidents.Delete("/:id", incidentroutes.DeleteIncident)
+	incidents.Post("/:id/acknowledge", incidentroutes.AcknowledgeIncident)
+	incidents.Post("/:id/resolve", incidentroutes.ResolveIncident)
 
 	// Monitor routes
 	monitors := app.Group("/monitors")

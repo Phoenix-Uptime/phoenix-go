@@ -248,6 +248,109 @@ definitions:
       status:
         type: string
     type: object
+  incidents.CreateIncidentRequest:
+    properties:
+      content:
+        type: string
+      ended_at:
+        type: string
+      is_pinned:
+        type: boolean
+      monitor_id:
+        minimum: 1
+        type: integer
+      severity:
+        enum:
+        - info
+        - warning
+        - critical
+        type: string
+      started_at:
+        type: string
+      status:
+        enum:
+        - open
+        - acknowledged
+        - resolved
+        type: string
+      status_page_id:
+        minimum: 1
+        type: integer
+      title:
+        minLength: 1
+        type: string
+    required:
+    - monitor_id
+    - title
+    type: object
+  incidents.IncidentListResponse:
+    properties:
+      incidents:
+        items:
+          $ref: '#/definitions/incidents.IncidentResponse'
+        type: array
+    type: object
+  incidents.IncidentResponse:
+    properties:
+      content:
+        type: string
+      created_at:
+        type: string
+      ended_at:
+        type: string
+      id:
+        type: integer
+      is_pinned:
+        type: boolean
+      monitor_id:
+        type: integer
+      resolved_by_id:
+        type: integer
+      severity:
+        type: string
+      started_at:
+        type: string
+      status:
+        type: string
+      status_page_id:
+        type: integer
+      title:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  incidents.UpdateIncidentRequest:
+    properties:
+      content:
+        type: string
+      ended_at:
+        type: string
+      is_pinned:
+        type: boolean
+      monitor_id:
+        minimum: 1
+        type: integer
+      severity:
+        enum:
+        - info
+        - warning
+        - critical
+        type: string
+      started_at:
+        type: string
+      status:
+        enum:
+        - open
+        - acknowledged
+        - resolved
+        type: string
+      status_page_id:
+        minimum: 0
+        type: integer
+      title:
+        minLength: 1
+        type: string
+    type: object
   models.SMTPSettings:
     properties:
       from_address:
@@ -1189,6 +1292,289 @@ paths:
       summary: Health check
       tags:
       - Health
+  /incidents:
+    get:
+      consumes:
+      - application/json
+      description: Returns incidents for monitors owned by the authenticated user.
+      parameters:
+      - description: open, acknowledged, or resolved
+        in: query
+        name: status
+        type: string
+      - description: info, warning, or critical
+        in: query
+        name: severity
+        type: string
+      - description: Monitor ID
+        in: query
+        name: monitor_id
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: incident list
+          schema:
+            $ref: '#/definitions/incidents.IncidentListResponse'
+        "400":
+          description: invalid input
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "401":
+          description: unauthorized - invalid or missing API key
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "500":
+          description: internal server error
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+      security:
+      - ApiKeyHeader: []
+      - ApiKeyQuery: []
+      summary: List Incidents
+      tags:
+      - Incidents
+    post:
+      consumes:
+      - application/json
+      description: Creates an incident for a monitor owned by the authenticated user.
+      parameters:
+      - description: incident payload
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/incidents.CreateIncidentRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: created incident
+          schema:
+            $ref: '#/definitions/incidents.IncidentResponse'
+        "400":
+          description: invalid input
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "401":
+          description: unauthorized - invalid or missing API key
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "500":
+          description: internal server error
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+      security:
+      - ApiKeyHeader: []
+      - ApiKeyQuery: []
+      summary: Create Incident
+      tags:
+      - Incidents
+  /incidents/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes one incident for a monitor owned by the authenticated user.
+      parameters:
+      - description: Incident ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: incident deleted
+          schema:
+            $ref: '#/definitions/routes.SuccessResponse'
+        "400":
+          description: invalid incident id
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "401":
+          description: unauthorized - invalid or missing API key
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "404":
+          description: incident not found
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "500":
+          description: internal server error
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+      security:
+      - ApiKeyHeader: []
+      - ApiKeyQuery: []
+      summary: Delete Incident
+      tags:
+      - Incidents
+    get:
+      consumes:
+      - application/json
+      description: Returns one incident for a monitor owned by the authenticated user.
+      parameters:
+      - description: Incident ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: incident
+          schema:
+            $ref: '#/definitions/incidents.IncidentResponse'
+        "400":
+          description: invalid incident id
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "401":
+          description: unauthorized - invalid or missing API key
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "404":
+          description: incident not found
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "500":
+          description: internal server error
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+      security:
+      - ApiKeyHeader: []
+      - ApiKeyQuery: []
+      summary: Get Incident
+      tags:
+      - Incidents
+    patch:
+      consumes:
+      - application/json
+      description: Updates one incident for a monitor owned by the authenticated user.
+      parameters:
+      - description: Incident ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: incident payload
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/incidents.UpdateIncidentRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: updated incident
+          schema:
+            $ref: '#/definitions/incidents.IncidentResponse'
+        "400":
+          description: invalid input
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "401":
+          description: unauthorized - invalid or missing API key
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "404":
+          description: incident not found
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "500":
+          description: internal server error
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+      security:
+      - ApiKeyHeader: []
+      - ApiKeyQuery: []
+      summary: Update Incident
+      tags:
+      - Incidents
+  /incidents/{id}/acknowledge:
+    post:
+      consumes:
+      - application/json
+      description: Marks one incident acknowledged.
+      parameters:
+      - description: Incident ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: acknowledged incident
+          schema:
+            $ref: '#/definitions/incidents.IncidentResponse'
+        "400":
+          description: invalid incident id
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "401":
+          description: unauthorized - invalid or missing API key
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "404":
+          description: incident not found
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "500":
+          description: internal server error
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+      security:
+      - ApiKeyHeader: []
+      - ApiKeyQuery: []
+      summary: Acknowledge Incident
+      tags:
+      - Incidents
+  /incidents/{id}/resolve:
+    post:
+      consumes:
+      - application/json
+      description: Marks one incident resolved by the authenticated user.
+      parameters:
+      - description: Incident ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: resolved incident
+          schema:
+            $ref: '#/definitions/incidents.IncidentResponse'
+        "400":
+          description: invalid incident id
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "401":
+          description: unauthorized - invalid or missing API key
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "404":
+          description: incident not found
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "500":
+          description: internal server error
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+      security:
+      - ApiKeyHeader: []
+      - ApiKeyQuery: []
+      summary: Resolve Incident
+      tags:
+      - Incidents
   /login:
     post:
       consumes:

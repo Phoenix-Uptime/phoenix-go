@@ -20,6 +20,7 @@ import (
 	accountroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/account"
 	alertruleroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/alert_rules"
 	authroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/auth"
+	incidentroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/incidents"
 	monitorroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/monitors"
 	notificationchannelroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/notification_channels"
 	tagroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/tags"
@@ -957,6 +958,156 @@ func TestAlertRuleRoutesCRUD(t *testing.T) {
 	}
 	if deleteResp.StatusCode != http.StatusOK {
 		t.Fatalf("expected delete alert rule status %d, got %d", http.StatusOK, deleteResp.StatusCode)
+	}
+}
+
+func TestIncidentRoutesCRUDAndState(t *testing.T) {
+	cleanup := useTestDatabase(t)
+	defer cleanup()
+
+	app := New()
+	apiKey := signupAndLogin(t, app, "incidentuser", "incident@example.com", "examplepassword")
+	monitorID := createTestMonitor(t, app, apiKey, "Incident Website")
+
+	createBody, err := json.Marshal(map[string]any{
+		"monitor_id": monitorID,
+		"title":      "Website outage",
+		"content":    "The website is returning 500s",
+		"severity":   "critical",
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	createReq, err := http.NewRequest(http.MethodPost, "/incidents", bytes.NewReader(createBody))
+	if err != nil {
+		t.Fatal(err)
+	}
+	createReq.Header.Set("Content-Type", "application/json")
+	createReq.Header.Set("x-api-key", apiKey)
+
+	createResp, err := app.Test(createReq, fiber.TestConfig{Timeout: 0})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if createResp.StatusCode != http.StatusCreated {
+		t.Fatalf("expected create incident status %d, got %d", http.StatusCreated, createResp.StatusCode)
+	}
+	defer createResp.Body.Close()
+
+	var created incidentroutes.IncidentResponse
+	if err := json.NewDecoder(createResp.Body).Decode(&created); err != nil {
+		t.Fatal(err)
+	}
+	if created.ID == 0 || created.MonitorID != monitorID || created.Status != "open" || created.Severity != "critical" {
+		t.Fatalf("unexpected created incident response: %+v", created)
+	}
+
+	listReq, err := http.NewRequest(http.MethodGet, "/incidents?status=open&monitor_id="+strconv.Itoa(monitorID), nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	listReq.Header.Set("x-api-key", apiKey)
+
+	listResp, err := app.Test(listReq, fiber.TestConfig{Timeout: 0})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if listResp.StatusCode != http.StatusOK {
+		t.Fatalf("expected list incidents status %d, got %d", http.StatusOK, listResp.StatusCode)
+	}
+	defer listResp.Body.Close()
+
+	var list incidentroutes.IncidentListResponse
+	if err := json.NewDecoder(listResp.Body).Decode(&list); err != nil {
+		t.Fatal(err)
+	}
+	if len(list.Incidents) != 1 || list.Incidents[0].ID != created.ID {
+		t.Fatalf("expected created incident in list, got %+v", list.Incidents)
+	}
+
+	updateBody := []byte(`{"title":"Website outage updated","severity":"warning","is_pinned":false}`)
+	updateReq, err := http.NewRequest(http.MethodPatch, "/incidents/"+strconv.Itoa(created.ID), bytes.NewReader(updateBody))
+	if err != nil {
+		t.Fatal(err)
+	}
+	updateReq.Header.Set("Content-Type", "application/json")
+	updateReq.Header.Set("x-api-key", apiKey)
+
+	updateResp, err := app.Test(updateReq, fiber.TestConfig{Timeout: 0})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if updateResp.StatusCode != http.StatusOK {
+		t.Fatalf("expected update incident status %d, got %d", http.StatusOK, updateResp.StatusCode)
+	}
+	defer updateResp.Body.Close()
+
+	var updated incidentroutes.IncidentResponse
+	if err := json.NewDecoder(updateResp.Body).Decode(&updated); err != nil {
+		t.Fatal(err)
+	}
+	if updated.Title != "Website outage updated" || updated.Severity != "warning" || updated.IsPinned {
+		t.Fatalf("unexpected updated incident response: %+v", updated)
+	}
+
+	ackReq, err := http.NewRequest(http.MethodPost, "/incidents/"+strconv.Itoa(created.ID)+"/acknowledge", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	ackReq.Header.Set("x-api-key", apiKey)
+
+	ackResp, err := app.Test(ackReq, fiber.TestConfig{Timeout: 0})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if ackResp.StatusCode != http.StatusOK {
+		t.Fatalf("expected acknowledge incident status %d, got %d", http.StatusOK, ackResp.StatusCode)
+	}
+	defer ackResp.Body.Close()
+
+	var acknowledged incidentroutes.IncidentResponse
+	if err := json.NewDecoder(ackResp.Body).Decode(&acknowledged); err != nil {
+		t.Fatal(err)
+	}
+	if acknowledged.Status != "acknowledged" || acknowledged.EndedAt != nil || acknowledged.ResolvedByID != nil {
+		t.Fatalf("unexpected acknowledged incident response: %+v", acknowledged)
+	}
+
+	resolveReq, err := http.NewRequest(http.MethodPost, "/incidents/"+strconv.Itoa(created.ID)+"/resolve", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	resolveReq.Header.Set("x-api-key", apiKey)
+
+	resolveResp, err := app.Test(resolveReq, fiber.TestConfig{Timeout: 0})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if resolveResp.StatusCode != http.StatusOK {
+		t.Fatalf("expected resolve incident status %d, got %d", http.StatusOK, resolveResp.StatusCode)
+	}
+	defer resolveResp.Body.Close()
+
+	var resolved incidentroutes.IncidentResponse
+	if err := json.NewDecoder(resolveResp.Body).Decode(&resolved); err != nil {
+		t.Fatal(err)
+	}
+	if resolved.Status != "resolved" || resolved.EndedAt == nil || resolved.ResolvedByID == nil {
+		t.Fatalf("unexpected resolved incident response: %+v", resolved)
+	}
+
+	deleteReq, err := http.NewRequest(http.MethodDelete, "/incidents/"+strconv.Itoa(created.ID), nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	deleteReq.Header.Set("x-api-key", apiKey)
+
+	deleteResp, err := app.Test(deleteReq, fiber.TestConfig{Timeout: 0})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if deleteResp.StatusCode != http.StatusOK {
+		t.Fatalf("expected delete incident status %d, got %d", http.StatusOK, deleteResp.StatusCode)
 	}
 }
 
