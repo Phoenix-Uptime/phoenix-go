@@ -6,15 +6,20 @@ import (
 	stdsql "database/sql"
 	"encoding/json"
 	"net/http"
+	"strconv"
 	"testing"
+	"time"
 
 	"entgo.io/ent/dialect"
 	entsql "entgo.io/ent/dialect/sql"
 	"github.com/Phoenix-Uptime/phoenix-go/ent"
+	entmonitorcheck "github.com/Phoenix-Uptime/phoenix-go/ent/monitorcheck"
+	entmonitorstat "github.com/Phoenix-Uptime/phoenix-go/ent/monitorstat"
 	entnotificationchannel "github.com/Phoenix-Uptime/phoenix-go/ent/notificationchannel"
 	"github.com/Phoenix-Uptime/phoenix-go/internal/database"
 	accountroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/account"
 	authroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/auth"
+	monitorroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/monitors"
 	"github.com/gofiber/fiber/v3"
 )
 
@@ -318,6 +323,211 @@ func TestResetAPIKeyRotatesAPIKeyRows(t *testing.T) {
 	}
 }
 
+func TestMonitorRoutesCRUD(t *testing.T) {
+	cleanup := useTestDatabase(t)
+	defer cleanup()
+
+	app := New()
+	apiKey := signupAndLogin(t, app, "monitoruser", "monitor@example.com", "examplepassword")
+
+	createBody := []byte(`{"name":"Website","type":"http","url":"https://example.com","interval":60,"timeout":10,"method":"GET","accepted_status_codes":["200-299"],"headers":{"x-test":"true"},"auth_password":"secret"}`)
+	createReq, err := http.NewRequest(http.MethodPost, "/monitors", bytes.NewReader(createBody))
+	if err != nil {
+		t.Fatal(err)
+	}
+	createReq.Header.Set("Content-Type", "application/json")
+	createReq.Header.Set("x-api-key", apiKey)
+
+	createResp, err := app.Test(createReq, fiber.TestConfig{Timeout: 0})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if createResp.StatusCode != http.StatusCreated {
+		t.Fatalf("expected create monitor status %d, got %d", http.StatusCreated, createResp.StatusCode)
+	}
+	defer createResp.Body.Close()
+
+	var created monitorroutes.MonitorResponse
+	if err := json.NewDecoder(createResp.Body).Decode(&created); err != nil {
+		t.Fatal(err)
+	}
+	if created.ID == 0 || created.Name != "Website" || created.Type != "http" {
+		t.Fatalf("unexpected created monitor response: %+v", created)
+	}
+
+	listReq, err := http.NewRequest(http.MethodGet, "/monitors", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	listReq.Header.Set("x-api-key", apiKey)
+
+	listResp, err := app.Test(listReq, fiber.TestConfig{Timeout: 0})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if listResp.StatusCode != http.StatusOK {
+		t.Fatalf("expected list monitor status %d, got %d", http.StatusOK, listResp.StatusCode)
+	}
+	defer listResp.Body.Close()
+
+	var list monitorroutes.MonitorListResponse
+	if err := json.NewDecoder(listResp.Body).Decode(&list); err != nil {
+		t.Fatal(err)
+	}
+	if len(list.Monitors) != 1 || list.Monitors[0].ID != created.ID {
+		t.Fatalf("expected created monitor in list, got %+v", list.Monitors)
+	}
+
+	if _, err := database.Client.MonitorCheck.Create().
+		SetMonitorID(created.ID).
+		SetStatus(entmonitorcheck.StatusUp).
+		SetResponseTimeMs(123).
+		Save(context.Background()); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := database.Client.MonitorStat.Create().
+		SetMonitorID(created.ID).
+		SetPeriod(entmonitorstat.PeriodHour).
+		SetPeriodStart(time.Now()).
+		SetTotalChecks(1).
+		SetUpChecks(1).
+		SetUptimePercentage(100).
+		Save(context.Background()); err != nil {
+		t.Fatal(err)
+	}
+
+	checksReq, err := http.NewRequest(http.MethodGet, "/monitors/"+strconv.Itoa(created.ID)+"/checks", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	checksReq.Header.Set("x-api-key", apiKey)
+
+	checksResp, err := app.Test(checksReq, fiber.TestConfig{Timeout: 0})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if checksResp.StatusCode != http.StatusOK {
+		t.Fatalf("expected monitor checks status %d, got %d", http.StatusOK, checksResp.StatusCode)
+	}
+	defer checksResp.Body.Close()
+
+	var checks monitorroutes.MonitorChecksResponse
+	if err := json.NewDecoder(checksResp.Body).Decode(&checks); err != nil {
+		t.Fatal(err)
+	}
+	if len(checks.Checks) != 1 || checks.Checks[0].ResponseTimeMs != 123 {
+		t.Fatalf("expected created monitor check, got %+v", checks.Checks)
+	}
+
+	statsReq, err := http.NewRequest(http.MethodGet, "/monitors/"+strconv.Itoa(created.ID)+"/stats?period=hour", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	statsReq.Header.Set("x-api-key", apiKey)
+
+	statsResp, err := app.Test(statsReq, fiber.TestConfig{Timeout: 0})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if statsResp.StatusCode != http.StatusOK {
+		t.Fatalf("expected monitor stats status %d, got %d", http.StatusOK, statsResp.StatusCode)
+	}
+	defer statsResp.Body.Close()
+
+	var stats monitorroutes.MonitorStatsResponse
+	if err := json.NewDecoder(statsResp.Body).Decode(&stats); err != nil {
+		t.Fatal(err)
+	}
+	if len(stats.Stats) != 1 || stats.Stats[0].UptimePercentage != 100 {
+		t.Fatalf("expected created monitor stat, got %+v", stats.Stats)
+	}
+
+	updateBody := []byte(`{"name":"Updated Website","timeout":15}`)
+	updateReq, err := http.NewRequest(http.MethodPatch, "/monitors/"+strconv.Itoa(created.ID), bytes.NewReader(updateBody))
+	if err != nil {
+		t.Fatal(err)
+	}
+	updateReq.Header.Set("Content-Type", "application/json")
+	updateReq.Header.Set("x-api-key", apiKey)
+
+	updateResp, err := app.Test(updateReq, fiber.TestConfig{Timeout: 0})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if updateResp.StatusCode != http.StatusOK {
+		t.Fatalf("expected update monitor status %d, got %d", http.StatusOK, updateResp.StatusCode)
+	}
+	defer updateResp.Body.Close()
+
+	var updated monitorroutes.MonitorResponse
+	if err := json.NewDecoder(updateResp.Body).Decode(&updated); err != nil {
+		t.Fatal(err)
+	}
+	if updated.Name != "Updated Website" || updated.Timeout != 15 {
+		t.Fatalf("unexpected updated monitor response: %+v", updated)
+	}
+
+	pauseReq, err := http.NewRequest(http.MethodPost, "/monitors/"+strconv.Itoa(created.ID)+"/pause", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	pauseReq.Header.Set("x-api-key", apiKey)
+
+	pauseResp, err := app.Test(pauseReq, fiber.TestConfig{Timeout: 0})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if pauseResp.StatusCode != http.StatusOK {
+		t.Fatalf("expected pause monitor status %d, got %d", http.StatusOK, pauseResp.StatusCode)
+	}
+	defer pauseResp.Body.Close()
+
+	var paused monitorroutes.MonitorResponse
+	if err := json.NewDecoder(pauseResp.Body).Decode(&paused); err != nil {
+		t.Fatal(err)
+	}
+	if paused.IsActive || paused.Status != "paused" {
+		t.Fatalf("expected paused inactive monitor, got %+v", paused)
+	}
+
+	resumeReq, err := http.NewRequest(http.MethodPost, "/monitors/"+strconv.Itoa(created.ID)+"/resume", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	resumeReq.Header.Set("x-api-key", apiKey)
+
+	resumeResp, err := app.Test(resumeReq, fiber.TestConfig{Timeout: 0})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if resumeResp.StatusCode != http.StatusOK {
+		t.Fatalf("expected resume monitor status %d, got %d", http.StatusOK, resumeResp.StatusCode)
+	}
+	defer resumeResp.Body.Close()
+
+	var resumed monitorroutes.MonitorResponse
+	if err := json.NewDecoder(resumeResp.Body).Decode(&resumed); err != nil {
+		t.Fatal(err)
+	}
+	if !resumed.IsActive || resumed.Status != "pending" {
+		t.Fatalf("expected resumed active monitor, got %+v", resumed)
+	}
+
+	deleteReq, err := http.NewRequest(http.MethodDelete, "/monitors/"+strconv.Itoa(created.ID), nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	deleteReq.Header.Set("x-api-key", apiKey)
+
+	deleteResp, err := app.Test(deleteReq, fiber.TestConfig{Timeout: 0})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if deleteResp.StatusCode != http.StatusOK {
+		t.Fatalf("expected delete monitor status %d, got %d", http.StatusOK, deleteResp.StatusCode)
+	}
+}
+
 func useTestDatabase(t *testing.T) func() {
 	t.Helper()
 
@@ -343,4 +553,62 @@ func useTestDatabase(t *testing.T) func() {
 			t.Fatal(err)
 		}
 	}
+}
+
+func signupAndLogin(t *testing.T, app *fiber.App, username string, email string, password string) string {
+	t.Helper()
+
+	signupBody, err := json.Marshal(map[string]string{
+		"username": username,
+		"email":    email,
+		"password": password,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	signupReq, err := http.NewRequest(http.MethodPost, "/signup", bytes.NewReader(signupBody))
+	if err != nil {
+		t.Fatal(err)
+	}
+	signupReq.Header.Set("Content-Type", "application/json")
+
+	signupResp, err := app.Test(signupReq, fiber.TestConfig{Timeout: 0})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if signupResp.StatusCode != http.StatusCreated {
+		t.Fatalf("expected signup status %d, got %d", http.StatusCreated, signupResp.StatusCode)
+	}
+
+	loginBody, err := json.Marshal(map[string]string{
+		"username": username,
+		"password": password,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	loginReq, err := http.NewRequest(http.MethodPost, "/login", bytes.NewReader(loginBody))
+	if err != nil {
+		t.Fatal(err)
+	}
+	loginReq.Header.Set("Content-Type", "application/json")
+
+	loginResp, err := app.Test(loginReq, fiber.TestConfig{Timeout: 0})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if loginResp.StatusCode != http.StatusOK {
+		t.Fatalf("expected login status %d, got %d", http.StatusOK, loginResp.StatusCode)
+	}
+	defer loginResp.Body.Close()
+
+	var login authroutes.LoginResponse
+	if err := json.NewDecoder(loginResp.Body).Decode(&login); err != nil {
+		t.Fatal(err)
+	}
+	if login.ApiKey == "" {
+		t.Fatal("expected login response to include api key")
+	}
+
+	return login.ApiKey
 }

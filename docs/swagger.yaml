@@ -145,6 +145,295 @@ definitions:
       bot_token:
         type: string
     type: object
+  monitors.CreateMonitorRequest:
+    properties:
+      accepted_status_codes:
+        items:
+          type: string
+        type: array
+      auth_password:
+        type: string
+      auth_username:
+        type: string
+      body:
+        type: string
+      config:
+        additionalProperties: true
+        type: object
+      description:
+        type: string
+      expected_value:
+        type: string
+      filters_contains:
+        type: string
+      filters_not_contains:
+        type: string
+      headers:
+        additionalProperties:
+          type: string
+        type: object
+      ignore_tls_errors:
+        type: boolean
+      interval:
+        minimum: 1
+        type: integer
+      json_path:
+        type: string
+      max_redirects:
+        minimum: 0
+        type: integer
+      method:
+        minLength: 1
+        type: string
+      name:
+        minLength: 1
+        type: string
+      push_token:
+        type: string
+      retry:
+        minimum: 0
+        type: integer
+      retry_after:
+        minimum: 0
+        type: integer
+      timeout:
+        minimum: 1
+        type: integer
+      type:
+        enum:
+        - http
+        - keyword
+        - json
+        - ping
+        - tcp
+        - smtp
+        - dns
+        - push
+        - grpc
+        type: string
+      url:
+        minLength: 1
+        type: string
+    required:
+    - name
+    - type
+    - url
+    type: object
+  monitors.MonitorCheckResponse:
+    properties:
+      checked_at:
+        type: string
+      created_at:
+        type: string
+      duration_seconds:
+        type: integer
+      error:
+        type: string
+      id:
+        type: integer
+      important:
+        type: boolean
+      message:
+        type: string
+      monitor_id:
+        type: integer
+      response_time_ms:
+        type: integer
+      retry_count:
+        type: integer
+      status:
+        type: string
+      status_code:
+        type: integer
+      updated_at:
+        type: string
+    type: object
+  monitors.MonitorChecksResponse:
+    properties:
+      checks:
+        items:
+          $ref: '#/definitions/monitors.MonitorCheckResponse'
+        type: array
+    type: object
+  monitors.MonitorListResponse:
+    properties:
+      monitors:
+        items:
+          $ref: '#/definitions/monitors.MonitorResponse'
+        type: array
+    type: object
+  monitors.MonitorResponse:
+    properties:
+      accepted_status_codes:
+        items:
+          type: string
+        type: array
+      auth_username:
+        type: string
+      body:
+        type: string
+      config:
+        additionalProperties: true
+        type: object
+      created_at:
+        type: string
+      description:
+        type: string
+      expected_value:
+        type: string
+      filters_contains:
+        type: string
+      filters_not_contains:
+        type: string
+      headers:
+        additionalProperties:
+          type: string
+        type: object
+      id:
+        type: integer
+      ignore_tls_errors:
+        type: boolean
+      interval:
+        type: integer
+      is_active:
+        type: boolean
+      json_path:
+        type: string
+      max_redirects:
+        type: integer
+      method:
+        type: string
+      name:
+        type: string
+      push_token:
+        type: string
+      retry:
+        type: integer
+      retry_after:
+        type: integer
+      status:
+        type: string
+      timeout:
+        type: integer
+      type:
+        type: string
+      updated_at:
+        type: string
+      url:
+        type: string
+      user_id:
+        type: integer
+    type: object
+  monitors.MonitorStatResponse:
+    properties:
+      avg_response_time_ms:
+        type: integer
+      created_at:
+        type: string
+      down_checks:
+        type: integer
+      downtime_seconds:
+        type: integer
+      id:
+        type: integer
+      maintenance_checks:
+        type: integer
+      max_response_time_ms:
+        type: integer
+      min_response_time_ms:
+        type: integer
+      monitor_id:
+        type: integer
+      period:
+        type: string
+      period_start:
+        type: string
+      total_checks:
+        type: integer
+      up_checks:
+        type: integer
+      updated_at:
+        type: string
+      uptime_percentage:
+        type: number
+    type: object
+  monitors.MonitorStatsResponse:
+    properties:
+      stats:
+        items:
+          $ref: '#/definitions/monitors.MonitorStatResponse'
+        type: array
+    type: object
+  monitors.UpdateMonitorRequest:
+    properties:
+      accepted_status_codes:
+        items:
+          type: string
+        type: array
+      auth_password:
+        type: string
+      auth_username:
+        type: string
+      body:
+        type: string
+      config:
+        additionalProperties: true
+        type: object
+      description:
+        type: string
+      expected_value:
+        type: string
+      filters_contains:
+        type: string
+      filters_not_contains:
+        type: string
+      headers:
+        additionalProperties:
+          type: string
+        type: object
+      ignore_tls_errors:
+        type: boolean
+      interval:
+        minimum: 1
+        type: integer
+      json_path:
+        type: string
+      max_redirects:
+        minimum: 0
+        type: integer
+      method:
+        minLength: 1
+        type: string
+      name:
+        minLength: 1
+        type: string
+      push_token:
+        type: string
+      retry:
+        minimum: 0
+        type: integer
+      retry_after:
+        minimum: 0
+        type: integer
+      timeout:
+        minimum: 1
+        type: integer
+      type:
+        enum:
+        - http
+        - keyword
+        - json
+        - ping
+        - tcp
+        - smtp
+        - dns
+        - push
+        - grpc
+        type: string
+      url:
+        minLength: 1
+        type: string
+    type: object
   routes.ErrorResponse:
     properties:
       message:
@@ -402,6 +691,365 @@ paths:
       summary: User Login
       tags:
       - Auth
+  /monitors:
+    get:
+      consumes:
+      - application/json
+      description: Returns monitors owned by the authenticated user.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: monitor list
+          schema:
+            $ref: '#/definitions/monitors.MonitorListResponse'
+        "401":
+          description: unauthorized - invalid or missing API key
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "500":
+          description: internal server error
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+      security:
+      - ApiKeyHeader: []
+      - ApiKeyQuery: []
+      summary: List Monitors
+      tags:
+      - Monitors
+    post:
+      consumes:
+      - application/json
+      description: Creates a monitor owned by the authenticated user.
+      parameters:
+      - description: monitor payload
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/monitors.CreateMonitorRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: created monitor
+          schema:
+            $ref: '#/definitions/monitors.MonitorResponse'
+        "400":
+          description: invalid input
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "401":
+          description: unauthorized - invalid or missing API key
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "500":
+          description: internal server error
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+      security:
+      - ApiKeyHeader: []
+      - ApiKeyQuery: []
+      summary: Create Monitor
+      tags:
+      - Monitors
+  /monitors/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes one monitor owned by the authenticated user.
+      parameters:
+      - description: Monitor ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: monitor deleted
+          schema:
+            $ref: '#/definitions/routes.SuccessResponse'
+        "400":
+          description: invalid monitor id
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "401":
+          description: unauthorized - invalid or missing API key
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "404":
+          description: monitor not found
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "500":
+          description: internal server error
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+      security:
+      - ApiKeyHeader: []
+      - ApiKeyQuery: []
+      summary: Delete Monitor
+      tags:
+      - Monitors
+    get:
+      consumes:
+      - application/json
+      description: Returns one monitor owned by the authenticated user.
+      parameters:
+      - description: Monitor ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: monitor
+          schema:
+            $ref: '#/definitions/monitors.MonitorResponse'
+        "400":
+          description: invalid monitor id
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "401":
+          description: unauthorized - invalid or missing API key
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "404":
+          description: monitor not found
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "500":
+          description: internal server error
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+      security:
+      - ApiKeyHeader: []
+      - ApiKeyQuery: []
+      summary: Get Monitor
+      tags:
+      - Monitors
+    patch:
+      consumes:
+      - application/json
+      description: Updates one monitor owned by the authenticated user.
+      parameters:
+      - description: Monitor ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: monitor payload
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/monitors.UpdateMonitorRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: updated monitor
+          schema:
+            $ref: '#/definitions/monitors.MonitorResponse'
+        "400":
+          description: invalid input
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "401":
+          description: unauthorized - invalid or missing API key
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "404":
+          description: monitor not found
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "500":
+          description: internal server error
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+      security:
+      - ApiKeyHeader: []
+      - ApiKeyQuery: []
+      summary: Update Monitor
+      tags:
+      - Monitors
+  /monitors/{id}/checks:
+    get:
+      consumes:
+      - application/json
+      description: Returns recent check results for one monitor owned by the authenticated
+        user.
+      parameters:
+      - description: Monitor ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Maximum checks to return
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: monitor checks
+          schema:
+            $ref: '#/definitions/monitors.MonitorChecksResponse'
+        "400":
+          description: invalid input
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "401":
+          description: unauthorized - invalid or missing API key
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "404":
+          description: monitor not found
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "500":
+          description: internal server error
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+      security:
+      - ApiKeyHeader: []
+      - ApiKeyQuery: []
+      summary: List Monitor Checks
+      tags:
+      - Monitors
+  /monitors/{id}/pause:
+    post:
+      consumes:
+      - application/json
+      description: Marks a monitor paused and inactive.
+      parameters:
+      - description: Monitor ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: paused monitor
+          schema:
+            $ref: '#/definitions/monitors.MonitorResponse'
+        "400":
+          description: invalid monitor id
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "401":
+          description: unauthorized - invalid or missing API key
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "404":
+          description: monitor not found
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "500":
+          description: internal server error
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+      security:
+      - ApiKeyHeader: []
+      - ApiKeyQuery: []
+      summary: Pause Monitor
+      tags:
+      - Monitors
+  /monitors/{id}/resume:
+    post:
+      consumes:
+      - application/json
+      description: Marks a monitor active and pending its next check.
+      parameters:
+      - description: Monitor ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: resumed monitor
+          schema:
+            $ref: '#/definitions/monitors.MonitorResponse'
+        "400":
+          description: invalid monitor id
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "401":
+          description: unauthorized - invalid or missing API key
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "404":
+          description: monitor not found
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "500":
+          description: internal server error
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+      security:
+      - ApiKeyHeader: []
+      - ApiKeyQuery: []
+      summary: Resume Monitor
+      tags:
+      - Monitors
+  /monitors/{id}/stats:
+    get:
+      consumes:
+      - application/json
+      description: Returns stats for one monitor owned by the authenticated user.
+      parameters:
+      - description: Monitor ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: hour or day
+        in: query
+        name: period
+        type: string
+      - description: Maximum stat rows to return
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: monitor stats
+          schema:
+            $ref: '#/definitions/monitors.MonitorStatsResponse'
+        "400":
+          description: invalid input
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "401":
+          description: unauthorized - invalid or missing API key
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "404":
+          description: monitor not found
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "500":
+          description: internal server error
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+      security:
+      - ApiKeyHeader: []
+      - ApiKeyQuery: []
+      summary: List Monitor Stats
+      tags:
+      - Monitors
   /signup:
     post:
       consumes:
