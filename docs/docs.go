@@ -2686,6 +2686,465 @@ const docTemplate = `{
                 }
             }
         },
+        "/status-pages": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyHeader": []
+                    },
+                    {
+                        "ApiKeyQuery": []
+                    }
+                ],
+                "description": "Returns status pages owned by the authenticated user.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Status Pages"
+                ],
+                "summary": "List Status Pages",
+                "parameters": [
+                    {
+                        "type": "boolean",
+                        "description": "filter by public/private status",
+                        "name": "is_public",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "status page list",
+                        "schema": {
+                            "$ref": "#/definitions/status_pages.StatusPageListResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "invalid input",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "unauthorized - invalid or missing API key",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyHeader": []
+                    },
+                    {
+                        "ApiKeyQuery": []
+                    }
+                ],
+                "description": "Creates a status page owned by the authenticated user.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Status Pages"
+                ],
+                "summary": "Create Status Page",
+                "parameters": [
+                    {
+                        "description": "status page payload",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/status_pages.CreateStatusPageRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "created status page",
+                        "schema": {
+                            "$ref": "#/definitions/status_pages.StatusPageResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "invalid input",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "unauthorized - invalid or missing API key",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "status page slug already exists",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/status-pages/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyHeader": []
+                    },
+                    {
+                        "ApiKeyQuery": []
+                    }
+                ],
+                "description": "Returns one status page owned by the authenticated user.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Status Pages"
+                ],
+                "summary": "Get Status Page",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Status Page ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "status page",
+                        "schema": {
+                            "$ref": "#/definitions/status_pages.StatusPageResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "invalid status page id",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "unauthorized - invalid or missing API key",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "status page not found",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyHeader": []
+                    },
+                    {
+                        "ApiKeyQuery": []
+                    }
+                ],
+                "description": "Deletes one status page owned by the authenticated user.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Status Pages"
+                ],
+                "summary": "Delete Status Page",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Status Page ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "status page deleted",
+                        "schema": {
+                            "$ref": "#/definitions/routes.SuccessResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "invalid status page id",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "unauthorized - invalid or missing API key",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "status page not found",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "security": [
+                    {
+                        "ApiKeyHeader": []
+                    },
+                    {
+                        "ApiKeyQuery": []
+                    }
+                ],
+                "description": "Updates one status page owned by the authenticated user.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Status Pages"
+                ],
+                "summary": "Update Status Page",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Status Page ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "status page payload",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/status_pages.UpdateStatusPageRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "updated status page",
+                        "schema": {
+                            "$ref": "#/definitions/status_pages.StatusPageResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "invalid input",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "unauthorized - invalid or missing API key",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "status page not found",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "status page slug already exists",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/status-pages/{id}/monitors": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyHeader": []
+                    },
+                    {
+                        "ApiKeyQuery": []
+                    }
+                ],
+                "description": "Returns monitor assignments for one status page owned by the authenticated user.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Status Pages"
+                ],
+                "summary": "List Status Page Monitors",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Status Page ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "status page monitor list",
+                        "schema": {
+                            "$ref": "#/definitions/status_pages.StatusPageMonitorsResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "invalid status page id",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "unauthorized - invalid or missing API key",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "status page not found",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyHeader": []
+                    },
+                    {
+                        "ApiKeyQuery": []
+                    }
+                ],
+                "description": "Replaces monitor assignments for one status page owned by the authenticated user.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Status Pages"
+                ],
+                "summary": "Replace Status Page Monitors",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Status Page ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "status page monitor payload",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/status_pages.ReplaceStatusPageMonitorsRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "status page monitor list",
+                        "schema": {
+                            "$ref": "#/definitions/status_pages.StatusPageMonitorsResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "invalid input",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "unauthorized - invalid or missing API key",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "status page not found",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/tags": {
             "get": {
                 "security": [
@@ -4378,6 +4837,252 @@ const docTemplate = `{
                 },
                 "status": {
                     "type": "string"
+                }
+            }
+        },
+        "status_pages.CreateStatusPageRequest": {
+            "type": "object",
+            "required": [
+                "name",
+                "slug"
+            ],
+            "properties": {
+                "auto_refresh_interval": {
+                    "type": "integer",
+                    "minimum": 30
+                },
+                "custom_css": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "footer_text": {
+                    "type": "string"
+                },
+                "is_public": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "password": {
+                    "type": "string"
+                },
+                "show_charts": {
+                    "type": "boolean"
+                },
+                "show_powered_by": {
+                    "type": "boolean"
+                },
+                "show_tags": {
+                    "type": "boolean"
+                },
+                "show_uptime_percentage": {
+                    "type": "boolean"
+                },
+                "slug": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "theme": {
+                    "type": "string",
+                    "minLength": 1
+                }
+            }
+        },
+        "status_pages.ReplaceStatusPageMonitorsRequest": {
+            "type": "object",
+            "required": [
+                "monitors"
+            ],
+            "properties": {
+                "monitors": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/status_pages.StatusPageMonitorItem"
+                    }
+                }
+            }
+        },
+        "status_pages.StatusPageListResponse": {
+            "type": "object",
+            "properties": {
+                "status_pages": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/status_pages.StatusPageResponse"
+                    }
+                }
+            }
+        },
+        "status_pages.StatusPageMonitorItem": {
+            "type": "object",
+            "required": [
+                "monitor_id"
+            ],
+            "properties": {
+                "display_name": {
+                    "type": "string"
+                },
+                "monitor_id": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "send_url": {
+                    "type": "boolean"
+                },
+                "weight": {
+                    "type": "integer",
+                    "minimum": 0
+                }
+            }
+        },
+        "status_pages.StatusPageMonitorResponse": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "display_name": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "monitor_id": {
+                    "type": "integer"
+                },
+                "send_url": {
+                    "type": "boolean"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "weight": {
+                    "type": "integer"
+                }
+            }
+        },
+        "status_pages.StatusPageMonitorsResponse": {
+            "type": "object",
+            "properties": {
+                "monitors": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/status_pages.StatusPageMonitorResponse"
+                    }
+                }
+            }
+        },
+        "status_pages.StatusPageResponse": {
+            "type": "object",
+            "properties": {
+                "auto_refresh_interval": {
+                    "type": "integer"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "custom_css": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "footer_text": {
+                    "type": "string"
+                },
+                "has_password": {
+                    "type": "boolean"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "is_public": {
+                    "type": "boolean"
+                },
+                "monitors": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/status_pages.StatusPageMonitorResponse"
+                    }
+                },
+                "name": {
+                    "type": "string"
+                },
+                "show_charts": {
+                    "type": "boolean"
+                },
+                "show_powered_by": {
+                    "type": "boolean"
+                },
+                "show_tags": {
+                    "type": "boolean"
+                },
+                "show_uptime_percentage": {
+                    "type": "boolean"
+                },
+                "slug": {
+                    "type": "string"
+                },
+                "theme": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "status_pages.UpdateStatusPageRequest": {
+            "type": "object",
+            "properties": {
+                "auto_refresh_interval": {
+                    "type": "integer",
+                    "minimum": 30
+                },
+                "custom_css": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "footer_text": {
+                    "type": "string"
+                },
+                "is_public": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "password": {
+                    "type": "string"
+                },
+                "show_charts": {
+                    "type": "boolean"
+                },
+                "show_powered_by": {
+                    "type": "boolean"
+                },
+                "show_tags": {
+                    "type": "boolean"
+                },
+                "show_uptime_percentage": {
+                    "type": "boolean"
+                },
+                "slug": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "theme": {
+                    "type": "string",
+                    "minLength": 1
                 }
             }
         },

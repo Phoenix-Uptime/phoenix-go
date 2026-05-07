@@ -24,6 +24,7 @@ import (
 	maintenancewindowroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/maintenance_windows"
 	monitorroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/monitors"
 	notificationchannelroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/notification_channels"
+	statuspageroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/status_pages"
 	tagroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/tags"
 	"github.com/gofiber/fiber/v3"
 )
@@ -1275,6 +1276,176 @@ func TestMaintenanceWindowRoutesCRUDAndState(t *testing.T) {
 	}
 	if deleteResp.StatusCode != http.StatusOK {
 		t.Fatalf("expected delete maintenance window status %d, got %d", http.StatusOK, deleteResp.StatusCode)
+	}
+}
+
+func TestStatusPageRoutesCRUDAndMonitorAssignment(t *testing.T) {
+	cleanup := useTestDatabase(t)
+	defer cleanup()
+
+	app := New()
+	apiKey := signupAndLogin(t, app, "statuspageuser", "statuspage@example.com", "examplepassword")
+	monitorID := createTestMonitor(t, app, apiKey, "Status Page Website")
+
+	createBody, err := json.Marshal(map[string]any{
+		"slug":                   "main-status",
+		"name":                   "Main Status",
+		"description":            "Public service status",
+		"is_public":              true,
+		"password":               "secret",
+		"show_tags":              true,
+		"show_charts":            false,
+		"show_uptime_percentage": true,
+		"show_powered_by":        false,
+		"auto_refresh_interval":  120,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	createReq, err := http.NewRequest(http.MethodPost, "/status-pages", bytes.NewReader(createBody))
+	if err != nil {
+		t.Fatal(err)
+	}
+	createReq.Header.Set("Content-Type", "application/json")
+	createReq.Header.Set("x-api-key", apiKey)
+
+	createResp, err := app.Test(createReq, fiber.TestConfig{Timeout: 0})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if createResp.StatusCode != http.StatusCreated {
+		t.Fatalf("expected create status page status %d, got %d", http.StatusCreated, createResp.StatusCode)
+	}
+	defer createResp.Body.Close()
+
+	var created statuspageroutes.StatusPageResponse
+	if err := json.NewDecoder(createResp.Body).Decode(&created); err != nil {
+		t.Fatal(err)
+	}
+	if created.ID == 0 || created.Slug != "main-status" || created.Name != "Main Status" || !created.HasPassword || !created.ShowTags || created.ShowCharts || created.ShowPoweredBy {
+		t.Fatalf("unexpected created status page response: %+v", created)
+	}
+
+	replaceBody, err := json.Marshal(map[string]any{
+		"monitors": []map[string]any{
+			{
+				"monitor_id":   monitorID,
+				"display_name": "Website",
+				"weight":       10,
+				"send_url":     true,
+			},
+		},
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	replaceReq, err := http.NewRequest(http.MethodPut, "/status-pages/"+strconv.Itoa(created.ID)+"/monitors", bytes.NewReader(replaceBody))
+	if err != nil {
+		t.Fatal(err)
+	}
+	replaceReq.Header.Set("Content-Type", "application/json")
+	replaceReq.Header.Set("x-api-key", apiKey)
+
+	replaceResp, err := app.Test(replaceReq, fiber.TestConfig{Timeout: 0})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if replaceResp.StatusCode != http.StatusOK {
+		t.Fatalf("expected replace status page monitors status %d, got %d", http.StatusOK, replaceResp.StatusCode)
+	}
+	defer replaceResp.Body.Close()
+
+	var replaced statuspageroutes.StatusPageMonitorsResponse
+	if err := json.NewDecoder(replaceResp.Body).Decode(&replaced); err != nil {
+		t.Fatal(err)
+	}
+	if len(replaced.Monitors) != 1 || replaced.Monitors[0].MonitorID != monitorID || replaced.Monitors[0].DisplayName == nil || *replaced.Monitors[0].DisplayName != "Website" || replaced.Monitors[0].Weight != 10 || !replaced.Monitors[0].SendURL {
+		t.Fatalf("unexpected replaced status page monitors response: %+v", replaced.Monitors)
+	}
+
+	monitorsReq, err := http.NewRequest(http.MethodGet, "/status-pages/"+strconv.Itoa(created.ID)+"/monitors", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	monitorsReq.Header.Set("x-api-key", apiKey)
+
+	monitorsResp, err := app.Test(monitorsReq, fiber.TestConfig{Timeout: 0})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if monitorsResp.StatusCode != http.StatusOK {
+		t.Fatalf("expected list status page monitors status %d, got %d", http.StatusOK, monitorsResp.StatusCode)
+	}
+	defer monitorsResp.Body.Close()
+
+	var monitors statuspageroutes.StatusPageMonitorsResponse
+	if err := json.NewDecoder(monitorsResp.Body).Decode(&monitors); err != nil {
+		t.Fatal(err)
+	}
+	if len(monitors.Monitors) != 1 || monitors.Monitors[0].MonitorID != monitorID {
+		t.Fatalf("expected assigned monitor, got %+v", monitors.Monitors)
+	}
+
+	listReq, err := http.NewRequest(http.MethodGet, "/status-pages?is_public=true", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	listReq.Header.Set("x-api-key", apiKey)
+
+	listResp, err := app.Test(listReq, fiber.TestConfig{Timeout: 0})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if listResp.StatusCode != http.StatusOK {
+		t.Fatalf("expected list status pages status %d, got %d", http.StatusOK, listResp.StatusCode)
+	}
+	defer listResp.Body.Close()
+
+	var list statuspageroutes.StatusPageListResponse
+	if err := json.NewDecoder(listResp.Body).Decode(&list); err != nil {
+		t.Fatal(err)
+	}
+	if len(list.StatusPages) != 1 || list.StatusPages[0].ID != created.ID || len(list.StatusPages[0].Monitors) != 1 {
+		t.Fatalf("expected created status page in list, got %+v", list.StatusPages)
+	}
+
+	updateBody := []byte(`{"name":"Public Status","password":"","footer_text":"Operational details"}`)
+	updateReq, err := http.NewRequest(http.MethodPatch, "/status-pages/"+strconv.Itoa(created.ID), bytes.NewReader(updateBody))
+	if err != nil {
+		t.Fatal(err)
+	}
+	updateReq.Header.Set("Content-Type", "application/json")
+	updateReq.Header.Set("x-api-key", apiKey)
+
+	updateResp, err := app.Test(updateReq, fiber.TestConfig{Timeout: 0})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if updateResp.StatusCode != http.StatusOK {
+		t.Fatalf("expected update status page status %d, got %d", http.StatusOK, updateResp.StatusCode)
+	}
+	defer updateResp.Body.Close()
+
+	var updated statuspageroutes.StatusPageResponse
+	if err := json.NewDecoder(updateResp.Body).Decode(&updated); err != nil {
+		t.Fatal(err)
+	}
+	if updated.Name != "Public Status" || updated.HasPassword || updated.FooterText == nil || *updated.FooterText != "Operational details" {
+		t.Fatalf("unexpected updated status page response: %+v", updated)
+	}
+
+	deleteReq, err := http.NewRequest(http.MethodDelete, "/status-pages/"+strconv.Itoa(created.ID), nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	deleteReq.Header.Set("x-api-key", apiKey)
+
+	deleteResp, err := app.Test(deleteReq, fiber.TestConfig{Timeout: 0})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if deleteResp.StatusCode != http.StatusOK {
+		t.Fatalf("expected delete status page status %d, got %d", http.StatusOK, deleteResp.StatusCode)
 	}
 }
 

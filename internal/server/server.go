@@ -11,6 +11,7 @@ import (
 	maintenancewindowroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/maintenance_windows"
 	monitorroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/monitors"
 	notificationchannelroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/notification_channels"
+	statuspageroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/status_pages"
 	tagroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/tags"
 	"github.com/Phoenix-Uptime/phoenix-go/internal/server/middleware"
 	"github.com/gofiber/contrib/v3/swaggo"
@@ -121,6 +122,17 @@ func New() *fiber.App {
 	maintenanceWindows.Delete("/:id", maintenancewindowroutes.DeleteMaintenanceWindow)
 	maintenanceWindows.Post("/:id/activate", maintenancewindowroutes.ActivateMaintenanceWindow)
 	maintenanceWindows.Post("/:id/deactivate", maintenancewindowroutes.DeactivateMaintenanceWindow)
+
+	// Status page routes
+	statusPages := app.Group("/status-pages")
+	statusPages.Use(middleware.AuthMiddleware)
+	statusPages.Get("", statuspageroutes.ListStatusPages)
+	statusPages.Post("", statuspageroutes.CreateStatusPage)
+	statusPages.Get("/:id", statuspageroutes.GetStatusPage)
+	statusPages.Patch("/:id", statuspageroutes.UpdateStatusPage)
+	statusPages.Delete("/:id", statuspageroutes.DeleteStatusPage)
+	statusPages.Get("/:id/monitors", statuspageroutes.ListStatusPageMonitors)
+	statusPages.Put("/:id/monitors", statuspageroutes.ReplaceStatusPageMonitors)
 
 	// Monitor routes
 	monitors := app.Group("/monitors")

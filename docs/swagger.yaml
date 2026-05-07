@@ -945,6 +945,171 @@ definitions:
       status:
         type: string
     type: object
+  status_pages.CreateStatusPageRequest:
+    properties:
+      auto_refresh_interval:
+        minimum: 30
+        type: integer
+      custom_css:
+        type: string
+      description:
+        type: string
+      footer_text:
+        type: string
+      is_public:
+        type: boolean
+      name:
+        minLength: 1
+        type: string
+      password:
+        type: string
+      show_charts:
+        type: boolean
+      show_powered_by:
+        type: boolean
+      show_tags:
+        type: boolean
+      show_uptime_percentage:
+        type: boolean
+      slug:
+        minLength: 1
+        type: string
+      theme:
+        minLength: 1
+        type: string
+    required:
+    - name
+    - slug
+    type: object
+  status_pages.ReplaceStatusPageMonitorsRequest:
+    properties:
+      monitors:
+        items:
+          $ref: '#/definitions/status_pages.StatusPageMonitorItem'
+        type: array
+    required:
+    - monitors
+    type: object
+  status_pages.StatusPageListResponse:
+    properties:
+      status_pages:
+        items:
+          $ref: '#/definitions/status_pages.StatusPageResponse'
+        type: array
+    type: object
+  status_pages.StatusPageMonitorItem:
+    properties:
+      display_name:
+        type: string
+      monitor_id:
+        minimum: 1
+        type: integer
+      send_url:
+        type: boolean
+      weight:
+        minimum: 0
+        type: integer
+    required:
+    - monitor_id
+    type: object
+  status_pages.StatusPageMonitorResponse:
+    properties:
+      created_at:
+        type: string
+      display_name:
+        type: string
+      id:
+        type: integer
+      monitor_id:
+        type: integer
+      send_url:
+        type: boolean
+      updated_at:
+        type: string
+      weight:
+        type: integer
+    type: object
+  status_pages.StatusPageMonitorsResponse:
+    properties:
+      monitors:
+        items:
+          $ref: '#/definitions/status_pages.StatusPageMonitorResponse'
+        type: array
+    type: object
+  status_pages.StatusPageResponse:
+    properties:
+      auto_refresh_interval:
+        type: integer
+      created_at:
+        type: string
+      custom_css:
+        type: string
+      description:
+        type: string
+      footer_text:
+        type: string
+      has_password:
+        type: boolean
+      id:
+        type: integer
+      is_public:
+        type: boolean
+      monitors:
+        items:
+          $ref: '#/definitions/status_pages.StatusPageMonitorResponse'
+        type: array
+      name:
+        type: string
+      show_charts:
+        type: boolean
+      show_powered_by:
+        type: boolean
+      show_tags:
+        type: boolean
+      show_uptime_percentage:
+        type: boolean
+      slug:
+        type: string
+      theme:
+        type: string
+      updated_at:
+        type: string
+      user_id:
+        type: integer
+    type: object
+  status_pages.UpdateStatusPageRequest:
+    properties:
+      auto_refresh_interval:
+        minimum: 30
+        type: integer
+      custom_css:
+        type: string
+      description:
+        type: string
+      footer_text:
+        type: string
+      is_public:
+        type: boolean
+      name:
+        minLength: 1
+        type: string
+      password:
+        type: string
+      show_charts:
+        type: boolean
+      show_powered_by:
+        type: boolean
+      show_tags:
+        type: boolean
+      show_uptime_percentage:
+        type: boolean
+      slug:
+        minLength: 1
+        type: string
+      theme:
+        minLength: 1
+        type: string
+    type: object
   tags.CreateTagRequest:
     properties:
       color:
@@ -2674,6 +2839,296 @@ paths:
       summary: User Signup
       tags:
       - Auth
+  /status-pages:
+    get:
+      consumes:
+      - application/json
+      description: Returns status pages owned by the authenticated user.
+      parameters:
+      - description: filter by public/private status
+        in: query
+        name: is_public
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: status page list
+          schema:
+            $ref: '#/definitions/status_pages.StatusPageListResponse'
+        "400":
+          description: invalid input
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "401":
+          description: unauthorized - invalid or missing API key
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "500":
+          description: internal server error
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+      security:
+      - ApiKeyHeader: []
+      - ApiKeyQuery: []
+      summary: List Status Pages
+      tags:
+      - Status Pages
+    post:
+      consumes:
+      - application/json
+      description: Creates a status page owned by the authenticated user.
+      parameters:
+      - description: status page payload
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/status_pages.CreateStatusPageRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: created status page
+          schema:
+            $ref: '#/definitions/status_pages.StatusPageResponse'
+        "400":
+          description: invalid input
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "401":
+          description: unauthorized - invalid or missing API key
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "409":
+          description: status page slug already exists
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "500":
+          description: internal server error
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+      security:
+      - ApiKeyHeader: []
+      - ApiKeyQuery: []
+      summary: Create Status Page
+      tags:
+      - Status Pages
+  /status-pages/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes one status page owned by the authenticated user.
+      parameters:
+      - description: Status Page ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: status page deleted
+          schema:
+            $ref: '#/definitions/routes.SuccessResponse'
+        "400":
+          description: invalid status page id
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "401":
+          description: unauthorized - invalid or missing API key
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "404":
+          description: status page not found
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "500":
+          description: internal server error
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+      security:
+      - ApiKeyHeader: []
+      - ApiKeyQuery: []
+      summary: Delete Status Page
+      tags:
+      - Status Pages
+    get:
+      consumes:
+      - application/json
+      description: Returns one status page owned by the authenticated user.
+      parameters:
+      - description: Status Page ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: status page
+          schema:
+            $ref: '#/definitions/status_pages.StatusPageResponse'
+        "400":
+          description: invalid status page id
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "401":
+          description: unauthorized - invalid or missing API key
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "404":
+          description: status page not found
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "500":
+          description: internal server error
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+      security:
+      - ApiKeyHeader: []
+      - ApiKeyQuery: []
+      summary: Get Status Page
+      tags:
+      - Status Pages
+    patch:
+      consumes:
+      - application/json
+      description: Updates one status page owned by the authenticated user.
+      parameters:
+      - description: Status Page ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: status page payload
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/status_pages.UpdateStatusPageRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: updated status page
+          schema:
+            $ref: '#/definitions/status_pages.StatusPageResponse'
+        "400":
+          description: invalid input
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "401":
+          description: unauthorized - invalid or missing API key
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "404":
+          description: status page not found
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "409":
+          description: status page slug already exists
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "500":
+          description: internal server error
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+      security:
+      - ApiKeyHeader: []
+      - ApiKeyQuery: []
+      summary: Update Status Page
+      tags:
+      - Status Pages
+  /status-pages/{id}/monitors:
+    get:
+      consumes:
+      - application/json
+      description: Returns monitor assignments for one status page owned by the authenticated
+        user.
+      parameters:
+      - description: Status Page ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: status page monitor list
+          schema:
+            $ref: '#/definitions/status_pages.StatusPageMonitorsResponse'
+        "400":
+          description: invalid status page id
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "401":
+          description: unauthorized - invalid or missing API key
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "404":
+          description: status page not found
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "500":
+          description: internal server error
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+      security:
+      - ApiKeyHeader: []
+      - ApiKeyQuery: []
+      summary: List Status Page Monitors
+      tags:
+      - Status Pages
+    put:
+      consumes:
+      - application/json
+      description: Replaces monitor assignments for one status page owned by the authenticated
+        user.
+      parameters:
+      - description: Status Page ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: status page monitor payload
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/status_pages.ReplaceStatusPageMonitorsRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: status page monitor list
+          schema:
+            $ref: '#/definitions/status_pages.StatusPageMonitorsResponse'
+        "400":
+          description: invalid input
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "401":
+          description: unauthorized - invalid or missing API key
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "404":
+          description: status page not found
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "500":
+          description: internal server error
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+      security:
+      - ApiKeyHeader: []
+      - ApiKeyQuery: []
+      summary: Replace Status Page Monitors
+      tags:
+      - Status Pages
   /tags:
     get:
       consumes:
