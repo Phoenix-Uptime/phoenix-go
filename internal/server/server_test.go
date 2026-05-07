@@ -19,6 +19,7 @@ import (
 	"github.com/Phoenix-Uptime/phoenix-go/internal/database"
 	accountroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/account"
 	alertruleroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/alert_rules"
+	apikeyroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/api_keys"
 	authroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/auth"
 	incidentroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/incidents"
 	maintenancewindowroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/maintenance_windows"
@@ -326,6 +327,162 @@ func TestResetAPIKeyRotatesAPIKeyRows(t *testing.T) {
 	}
 	if newKeyResp.StatusCode != http.StatusOK {
 		t.Fatalf("expected new key status %d, got %d", http.StatusOK, newKeyResp.StatusCode)
+	}
+}
+
+func TestAPIKeyRoutesCRUD(t *testing.T) {
+	cleanup := useTestDatabase(t)
+	defer cleanup()
+
+	app := New()
+	apiKey := signupAndLogin(t, app, "apikeyuser", "apikey@example.com", "examplepassword")
+	expiresAt := time.Now().UTC().Add(24 * time.Hour).Truncate(time.Second)
+
+	createBody, err := json.Marshal(map[string]any{
+		"name":       "Worker",
+		"expires_at": expiresAt.Format(time.RFC3339),
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	createReq, err := http.NewRequest(http.MethodPost, "/api-keys", bytes.NewReader(createBody))
+	if err != nil {
+		t.Fatal(err)
+	}
+	createReq.Header.Set("Content-Type", "application/json")
+	createReq.Header.Set("x-api-key", apiKey)
+
+	createResp, err := app.Test(createReq, fiber.TestConfig{Timeout: 0})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if createResp.StatusCode != http.StatusCreated {
+		t.Fatalf("expected create API key status %d, got %d", http.StatusCreated, createResp.StatusCode)
+	}
+	defer createResp.Body.Close()
+
+	var created apikeyroutes.CreateAPIKeyResponse
+	if err := json.NewDecoder(createResp.Body).Decode(&created); err != nil {
+		t.Fatal(err)
+	}
+	if created.APIKey == "" || created.Key.ID == 0 || created.Key.Name != "Worker" || !created.Key.IsActive || created.Key.KeyPreview == "" {
+		t.Fatalf("unexpected created API key response: %+v", created)
+	}
+	if created.Key.KeyPreview == created.APIKey {
+		t.Fatal("expected API key response to include only a preview")
+	}
+
+	meReq, err := http.NewRequest(http.MethodGet, "/account/me", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	meReq.Header.Set("x-api-key", created.APIKey)
+
+	meResp, err := app.Test(meReq, fiber.TestConfig{Timeout: 0})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if meResp.StatusCode != http.StatusOK {
+		t.Fatalf("expected created API key to authenticate with status %d, got %d", http.StatusOK, meResp.StatusCode)
+	}
+
+	listReq, err := http.NewRequest(http.MethodGet, "/api-keys?is_active=true", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	listReq.Header.Set("x-api-key", apiKey)
+
+	listResp, err := app.Test(listReq, fiber.TestConfig{Timeout: 0})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if listResp.StatusCode != http.StatusOK {
+		t.Fatalf("expected list API keys status %d, got %d", http.StatusOK, listResp.StatusCode)
+	}
+	defer listResp.Body.Close()
+
+	var list apikeyroutes.APIKeyListResponse
+	if err := json.NewDecoder(listResp.Body).Decode(&list); err != nil {
+		t.Fatal(err)
+	}
+	if len(list.APIKeys) < 2 {
+		t.Fatalf("expected default and created API keys in list, got %+v", list.APIKeys)
+	}
+
+	getReq, err := http.NewRequest(http.MethodGet, "/api-keys/"+strconv.Itoa(created.Key.ID), nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	getReq.Header.Set("x-api-key", apiKey)
+
+	getResp, err := app.Test(getReq, fiber.TestConfig{Timeout: 0})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if getResp.StatusCode != http.StatusOK {
+		t.Fatalf("expected get API key status %d, got %d", http.StatusOK, getResp.StatusCode)
+	}
+	defer getResp.Body.Close()
+
+	var found apikeyroutes.APIKeyResponse
+	if err := json.NewDecoder(getResp.Body).Decode(&found); err != nil {
+		t.Fatal(err)
+	}
+	if found.ID != created.Key.ID || found.Name != "Worker" {
+		t.Fatalf("unexpected API key response: %+v", found)
+	}
+
+	updateBody := []byte(`{"name":"Worker renamed","is_active":false,"clear_expires_at":true}`)
+	updateReq, err := http.NewRequest(http.MethodPatch, "/api-keys/"+strconv.Itoa(created.Key.ID), bytes.NewReader(updateBody))
+	if err != nil {
+		t.Fatal(err)
+	}
+	updateReq.Header.Set("Content-Type", "application/json")
+	updateReq.Header.Set("x-api-key", apiKey)
+
+	updateResp, err := app.Test(updateReq, fiber.TestConfig{Timeout: 0})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if updateResp.StatusCode != http.StatusOK {
+		t.Fatalf("expected update API key status %d, got %d", http.StatusOK, updateResp.StatusCode)
+	}
+	defer updateResp.Body.Close()
+
+	var updated apikeyroutes.APIKeyResponse
+	if err := json.NewDecoder(updateResp.Body).Decode(&updated); err != nil {
+		t.Fatal(err)
+	}
+	if updated.Name != "Worker renamed" || updated.IsActive || updated.ExpiresAt != nil {
+		t.Fatalf("unexpected updated API key response: %+v", updated)
+	}
+
+	revokedMeReq, err := http.NewRequest(http.MethodGet, "/account/me", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	revokedMeReq.Header.Set("x-api-key", created.APIKey)
+
+	revokedMeResp, err := app.Test(revokedMeReq, fiber.TestConfig{Timeout: 0})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if revokedMeResp.StatusCode != http.StatusUnauthorized {
+		t.Fatalf("expected revoked API key auth status %d, got %d", http.StatusUnauthorized, revokedMeResp.StatusCode)
+	}
+
+	deleteReq, err := http.NewRequest(http.MethodDelete, "/api-keys/"+strconv.Itoa(created.Key.ID), nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	deleteReq.Header.Set("x-api-key", apiKey)
+
+	deleteResp, err := app.Test(deleteReq, fiber.TestConfig{Timeout: 0})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if deleteResp.StatusCode != http.StatusOK {
+		t.Fatalf("expected delete API key status %d, got %d", http.StatusOK, deleteResp.StatusCode)
 	}
 }
 

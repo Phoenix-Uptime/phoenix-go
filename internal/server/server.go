@@ -5,6 +5,7 @@ import (
 
 	accountroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/account"
 	alertruleroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/alert_rules"
+	apikeyroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/api_keys"
 	authroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/auth"
 	healthroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/health"
 	incidentroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/incidents"
@@ -73,6 +74,15 @@ func New() *fiber.App {
 	account.Post("/change-password", accountroutes.ChangePassword)
 	account.Post("/settings/telegram", accountroutes.UpdateTelegramBotSettings)
 	account.Post("/settings/smtp", accountroutes.UpdateSMTPSettings)
+
+	// API key routes
+	apiKeys := app.Group("/api-keys")
+	apiKeys.Use(middleware.AuthMiddleware)
+	apiKeys.Get("", apikeyroutes.ListAPIKeys)
+	apiKeys.Post("", apikeyroutes.CreateAPIKey)
+	apiKeys.Get("/:id", apikeyroutes.GetAPIKey)
+	apiKeys.Patch("/:id", apikeyroutes.UpdateAPIKey)
+	apiKeys.Delete("/:id", apikeyroutes.DeleteAPIKey)
 
 	// Tag routes
 	tags := app.Group("/tags")

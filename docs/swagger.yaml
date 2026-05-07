@@ -193,6 +193,63 @@ definitions:
           type: integer
         type: array
     type: object
+  api_keys.APIKeyListResponse:
+    properties:
+      api_keys:
+        items:
+          $ref: '#/definitions/api_keys.APIKeyResponse'
+        type: array
+    type: object
+  api_keys.APIKeyResponse:
+    properties:
+      created_at:
+        type: string
+      expires_at:
+        type: string
+      id:
+        type: integer
+      is_active:
+        type: boolean
+      key_preview:
+        type: string
+      last_used_at:
+        type: string
+      name:
+        type: string
+      updated_at:
+        type: string
+      user_id:
+        type: integer
+    type: object
+  api_keys.CreateAPIKeyRequest:
+    properties:
+      expires_at:
+        type: string
+      name:
+        minLength: 1
+        type: string
+    required:
+    - name
+    type: object
+  api_keys.CreateAPIKeyResponse:
+    properties:
+      api_key:
+        type: string
+      key:
+        $ref: '#/definitions/api_keys.APIKeyResponse'
+    type: object
+  api_keys.UpdateAPIKeyRequest:
+    properties:
+      clear_expires_at:
+        type: boolean
+      expires_at:
+        type: string
+      is_active:
+        type: boolean
+      name:
+        minLength: 1
+        type: string
+    type: object
   auth.LoginRequest:
     properties:
       password:
@@ -1552,6 +1609,205 @@ paths:
       summary: Update Alert Rule
       tags:
       - Alert Rules
+  /api-keys:
+    get:
+      consumes:
+      - application/json
+      description: Returns API keys owned by the authenticated user without exposing
+        secrets.
+      parameters:
+      - description: filter by active status
+        in: query
+        name: is_active
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: API key list
+          schema:
+            $ref: '#/definitions/api_keys.APIKeyListResponse'
+        "400":
+          description: invalid input
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "401":
+          description: unauthorized - invalid or missing API key
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "500":
+          description: internal server error
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+      security:
+      - ApiKeyHeader: []
+      - ApiKeyQuery: []
+      summary: List API Keys
+      tags:
+      - API Keys
+    post:
+      consumes:
+      - application/json
+      description: Creates an API key owned by the authenticated user. The secret
+        is returned only once in this response.
+      parameters:
+      - description: API key payload
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/api_keys.CreateAPIKeyRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: created API key
+          schema:
+            $ref: '#/definitions/api_keys.CreateAPIKeyResponse'
+        "400":
+          description: invalid input
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "401":
+          description: unauthorized - invalid or missing API key
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "500":
+          description: internal server error
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+      security:
+      - ApiKeyHeader: []
+      - ApiKeyQuery: []
+      summary: Create API Key
+      tags:
+      - API Keys
+  /api-keys/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Revokes one API key owned by the authenticated user.
+      parameters:
+      - description: API Key ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: API key revoked
+          schema:
+            $ref: '#/definitions/routes.SuccessResponse'
+        "400":
+          description: invalid API key id
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "401":
+          description: unauthorized - invalid or missing API key
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "404":
+          description: API key not found
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "500":
+          description: internal server error
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+      security:
+      - ApiKeyHeader: []
+      - ApiKeyQuery: []
+      summary: Revoke API Key
+      tags:
+      - API Keys
+    get:
+      consumes:
+      - application/json
+      description: Returns one API key owned by the authenticated user without exposing
+        the secret.
+      parameters:
+      - description: API Key ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: API key
+          schema:
+            $ref: '#/definitions/api_keys.APIKeyResponse'
+        "400":
+          description: invalid API key id
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "401":
+          description: unauthorized - invalid or missing API key
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "404":
+          description: API key not found
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "500":
+          description: internal server error
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+      security:
+      - ApiKeyHeader: []
+      - ApiKeyQuery: []
+      summary: Get API Key
+      tags:
+      - API Keys
+    patch:
+      consumes:
+      - application/json
+      description: Updates API key metadata owned by the authenticated user without
+        rotating the secret.
+      parameters:
+      - description: API Key ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: API key payload
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/api_keys.UpdateAPIKeyRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: updated API key
+          schema:
+            $ref: '#/definitions/api_keys.APIKeyResponse'
+        "400":
+          description: invalid input
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "401":
+          description: unauthorized - invalid or missing API key
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "404":
+          description: API key not found
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "500":
+          description: internal server error
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+      security:
+      - ApiKeyHeader: []
+      - ApiKeyQuery: []
+      summary: Update API Key
+      tags:
+      - API Keys
   /health:
     get:
       description: Check if the API is healthy

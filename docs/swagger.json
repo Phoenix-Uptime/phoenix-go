@@ -636,6 +636,318 @@
                 }
             }
         },
+        "/api-keys": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyHeader": []
+                    },
+                    {
+                        "ApiKeyQuery": []
+                    }
+                ],
+                "description": "Returns API keys owned by the authenticated user without exposing secrets.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "API Keys"
+                ],
+                "summary": "List API Keys",
+                "parameters": [
+                    {
+                        "type": "boolean",
+                        "description": "filter by active status",
+                        "name": "is_active",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "API key list",
+                        "schema": {
+                            "$ref": "#/definitions/api_keys.APIKeyListResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "invalid input",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "unauthorized - invalid or missing API key",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyHeader": []
+                    },
+                    {
+                        "ApiKeyQuery": []
+                    }
+                ],
+                "description": "Creates an API key owned by the authenticated user. The secret is returned only once in this response.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "API Keys"
+                ],
+                "summary": "Create API Key",
+                "parameters": [
+                    {
+                        "description": "API key payload",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api_keys.CreateAPIKeyRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "created API key",
+                        "schema": {
+                            "$ref": "#/definitions/api_keys.CreateAPIKeyResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "invalid input",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "unauthorized - invalid or missing API key",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api-keys/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyHeader": []
+                    },
+                    {
+                        "ApiKeyQuery": []
+                    }
+                ],
+                "description": "Returns one API key owned by the authenticated user without exposing the secret.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "API Keys"
+                ],
+                "summary": "Get API Key",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "API Key ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "API key",
+                        "schema": {
+                            "$ref": "#/definitions/api_keys.APIKeyResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "invalid API key id",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "unauthorized - invalid or missing API key",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "API key not found",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyHeader": []
+                    },
+                    {
+                        "ApiKeyQuery": []
+                    }
+                ],
+                "description": "Revokes one API key owned by the authenticated user.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "API Keys"
+                ],
+                "summary": "Revoke API Key",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "API Key ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "API key revoked",
+                        "schema": {
+                            "$ref": "#/definitions/routes.SuccessResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "invalid API key id",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "unauthorized - invalid or missing API key",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "API key not found",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "security": [
+                    {
+                        "ApiKeyHeader": []
+                    },
+                    {
+                        "ApiKeyQuery": []
+                    }
+                ],
+                "description": "Updates API key metadata owned by the authenticated user without rotating the secret.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "API Keys"
+                ],
+                "summary": "Update API Key",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "API Key ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "API key payload",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api_keys.UpdateAPIKeyRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "updated API key",
+                        "schema": {
+                            "$ref": "#/definitions/api_keys.APIKeyResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "invalid input",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "unauthorized - invalid or missing API key",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "API key not found",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/health": {
             "get": {
                 "description": "Check if the API is healthy",
@@ -3731,6 +4043,93 @@
                     "items": {
                         "type": "integer"
                     }
+                }
+            }
+        },
+        "api_keys.APIKeyListResponse": {
+            "type": "object",
+            "properties": {
+                "api_keys": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/api_keys.APIKeyResponse"
+                    }
+                }
+            }
+        },
+        "api_keys.APIKeyResponse": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "expires_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "is_active": {
+                    "type": "boolean"
+                },
+                "key_preview": {
+                    "type": "string"
+                },
+                "last_used_at": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "api_keys.CreateAPIKeyRequest": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "expires_at": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string",
+                    "minLength": 1
+                }
+            }
+        },
+        "api_keys.CreateAPIKeyResponse": {
+            "type": "object",
+            "properties": {
+                "api_key": {
+                    "type": "string"
+                },
+                "key": {
+                    "$ref": "#/definitions/api_keys.APIKeyResponse"
+                }
+            }
+        },
+        "api_keys.UpdateAPIKeyRequest": {
+            "type": "object",
+            "properties": {
+                "clear_expires_at": {
+                    "type": "boolean"
+                },
+                "expires_at": {
+                    "type": "string"
+                },
+                "is_active": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string",
+                    "minLength": 1
                 }
             }
         },
