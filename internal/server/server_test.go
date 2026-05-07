@@ -13,9 +13,13 @@ import (
 	"entgo.io/ent/dialect"
 	entsql "entgo.io/ent/dialect/sql"
 	"github.com/Phoenix-Uptime/phoenix-go/ent"
+	entincident "github.com/Phoenix-Uptime/phoenix-go/ent/incident"
+	entmonitor "github.com/Phoenix-Uptime/phoenix-go/ent/monitor"
 	entmonitorcheck "github.com/Phoenix-Uptime/phoenix-go/ent/monitorcheck"
 	entmonitorstat "github.com/Phoenix-Uptime/phoenix-go/ent/monitorstat"
 	entnotificationchannel "github.com/Phoenix-Uptime/phoenix-go/ent/notificationchannel"
+	entstatusmessage "github.com/Phoenix-Uptime/phoenix-go/ent/statusmessage"
+	entstatuspage "github.com/Phoenix-Uptime/phoenix-go/ent/statuspage"
 	"github.com/Phoenix-Uptime/phoenix-go/internal/database"
 	accountroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/account"
 	alertruleroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/alert_rules"
@@ -25,6 +29,7 @@ import (
 	maintenancewindowroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/maintenance_windows"
 	monitorroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/monitors"
 	notificationchannelroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/notification_channels"
+	publicstatuspageroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/public_status_pages"
 	statuspageroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/status_pages"
 	tagroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/tags"
 	"github.com/gofiber/fiber/v3"
@@ -1603,6 +1608,221 @@ func TestStatusPageRoutesCRUDAndMonitorAssignment(t *testing.T) {
 	}
 	if deleteResp.StatusCode != http.StatusOK {
 		t.Fatalf("expected delete status page status %d, got %d", http.StatusOK, deleteResp.StatusCode)
+	}
+}
+
+func TestPublicStatusPageRoutes(t *testing.T) {
+	cleanup := useTestDatabase(t)
+	defer cleanup()
+
+	app := New()
+	apiKey := signupAndLogin(t, app, "publicstatususer", "publicstatus@example.com", "examplepassword")
+	monitorID := createTestMonitor(t, app, apiKey, "Public Website")
+
+	if _, err := database.Client.Monitor.UpdateOneID(monitorID).
+		SetStatus(entmonitor.StatusUp).
+		Save(context.Background()); err != nil {
+		t.Fatal(err)
+	}
+
+	createBody := []byte(`{"slug":"public-main","name":"Public Status","password":"secret","show_charts":true,"show_uptime_percentage":true}`)
+	createReq, err := http.NewRequest(http.MethodPost, "/status-pages", bytes.NewReader(createBody))
+	if err != nil {
+		t.Fatal(err)
+	}
+	createReq.Header.Set("Content-Type", "application/json")
+	createReq.Header.Set("x-api-key", apiKey)
+
+	createResp, err := app.Test(createReq, fiber.TestConfig{Timeout: 0})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if createResp.StatusCode != http.StatusCreated {
+		t.Fatalf("expected create status page status %d, got %d", http.StatusCreated, createResp.StatusCode)
+	}
+	defer createResp.Body.Close()
+
+	var page statuspageroutes.StatusPageResponse
+	if err := json.NewDecoder(createResp.Body).Decode(&page); err != nil {
+		t.Fatal(err)
+	}
+	if !page.HasPassword {
+		t.Fatalf("expected created status page to have password, got %+v", page)
+	}
+	protected, err := database.Client.StatusPage.Query().
+		Where(entstatuspage.ID(page.ID), entstatuspage.PasswordNotNil()).
+		Exist(context.Background())
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !protected {
+		t.Fatal("expected created status page password to be persisted")
+	}
+	validSecret, err := database.Client.StatusPage.Query().
+		Where(entstatuspage.ID(page.ID), entstatuspage.Password("secret")).
+		Exist(context.Background())
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !validSecret {
+		t.Fatal("expected created status page password to match secret")
+	}
+
+	replaceBody, err := json.Marshal(map[string]any{
+		"monitors": []map[string]any{
+			{
+				"monitor_id":   monitorID,
+				"display_name": "Website",
+				"weight":       1,
+				"send_url":     true,
+			},
+		},
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	replaceReq, err := http.NewRequest(http.MethodPut, "/status-pages/"+strconv.Itoa(page.ID)+"/monitors", bytes.NewReader(replaceBody))
+	if err != nil {
+		t.Fatal(err)
+	}
+	replaceReq.Header.Set("Content-Type", "application/json")
+	replaceReq.Header.Set("x-api-key", apiKey)
+
+	replaceResp, err := app.Test(replaceReq, fiber.TestConfig{Timeout: 0})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if replaceResp.StatusCode != http.StatusOK {
+		t.Fatalf("expected replace status page monitors status %d, got %d", http.StatusOK, replaceResp.StatusCode)
+	}
+
+	checkedAt := time.Now().UTC().Truncate(time.Second)
+	if _, err := database.Client.MonitorCheck.Create().
+		SetMonitorID(monitorID).
+		SetStatus(entmonitorcheck.StatusUp).
+		SetCheckedAt(checkedAt).
+		SetResponseTimeMs(123).
+		Save(context.Background()); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := database.Client.MonitorStat.Create().
+		SetMonitorID(monitorID).
+		SetPeriod(entmonitorstat.PeriodDay).
+		SetPeriodStart(checkedAt.Truncate(24 * time.Hour)).
+		SetTotalChecks(10).
+		SetUpChecks(10).
+		SetUptimePercentage(99.9).
+		SetAvgResponseTimeMs(111).
+		Save(context.Background()); err != nil {
+		t.Fatal(err)
+	}
+	incident, err := database.Client.Incident.Create().
+		SetMonitorID(monitorID).
+		SetStatusPageID(page.ID).
+		SetTitle("Partial outage").
+		SetContent("Investigating degraded responses").
+		SetStatus(entincident.StatusOpen).
+		SetSeverity(entincident.SeverityWarning).
+		Save(context.Background())
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := database.Client.StatusMessage.Create().
+		SetStatusPageID(page.ID).
+		SetIncidentID(incident.ID).
+		SetType(entstatusmessage.TypeInvestigating).
+		SetTitle("Investigating").
+		SetContent("We are checking this now.").
+		Save(context.Background()); err != nil {
+		t.Fatal(err)
+	}
+
+	unauthorizedReq, err := http.NewRequest(http.MethodGet, "/status-pages/public/public-main?password=wrong", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	unauthorizedResp, err := app.Test(unauthorizedReq, fiber.TestConfig{Timeout: 0})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if unauthorizedResp.StatusCode != http.StatusUnauthorized {
+		body := new(bytes.Buffer)
+		if _, err := body.ReadFrom(unauthorizedResp.Body); err != nil {
+			t.Fatal(err)
+		}
+		t.Fatalf("expected protected public status page status %d, got %d with body %s", http.StatusUnauthorized, unauthorizedResp.StatusCode, body.String())
+	}
+
+	publicReq, err := http.NewRequest(http.MethodGet, "/status-pages/public/public-main", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	publicReq.Header.Set("x-status-page-password", "secret")
+
+	publicResp, err := app.Test(publicReq, fiber.TestConfig{Timeout: 0})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if publicResp.StatusCode != http.StatusOK {
+		t.Fatalf("expected public status page status %d, got %d", http.StatusOK, publicResp.StatusCode)
+	}
+	defer publicResp.Body.Close()
+
+	var publicPage publicstatuspageroutes.PublicStatusPageResponse
+	if err := json.NewDecoder(publicResp.Body).Decode(&publicPage); err != nil {
+		t.Fatal(err)
+	}
+	if publicPage.Slug != "public-main" || publicPage.Status != "up" || len(publicPage.Monitors) != 1 {
+		t.Fatalf("unexpected public status page response: %+v", publicPage)
+	}
+	publicMonitor := publicPage.Monitors[0]
+	if publicMonitor.Name != "Website" || publicMonitor.URL == nil || *publicMonitor.URL != "https://example.com" || publicMonitor.ResponseTimeMs == nil || *publicMonitor.ResponseTimeMs != 123 {
+		t.Fatalf("unexpected public monitor response: %+v", publicMonitor)
+	}
+	if publicMonitor.UptimePercentage == nil || *publicMonitor.UptimePercentage != 99.9 {
+		t.Fatalf("expected public uptime percentage, got %+v", publicMonitor.UptimePercentage)
+	}
+
+	incidentsReq, err := http.NewRequest(http.MethodGet, "/status-pages/public/public-main/incidents?password=secret", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	incidentsResp, err := app.Test(incidentsReq, fiber.TestConfig{Timeout: 0})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if incidentsResp.StatusCode != http.StatusOK {
+		t.Fatalf("expected public incidents status %d, got %d", http.StatusOK, incidentsResp.StatusCode)
+	}
+	defer incidentsResp.Body.Close()
+
+	var incidents publicstatuspageroutes.PublicStatusPageIncidentsResponse
+	if err := json.NewDecoder(incidentsResp.Body).Decode(&incidents); err != nil {
+		t.Fatal(err)
+	}
+	if len(incidents.Incidents) != 1 || incidents.Incidents[0].Title != "Partial outage" {
+		t.Fatalf("unexpected public incidents response: %+v", incidents.Incidents)
+	}
+
+	messagesReq, err := http.NewRequest(http.MethodGet, "/status-pages/public/public-main/messages?password=secret", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	messagesResp, err := app.Test(messagesReq, fiber.TestConfig{Timeout: 0})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if messagesResp.StatusCode != http.StatusOK {
+		t.Fatalf("expected public messages status %d, got %d", http.StatusOK, messagesResp.StatusCode)
+	}
+	defer messagesResp.Body.Close()
+
+	var messages publicstatuspageroutes.PublicStatusPageMessagesResponse
+	if err := json.NewDecoder(messagesResp.Body).Decode(&messages); err != nil {
+		t.Fatal(err)
+	}
+	if len(messages.Messages) != 1 || messages.Messages[0].Type != "investigating" {
+		t.Fatalf("unexpected public messages response: %+v", messages.Messages)
 	}
 }
 

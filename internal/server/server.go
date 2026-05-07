@@ -12,6 +12,7 @@ import (
 	maintenancewindowroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/maintenance_windows"
 	monitorroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/monitors"
 	notificationchannelroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/notification_channels"
+	publicstatuspageroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/public_status_pages"
 	statuspageroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/status_pages"
 	tagroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/tags"
 	"github.com/Phoenix-Uptime/phoenix-go/internal/server/middleware"
@@ -60,6 +61,11 @@ func New() *fiber.App {
 
 	// Register health check route
 	app.Get("/health", healthroutes.HealthCheck)
+
+	// Public status page routes
+	app.Get("/status-pages/public/:slug", publicstatuspageroutes.GetPublicStatusPage)
+	app.Get("/status-pages/public/:slug/incidents", publicstatuspageroutes.ListPublicStatusPageIncidents)
+	app.Get("/status-pages/public/:slug/messages", publicstatuspageroutes.ListPublicStatusPageMessages)
 
 	// Auth routes
 	app.Post("/login", authroutes.Login)

@@ -3119,6 +3119,204 @@ const docTemplate = `{
                 }
             }
         },
+        "/status-pages/public/{slug}": {
+            "get": {
+                "description": "Returns a public status page by slug without API key authentication.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Public Status Pages"
+                ],
+                "summary": "Get Public Status Page",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Status Page Slug",
+                        "name": "slug",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Status page password when protected",
+                        "name": "password",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "public status page",
+                        "schema": {
+                            "$ref": "#/definitions/public_status_pages.PublicStatusPageResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "password required or invalid",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "status page not found",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/status-pages/public/{slug}/incidents": {
+            "get": {
+                "description": "Returns incidents for a public status page by slug without API key authentication.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Public Status Pages"
+                ],
+                "summary": "List Public Status Page Incidents",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Status Page Slug",
+                        "name": "slug",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Status page password when protected",
+                        "name": "password",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "open, acknowledged, or resolved",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Maximum incidents to return",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "public incident list",
+                        "schema": {
+                            "$ref": "#/definitions/public_status_pages.PublicStatusPageIncidentsResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "invalid input",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "password required or invalid",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "status page not found",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/status-pages/public/{slug}/messages": {
+            "get": {
+                "description": "Returns messages for a public status page by slug without API key authentication.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Public Status Pages"
+                ],
+                "summary": "List Public Status Page Messages",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Status Page Slug",
+                        "name": "slug",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Status page password when protected",
+                        "name": "password",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Maximum messages to return",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "public message list",
+                        "schema": {
+                            "$ref": "#/definitions/public_status_pages.PublicStatusPageMessagesResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "invalid input",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "password required or invalid",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "status page not found",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/status-pages/{id}": {
             "get": {
                 "security": [
@@ -5213,6 +5411,198 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "webhook_url": {
+                    "type": "string"
+                }
+            }
+        },
+        "public_status_pages.PublicStatusPageIncidentResponse": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "ended_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "is_pinned": {
+                    "type": "boolean"
+                },
+                "monitor_id": {
+                    "type": "integer"
+                },
+                "severity": {
+                    "type": "string"
+                },
+                "started_at": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "public_status_pages.PublicStatusPageIncidentsResponse": {
+            "type": "object",
+            "properties": {
+                "incidents": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/public_status_pages.PublicStatusPageIncidentResponse"
+                    }
+                }
+            }
+        },
+        "public_status_pages.PublicStatusPageMessageResponse": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "incident_id": {
+                    "type": "integer"
+                },
+                "parent_id": {
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "public_status_pages.PublicStatusPageMessagesResponse": {
+            "type": "object",
+            "properties": {
+                "messages": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/public_status_pages.PublicStatusPageMessageResponse"
+                    }
+                }
+            }
+        },
+        "public_status_pages.PublicStatusPageMonitorResponse": {
+            "type": "object",
+            "properties": {
+                "assignment_created_at": {
+                    "type": "string"
+                },
+                "avg_response_time_ms": {
+                    "type": "integer"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "downtime_seconds": {
+                    "type": "integer"
+                },
+                "last_checked_at": {
+                    "type": "string"
+                },
+                "maintenance_checks": {
+                    "type": "integer"
+                },
+                "monitor_created_at": {
+                    "type": "string"
+                },
+                "monitor_id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "response_time_ms": {
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "uptime_percentage": {
+                    "type": "number"
+                },
+                "url": {
+                    "type": "string"
+                },
+                "weight": {
+                    "type": "integer"
+                }
+            }
+        },
+        "public_status_pages.PublicStatusPageResponse": {
+            "type": "object",
+            "properties": {
+                "auto_refresh_interval": {
+                    "type": "integer"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "custom_css": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "footer_text": {
+                    "type": "string"
+                },
+                "monitors": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/public_status_pages.PublicStatusPageMonitorResponse"
+                    }
+                },
+                "name": {
+                    "type": "string"
+                },
+                "show_charts": {
+                    "type": "boolean"
+                },
+                "show_powered_by": {
+                    "type": "boolean"
+                },
+                "show_tags": {
+                    "type": "boolean"
+                },
+                "show_uptime_percentage": {
+                    "type": "boolean"
+                },
+                "slug": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "theme": {
+                    "type": "string"
+                },
+                "updated_at": {
                     "type": "string"
                 }
             }
