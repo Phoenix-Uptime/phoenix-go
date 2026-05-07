@@ -43,7 +43,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/api.PasswordChangeRequest"
+                            "$ref": "#/definitions/account.PasswordChangeRequest"
                         }
                     }
                 ],
@@ -51,31 +51,31 @@ const docTemplate = `{
                     "200": {
                         "description": "Password changed successfully",
                         "schema": {
-                            "$ref": "#/definitions/api.PasswordChangeResponse"
+                            "$ref": "#/definitions/account.PasswordChangeResponse"
                         }
                     },
                     "400": {
                         "description": "Bad request - invalid input",
                         "schema": {
-                            "$ref": "#/definitions/api.ErrorResponse"
+                            "$ref": "#/definitions/routes.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized - invalid or missing API key",
                         "schema": {
-                            "$ref": "#/definitions/api.ErrorResponse"
+                            "$ref": "#/definitions/routes.ErrorResponse"
                         }
                     },
                     "403": {
                         "description": "Forbidden - incorrect current password",
                         "schema": {
-                            "$ref": "#/definitions/api.ErrorResponse"
+                            "$ref": "#/definitions/routes.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal server error",
                         "schema": {
-                            "$ref": "#/definitions/api.ErrorResponse"
+                            "$ref": "#/definitions/routes.ErrorResponse"
                         }
                     }
                 }
@@ -106,13 +106,13 @@ const docTemplate = `{
                     "200": {
                         "description": "user basic information",
                         "schema": {
-                            "$ref": "#/definitions/api.UserResponse"
+                            "$ref": "#/definitions/account.UserResponse"
                         }
                     },
                     "401": {
                         "description": "unauthorized - invalid or missing API key",
                         "schema": {
-                            "$ref": "#/definitions/api.ErrorResponse"
+                            "$ref": "#/definitions/routes.ErrorResponse"
                         }
                     }
                 }
@@ -143,19 +143,19 @@ const docTemplate = `{
                     "200": {
                         "description": "new API key",
                         "schema": {
-                            "$ref": "#/definitions/api.ResetAPIKeyResponse"
+                            "$ref": "#/definitions/account.ResetAPIKeyResponse"
                         }
                     },
                     "401": {
                         "description": "unauthorized - invalid or missing API key",
                         "schema": {
-                            "$ref": "#/definitions/api.ErrorResponse"
+                            "$ref": "#/definitions/routes.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "internal server error",
                         "schema": {
-                            "$ref": "#/definitions/api.ErrorResponse"
+                            "$ref": "#/definitions/routes.ErrorResponse"
                         }
                     }
                 }
@@ -186,19 +186,19 @@ const docTemplate = `{
                     "200": {
                         "description": "user settings",
                         "schema": {
-                            "$ref": "#/definitions/api.SettingsResponse"
+                            "$ref": "#/definitions/account.SettingsResponse"
                         }
                     },
                     "401": {
                         "description": "unauthorized - invalid or missing API key",
                         "schema": {
-                            "$ref": "#/definitions/api.ErrorResponse"
+                            "$ref": "#/definitions/routes.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "internal server error",
                         "schema": {
-                            "$ref": "#/definitions/api.ErrorResponse"
+                            "$ref": "#/definitions/routes.ErrorResponse"
                         }
                     }
                 }
@@ -232,7 +232,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/api.UpdateSMTPSettingsRequest"
+                            "$ref": "#/definitions/account.UpdateSMTPSettingsRequest"
                         }
                     }
                 ],
@@ -240,25 +240,25 @@ const docTemplate = `{
                     "200": {
                         "description": "settings updated",
                         "schema": {
-                            "$ref": "#/definitions/api.SuccessResponse"
+                            "$ref": "#/definitions/routes.SuccessResponse"
                         }
                     },
                     "400": {
                         "description": "invalid input",
                         "schema": {
-                            "$ref": "#/definitions/api.ErrorResponse"
+                            "$ref": "#/definitions/routes.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "unauthorized - invalid or missing API key",
                         "schema": {
-                            "$ref": "#/definitions/api.ErrorResponse"
+                            "$ref": "#/definitions/routes.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "internal server error",
                         "schema": {
-                            "$ref": "#/definitions/api.ErrorResponse"
+                            "$ref": "#/definitions/routes.ErrorResponse"
                         }
                     }
                 }
@@ -292,7 +292,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/api.UpdateTelegramBotRequest"
+                            "$ref": "#/definitions/account.UpdateTelegramBotRequest"
                         }
                     }
                 ],
@@ -300,25 +300,25 @@ const docTemplate = `{
                     "200": {
                         "description": "settings updated",
                         "schema": {
-                            "$ref": "#/definitions/api.SuccessResponse"
+                            "$ref": "#/definitions/routes.SuccessResponse"
                         }
                     },
                     "400": {
                         "description": "invalid input",
                         "schema": {
-                            "$ref": "#/definitions/api.ErrorResponse"
+                            "$ref": "#/definitions/routes.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "unauthorized - invalid or missing API key",
                         "schema": {
-                            "$ref": "#/definitions/api.ErrorResponse"
+                            "$ref": "#/definitions/routes.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "internal server error",
                         "schema": {
-                            "$ref": "#/definitions/api.ErrorResponse"
+                            "$ref": "#/definitions/routes.ErrorResponse"
                         }
                     }
                 }
@@ -335,7 +335,7 @@ const docTemplate = `{
                     "200": {
                         "description": "status and message",
                         "schema": {
-                            "$ref": "#/definitions/api.HealthCheckResponse"
+                            "$ref": "#/definitions/health.HealthCheckResponse"
                         }
                     }
                 }
@@ -361,7 +361,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/api.LoginRequest"
+                            "$ref": "#/definitions/auth.LoginRequest"
                         }
                     }
                 ],
@@ -369,25 +369,25 @@ const docTemplate = `{
                     "200": {
                         "description": "user successfully logged in",
                         "schema": {
-                            "$ref": "#/definitions/api.LoginResponse"
+                            "$ref": "#/definitions/auth.LoginResponse"
                         }
                     },
                     "400": {
                         "description": "invalid login payload",
                         "schema": {
-                            "$ref": "#/definitions/api.ErrorResponse"
+                            "$ref": "#/definitions/routes.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "invalid credentials",
                         "schema": {
-                            "$ref": "#/definitions/api.ErrorResponse"
+                            "$ref": "#/definitions/routes.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "internal server error",
                         "schema": {
-                            "$ref": "#/definitions/api.ErrorResponse"
+                            "$ref": "#/definitions/routes.ErrorResponse"
                         }
                     }
                 }
@@ -413,7 +413,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/api.SignupRequest"
+                            "$ref": "#/definitions/auth.SignupRequest"
                         }
                     }
                 ],
@@ -421,25 +421,25 @@ const docTemplate = `{
                     "201": {
                         "description": "User successfully created",
                         "schema": {
-                            "$ref": "#/definitions/api.SignupResponse"
+                            "$ref": "#/definitions/auth.SignupResponse"
                         }
                     },
                     "400": {
                         "description": "Invalid request payload",
                         "schema": {
-                            "$ref": "#/definitions/api.ErrorResponse"
+                            "$ref": "#/definitions/routes.ErrorResponse"
                         }
                     },
                     "403": {
                         "description": "Signup not allowed if a user already exists",
                         "schema": {
-                            "$ref": "#/definitions/api.ErrorResponse"
+                            "$ref": "#/definitions/routes.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal server error",
                         "schema": {
-                            "$ref": "#/definitions/api.ErrorResponse"
+                            "$ref": "#/definitions/routes.ErrorResponse"
                         }
                     }
                 }
@@ -447,61 +447,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "api.ErrorResponse": {
-            "type": "object",
-            "properties": {
-                "message": {
-                    "type": "string"
-                },
-                "status": {
-                    "type": "string"
-                }
-            }
-        },
-        "api.HealthCheckResponse": {
-            "type": "object",
-            "properties": {
-                "message": {
-                    "type": "string"
-                },
-                "status": {
-                    "type": "string"
-                }
-            }
-        },
-        "api.LoginRequest": {
-            "type": "object",
-            "required": [
-                "password",
-                "username"
-            ],
-            "properties": {
-                "password": {
-                    "type": "string",
-                    "minLength": 6
-                },
-                "username": {
-                    "type": "string",
-                    "maxLength": 20,
-                    "minLength": 3
-                }
-            }
-        },
-        "api.LoginResponse": {
-            "type": "object",
-            "properties": {
-                "api_key": {
-                    "type": "string"
-                },
-                "message": {
-                    "type": "string"
-                },
-                "status": {
-                    "type": "string"
-                }
-            }
-        },
-        "api.PasswordChangeRequest": {
+        "account.PasswordChangeRequest": {
             "type": "object",
             "required": [
                 "current_password",
@@ -518,7 +464,7 @@ const docTemplate = `{
                 }
             }
         },
-        "api.PasswordChangeResponse": {
+        "account.PasswordChangeResponse": {
             "type": "object",
             "properties": {
                 "message": {
@@ -529,7 +475,7 @@ const docTemplate = `{
                 }
             }
         },
-        "api.ResetAPIKeyResponse": {
+        "account.ResetAPIKeyResponse": {
             "type": "object",
             "properties": {
                 "api_key": {
@@ -540,7 +486,7 @@ const docTemplate = `{
                 }
             }
         },
-        "api.SettingsResponse": {
+        "account.SettingsResponse": {
             "type": "object",
             "properties": {
                 "smtp_settings": {
@@ -551,52 +497,7 @@ const docTemplate = `{
                 }
             }
         },
-        "api.SignupRequest": {
-            "type": "object",
-            "required": [
-                "email",
-                "password",
-                "username"
-            ],
-            "properties": {
-                "email": {
-                    "type": "string"
-                },
-                "password": {
-                    "type": "string",
-                    "minLength": 6
-                },
-                "username": {
-                    "description": "Username must be between 3 to 20 characters long, allowing only alphanumeric characters,\nunderscores, and hyphens. It is required and should be unique.",
-                    "type": "string",
-                    "maxLength": 20,
-                    "minLength": 3
-                }
-            }
-        },
-        "api.SignupResponse": {
-            "type": "object",
-            "properties": {
-                "message": {
-                    "type": "string"
-                },
-                "status": {
-                    "type": "string"
-                }
-            }
-        },
-        "api.SuccessResponse": {
-            "type": "object",
-            "properties": {
-                "message": {
-                    "type": "string"
-                },
-                "status": {
-                    "type": "string"
-                }
-            }
-        },
-        "api.UpdateSMTPSettingsRequest": {
+        "account.UpdateSMTPSettingsRequest": {
             "type": "object",
             "required": [
                 "from_address",
@@ -626,7 +527,7 @@ const docTemplate = `{
                 }
             }
         },
-        "api.UpdateTelegramBotRequest": {
+        "account.UpdateTelegramBotRequest": {
             "type": "object",
             "required": [
                 "bot_token"
@@ -637,7 +538,7 @@ const docTemplate = `{
                 }
             }
         },
-        "api.UserResponse": {
+        "account.UserResponse": {
             "type": "object",
             "properties": {
                 "api_key": {
@@ -647,6 +548,83 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "auth.LoginRequest": {
+            "type": "object",
+            "required": [
+                "password",
+                "username"
+            ],
+            "properties": {
+                "password": {
+                    "type": "string",
+                    "minLength": 6
+                },
+                "username": {
+                    "type": "string",
+                    "maxLength": 20,
+                    "minLength": 3
+                }
+            }
+        },
+        "auth.LoginResponse": {
+            "type": "object",
+            "properties": {
+                "api_key": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "auth.SignupRequest": {
+            "type": "object",
+            "required": [
+                "email",
+                "password",
+                "username"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string",
+                    "minLength": 6
+                },
+                "username": {
+                    "description": "Username must be between 3 to 20 characters long, allowing only alphanumeric characters,\nunderscores, and hyphens. It is required and should be unique.",
+                    "type": "string",
+                    "maxLength": 20,
+                    "minLength": 3
+                }
+            }
+        },
+        "auth.SignupResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "health.HealthCheckResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                },
+                "status": {
                     "type": "string"
                 }
             }
@@ -678,6 +656,28 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "bot_token": {
+                    "type": "string"
+                }
+            }
+        },
+        "routes.ErrorResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "routes.SuccessResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                },
+                "status": {
                     "type": "string"
                 }
             }

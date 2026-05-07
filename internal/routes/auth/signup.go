@@ -1,7 +1,8 @@
-package api
+package auth
 
 import (
 	"github.com/Phoenix-Uptime/phoenix-go/internal/database"
+	"github.com/Phoenix-Uptime/phoenix-go/internal/routes"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v3"
 	"github.com/google/uuid"
@@ -29,14 +30,14 @@ type SignupResponse struct {
 // @Produce json
 // @Param data body SignupRequest true "User signup data"
 // @Success 201 {object} SignupResponse "User successfully created"
-// @Failure 403 {object} ErrorResponse "Signup not allowed if a user already exists"
-// @Failure 400 {object} ErrorResponse "Invalid request payload"
-// @Failure 500 {object} ErrorResponse "Internal server error"
+// @Failure 403 {object} routes.ErrorResponse "Signup not allowed if a user already exists"
+// @Failure 400 {object} routes.ErrorResponse "Invalid request payload"
+// @Failure 500 {object} routes.ErrorResponse "Internal server error"
 // @Router /signup [post]
 func Signup(c fiber.Ctx) error {
 	var req SignupRequest
 	if err := c.Bind().Body(&req); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(ErrorResponse{
+		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
 			Status:  "error",
 			Message: "Invalid request payload",
 		})
@@ -45,7 +46,7 @@ func Signup(c fiber.Ctx) error {
 	validate := validator.New()
 	if err := validate.Struct(&req); err != nil {
 		validationErrors := err.(validator.ValidationErrors)
-		return c.Status(fiber.StatusBadRequest).JSON(ErrorResponse{
+		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
 			Status:  "error",
 			Message: "Validation failed: " + validationErrors.Error(),
 		})
@@ -54,7 +55,7 @@ func Signup(c fiber.Ctx) error {
 	userCount, err := database.Client.User.Query().Count(c)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to check user count")
-		return c.Status(fiber.StatusInternalServerError).JSON(ErrorResponse{
+		return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
 			Status:  "error",
 			Message: "Internal server error",
 		})
@@ -62,7 +63,7 @@ func Signup(c fiber.Ctx) error {
 
 	// Prevent further signups if a user already exists
 	if userCount > 0 {
-		return c.Status(fiber.StatusForbidden).JSON(ErrorResponse{
+		return c.Status(fiber.StatusForbidden).JSON(routes.ErrorResponse{
 			Status:  "error",
 			Message: "User already exists. Signup not allowed.",
 		})
@@ -71,7 +72,7 @@ func Signup(c fiber.Ctx) error {
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to hash password")
-		return c.Status(fiber.StatusInternalServerError).JSON(ErrorResponse{
+		return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
 			Status:  "error",
 			Message: "Internal server error",
 		})
@@ -87,7 +88,7 @@ func Signup(c fiber.Ctx) error {
 		SetAPIKey(apiKey).
 		Save(c); err != nil {
 		log.Error().Err(err).Msg("Failed to create user")
-		return c.Status(fiber.StatusInternalServerError).JSON(ErrorResponse{
+		return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
 			Status:  "error",
 			Message: "Internal server error",
 		})

@@ -1,42 +1,6 @@
 basePath: /
 definitions:
-  api.ErrorResponse:
-    properties:
-      message:
-        type: string
-      status:
-        type: string
-    type: object
-  api.HealthCheckResponse:
-    properties:
-      message:
-        type: string
-      status:
-        type: string
-    type: object
-  api.LoginRequest:
-    properties:
-      password:
-        minLength: 6
-        type: string
-      username:
-        maxLength: 20
-        minLength: 3
-        type: string
-    required:
-    - password
-    - username
-    type: object
-  api.LoginResponse:
-    properties:
-      api_key:
-        type: string
-      message:
-        type: string
-      status:
-        type: string
-    type: object
-  api.PasswordChangeRequest:
+  account.PasswordChangeRequest:
     properties:
       current_password:
         minLength: 6
@@ -48,61 +12,28 @@ definitions:
     - current_password
     - new_password
     type: object
-  api.PasswordChangeResponse:
+  account.PasswordChangeResponse:
     properties:
       message:
         type: string
       status:
         type: string
     type: object
-  api.ResetAPIKeyResponse:
+  account.ResetAPIKeyResponse:
     properties:
       api_key:
         type: string
       status:
         type: string
     type: object
-  api.SettingsResponse:
+  account.SettingsResponse:
     properties:
       smtp_settings:
         $ref: '#/definitions/models.SMTPSettings'
       telegram_bot:
         $ref: '#/definitions/models.TelegramBot'
     type: object
-  api.SignupRequest:
-    properties:
-      email:
-        type: string
-      password:
-        minLength: 6
-        type: string
-      username:
-        description: |-
-          Username must be between 3 to 20 characters long, allowing only alphanumeric characters,
-          underscores, and hyphens. It is required and should be unique.
-        maxLength: 20
-        minLength: 3
-        type: string
-    required:
-    - email
-    - password
-    - username
-    type: object
-  api.SignupResponse:
-    properties:
-      message:
-        type: string
-      status:
-        type: string
-    type: object
-  api.SuccessResponse:
-    properties:
-      message:
-        type: string
-      status:
-        type: string
-    type: object
-  api.UpdateSMTPSettingsRequest:
+  account.UpdateSMTPSettingsRequest:
     properties:
       from_address:
         type: string
@@ -123,20 +54,75 @@ definitions:
     - smtp_server
     - username
     type: object
-  api.UpdateTelegramBotRequest:
+  account.UpdateTelegramBotRequest:
     properties:
       bot_token:
         type: string
     required:
     - bot_token
     type: object
-  api.UserResponse:
+  account.UserResponse:
     properties:
       api_key:
         type: string
       email:
         type: string
       username:
+        type: string
+    type: object
+  auth.LoginRequest:
+    properties:
+      password:
+        minLength: 6
+        type: string
+      username:
+        maxLength: 20
+        minLength: 3
+        type: string
+    required:
+    - password
+    - username
+    type: object
+  auth.LoginResponse:
+    properties:
+      api_key:
+        type: string
+      message:
+        type: string
+      status:
+        type: string
+    type: object
+  auth.SignupRequest:
+    properties:
+      email:
+        type: string
+      password:
+        minLength: 6
+        type: string
+      username:
+        description: |-
+          Username must be between 3 to 20 characters long, allowing only alphanumeric characters,
+          underscores, and hyphens. It is required and should be unique.
+        maxLength: 20
+        minLength: 3
+        type: string
+    required:
+    - email
+    - password
+    - username
+    type: object
+  auth.SignupResponse:
+    properties:
+      message:
+        type: string
+      status:
+        type: string
+    type: object
+  health.HealthCheckResponse:
+    properties:
+      message:
+        type: string
+      status:
         type: string
     type: object
   models.SMTPSettings:
@@ -159,6 +145,20 @@ definitions:
       bot_token:
         type: string
     type: object
+  routes.ErrorResponse:
+    properties:
+      message:
+        type: string
+      status:
+        type: string
+    type: object
+  routes.SuccessResponse:
+    properties:
+      message:
+        type: string
+      status:
+        type: string
+    type: object
 host: 127.0.0.1:3031
 info:
   contact: {}
@@ -177,30 +177,30 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/api.PasswordChangeRequest'
+          $ref: '#/definitions/account.PasswordChangeRequest'
       produces:
       - application/json
       responses:
         "200":
           description: Password changed successfully
           schema:
-            $ref: '#/definitions/api.PasswordChangeResponse'
+            $ref: '#/definitions/account.PasswordChangeResponse'
         "400":
           description: Bad request - invalid input
           schema:
-            $ref: '#/definitions/api.ErrorResponse'
+            $ref: '#/definitions/routes.ErrorResponse'
         "401":
           description: Unauthorized - invalid or missing API key
           schema:
-            $ref: '#/definitions/api.ErrorResponse'
+            $ref: '#/definitions/routes.ErrorResponse'
         "403":
           description: Forbidden - incorrect current password
           schema:
-            $ref: '#/definitions/api.ErrorResponse'
+            $ref: '#/definitions/routes.ErrorResponse'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/api.ErrorResponse'
+            $ref: '#/definitions/routes.ErrorResponse'
       security:
       - ApiKeyHeader: []
       - ApiKeyQuery: []
@@ -218,11 +218,11 @@ paths:
         "200":
           description: user basic information
           schema:
-            $ref: '#/definitions/api.UserResponse'
+            $ref: '#/definitions/account.UserResponse'
         "401":
           description: unauthorized - invalid or missing API key
           schema:
-            $ref: '#/definitions/api.ErrorResponse'
+            $ref: '#/definitions/routes.ErrorResponse'
       security:
       - ApiKeyHeader: []
       - ApiKeyQuery: []
@@ -241,15 +241,15 @@ paths:
         "200":
           description: new API key
           schema:
-            $ref: '#/definitions/api.ResetAPIKeyResponse'
+            $ref: '#/definitions/account.ResetAPIKeyResponse'
         "401":
           description: unauthorized - invalid or missing API key
           schema:
-            $ref: '#/definitions/api.ErrorResponse'
+            $ref: '#/definitions/routes.ErrorResponse'
         "500":
           description: internal server error
           schema:
-            $ref: '#/definitions/api.ErrorResponse'
+            $ref: '#/definitions/routes.ErrorResponse'
       security:
       - ApiKeyHeader: []
       - ApiKeyQuery: []
@@ -267,15 +267,15 @@ paths:
         "200":
           description: user settings
           schema:
-            $ref: '#/definitions/api.SettingsResponse'
+            $ref: '#/definitions/account.SettingsResponse'
         "401":
           description: unauthorized - invalid or missing API key
           schema:
-            $ref: '#/definitions/api.ErrorResponse'
+            $ref: '#/definitions/routes.ErrorResponse'
         "500":
           description: internal server error
           schema:
-            $ref: '#/definitions/api.ErrorResponse'
+            $ref: '#/definitions/routes.ErrorResponse'
       security:
       - ApiKeyHeader: []
       - ApiKeyQuery: []
@@ -293,26 +293,26 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/api.UpdateSMTPSettingsRequest'
+          $ref: '#/definitions/account.UpdateSMTPSettingsRequest'
       produces:
       - application/json
       responses:
         "200":
           description: settings updated
           schema:
-            $ref: '#/definitions/api.SuccessResponse'
+            $ref: '#/definitions/routes.SuccessResponse'
         "400":
           description: invalid input
           schema:
-            $ref: '#/definitions/api.ErrorResponse'
+            $ref: '#/definitions/routes.ErrorResponse'
         "401":
           description: unauthorized - invalid or missing API key
           schema:
-            $ref: '#/definitions/api.ErrorResponse'
+            $ref: '#/definitions/routes.ErrorResponse'
         "500":
           description: internal server error
           schema:
-            $ref: '#/definitions/api.ErrorResponse'
+            $ref: '#/definitions/routes.ErrorResponse'
       security:
       - ApiKeyHeader: []
       - ApiKeyQuery: []
@@ -330,26 +330,26 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/api.UpdateTelegramBotRequest'
+          $ref: '#/definitions/account.UpdateTelegramBotRequest'
       produces:
       - application/json
       responses:
         "200":
           description: settings updated
           schema:
-            $ref: '#/definitions/api.SuccessResponse'
+            $ref: '#/definitions/routes.SuccessResponse'
         "400":
           description: invalid input
           schema:
-            $ref: '#/definitions/api.ErrorResponse'
+            $ref: '#/definitions/routes.ErrorResponse'
         "401":
           description: unauthorized - invalid or missing API key
           schema:
-            $ref: '#/definitions/api.ErrorResponse'
+            $ref: '#/definitions/routes.ErrorResponse'
         "500":
           description: internal server error
           schema:
-            $ref: '#/definitions/api.ErrorResponse'
+            $ref: '#/definitions/routes.ErrorResponse'
       security:
       - ApiKeyHeader: []
       - ApiKeyQuery: []
@@ -363,7 +363,7 @@ paths:
         "200":
           description: status and message
           schema:
-            $ref: '#/definitions/api.HealthCheckResponse'
+            $ref: '#/definitions/health.HealthCheckResponse'
       summary: Health check
       tags:
       - Health
@@ -379,26 +379,26 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/api.LoginRequest'
+          $ref: '#/definitions/auth.LoginRequest'
       produces:
       - application/json
       responses:
         "200":
           description: user successfully logged in
           schema:
-            $ref: '#/definitions/api.LoginResponse'
+            $ref: '#/definitions/auth.LoginResponse'
         "400":
           description: invalid login payload
           schema:
-            $ref: '#/definitions/api.ErrorResponse'
+            $ref: '#/definitions/routes.ErrorResponse'
         "401":
           description: invalid credentials
           schema:
-            $ref: '#/definitions/api.ErrorResponse'
+            $ref: '#/definitions/routes.ErrorResponse'
         "500":
           description: internal server error
           schema:
-            $ref: '#/definitions/api.ErrorResponse'
+            $ref: '#/definitions/routes.ErrorResponse'
       summary: User Login
       tags:
       - Auth
@@ -413,26 +413,26 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/api.SignupRequest'
+          $ref: '#/definitions/auth.SignupRequest'
       produces:
       - application/json
       responses:
         "201":
           description: User successfully created
           schema:
-            $ref: '#/definitions/api.SignupResponse'
+            $ref: '#/definitions/auth.SignupResponse'
         "400":
           description: Invalid request payload
           schema:
-            $ref: '#/definitions/api.ErrorResponse'
+            $ref: '#/definitions/routes.ErrorResponse'
         "403":
           description: Signup not allowed if a user already exists
           schema:
-            $ref: '#/definitions/api.ErrorResponse'
+            $ref: '#/definitions/routes.ErrorResponse'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/api.ErrorResponse'
+            $ref: '#/definitions/routes.ErrorResponse'
       summary: User Signup
       tags:
       - Auth

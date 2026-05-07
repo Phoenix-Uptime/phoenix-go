@@ -12,8 +12,9 @@ import (
 	entsql "entgo.io/ent/dialect/sql"
 	"github.com/Phoenix-Uptime/phoenix-go/ent"
 	entnotificationchannel "github.com/Phoenix-Uptime/phoenix-go/ent/notificationchannel"
-	"github.com/Phoenix-Uptime/phoenix-go/internal/api"
 	"github.com/Phoenix-Uptime/phoenix-go/internal/database"
+	accountroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/account"
+	authroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/auth"
 	"github.com/gofiber/fiber/v3"
 )
 
@@ -103,7 +104,7 @@ func TestSignupAndLoginWithEnt(t *testing.T) {
 	}
 	defer loginResp.Body.Close()
 
-	var body api.LoginResponse
+	var body authroutes.LoginResponse
 	if err := json.NewDecoder(loginResp.Body).Decode(&body); err != nil {
 		t.Fatal(err)
 	}
@@ -146,7 +147,7 @@ func TestAccountSettingsUseNotificationChannelRows(t *testing.T) {
 	}
 	defer loginResp.Body.Close()
 
-	var login api.LoginResponse
+	var login authroutes.LoginResponse
 	if err := json.NewDecoder(loginResp.Body).Decode(&login); err != nil {
 		t.Fatal(err)
 	}
@@ -201,7 +202,7 @@ func TestAccountSettingsUseNotificationChannelRows(t *testing.T) {
 	}
 	defer settingsResp.Body.Close()
 
-	var settings api.SettingsResponse
+	var settings accountroutes.SettingsResponse
 	if err := json.NewDecoder(settingsResp.Body).Decode(&settings); err != nil {
 		t.Fatal(err)
 	}

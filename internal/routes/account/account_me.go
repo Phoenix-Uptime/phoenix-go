@@ -1,4 +1,4 @@
-package api
+package account
 
 import (
 	"github.com/Phoenix-Uptime/phoenix-go/ent"
@@ -19,7 +19,7 @@ type UserResponse struct {
 // @Security ApiKeyHeader
 // @Security ApiKeyQuery
 // @Success 200 {object} UserResponse "user basic information"
-// @Failure 401 {object} ErrorResponse "unauthorized - invalid or missing API key"
+// @Failure 401 {object} routes.ErrorResponse "unauthorized - invalid or missing API key"
 // @Router /account/me [get]
 func GetAccountMe(c fiber.Ctx) error {
 	user := c.Locals("user").(*ent.User)

@@ -1,4 +1,4 @@
-package api
+package routes
 
 type SuccessResponse struct {
 	Status  string `json:"status"`

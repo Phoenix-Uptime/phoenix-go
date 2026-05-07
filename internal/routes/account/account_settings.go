@@ -1,10 +1,11 @@
-package api
+package account
 
 import (
 	"github.com/Phoenix-Uptime/phoenix-go/ent"
 	entnotificationchannel "github.com/Phoenix-Uptime/phoenix-go/ent/notificationchannel"
 	"github.com/Phoenix-Uptime/phoenix-go/internal/database"
 	"github.com/Phoenix-Uptime/phoenix-go/internal/models"
+	"github.com/Phoenix-Uptime/phoenix-go/internal/routes"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v3"
 	"github.com/rs/zerolog/log"
@@ -23,8 +24,8 @@ type SettingsResponse struct {
 // @Security ApiKeyHeader
 // @Security ApiKeyQuery
 // @Success 200 {object} SettingsResponse "user settings"
-// @Failure 401 {object} ErrorResponse "unauthorized - invalid or missing API key"
-// @Failure 500 {object} ErrorResponse "internal server error"
+// @Failure 401 {object} routes.ErrorResponse "unauthorized - invalid or missing API key"
+// @Failure 500 {object} routes.ErrorResponse "internal server error"
 // @Router /account/settings [get]
 func GetAccountSettings(c fiber.Ctx) error {
 	user := c.Locals("user").(*ent.User)
@@ -32,7 +33,7 @@ func GetAccountSettings(c fiber.Ctx) error {
 	smtpChannel, err := defaultNotificationChannel(c, user.ID, entnotificationchannel.TypeSMTP)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to load SMTP settings")
-		return c.Status(fiber.StatusInternalServerError).JSON(ErrorResponse{
+		return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
 			Status:  "error",
 			Message: "Failed to load user settings",
 		})
@@ -41,7 +42,7 @@ func GetAccountSettings(c fiber.Ctx) error {
 	telegramChannel, err := defaultNotificationChannel(c, user.ID, entnotificationchannel.TypeTelegram)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to load Telegram bot settings")
-		return c.Status(fiber.StatusInternalServerError).JSON(ErrorResponse{
+		return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
 			Status:  "error",
 			Message: "Failed to load user settings",
 		})
@@ -72,17 +73,17 @@ type UpdateSMTPSettingsRequest struct {
 // @Security ApiKeyHeader
 // @Security ApiKeyQuery
 // @Param data body UpdateSMTPSettingsRequest true "SMTP settings"
-// @Success 200 {object} SuccessResponse "settings updated"
-// @Failure 400 {object} ErrorResponse "invalid input"
-// @Failure 401 {object} ErrorResponse "unauthorized - invalid or missing API key"
-// @Failure 500 {object} ErrorResponse "internal server error"
+// @Success 200 {object} routes.SuccessResponse "settings updated"
+// @Failure 400 {object} routes.ErrorResponse "invalid input"
+// @Failure 401 {object} routes.ErrorResponse "unauthorized - invalid or missing API key"
+// @Failure 500 {object} routes.ErrorResponse "internal server error"
 // @Router /account/settings/smtp [post]
 func UpdateSMTPSettings(c fiber.Ctx) error {
 	user := c.Locals("user").(*ent.User)
 
 	var req UpdateSMTPSettingsRequest
 	if err := c.Bind().Body(&req); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(ErrorResponse{
+		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
 			Status:  "error",
 			Message: "Invalid request payload",
 		})
@@ -90,7 +91,7 @@ func UpdateSMTPSettings(c fiber.Ctx) error {
 
 	validate := validator.New()
 	if err := validate.Struct(&req); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(ErrorResponse{
+		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
 			Status:  "error",
 			Message: "Invalid input: " + err.Error(),
 		})
@@ -98,13 +99,13 @@ func UpdateSMTPSettings(c fiber.Ctx) error {
 
 	if err := upsertDefaultSMTPChannel(c, user.ID, req); err != nil {
 		log.Error().Err(err).Msg("Failed to update SMTP settings")
-		return c.Status(fiber.StatusInternalServerError).JSON(ErrorResponse{
+		return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
 			Status:  "error",
 			Message: "Failed to update SMTP settings",
 		})
 	}
 
-	return c.Status(fiber.StatusOK).JSON(SuccessResponse{
+	return c.Status(fiber.StatusOK).JSON(routes.SuccessResponse{
 		Status:  "success",
 		Message: "SMTP settings updated",
 	})
@@ -122,17 +123,17 @@ type UpdateTelegramBotRequest struct {
 // @Security ApiKeyHeader
 // @Security ApiKeyQuery
 // @Param data body UpdateTelegramBotRequest true "Telegram bot settings"
-// @Success 200 {object} SuccessResponse "settings updated"
-// @Failure 400 {object} ErrorResponse "invalid input"
-// @Failure 401 {object} ErrorResponse "unauthorized - invalid or missing API key"
-// @Failure 500 {object} ErrorResponse "internal server error"
+// @Success 200 {object} routes.SuccessResponse "settings updated"
+// @Failure 400 {object} routes.ErrorResponse "invalid input"
+// @Failure 401 {object} routes.ErrorResponse "unauthorized - invalid or missing API key"
+// @Failure 500 {object} routes.ErrorResponse "internal server error"
 // @Router /account/settings/telegram [post]
 func UpdateTelegramBotSettings(c fiber.Ctx) error {
 	user := c.Locals("user").(*ent.User)
 
 	var req UpdateTelegramBotRequest
 	if err := c.Bind().Body(&req); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(ErrorResponse{
+		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
 			Status:  "error",
 			Message: "Invalid request payload",
 		})
@@ -140,7 +141,7 @@ func UpdateTelegramBotSettings(c fiber.Ctx) error {
 
 	validate := validator.New()
 	if err := validate.Struct(&req); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(ErrorResponse{
+		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
 			Status:  "error",
 			Message: "Invalid input: " + err.Error(),
 		})
@@ -148,13 +149,13 @@ func UpdateTelegramBotSettings(c fiber.Ctx) error {
 
 	if err := upsertDefaultTelegramChannel(c, user.ID, req); err != nil {
 		log.Error().Err(err).Msg("Failed to update Telegram bot settings")
-		return c.Status(fiber.StatusInternalServerError).JSON(ErrorResponse{
+		return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
 			Status:  "error",
 			Message: "Failed to update Telegram bot settings",
 		})
 	}
 
-	return c.Status(fiber.StatusOK).JSON(SuccessResponse{
+	return c.Status(fiber.StatusOK).JSON(routes.SuccessResponse{
 		Status:  "success",
 		Message: "Telegram bot settings updated",
 	})

@@ -3,7 +3,9 @@ package server
 import (
 	"time"
 
-	"github.com/Phoenix-Uptime/phoenix-go/internal/api"
+	accountroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/account"
+	authroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/auth"
+	healthroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/health"
 	"github.com/Phoenix-Uptime/phoenix-go/internal/server/middleware"
 	"github.com/gofiber/contrib/v3/swaggo"
 	"github.com/gofiber/fiber/v3"
@@ -49,21 +51,21 @@ func New() *fiber.App {
 	app.Get("/swagger/*", swaggo.HandlerDefault)
 
 	// Register health check route
-	app.Get("/health", api.HealthCheck)
+	app.Get("/health", healthroutes.HealthCheck)
 
 	// Auth routes
-	app.Post("/login", api.Login)
-	app.Post("/signup", api.Signup)
+	app.Post("/login", authroutes.Login)
+	app.Post("/signup", authroutes.Signup)
 
 	// Account routes
 	account := app.Group("/account")
 	account.Use(middleware.AuthMiddleware)
-	account.Get("/me", api.GetAccountMe)
-	account.Get("/settings", api.GetAccountSettings)
-	account.Post("/reset-api-key", api.ResetAPIKey)
-	account.Post("/change-password", api.ChangePassword)
-	account.Post("/settings/telegram", api.UpdateTelegramBotSettings)
-	account.Post("/settings/smtp", api.UpdateSMTPSettings)
+	account.Get("/me", accountroutes.GetAccountMe)
+	account.Get("/settings", accountroutes.GetAccountSettings)
+	account.Post("/reset-api-key", accountroutes.ResetAPIKey)
+	account.Post("/change-password", accountroutes.ChangePassword)
+	account.Post("/settings/telegram", accountroutes.UpdateTelegramBotSettings)
+	account.Post("/settings/smtp", accountroutes.UpdateSMTPSettings)
 
 	return app
 }

@@ -1,8 +1,9 @@
-package api
+package account
 
 import (
 	"github.com/Phoenix-Uptime/phoenix-go/ent"
 	"github.com/Phoenix-Uptime/phoenix-go/internal/database"
+	"github.com/Phoenix-Uptime/phoenix-go/internal/routes"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v3"
 	"github.com/rs/zerolog/log"
@@ -28,15 +29,15 @@ type PasswordChangeResponse struct {
 // @Security ApiKeyQuery
 // @Param data body PasswordChangeRequest true "Password change data"
 // @Success 200 {object} PasswordChangeResponse "Password changed successfully"
-// @Failure 400 {object} ErrorResponse "Bad request - invalid input"
-// @Failure 401 {object} ErrorResponse "Unauthorized - invalid or missing API key"
-// @Failure 403 {object} ErrorResponse "Forbidden - incorrect current password"
-// @Failure 500 {object} ErrorResponse "Internal server error"
+// @Failure 400 {object} routes.ErrorResponse "Bad request - invalid input"
+// @Failure 401 {object} routes.ErrorResponse "Unauthorized - invalid or missing API key"
+// @Failure 403 {object} routes.ErrorResponse "Forbidden - incorrect current password"
+// @Failure 500 {object} routes.ErrorResponse "Internal server error"
 // @Router /account/change-password [post]
 func ChangePassword(c fiber.Ctx) error {
 	var req PasswordChangeRequest
 	if err := c.Bind().Body(&req); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(ErrorResponse{
+		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
 			Status:  "error",
 			Message: "Invalid request payload",
 		})
@@ -44,7 +45,7 @@ func ChangePassword(c fiber.Ctx) error {
 
 	validate := validator.New()
 	if err := validate.Struct(&req); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(ErrorResponse{
+		return c.Status(fiber.StatusBadRequest).JSON(routes.ErrorResponse{
 			Status:  "error",
 			Message: "Invalid input: " + err.Error(),
 		})
@@ -54,7 +55,7 @@ func ChangePassword(c fiber.Ctx) error {
 
 	// Check if the current password is correct
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.CurrentPassword)); err != nil {
-		return c.Status(fiber.StatusForbidden).JSON(ErrorResponse{
+		return c.Status(fiber.StatusForbidden).JSON(routes.ErrorResponse{
 			Status:  "error",
 			Message: "Incorrect current password",
 		})
@@ -64,7 +65,7 @@ func ChangePassword(c fiber.Ctx) error {
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.NewPassword), bcrypt.DefaultCost)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to hash new password")
-		return c.Status(fiber.StatusInternalServerError).JSON(ErrorResponse{
+		return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
 			Status:  "error",
 			Message: "Internal server error",
 		})
@@ -75,7 +76,7 @@ func ChangePassword(c fiber.Ctx) error {
 		SetPassword(string(hashedPassword)).
 		Exec(c); err != nil {
 		log.Error().Err(err).Msg("Failed to update password")
-		return c.Status(fiber.StatusInternalServerError).JSON(ErrorResponse{
+		return c.Status(fiber.StatusInternalServerError).JSON(routes.ErrorResponse{
 			Status:  "error",
 			Message: "Internal server error",
 		})
