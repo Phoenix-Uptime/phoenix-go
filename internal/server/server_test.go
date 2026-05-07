@@ -20,6 +20,7 @@ import (
 	accountroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/account"
 	authroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/auth"
 	monitorroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/monitors"
+	tagroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/tags"
 	"github.com/gofiber/fiber/v3"
 )
 
@@ -525,6 +526,171 @@ func TestMonitorRoutesCRUD(t *testing.T) {
 	}
 	if deleteResp.StatusCode != http.StatusOK {
 		t.Fatalf("expected delete monitor status %d, got %d", http.StatusOK, deleteResp.StatusCode)
+	}
+}
+
+func TestTagRoutesAndMonitorAssignment(t *testing.T) {
+	cleanup := useTestDatabase(t)
+	defer cleanup()
+
+	app := New()
+	apiKey := signupAndLogin(t, app, "taguser", "tag@example.com", "examplepassword")
+
+	createTagBody := []byte(`{"name":"production","description":"Production monitors","color":"#ff0000"}`)
+	createTagReq, err := http.NewRequest(http.MethodPost, "/tags", bytes.NewReader(createTagBody))
+	if err != nil {
+		t.Fatal(err)
+	}
+	createTagReq.Header.Set("Content-Type", "application/json")
+	createTagReq.Header.Set("x-api-key", apiKey)
+
+	createTagResp, err := app.Test(createTagReq, fiber.TestConfig{Timeout: 0})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if createTagResp.StatusCode != http.StatusCreated {
+		t.Fatalf("expected create tag status %d, got %d", http.StatusCreated, createTagResp.StatusCode)
+	}
+	defer createTagResp.Body.Close()
+
+	var createdTag tagroutes.TagResponse
+	if err := json.NewDecoder(createTagResp.Body).Decode(&createdTag); err != nil {
+		t.Fatal(err)
+	}
+	if createdTag.ID == 0 || createdTag.Name != "production" {
+		t.Fatalf("unexpected created tag response: %+v", createdTag)
+	}
+
+	listTagsReq, err := http.NewRequest(http.MethodGet, "/tags", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	listTagsReq.Header.Set("x-api-key", apiKey)
+
+	listTagsResp, err := app.Test(listTagsReq, fiber.TestConfig{Timeout: 0})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if listTagsResp.StatusCode != http.StatusOK {
+		t.Fatalf("expected list tags status %d, got %d", http.StatusOK, listTagsResp.StatusCode)
+	}
+	defer listTagsResp.Body.Close()
+
+	var tagList tagroutes.TagListResponse
+	if err := json.NewDecoder(listTagsResp.Body).Decode(&tagList); err != nil {
+		t.Fatal(err)
+	}
+	if len(tagList.Tags) != 1 || tagList.Tags[0].ID != createdTag.ID {
+		t.Fatalf("expected created tag in list, got %+v", tagList.Tags)
+	}
+
+	createMonitorBody := []byte(`{"name":"Tagged Website","type":"http","url":"https://example.com"}`)
+	createMonitorReq, err := http.NewRequest(http.MethodPost, "/monitors", bytes.NewReader(createMonitorBody))
+	if err != nil {
+		t.Fatal(err)
+	}
+	createMonitorReq.Header.Set("Content-Type", "application/json")
+	createMonitorReq.Header.Set("x-api-key", apiKey)
+
+	createMonitorResp, err := app.Test(createMonitorReq, fiber.TestConfig{Timeout: 0})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if createMonitorResp.StatusCode != http.StatusCreated {
+		t.Fatalf("expected create monitor status %d, got %d", http.StatusCreated, createMonitorResp.StatusCode)
+	}
+	defer createMonitorResp.Body.Close()
+
+	var createdMonitor monitorroutes.MonitorResponse
+	if err := json.NewDecoder(createMonitorResp.Body).Decode(&createdMonitor); err != nil {
+		t.Fatal(err)
+	}
+
+	assignBody := []byte(`{"tag_ids":[` + strconv.Itoa(createdTag.ID) + `]}`)
+	assignReq, err := http.NewRequest(http.MethodPut, "/monitors/"+strconv.Itoa(createdMonitor.ID)+"/tags", bytes.NewReader(assignBody))
+	if err != nil {
+		t.Fatal(err)
+	}
+	assignReq.Header.Set("Content-Type", "application/json")
+	assignReq.Header.Set("x-api-key", apiKey)
+
+	assignResp, err := app.Test(assignReq, fiber.TestConfig{Timeout: 0})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if assignResp.StatusCode != http.StatusOK {
+		t.Fatalf("expected assign monitor tags status %d, got %d", http.StatusOK, assignResp.StatusCode)
+	}
+	defer assignResp.Body.Close()
+
+	var assigned monitorroutes.MonitorTagsResponse
+	if err := json.NewDecoder(assignResp.Body).Decode(&assigned); err != nil {
+		t.Fatal(err)
+	}
+	if len(assigned.Tags) != 1 || assigned.Tags[0].ID != createdTag.ID {
+		t.Fatalf("expected assigned monitor tag, got %+v", assigned.Tags)
+	}
+
+	getAssignedReq, err := http.NewRequest(http.MethodGet, "/monitors/"+strconv.Itoa(createdMonitor.ID)+"/tags", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	getAssignedReq.Header.Set("x-api-key", apiKey)
+
+	getAssignedResp, err := app.Test(getAssignedReq, fiber.TestConfig{Timeout: 0})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if getAssignedResp.StatusCode != http.StatusOK {
+		t.Fatalf("expected monitor tags status %d, got %d", http.StatusOK, getAssignedResp.StatusCode)
+	}
+	defer getAssignedResp.Body.Close()
+
+	var currentTags monitorroutes.MonitorTagsResponse
+	if err := json.NewDecoder(getAssignedResp.Body).Decode(&currentTags); err != nil {
+		t.Fatal(err)
+	}
+	if len(currentTags.Tags) != 1 || currentTags.Tags[0].Name != "production" {
+		t.Fatalf("expected monitor tag, got %+v", currentTags.Tags)
+	}
+
+	updateTagBody := []byte(`{"name":"critical","description":""}`)
+	updateTagReq, err := http.NewRequest(http.MethodPatch, "/tags/"+strconv.Itoa(createdTag.ID), bytes.NewReader(updateTagBody))
+	if err != nil {
+		t.Fatal(err)
+	}
+	updateTagReq.Header.Set("Content-Type", "application/json")
+	updateTagReq.Header.Set("x-api-key", apiKey)
+
+	updateTagResp, err := app.Test(updateTagReq, fiber.TestConfig{Timeout: 0})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if updateTagResp.StatusCode != http.StatusOK {
+		t.Fatalf("expected update tag status %d, got %d", http.StatusOK, updateTagResp.StatusCode)
+	}
+	defer updateTagResp.Body.Close()
+
+	var updatedTag tagroutes.TagResponse
+	if err := json.NewDecoder(updateTagResp.Body).Decode(&updatedTag); err != nil {
+		t.Fatal(err)
+	}
+	if updatedTag.Name != "critical" || updatedTag.Description != nil {
+		t.Fatalf("unexpected updated tag response: %+v", updatedTag)
+	}
+
+	deleteTagReq, err := http.NewRequest(http.MethodDelete, "/tags/"+strconv.Itoa(createdTag.ID), nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	deleteTagReq.Header.Set("x-api-key", apiKey)
+
+	deleteTagResp, err := app.Test(deleteTagReq, fiber.TestConfig{Timeout: 0})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if deleteTagResp.StatusCode != http.StatusOK {
+		t.Fatalf("expected delete tag status %d, got %d", http.StatusOK, deleteTagResp.StatusCode)
 	}
 }
 

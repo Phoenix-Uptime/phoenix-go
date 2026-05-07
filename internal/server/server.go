@@ -7,6 +7,7 @@ import (
 	authroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/auth"
 	healthroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/health"
 	monitorroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/monitors"
+	tagroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/tags"
 	"github.com/Phoenix-Uptime/phoenix-go/internal/server/middleware"
 	"github.com/gofiber/contrib/v3/swaggo"
 	"github.com/gofiber/fiber/v3"
@@ -68,6 +69,15 @@ func New() *fiber.App {
 	account.Post("/settings/telegram", accountroutes.UpdateTelegramBotSettings)
 	account.Post("/settings/smtp", accountroutes.UpdateSMTPSettings)
 
+	// Tag routes
+	tags := app.Group("/tags")
+	tags.Use(middleware.AuthMiddleware)
+	tags.Get("", tagroutes.ListTags)
+	tags.Post("", tagroutes.CreateTag)
+	tags.Get("/:id", tagroutes.GetTag)
+	tags.Patch("/:id", tagroutes.UpdateTag)
+	tags.Delete("/:id", tagroutes.DeleteTag)
+
 	// Monitor routes
 	monitors := app.Group("/monitors")
 	monitors.Use(middleware.AuthMiddleware)
@@ -80,6 +90,8 @@ func New() *fiber.App {
 	monitors.Post("/:id/resume", monitorroutes.ResumeMonitor)
 	monitors.Get("/:id/checks", monitorroutes.ListMonitorChecks)
 	monitors.Get("/:id/stats", monitorroutes.ListMonitorStats)
+	monitors.Get("/:id/tags", monitorroutes.ListMonitorTags)
+	monitors.Put("/:id/tags", monitorroutes.ReplaceMonitorTags)
 
 	return app
 }

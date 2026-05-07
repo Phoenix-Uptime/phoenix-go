@@ -364,6 +364,33 @@ definitions:
           $ref: '#/definitions/monitors.MonitorStatResponse'
         type: array
     type: object
+  monitors.MonitorTagResponse:
+    properties:
+      color:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
+  monitors.MonitorTagsResponse:
+    properties:
+      tags:
+        items:
+          $ref: '#/definitions/monitors.MonitorTagResponse'
+        type: array
+    type: object
+  monitors.ReplaceMonitorTagsRequest:
+    properties:
+      tag_ids:
+        items:
+          type: integer
+        type: array
+    required:
+    - tag_ids
+    type: object
   monitors.UpdateMonitorRequest:
     properties:
       accepted_status_codes:
@@ -446,6 +473,52 @@ definitions:
       message:
         type: string
       status:
+        type: string
+    type: object
+  tags.CreateTagRequest:
+    properties:
+      color:
+        type: string
+      description:
+        type: string
+      name:
+        minLength: 1
+        type: string
+    required:
+    - name
+    type: object
+  tags.TagListResponse:
+    properties:
+      tags:
+        items:
+          $ref: '#/definitions/tags.TagResponse'
+        type: array
+    type: object
+  tags.TagResponse:
+    properties:
+      color:
+        type: string
+      created_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      updated_at:
+        type: string
+      user_id:
+        type: integer
+    type: object
+  tags.UpdateTagRequest:
+    properties:
+      color:
+        type: string
+      description:
+        type: string
+      name:
+        minLength: 1
         type: string
     type: object
 host: 127.0.0.1:3031
@@ -1050,6 +1123,93 @@ paths:
       summary: List Monitor Stats
       tags:
       - Monitors
+  /monitors/{id}/tags:
+    get:
+      consumes:
+      - application/json
+      description: Returns tags assigned to one monitor owned by the authenticated
+        user.
+      parameters:
+      - description: Monitor ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: monitor tags
+          schema:
+            $ref: '#/definitions/monitors.MonitorTagsResponse'
+        "400":
+          description: invalid monitor id
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "401":
+          description: unauthorized - invalid or missing API key
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "404":
+          description: monitor not found
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "500":
+          description: internal server error
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+      security:
+      - ApiKeyHeader: []
+      - ApiKeyQuery: []
+      summary: List Monitor Tags
+      tags:
+      - Monitors
+    put:
+      consumes:
+      - application/json
+      description: Replaces the full tag set assigned to one monitor owned by the
+        authenticated user.
+      parameters:
+      - description: Monitor ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: tag IDs
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/monitors.ReplaceMonitorTagsRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: monitor tags
+          schema:
+            $ref: '#/definitions/monitors.MonitorTagsResponse'
+        "400":
+          description: invalid input
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "401":
+          description: unauthorized - invalid or missing API key
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "404":
+          description: monitor not found
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "500":
+          description: internal server error
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+      security:
+      - ApiKeyHeader: []
+      - ApiKeyQuery: []
+      summary: Replace Monitor Tags
+      tags:
+      - Monitors
   /signup:
     post:
       consumes:
@@ -1084,6 +1244,200 @@ paths:
       summary: User Signup
       tags:
       - Auth
+  /tags:
+    get:
+      consumes:
+      - application/json
+      description: Returns tags owned by the authenticated user.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: tag list
+          schema:
+            $ref: '#/definitions/tags.TagListResponse'
+        "401":
+          description: unauthorized - invalid or missing API key
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "500":
+          description: internal server error
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+      security:
+      - ApiKeyHeader: []
+      - ApiKeyQuery: []
+      summary: List Tags
+      tags:
+      - Tags
+    post:
+      consumes:
+      - application/json
+      description: Creates a tag owned by the authenticated user.
+      parameters:
+      - description: tag payload
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/tags.CreateTagRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: created tag
+          schema:
+            $ref: '#/definitions/tags.TagResponse'
+        "400":
+          description: invalid input
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "401":
+          description: unauthorized - invalid or missing API key
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "409":
+          description: tag already exists
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "500":
+          description: internal server error
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+      security:
+      - ApiKeyHeader: []
+      - ApiKeyQuery: []
+      summary: Create Tag
+      tags:
+      - Tags
+  /tags/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes one tag owned by the authenticated user.
+      parameters:
+      - description: Tag ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: tag deleted
+          schema:
+            $ref: '#/definitions/routes.SuccessResponse'
+        "400":
+          description: invalid tag id
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "401":
+          description: unauthorized - invalid or missing API key
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "404":
+          description: tag not found
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "500":
+          description: internal server error
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+      security:
+      - ApiKeyHeader: []
+      - ApiKeyQuery: []
+      summary: Delete Tag
+      tags:
+      - Tags
+    get:
+      consumes:
+      - application/json
+      description: Returns one tag owned by the authenticated user.
+      parameters:
+      - description: Tag ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: tag
+          schema:
+            $ref: '#/definitions/tags.TagResponse'
+        "400":
+          description: invalid tag id
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "401":
+          description: unauthorized - invalid or missing API key
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "404":
+          description: tag not found
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "500":
+          description: internal server error
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+      security:
+      - ApiKeyHeader: []
+      - ApiKeyQuery: []
+      summary: Get Tag
+      tags:
+      - Tags
+    patch:
+      consumes:
+      - application/json
+      description: Updates one tag owned by the authenticated user.
+      parameters:
+      - description: Tag ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: tag payload
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/tags.UpdateTagRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: updated tag
+          schema:
+            $ref: '#/definitions/tags.TagResponse'
+        "400":
+          description: invalid input
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "401":
+          description: unauthorized - invalid or missing API key
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "404":
+          description: tag not found
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "409":
+          description: tag already exists
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "500":
+          description: internal server error
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+      security:
+      - ApiKeyHeader: []
+      - ApiKeyQuery: []
+      summary: Update Tag
+      tags:
+      - Tags
 securityDefinitions:
   ApiKeyHeader:
     in: header
