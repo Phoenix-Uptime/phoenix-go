@@ -10,12 +10,12 @@ import (
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
-	"github.com/Phoenix-Uptime/phoenix-go/ent/notification"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/notificationchannel"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/user"
 )
 
-// Notification is the model entity for the Notification schema.
-type Notification struct {
+// NotificationChannel is the model entity for the NotificationChannel schema.
+type NotificationChannel struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID int `json:"id,omitempty"`
@@ -24,7 +24,7 @@ type Notification struct {
 	// Name holds the value of the "name" field.
 	Name string `json:"name,omitempty"`
 	// Type holds the value of the "type" field.
-	Type notification.Type `json:"type,omitempty"`
+	Type notificationchannel.Type `json:"type,omitempty"`
 	// IsActive holds the value of the "is_active" field.
 	IsActive bool `json:"is_active,omitempty"`
 	// IsDefault holds the value of the "is_default" field.
@@ -36,13 +36,13 @@ type Notification struct {
 	// UpdatedAt holds the value of the "updated_at" field.
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
-	// The values are being populated by the NotificationQuery when eager-loading is set.
-	Edges        NotificationEdges `json:"edges"`
+	// The values are being populated by the NotificationChannelQuery when eager-loading is set.
+	Edges        NotificationChannelEdges `json:"edges"`
 	selectValues sql.SelectValues
 }
 
-// NotificationEdges holds the relations/edges for other nodes in the graph.
-type NotificationEdges struct {
+// NotificationChannelEdges holds the relations/edges for other nodes in the graph.
+type NotificationChannelEdges struct {
 	// User holds the value of the user edge.
 	User *User `json:"user,omitempty"`
 	// Monitors holds the value of the monitors edge.
@@ -54,7 +54,7 @@ type NotificationEdges struct {
 
 // UserOrErr returns the User value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
-func (e NotificationEdges) UserOrErr() (*User, error) {
+func (e NotificationChannelEdges) UserOrErr() (*User, error) {
 	if e.User != nil {
 		return e.User, nil
 	} else if e.loadedTypes[0] {
@@ -65,7 +65,7 @@ func (e NotificationEdges) UserOrErr() (*User, error) {
 
 // MonitorsOrErr returns the Monitors value or an error if the edge
 // was not loaded in eager-loading.
-func (e NotificationEdges) MonitorsOrErr() ([]*Monitor, error) {
+func (e NotificationChannelEdges) MonitorsOrErr() ([]*Monitor, error) {
 	if e.loadedTypes[1] {
 		return e.Monitors, nil
 	}
@@ -73,19 +73,19 @@ func (e NotificationEdges) MonitorsOrErr() ([]*Monitor, error) {
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
-func (*Notification) scanValues(columns []string) ([]any, error) {
+func (*NotificationChannel) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case notification.FieldConfig:
+		case notificationchannel.FieldConfig:
 			values[i] = new([]byte)
-		case notification.FieldIsActive, notification.FieldIsDefault:
+		case notificationchannel.FieldIsActive, notificationchannel.FieldIsDefault:
 			values[i] = new(sql.NullBool)
-		case notification.FieldID, notification.FieldUserID:
+		case notificationchannel.FieldID, notificationchannel.FieldUserID:
 			values[i] = new(sql.NullInt64)
-		case notification.FieldName, notification.FieldType:
+		case notificationchannel.FieldName, notificationchannel.FieldType:
 			values[i] = new(sql.NullString)
-		case notification.FieldCreatedAt, notification.FieldUpdatedAt:
+		case notificationchannel.FieldCreatedAt, notificationchannel.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -95,50 +95,50 @@ func (*Notification) scanValues(columns []string) ([]any, error) {
 }
 
 // assignValues assigns the values that were returned from sql.Rows (after scanning)
-// to the Notification fields.
-func (_m *Notification) assignValues(columns []string, values []any) error {
+// to the NotificationChannel fields.
+func (_m *NotificationChannel) assignValues(columns []string, values []any) error {
 	if m, n := len(values), len(columns); m < n {
 		return fmt.Errorf("mismatch number of scan values: %d != %d", m, n)
 	}
 	for i := range columns {
 		switch columns[i] {
-		case notification.FieldID:
+		case notificationchannel.FieldID:
 			value, ok := values[i].(*sql.NullInt64)
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
 			_m.ID = int(value.Int64)
-		case notification.FieldUserID:
+		case notificationchannel.FieldUserID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field user_id", values[i])
 			} else if value.Valid {
 				_m.UserID = int(value.Int64)
 			}
-		case notification.FieldName:
+		case notificationchannel.FieldName:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field name", values[i])
 			} else if value.Valid {
 				_m.Name = value.String
 			}
-		case notification.FieldType:
+		case notificationchannel.FieldType:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field type", values[i])
 			} else if value.Valid {
-				_m.Type = notification.Type(value.String)
+				_m.Type = notificationchannel.Type(value.String)
 			}
-		case notification.FieldIsActive:
+		case notificationchannel.FieldIsActive:
 			if value, ok := values[i].(*sql.NullBool); !ok {
 				return fmt.Errorf("unexpected type %T for field is_active", values[i])
 			} else if value.Valid {
 				_m.IsActive = value.Bool
 			}
-		case notification.FieldIsDefault:
+		case notificationchannel.FieldIsDefault:
 			if value, ok := values[i].(*sql.NullBool); !ok {
 				return fmt.Errorf("unexpected type %T for field is_default", values[i])
 			} else if value.Valid {
 				_m.IsDefault = value.Bool
 			}
-		case notification.FieldConfig:
+		case notificationchannel.FieldConfig:
 			if value, ok := values[i].(*[]byte); !ok {
 				return fmt.Errorf("unexpected type %T for field config", values[i])
 			} else if value != nil && len(*value) > 0 {
@@ -146,13 +146,13 @@ func (_m *Notification) assignValues(columns []string, values []any) error {
 					return fmt.Errorf("unmarshal field config: %w", err)
 				}
 			}
-		case notification.FieldCreatedAt:
+		case notificationchannel.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field created_at", values[i])
 			} else if value.Valid {
 				_m.CreatedAt = value.Time
 			}
-		case notification.FieldUpdatedAt:
+		case notificationchannel.FieldUpdatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
 			} else if value.Valid {
@@ -165,44 +165,44 @@ func (_m *Notification) assignValues(columns []string, values []any) error {
 	return nil
 }
 
-// Value returns the ent.Value that was dynamically selected and assigned to the Notification.
+// Value returns the ent.Value that was dynamically selected and assigned to the NotificationChannel.
 // This includes values selected through modifiers, order, etc.
-func (_m *Notification) Value(name string) (ent.Value, error) {
+func (_m *NotificationChannel) Value(name string) (ent.Value, error) {
 	return _m.selectValues.Get(name)
 }
 
-// QueryUser queries the "user" edge of the Notification entity.
-func (_m *Notification) QueryUser() *UserQuery {
-	return NewNotificationClient(_m.config).QueryUser(_m)
+// QueryUser queries the "user" edge of the NotificationChannel entity.
+func (_m *NotificationChannel) QueryUser() *UserQuery {
+	return NewNotificationChannelClient(_m.config).QueryUser(_m)
 }
 
-// QueryMonitors queries the "monitors" edge of the Notification entity.
-func (_m *Notification) QueryMonitors() *MonitorQuery {
-	return NewNotificationClient(_m.config).QueryMonitors(_m)
+// QueryMonitors queries the "monitors" edge of the NotificationChannel entity.
+func (_m *NotificationChannel) QueryMonitors() *MonitorQuery {
+	return NewNotificationChannelClient(_m.config).QueryMonitors(_m)
 }
 
-// Update returns a builder for updating this Notification.
-// Note that you need to call Notification.Unwrap() before calling this method if this Notification
+// Update returns a builder for updating this NotificationChannel.
+// Note that you need to call NotificationChannel.Unwrap() before calling this method if this NotificationChannel
 // was returned from a transaction, and the transaction was committed or rolled back.
-func (_m *Notification) Update() *NotificationUpdateOne {
-	return NewNotificationClient(_m.config).UpdateOne(_m)
+func (_m *NotificationChannel) Update() *NotificationChannelUpdateOne {
+	return NewNotificationChannelClient(_m.config).UpdateOne(_m)
 }
 
-// Unwrap unwraps the Notification entity that was returned from a transaction after it was closed,
+// Unwrap unwraps the NotificationChannel entity that was returned from a transaction after it was closed,
 // so that all future queries will be executed through the driver which created the transaction.
-func (_m *Notification) Unwrap() *Notification {
+func (_m *NotificationChannel) Unwrap() *NotificationChannel {
 	_tx, ok := _m.config.driver.(*txDriver)
 	if !ok {
-		panic("ent: Notification is not a transactional entity")
+		panic("ent: NotificationChannel is not a transactional entity")
 	}
 	_m.config.driver = _tx.drv
 	return _m
 }
 
 // String implements the fmt.Stringer.
-func (_m *Notification) String() string {
+func (_m *NotificationChannel) String() string {
 	var builder strings.Builder
-	builder.WriteString("Notification(")
+	builder.WriteString("NotificationChannel(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", _m.ID))
 	builder.WriteString("user_id=")
 	builder.WriteString(fmt.Sprintf("%v", _m.UserID))
@@ -230,5 +230,5 @@ func (_m *Notification) String() string {
 	return builder.String()
 }
 
-// Notifications is a parsable slice of Notification.
-type Notifications []*Notification
+// NotificationChannels is a parsable slice of NotificationChannel.
+type NotificationChannels []*NotificationChannel

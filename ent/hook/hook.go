@@ -81,16 +81,16 @@ func (f MonitorStatFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value,
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.MonitorStatMutation", m)
 }
 
-// The NotificationFunc type is an adapter to allow the use of ordinary
-// function as Notification mutator.
-type NotificationFunc func(context.Context, *ent.NotificationMutation) (ent.Value, error)
+// The NotificationChannelFunc type is an adapter to allow the use of ordinary
+// function as NotificationChannel mutator.
+type NotificationChannelFunc func(context.Context, *ent.NotificationChannelMutation) (ent.Value, error)
 
 // Mutate calls f(ctx, m).
-func (f NotificationFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-	if mv, ok := m.(*ent.NotificationMutation); ok {
+func (f NotificationChannelFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.NotificationChannelMutation); ok {
 		return f(ctx, mv)
 	}
-	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.NotificationMutation", m)
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.NotificationChannelMutation", m)
 }
 
 // The StatusMessageFunc type is an adapter to allow the use of ordinary

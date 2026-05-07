@@ -16,7 +16,7 @@ import (
 	"github.com/Phoenix-Uptime/phoenix-go/ent/incident"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/maintenancewindow"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/monitor"
-	"github.com/Phoenix-Uptime/phoenix-go/ent/notification"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/notificationchannel"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/predicate"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/statuspage"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/tag"
@@ -26,17 +26,17 @@ import (
 // UserQuery is the builder for querying User entities.
 type UserQuery struct {
 	config
-	ctx                    *QueryContext
-	order                  []user.OrderOption
-	inters                 []Interceptor
-	predicates             []predicate.User
-	withMonitors           *MonitorQuery
-	withTags               *TagQuery
-	withAPIKeys            *APIKeyQuery
-	withNotifications      *NotificationQuery
-	withStatusPages        *StatusPageQuery
-	withMaintenanceWindows *MaintenanceWindowQuery
-	withResolvedIncidents  *IncidentQuery
+	ctx                      *QueryContext
+	order                    []user.OrderOption
+	inters                   []Interceptor
+	predicates               []predicate.User
+	withMonitors             *MonitorQuery
+	withTags                 *TagQuery
+	withAPIKeys              *APIKeyQuery
+	withNotificationChannels *NotificationChannelQuery
+	withStatusPages          *StatusPageQuery
+	withMaintenanceWindows   *MaintenanceWindowQuery
+	withResolvedIncidents    *IncidentQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -139,9 +139,9 @@ func (_q *UserQuery) QueryAPIKeys() *APIKeyQuery {
 	return query
 }
 
-// QueryNotifications chains the current query on the "notifications" edge.
-func (_q *UserQuery) QueryNotifications() *NotificationQuery {
-	query := (&NotificationClient{config: _q.config}).Query()
+// QueryNotificationChannels chains the current query on the "notification_channels" edge.
+func (_q *UserQuery) QueryNotificationChannels() *NotificationChannelQuery {
+	query := (&NotificationChannelClient{config: _q.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := _q.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -152,8 +152,8 @@ func (_q *UserQuery) QueryNotifications() *NotificationQuery {
 		}
 		step := sqlgraph.NewStep(
 			sqlgraph.From(user.Table, user.FieldID, selector),
-			sqlgraph.To(notification.Table, notification.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, user.NotificationsTable, user.NotificationsColumn),
+			sqlgraph.To(notificationchannel.Table, notificationchannel.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.NotificationChannelsTable, user.NotificationChannelsColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -414,18 +414,18 @@ func (_q *UserQuery) Clone() *UserQuery {
 		return nil
 	}
 	return &UserQuery{
-		config:                 _q.config,
-		ctx:                    _q.ctx.Clone(),
-		order:                  append([]user.OrderOption{}, _q.order...),
-		inters:                 append([]Interceptor{}, _q.inters...),
-		predicates:             append([]predicate.User{}, _q.predicates...),
-		withMonitors:           _q.withMonitors.Clone(),
-		withTags:               _q.withTags.Clone(),
-		withAPIKeys:            _q.withAPIKeys.Clone(),
-		withNotifications:      _q.withNotifications.Clone(),
-		withStatusPages:        _q.withStatusPages.Clone(),
-		withMaintenanceWindows: _q.withMaintenanceWindows.Clone(),
-		withResolvedIncidents:  _q.withResolvedIncidents.Clone(),
+		config:                   _q.config,
+		ctx:                      _q.ctx.Clone(),
+		order:                    append([]user.OrderOption{}, _q.order...),
+		inters:                   append([]Interceptor{}, _q.inters...),
+		predicates:               append([]predicate.User{}, _q.predicates...),
+		withMonitors:             _q.withMonitors.Clone(),
+		withTags:                 _q.withTags.Clone(),
+		withAPIKeys:              _q.withAPIKeys.Clone(),
+		withNotificationChannels: _q.withNotificationChannels.Clone(),
+		withStatusPages:          _q.withStatusPages.Clone(),
+		withMaintenanceWindows:   _q.withMaintenanceWindows.Clone(),
+		withResolvedIncidents:    _q.withResolvedIncidents.Clone(),
 		// clone intermediate query.
 		sql:  _q.sql.Clone(),
 		path: _q.path,
@@ -465,14 +465,14 @@ func (_q *UserQuery) WithAPIKeys(opts ...func(*APIKeyQuery)) *UserQuery {
 	return _q
 }
 
-// WithNotifications tells the query-builder to eager-load the nodes that are connected to
-// the "notifications" edge. The optional arguments are used to configure the query builder of the edge.
-func (_q *UserQuery) WithNotifications(opts ...func(*NotificationQuery)) *UserQuery {
-	query := (&NotificationClient{config: _q.config}).Query()
+// WithNotificationChannels tells the query-builder to eager-load the nodes that are connected to
+// the "notification_channels" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *UserQuery) WithNotificationChannels(opts ...func(*NotificationChannelQuery)) *UserQuery {
+	query := (&NotificationChannelClient{config: _q.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
-	_q.withNotifications = query
+	_q.withNotificationChannels = query
 	return _q
 }
 
@@ -591,7 +591,7 @@ func (_q *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 			_q.withMonitors != nil,
 			_q.withTags != nil,
 			_q.withAPIKeys != nil,
-			_q.withNotifications != nil,
+			_q.withNotificationChannels != nil,
 			_q.withStatusPages != nil,
 			_q.withMaintenanceWindows != nil,
 			_q.withResolvedIncidents != nil,
@@ -636,10 +636,12 @@ func (_q *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 			return nil, err
 		}
 	}
-	if query := _q.withNotifications; query != nil {
-		if err := _q.loadNotifications(ctx, query, nodes,
-			func(n *User) { n.Edges.Notifications = []*Notification{} },
-			func(n *User, e *Notification) { n.Edges.Notifications = append(n.Edges.Notifications, e) }); err != nil {
+	if query := _q.withNotificationChannels; query != nil {
+		if err := _q.loadNotificationChannels(ctx, query, nodes,
+			func(n *User) { n.Edges.NotificationChannels = []*NotificationChannel{} },
+			func(n *User, e *NotificationChannel) {
+				n.Edges.NotificationChannels = append(n.Edges.NotificationChannels, e)
+			}); err != nil {
 			return nil, err
 		}
 	}
@@ -759,7 +761,7 @@ func (_q *UserQuery) loadAPIKeys(ctx context.Context, query *APIKeyQuery, nodes 
 	}
 	return nil
 }
-func (_q *UserQuery) loadNotifications(ctx context.Context, query *NotificationQuery, nodes []*User, init func(*User), assign func(*User, *Notification)) error {
+func (_q *UserQuery) loadNotificationChannels(ctx context.Context, query *NotificationChannelQuery, nodes []*User, init func(*User), assign func(*User, *NotificationChannel)) error {
 	fks := make([]driver.Value, 0, len(nodes))
 	nodeids := make(map[int]*User)
 	for i := range nodes {
@@ -770,10 +772,10 @@ func (_q *UserQuery) loadNotifications(ctx context.Context, query *NotificationQ
 		}
 	}
 	if len(query.ctx.Fields) > 0 {
-		query.ctx.AppendFieldOnce(notification.FieldUserID)
+		query.ctx.AppendFieldOnce(notificationchannel.FieldUserID)
 	}
-	query.Where(predicate.Notification(func(s *sql.Selector) {
-		s.Where(sql.InValues(s.C(user.NotificationsColumn), fks...))
+	query.Where(predicate.NotificationChannel(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(user.NotificationChannelsColumn), fks...))
 	}))
 	neighbors, err := query.All(ctx)
 	if err != nil {

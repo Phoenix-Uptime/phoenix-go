@@ -28,22 +28,6 @@ func (User) Fields() []ent.Field {
 		field.String("api_key").
 			NotEmpty().
 			Unique(),
-		field.String("smtp_smtp_server").
-			Optional(),
-		field.Int("smtp_smtp_port").
-			Optional(),
-		field.String("smtp_from_address").
-			Optional(),
-		field.String("smtp_username").
-			Optional(),
-		field.String("smtp_password").
-			Optional().
-			Sensitive(),
-		field.Bool("smtp_use_tls").
-			Optional(),
-		field.String("telegram_bot_token").
-			Optional().
-			Sensitive(),
 		field.Time("created_at").
 			Default(time.Now).
 			Immutable(),
@@ -61,7 +45,7 @@ func (User) Edges() []ent.Edge {
 			Annotations(entsql.OnDelete(entsql.Cascade)),
 		edge.To("api_keys", APIKey.Type).
 			Annotations(entsql.OnDelete(entsql.Cascade)),
-		edge.To("notifications", Notification.Type).
+		edge.To("notification_channels", NotificationChannel.Type).
 			Annotations(entsql.OnDelete(entsql.Cascade)),
 		edge.To("status_pages", StatusPage.Type).
 			Annotations(entsql.OnDelete(entsql.Cascade)),

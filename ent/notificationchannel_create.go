@@ -11,43 +11,43 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/monitor"
-	"github.com/Phoenix-Uptime/phoenix-go/ent/notification"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/notificationchannel"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/user"
 )
 
-// NotificationCreate is the builder for creating a Notification entity.
-type NotificationCreate struct {
+// NotificationChannelCreate is the builder for creating a NotificationChannel entity.
+type NotificationChannelCreate struct {
 	config
-	mutation *NotificationMutation
+	mutation *NotificationChannelMutation
 	hooks    []Hook
 }
 
 // SetUserID sets the "user_id" field.
-func (_c *NotificationCreate) SetUserID(v int) *NotificationCreate {
+func (_c *NotificationChannelCreate) SetUserID(v int) *NotificationChannelCreate {
 	_c.mutation.SetUserID(v)
 	return _c
 }
 
 // SetName sets the "name" field.
-func (_c *NotificationCreate) SetName(v string) *NotificationCreate {
+func (_c *NotificationChannelCreate) SetName(v string) *NotificationChannelCreate {
 	_c.mutation.SetName(v)
 	return _c
 }
 
 // SetType sets the "type" field.
-func (_c *NotificationCreate) SetType(v notification.Type) *NotificationCreate {
+func (_c *NotificationChannelCreate) SetType(v notificationchannel.Type) *NotificationChannelCreate {
 	_c.mutation.SetType(v)
 	return _c
 }
 
 // SetIsActive sets the "is_active" field.
-func (_c *NotificationCreate) SetIsActive(v bool) *NotificationCreate {
+func (_c *NotificationChannelCreate) SetIsActive(v bool) *NotificationChannelCreate {
 	_c.mutation.SetIsActive(v)
 	return _c
 }
 
 // SetNillableIsActive sets the "is_active" field if the given value is not nil.
-func (_c *NotificationCreate) SetNillableIsActive(v *bool) *NotificationCreate {
+func (_c *NotificationChannelCreate) SetNillableIsActive(v *bool) *NotificationChannelCreate {
 	if v != nil {
 		_c.SetIsActive(*v)
 	}
@@ -55,13 +55,13 @@ func (_c *NotificationCreate) SetNillableIsActive(v *bool) *NotificationCreate {
 }
 
 // SetIsDefault sets the "is_default" field.
-func (_c *NotificationCreate) SetIsDefault(v bool) *NotificationCreate {
+func (_c *NotificationChannelCreate) SetIsDefault(v bool) *NotificationChannelCreate {
 	_c.mutation.SetIsDefault(v)
 	return _c
 }
 
 // SetNillableIsDefault sets the "is_default" field if the given value is not nil.
-func (_c *NotificationCreate) SetNillableIsDefault(v *bool) *NotificationCreate {
+func (_c *NotificationChannelCreate) SetNillableIsDefault(v *bool) *NotificationChannelCreate {
 	if v != nil {
 		_c.SetIsDefault(*v)
 	}
@@ -69,19 +69,19 @@ func (_c *NotificationCreate) SetNillableIsDefault(v *bool) *NotificationCreate 
 }
 
 // SetConfig sets the "config" field.
-func (_c *NotificationCreate) SetConfig(v map[string]interface{}) *NotificationCreate {
+func (_c *NotificationChannelCreate) SetConfig(v map[string]interface{}) *NotificationChannelCreate {
 	_c.mutation.SetConfig(v)
 	return _c
 }
 
 // SetCreatedAt sets the "created_at" field.
-func (_c *NotificationCreate) SetCreatedAt(v time.Time) *NotificationCreate {
+func (_c *NotificationChannelCreate) SetCreatedAt(v time.Time) *NotificationChannelCreate {
 	_c.mutation.SetCreatedAt(v)
 	return _c
 }
 
 // SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (_c *NotificationCreate) SetNillableCreatedAt(v *time.Time) *NotificationCreate {
+func (_c *NotificationChannelCreate) SetNillableCreatedAt(v *time.Time) *NotificationChannelCreate {
 	if v != nil {
 		_c.SetCreatedAt(*v)
 	}
@@ -89,13 +89,13 @@ func (_c *NotificationCreate) SetNillableCreatedAt(v *time.Time) *NotificationCr
 }
 
 // SetUpdatedAt sets the "updated_at" field.
-func (_c *NotificationCreate) SetUpdatedAt(v time.Time) *NotificationCreate {
+func (_c *NotificationChannelCreate) SetUpdatedAt(v time.Time) *NotificationChannelCreate {
 	_c.mutation.SetUpdatedAt(v)
 	return _c
 }
 
 // SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (_c *NotificationCreate) SetNillableUpdatedAt(v *time.Time) *NotificationCreate {
+func (_c *NotificationChannelCreate) SetNillableUpdatedAt(v *time.Time) *NotificationChannelCreate {
 	if v != nil {
 		_c.SetUpdatedAt(*v)
 	}
@@ -103,18 +103,18 @@ func (_c *NotificationCreate) SetNillableUpdatedAt(v *time.Time) *NotificationCr
 }
 
 // SetUser sets the "user" edge to the User entity.
-func (_c *NotificationCreate) SetUser(v *User) *NotificationCreate {
+func (_c *NotificationChannelCreate) SetUser(v *User) *NotificationChannelCreate {
 	return _c.SetUserID(v.ID)
 }
 
 // AddMonitorIDs adds the "monitors" edge to the Monitor entity by IDs.
-func (_c *NotificationCreate) AddMonitorIDs(ids ...int) *NotificationCreate {
+func (_c *NotificationChannelCreate) AddMonitorIDs(ids ...int) *NotificationChannelCreate {
 	_c.mutation.AddMonitorIDs(ids...)
 	return _c
 }
 
 // AddMonitors adds the "monitors" edges to the Monitor entity.
-func (_c *NotificationCreate) AddMonitors(v ...*Monitor) *NotificationCreate {
+func (_c *NotificationChannelCreate) AddMonitors(v ...*Monitor) *NotificationChannelCreate {
 	ids := make([]int, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
@@ -122,19 +122,19 @@ func (_c *NotificationCreate) AddMonitors(v ...*Monitor) *NotificationCreate {
 	return _c.AddMonitorIDs(ids...)
 }
 
-// Mutation returns the NotificationMutation object of the builder.
-func (_c *NotificationCreate) Mutation() *NotificationMutation {
+// Mutation returns the NotificationChannelMutation object of the builder.
+func (_c *NotificationChannelCreate) Mutation() *NotificationChannelMutation {
 	return _c.mutation
 }
 
-// Save creates the Notification in the database.
-func (_c *NotificationCreate) Save(ctx context.Context) (*Notification, error) {
+// Save creates the NotificationChannel in the database.
+func (_c *NotificationChannelCreate) Save(ctx context.Context) (*NotificationChannel, error) {
 	_c.defaults()
 	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
 // SaveX calls Save and panics if Save returns an error.
-func (_c *NotificationCreate) SaveX(ctx context.Context) *Notification {
+func (_c *NotificationChannelCreate) SaveX(ctx context.Context) *NotificationChannel {
 	v, err := _c.Save(ctx)
 	if err != nil {
 		panic(err)
@@ -143,78 +143,78 @@ func (_c *NotificationCreate) SaveX(ctx context.Context) *Notification {
 }
 
 // Exec executes the query.
-func (_c *NotificationCreate) Exec(ctx context.Context) error {
+func (_c *NotificationChannelCreate) Exec(ctx context.Context) error {
 	_, err := _c.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (_c *NotificationCreate) ExecX(ctx context.Context) {
+func (_c *NotificationChannelCreate) ExecX(ctx context.Context) {
 	if err := _c.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // defaults sets the default values of the builder before save.
-func (_c *NotificationCreate) defaults() {
+func (_c *NotificationChannelCreate) defaults() {
 	if _, ok := _c.mutation.IsActive(); !ok {
-		v := notification.DefaultIsActive
+		v := notificationchannel.DefaultIsActive
 		_c.mutation.SetIsActive(v)
 	}
 	if _, ok := _c.mutation.IsDefault(); !ok {
-		v := notification.DefaultIsDefault
+		v := notificationchannel.DefaultIsDefault
 		_c.mutation.SetIsDefault(v)
 	}
 	if _, ok := _c.mutation.CreatedAt(); !ok {
-		v := notification.DefaultCreatedAt()
+		v := notificationchannel.DefaultCreatedAt()
 		_c.mutation.SetCreatedAt(v)
 	}
 	if _, ok := _c.mutation.UpdatedAt(); !ok {
-		v := notification.DefaultUpdatedAt()
+		v := notificationchannel.DefaultUpdatedAt()
 		_c.mutation.SetUpdatedAt(v)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (_c *NotificationCreate) check() error {
+func (_c *NotificationChannelCreate) check() error {
 	if _, ok := _c.mutation.UserID(); !ok {
-		return &ValidationError{Name: "user_id", err: errors.New(`ent: missing required field "Notification.user_id"`)}
+		return &ValidationError{Name: "user_id", err: errors.New(`ent: missing required field "NotificationChannel.user_id"`)}
 	}
 	if _, ok := _c.mutation.Name(); !ok {
-		return &ValidationError{Name: "name", err: errors.New(`ent: missing required field "Notification.name"`)}
+		return &ValidationError{Name: "name", err: errors.New(`ent: missing required field "NotificationChannel.name"`)}
 	}
 	if v, ok := _c.mutation.Name(); ok {
-		if err := notification.NameValidator(v); err != nil {
-			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "Notification.name": %w`, err)}
+		if err := notificationchannel.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "NotificationChannel.name": %w`, err)}
 		}
 	}
 	if _, ok := _c.mutation.GetType(); !ok {
-		return &ValidationError{Name: "type", err: errors.New(`ent: missing required field "Notification.type"`)}
+		return &ValidationError{Name: "type", err: errors.New(`ent: missing required field "NotificationChannel.type"`)}
 	}
 	if v, ok := _c.mutation.GetType(); ok {
-		if err := notification.TypeValidator(v); err != nil {
-			return &ValidationError{Name: "type", err: fmt.Errorf(`ent: validator failed for field "Notification.type": %w`, err)}
+		if err := notificationchannel.TypeValidator(v); err != nil {
+			return &ValidationError{Name: "type", err: fmt.Errorf(`ent: validator failed for field "NotificationChannel.type": %w`, err)}
 		}
 	}
 	if _, ok := _c.mutation.IsActive(); !ok {
-		return &ValidationError{Name: "is_active", err: errors.New(`ent: missing required field "Notification.is_active"`)}
+		return &ValidationError{Name: "is_active", err: errors.New(`ent: missing required field "NotificationChannel.is_active"`)}
 	}
 	if _, ok := _c.mutation.IsDefault(); !ok {
-		return &ValidationError{Name: "is_default", err: errors.New(`ent: missing required field "Notification.is_default"`)}
+		return &ValidationError{Name: "is_default", err: errors.New(`ent: missing required field "NotificationChannel.is_default"`)}
 	}
 	if _, ok := _c.mutation.CreatedAt(); !ok {
-		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Notification.created_at"`)}
+		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "NotificationChannel.created_at"`)}
 	}
 	if _, ok := _c.mutation.UpdatedAt(); !ok {
-		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "Notification.updated_at"`)}
+		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "NotificationChannel.updated_at"`)}
 	}
 	if len(_c.mutation.UserIDs()) == 0 {
-		return &ValidationError{Name: "user", err: errors.New(`ent: missing required edge "Notification.user"`)}
+		return &ValidationError{Name: "user", err: errors.New(`ent: missing required edge "NotificationChannel.user"`)}
 	}
 	return nil
 }
 
-func (_c *NotificationCreate) sqlSave(ctx context.Context) (*Notification, error) {
+func (_c *NotificationChannelCreate) sqlSave(ctx context.Context) (*NotificationChannel, error) {
 	if err := _c.check(); err != nil {
 		return nil, err
 	}
@@ -232,45 +232,45 @@ func (_c *NotificationCreate) sqlSave(ctx context.Context) (*Notification, error
 	return _node, nil
 }
 
-func (_c *NotificationCreate) createSpec() (*Notification, *sqlgraph.CreateSpec) {
+func (_c *NotificationChannelCreate) createSpec() (*NotificationChannel, *sqlgraph.CreateSpec) {
 	var (
-		_node = &Notification{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(notification.Table, sqlgraph.NewFieldSpec(notification.FieldID, field.TypeInt))
+		_node = &NotificationChannel{config: _c.config}
+		_spec = sqlgraph.NewCreateSpec(notificationchannel.Table, sqlgraph.NewFieldSpec(notificationchannel.FieldID, field.TypeInt))
 	)
 	if value, ok := _c.mutation.Name(); ok {
-		_spec.SetField(notification.FieldName, field.TypeString, value)
+		_spec.SetField(notificationchannel.FieldName, field.TypeString, value)
 		_node.Name = value
 	}
 	if value, ok := _c.mutation.GetType(); ok {
-		_spec.SetField(notification.FieldType, field.TypeEnum, value)
+		_spec.SetField(notificationchannel.FieldType, field.TypeEnum, value)
 		_node.Type = value
 	}
 	if value, ok := _c.mutation.IsActive(); ok {
-		_spec.SetField(notification.FieldIsActive, field.TypeBool, value)
+		_spec.SetField(notificationchannel.FieldIsActive, field.TypeBool, value)
 		_node.IsActive = value
 	}
 	if value, ok := _c.mutation.IsDefault(); ok {
-		_spec.SetField(notification.FieldIsDefault, field.TypeBool, value)
+		_spec.SetField(notificationchannel.FieldIsDefault, field.TypeBool, value)
 		_node.IsDefault = value
 	}
 	if value, ok := _c.mutation.Config(); ok {
-		_spec.SetField(notification.FieldConfig, field.TypeJSON, value)
+		_spec.SetField(notificationchannel.FieldConfig, field.TypeJSON, value)
 		_node.Config = value
 	}
 	if value, ok := _c.mutation.CreatedAt(); ok {
-		_spec.SetField(notification.FieldCreatedAt, field.TypeTime, value)
+		_spec.SetField(notificationchannel.FieldCreatedAt, field.TypeTime, value)
 		_node.CreatedAt = value
 	}
 	if value, ok := _c.mutation.UpdatedAt(); ok {
-		_spec.SetField(notification.FieldUpdatedAt, field.TypeTime, value)
+		_spec.SetField(notificationchannel.FieldUpdatedAt, field.TypeTime, value)
 		_node.UpdatedAt = value
 	}
 	if nodes := _c.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   notification.UserTable,
-			Columns: []string{notification.UserColumn},
+			Table:   notificationchannel.UserTable,
+			Columns: []string{notificationchannel.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
@@ -286,8 +286,8 @@ func (_c *NotificationCreate) createSpec() (*Notification, *sqlgraph.CreateSpec)
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: true,
-			Table:   notification.MonitorsTable,
-			Columns: notification.MonitorsPrimaryKey,
+			Table:   notificationchannel.MonitorsTable,
+			Columns: notificationchannel.MonitorsPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(monitor.FieldID, field.TypeInt),
@@ -301,27 +301,27 @@ func (_c *NotificationCreate) createSpec() (*Notification, *sqlgraph.CreateSpec)
 	return _node, _spec
 }
 
-// NotificationCreateBulk is the builder for creating many Notification entities in bulk.
-type NotificationCreateBulk struct {
+// NotificationChannelCreateBulk is the builder for creating many NotificationChannel entities in bulk.
+type NotificationChannelCreateBulk struct {
 	config
 	err      error
-	builders []*NotificationCreate
+	builders []*NotificationChannelCreate
 }
 
-// Save creates the Notification entities in the database.
-func (_c *NotificationCreateBulk) Save(ctx context.Context) ([]*Notification, error) {
+// Save creates the NotificationChannel entities in the database.
+func (_c *NotificationChannelCreateBulk) Save(ctx context.Context) ([]*NotificationChannel, error) {
 	if _c.err != nil {
 		return nil, _c.err
 	}
 	specs := make([]*sqlgraph.CreateSpec, len(_c.builders))
-	nodes := make([]*Notification, len(_c.builders))
+	nodes := make([]*NotificationChannel, len(_c.builders))
 	mutators := make([]Mutator, len(_c.builders))
 	for i := range _c.builders {
 		func(i int, root context.Context) {
 			builder := _c.builders[i]
 			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-				mutation, ok := m.(*NotificationMutation)
+				mutation, ok := m.(*NotificationChannelMutation)
 				if !ok {
 					return nil, fmt.Errorf("unexpected mutation type %T", m)
 				}
@@ -368,7 +368,7 @@ func (_c *NotificationCreateBulk) Save(ctx context.Context) ([]*Notification, er
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (_c *NotificationCreateBulk) SaveX(ctx context.Context) []*Notification {
+func (_c *NotificationChannelCreateBulk) SaveX(ctx context.Context) []*NotificationChannel {
 	v, err := _c.Save(ctx)
 	if err != nil {
 		panic(err)
@@ -377,13 +377,13 @@ func (_c *NotificationCreateBulk) SaveX(ctx context.Context) []*Notification {
 }
 
 // Exec executes the query.
-func (_c *NotificationCreateBulk) Exec(ctx context.Context) error {
+func (_c *NotificationChannelCreateBulk) Exec(ctx context.Context) error {
 	_, err := _c.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (_c *NotificationCreateBulk) ExecX(ctx context.Context) {
+func (_c *NotificationChannelCreateBulk) ExecX(ctx context.Context) {
 	if err := _c.Exec(ctx); err != nil {
 		panic(err)
 	}

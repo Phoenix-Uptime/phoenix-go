@@ -17,7 +17,7 @@ import (
 	"github.com/Phoenix-Uptime/phoenix-go/ent/monitor"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/monitorcheck"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/monitorstat"
-	"github.com/Phoenix-Uptime/phoenix-go/ent/notification"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/notificationchannel"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/predicate"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/statuspagemonitor"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/tag"
@@ -532,19 +532,19 @@ func (_u *MonitorUpdate) AddTags(v ...*Tag) *MonitorUpdate {
 	return _u.AddTagIDs(ids...)
 }
 
-// AddNotificationIDs adds the "notifications" edge to the Notification entity by IDs.
-func (_u *MonitorUpdate) AddNotificationIDs(ids ...int) *MonitorUpdate {
-	_u.mutation.AddNotificationIDs(ids...)
+// AddNotificationChannelIDs adds the "notification_channels" edge to the NotificationChannel entity by IDs.
+func (_u *MonitorUpdate) AddNotificationChannelIDs(ids ...int) *MonitorUpdate {
+	_u.mutation.AddNotificationChannelIDs(ids...)
 	return _u
 }
 
-// AddNotifications adds the "notifications" edges to the Notification entity.
-func (_u *MonitorUpdate) AddNotifications(v ...*Notification) *MonitorUpdate {
+// AddNotificationChannels adds the "notification_channels" edges to the NotificationChannel entity.
+func (_u *MonitorUpdate) AddNotificationChannels(v ...*NotificationChannel) *MonitorUpdate {
 	ids := make([]int, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
-	return _u.AddNotificationIDs(ids...)
+	return _u.AddNotificationChannelIDs(ids...)
 }
 
 // AddStatusPageMonitorIDs adds the "status_page_monitors" edge to the StatusPageMonitor entity by IDs.
@@ -666,25 +666,25 @@ func (_u *MonitorUpdate) RemoveTags(v ...*Tag) *MonitorUpdate {
 	return _u.RemoveTagIDs(ids...)
 }
 
-// ClearNotifications clears all "notifications" edges to the Notification entity.
-func (_u *MonitorUpdate) ClearNotifications() *MonitorUpdate {
-	_u.mutation.ClearNotifications()
+// ClearNotificationChannels clears all "notification_channels" edges to the NotificationChannel entity.
+func (_u *MonitorUpdate) ClearNotificationChannels() *MonitorUpdate {
+	_u.mutation.ClearNotificationChannels()
 	return _u
 }
 
-// RemoveNotificationIDs removes the "notifications" edge to Notification entities by IDs.
-func (_u *MonitorUpdate) RemoveNotificationIDs(ids ...int) *MonitorUpdate {
-	_u.mutation.RemoveNotificationIDs(ids...)
+// RemoveNotificationChannelIDs removes the "notification_channels" edge to NotificationChannel entities by IDs.
+func (_u *MonitorUpdate) RemoveNotificationChannelIDs(ids ...int) *MonitorUpdate {
+	_u.mutation.RemoveNotificationChannelIDs(ids...)
 	return _u
 }
 
-// RemoveNotifications removes "notifications" edges to Notification entities.
-func (_u *MonitorUpdate) RemoveNotifications(v ...*Notification) *MonitorUpdate {
+// RemoveNotificationChannels removes "notification_channels" edges to NotificationChannel entities.
+func (_u *MonitorUpdate) RemoveNotificationChannels(v ...*NotificationChannel) *MonitorUpdate {
 	ids := make([]int, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
-	return _u.RemoveNotificationIDs(ids...)
+	return _u.RemoveNotificationChannelIDs(ids...)
 }
 
 // ClearStatusPageMonitors clears all "status_page_monitors" edges to the StatusPageMonitor entity.
@@ -1121,28 +1121,28 @@ func (_u *MonitorUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if _u.mutation.NotificationsCleared() {
+	if _u.mutation.NotificationChannelsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: false,
-			Table:   monitor.NotificationsTable,
-			Columns: monitor.NotificationsPrimaryKey,
+			Table:   monitor.NotificationChannelsTable,
+			Columns: monitor.NotificationChannelsPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(notification.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(notificationchannel.FieldID, field.TypeInt),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := _u.mutation.RemovedNotificationsIDs(); len(nodes) > 0 && !_u.mutation.NotificationsCleared() {
+	if nodes := _u.mutation.RemovedNotificationChannelsIDs(); len(nodes) > 0 && !_u.mutation.NotificationChannelsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: false,
-			Table:   monitor.NotificationsTable,
-			Columns: monitor.NotificationsPrimaryKey,
+			Table:   monitor.NotificationChannelsTable,
+			Columns: monitor.NotificationChannelsPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(notification.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(notificationchannel.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -1150,15 +1150,15 @@ func (_u *MonitorUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := _u.mutation.NotificationsIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.NotificationChannelsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: false,
-			Table:   monitor.NotificationsTable,
-			Columns: monitor.NotificationsPrimaryKey,
+			Table:   monitor.NotificationChannelsTable,
+			Columns: monitor.NotificationChannelsPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(notification.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(notificationchannel.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -1816,19 +1816,19 @@ func (_u *MonitorUpdateOne) AddTags(v ...*Tag) *MonitorUpdateOne {
 	return _u.AddTagIDs(ids...)
 }
 
-// AddNotificationIDs adds the "notifications" edge to the Notification entity by IDs.
-func (_u *MonitorUpdateOne) AddNotificationIDs(ids ...int) *MonitorUpdateOne {
-	_u.mutation.AddNotificationIDs(ids...)
+// AddNotificationChannelIDs adds the "notification_channels" edge to the NotificationChannel entity by IDs.
+func (_u *MonitorUpdateOne) AddNotificationChannelIDs(ids ...int) *MonitorUpdateOne {
+	_u.mutation.AddNotificationChannelIDs(ids...)
 	return _u
 }
 
-// AddNotifications adds the "notifications" edges to the Notification entity.
-func (_u *MonitorUpdateOne) AddNotifications(v ...*Notification) *MonitorUpdateOne {
+// AddNotificationChannels adds the "notification_channels" edges to the NotificationChannel entity.
+func (_u *MonitorUpdateOne) AddNotificationChannels(v ...*NotificationChannel) *MonitorUpdateOne {
 	ids := make([]int, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
-	return _u.AddNotificationIDs(ids...)
+	return _u.AddNotificationChannelIDs(ids...)
 }
 
 // AddStatusPageMonitorIDs adds the "status_page_monitors" edge to the StatusPageMonitor entity by IDs.
@@ -1950,25 +1950,25 @@ func (_u *MonitorUpdateOne) RemoveTags(v ...*Tag) *MonitorUpdateOne {
 	return _u.RemoveTagIDs(ids...)
 }
 
-// ClearNotifications clears all "notifications" edges to the Notification entity.
-func (_u *MonitorUpdateOne) ClearNotifications() *MonitorUpdateOne {
-	_u.mutation.ClearNotifications()
+// ClearNotificationChannels clears all "notification_channels" edges to the NotificationChannel entity.
+func (_u *MonitorUpdateOne) ClearNotificationChannels() *MonitorUpdateOne {
+	_u.mutation.ClearNotificationChannels()
 	return _u
 }
 
-// RemoveNotificationIDs removes the "notifications" edge to Notification entities by IDs.
-func (_u *MonitorUpdateOne) RemoveNotificationIDs(ids ...int) *MonitorUpdateOne {
-	_u.mutation.RemoveNotificationIDs(ids...)
+// RemoveNotificationChannelIDs removes the "notification_channels" edge to NotificationChannel entities by IDs.
+func (_u *MonitorUpdateOne) RemoveNotificationChannelIDs(ids ...int) *MonitorUpdateOne {
+	_u.mutation.RemoveNotificationChannelIDs(ids...)
 	return _u
 }
 
-// RemoveNotifications removes "notifications" edges to Notification entities.
-func (_u *MonitorUpdateOne) RemoveNotifications(v ...*Notification) *MonitorUpdateOne {
+// RemoveNotificationChannels removes "notification_channels" edges to NotificationChannel entities.
+func (_u *MonitorUpdateOne) RemoveNotificationChannels(v ...*NotificationChannel) *MonitorUpdateOne {
 	ids := make([]int, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
-	return _u.RemoveNotificationIDs(ids...)
+	return _u.RemoveNotificationChannelIDs(ids...)
 }
 
 // ClearStatusPageMonitors clears all "status_page_monitors" edges to the StatusPageMonitor entity.
@@ -2435,28 +2435,28 @@ func (_u *MonitorUpdateOne) sqlSave(ctx context.Context) (_node *Monitor, err er
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if _u.mutation.NotificationsCleared() {
+	if _u.mutation.NotificationChannelsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: false,
-			Table:   monitor.NotificationsTable,
-			Columns: monitor.NotificationsPrimaryKey,
+			Table:   monitor.NotificationChannelsTable,
+			Columns: monitor.NotificationChannelsPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(notification.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(notificationchannel.FieldID, field.TypeInt),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := _u.mutation.RemovedNotificationsIDs(); len(nodes) > 0 && !_u.mutation.NotificationsCleared() {
+	if nodes := _u.mutation.RemovedNotificationChannelsIDs(); len(nodes) > 0 && !_u.mutation.NotificationChannelsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: false,
-			Table:   monitor.NotificationsTable,
-			Columns: monitor.NotificationsPrimaryKey,
+			Table:   monitor.NotificationChannelsTable,
+			Columns: monitor.NotificationChannelsPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(notification.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(notificationchannel.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -2464,15 +2464,15 @@ func (_u *MonitorUpdateOne) sqlSave(ctx context.Context) (_node *Monitor, err er
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := _u.mutation.NotificationsIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.NotificationChannelsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: false,
-			Table:   monitor.NotificationsTable,
-			Columns: monitor.NotificationsPrimaryKey,
+			Table:   monitor.NotificationChannelsTable,
+			Columns: monitor.NotificationChannelsPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(notification.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(notificationchannel.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

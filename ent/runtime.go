@@ -11,7 +11,7 @@ import (
 	"github.com/Phoenix-Uptime/phoenix-go/ent/monitor"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/monitorcheck"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/monitorstat"
-	"github.com/Phoenix-Uptime/phoenix-go/ent/notification"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/notificationchannel"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/schema"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/statusmessage"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/statuspage"
@@ -216,30 +216,30 @@ func init() {
 	monitorstat.DefaultUpdatedAt = monitorstatDescUpdatedAt.Default.(func() time.Time)
 	// monitorstat.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	monitorstat.UpdateDefaultUpdatedAt = monitorstatDescUpdatedAt.UpdateDefault.(func() time.Time)
-	notificationFields := schema.Notification{}.Fields()
-	_ = notificationFields
-	// notificationDescName is the schema descriptor for name field.
-	notificationDescName := notificationFields[1].Descriptor()
-	// notification.NameValidator is a validator for the "name" field. It is called by the builders before save.
-	notification.NameValidator = notificationDescName.Validators[0].(func(string) error)
-	// notificationDescIsActive is the schema descriptor for is_active field.
-	notificationDescIsActive := notificationFields[3].Descriptor()
-	// notification.DefaultIsActive holds the default value on creation for the is_active field.
-	notification.DefaultIsActive = notificationDescIsActive.Default.(bool)
-	// notificationDescIsDefault is the schema descriptor for is_default field.
-	notificationDescIsDefault := notificationFields[4].Descriptor()
-	// notification.DefaultIsDefault holds the default value on creation for the is_default field.
-	notification.DefaultIsDefault = notificationDescIsDefault.Default.(bool)
-	// notificationDescCreatedAt is the schema descriptor for created_at field.
-	notificationDescCreatedAt := notificationFields[6].Descriptor()
-	// notification.DefaultCreatedAt holds the default value on creation for the created_at field.
-	notification.DefaultCreatedAt = notificationDescCreatedAt.Default.(func() time.Time)
-	// notificationDescUpdatedAt is the schema descriptor for updated_at field.
-	notificationDescUpdatedAt := notificationFields[7].Descriptor()
-	// notification.DefaultUpdatedAt holds the default value on creation for the updated_at field.
-	notification.DefaultUpdatedAt = notificationDescUpdatedAt.Default.(func() time.Time)
-	// notification.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
-	notification.UpdateDefaultUpdatedAt = notificationDescUpdatedAt.UpdateDefault.(func() time.Time)
+	notificationchannelFields := schema.NotificationChannel{}.Fields()
+	_ = notificationchannelFields
+	// notificationchannelDescName is the schema descriptor for name field.
+	notificationchannelDescName := notificationchannelFields[1].Descriptor()
+	// notificationchannel.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	notificationchannel.NameValidator = notificationchannelDescName.Validators[0].(func(string) error)
+	// notificationchannelDescIsActive is the schema descriptor for is_active field.
+	notificationchannelDescIsActive := notificationchannelFields[3].Descriptor()
+	// notificationchannel.DefaultIsActive holds the default value on creation for the is_active field.
+	notificationchannel.DefaultIsActive = notificationchannelDescIsActive.Default.(bool)
+	// notificationchannelDescIsDefault is the schema descriptor for is_default field.
+	notificationchannelDescIsDefault := notificationchannelFields[4].Descriptor()
+	// notificationchannel.DefaultIsDefault holds the default value on creation for the is_default field.
+	notificationchannel.DefaultIsDefault = notificationchannelDescIsDefault.Default.(bool)
+	// notificationchannelDescCreatedAt is the schema descriptor for created_at field.
+	notificationchannelDescCreatedAt := notificationchannelFields[6].Descriptor()
+	// notificationchannel.DefaultCreatedAt holds the default value on creation for the created_at field.
+	notificationchannel.DefaultCreatedAt = notificationchannelDescCreatedAt.Default.(func() time.Time)
+	// notificationchannelDescUpdatedAt is the schema descriptor for updated_at field.
+	notificationchannelDescUpdatedAt := notificationchannelFields[7].Descriptor()
+	// notificationchannel.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	notificationchannel.DefaultUpdatedAt = notificationchannelDescUpdatedAt.Default.(func() time.Time)
+	// notificationchannel.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	notificationchannel.UpdateDefaultUpdatedAt = notificationchannelDescUpdatedAt.UpdateDefault.(func() time.Time)
 	statusmessageFields := schema.StatusMessage{}.Fields()
 	_ = statusmessageFields
 	// statusmessageDescContent is the schema descriptor for content field.
@@ -359,11 +359,11 @@ func init() {
 	// user.APIKeyValidator is a validator for the "api_key" field. It is called by the builders before save.
 	user.APIKeyValidator = userDescAPIKey.Validators[0].(func(string) error)
 	// userDescCreatedAt is the schema descriptor for created_at field.
-	userDescCreatedAt := userFields[11].Descriptor()
+	userDescCreatedAt := userFields[4].Descriptor()
 	// user.DefaultCreatedAt holds the default value on creation for the created_at field.
 	user.DefaultCreatedAt = userDescCreatedAt.Default.(func() time.Time)
 	// userDescUpdatedAt is the schema descriptor for updated_at field.
-	userDescUpdatedAt := userFields[12].Descriptor()
+	userDescUpdatedAt := userFields[5].Descriptor()
 	// user.DefaultUpdatedAt holds the default value on creation for the updated_at field.
 	user.DefaultUpdatedAt = userDescUpdatedAt.Default.(func() time.Time)
 	// user.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.

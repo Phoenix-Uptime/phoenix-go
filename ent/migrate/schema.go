@@ -336,8 +336,8 @@ var (
 			},
 		},
 	}
-	// NotificationsColumns holds the columns for the "notifications" table.
-	NotificationsColumns = []*schema.Column{
+	// NotificationChannelsColumns holds the columns for the "notification_channels" table.
+	NotificationChannelsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "name", Type: field.TypeString},
 		{Name: "type", Type: field.TypeEnum, Enums: []string{"smtp", "telegram", "webhook", "discord", "slack", "pagerduty", "pushover", "twilio"}},
@@ -348,34 +348,34 @@ var (
 		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "user_id", Type: field.TypeInt},
 	}
-	// NotificationsTable holds the schema information for the "notifications" table.
-	NotificationsTable = &schema.Table{
-		Name:       "notifications",
-		Columns:    NotificationsColumns,
-		PrimaryKey: []*schema.Column{NotificationsColumns[0]},
+	// NotificationChannelsTable holds the schema information for the "notification_channels" table.
+	NotificationChannelsTable = &schema.Table{
+		Name:       "notification_channels",
+		Columns:    NotificationChannelsColumns,
+		PrimaryKey: []*schema.Column{NotificationChannelsColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:     "notifications_users_notifications",
-				Columns:    []*schema.Column{NotificationsColumns[8]},
+				Symbol:     "notification_channels_users_notification_channels",
+				Columns:    []*schema.Column{NotificationChannelsColumns[8]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
 		},
 		Indexes: []*schema.Index{
 			{
-				Name:    "notification_user_id",
+				Name:    "notificationchannel_user_id",
 				Unique:  false,
-				Columns: []*schema.Column{NotificationsColumns[8]},
+				Columns: []*schema.Column{NotificationChannelsColumns[8]},
 			},
 			{
-				Name:    "notification_user_id_type",
+				Name:    "notificationchannel_user_id_type",
 				Unique:  false,
-				Columns: []*schema.Column{NotificationsColumns[8], NotificationsColumns[2]},
+				Columns: []*schema.Column{NotificationChannelsColumns[8], NotificationChannelsColumns[2]},
 			},
 			{
-				Name:    "notification_user_id_is_default",
+				Name:    "notificationchannel_user_id_is_default",
 				Unique:  false,
-				Columns: []*schema.Column{NotificationsColumns[8], NotificationsColumns[4]},
+				Columns: []*schema.Column{NotificationChannelsColumns[8], NotificationChannelsColumns[4]},
 			},
 		},
 	}
@@ -576,13 +576,6 @@ var (
 		{Name: "email", Type: field.TypeString, Unique: true},
 		{Name: "password", Type: field.TypeString},
 		{Name: "api_key", Type: field.TypeString, Unique: true},
-		{Name: "smtp_smtp_server", Type: field.TypeString, Nullable: true},
-		{Name: "smtp_smtp_port", Type: field.TypeInt, Nullable: true},
-		{Name: "smtp_from_address", Type: field.TypeString, Nullable: true},
-		{Name: "smtp_username", Type: field.TypeString, Nullable: true},
-		{Name: "smtp_password", Type: field.TypeString, Nullable: true},
-		{Name: "smtp_use_tls", Type: field.TypeBool, Nullable: true},
-		{Name: "telegram_bot_token", Type: field.TypeString, Nullable: true},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
 	}
@@ -659,27 +652,27 @@ var (
 			},
 		},
 	}
-	// MonitorNotificationsColumns holds the columns for the "monitor_notifications" table.
-	MonitorNotificationsColumns = []*schema.Column{
+	// MonitorNotificationChannelsColumns holds the columns for the "monitor_notification_channels" table.
+	MonitorNotificationChannelsColumns = []*schema.Column{
 		{Name: "monitor_id", Type: field.TypeInt},
-		{Name: "notification_id", Type: field.TypeInt},
+		{Name: "notification_channel_id", Type: field.TypeInt},
 	}
-	// MonitorNotificationsTable holds the schema information for the "monitor_notifications" table.
-	MonitorNotificationsTable = &schema.Table{
-		Name:       "monitor_notifications",
-		Columns:    MonitorNotificationsColumns,
-		PrimaryKey: []*schema.Column{MonitorNotificationsColumns[0], MonitorNotificationsColumns[1]},
+	// MonitorNotificationChannelsTable holds the schema information for the "monitor_notification_channels" table.
+	MonitorNotificationChannelsTable = &schema.Table{
+		Name:       "monitor_notification_channels",
+		Columns:    MonitorNotificationChannelsColumns,
+		PrimaryKey: []*schema.Column{MonitorNotificationChannelsColumns[0], MonitorNotificationChannelsColumns[1]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:     "monitor_notifications_monitor_id",
-				Columns:    []*schema.Column{MonitorNotificationsColumns[0]},
+				Symbol:     "monitor_notification_channels_monitor_id",
+				Columns:    []*schema.Column{MonitorNotificationChannelsColumns[0]},
 				RefColumns: []*schema.Column{MonitorsColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
 			{
-				Symbol:     "monitor_notifications_notification_id",
-				Columns:    []*schema.Column{MonitorNotificationsColumns[1]},
-				RefColumns: []*schema.Column{NotificationsColumns[0]},
+				Symbol:     "monitor_notification_channels_notification_channel_id",
+				Columns:    []*schema.Column{MonitorNotificationChannelsColumns[1]},
+				RefColumns: []*schema.Column{NotificationChannelsColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
 		},
@@ -692,7 +685,7 @@ var (
 		MonitorsTable,
 		MonitorChecksTable,
 		MonitorStatsTable,
-		NotificationsTable,
+		NotificationChannelsTable,
 		StatusMessagesTable,
 		StatusPagesTable,
 		StatusPageMonitorsTable,
@@ -700,7 +693,7 @@ var (
 		UsersTable,
 		MonitorMaintenanceWindowsTable,
 		MonitorTagsTable,
-		MonitorNotificationsTable,
+		MonitorNotificationChannelsTable,
 	}
 )
 
@@ -713,7 +706,7 @@ func init() {
 	MonitorsTable.ForeignKeys[0].RefTable = UsersTable
 	MonitorChecksTable.ForeignKeys[0].RefTable = MonitorsTable
 	MonitorStatsTable.ForeignKeys[0].RefTable = MonitorsTable
-	NotificationsTable.ForeignKeys[0].RefTable = UsersTable
+	NotificationChannelsTable.ForeignKeys[0].RefTable = UsersTable
 	StatusMessagesTable.ForeignKeys[0].RefTable = IncidentsTable
 	StatusMessagesTable.ForeignKeys[1].RefTable = StatusMessagesTable
 	StatusMessagesTable.ForeignKeys[2].RefTable = StatusPagesTable
@@ -725,6 +718,6 @@ func init() {
 	MonitorMaintenanceWindowsTable.ForeignKeys[1].RefTable = MonitorsTable
 	MonitorTagsTable.ForeignKeys[0].RefTable = MonitorsTable
 	MonitorTagsTable.ForeignKeys[1].RefTable = TagsTable
-	MonitorNotificationsTable.ForeignKeys[0].RefTable = MonitorsTable
-	MonitorNotificationsTable.ForeignKeys[1].RefTable = NotificationsTable
+	MonitorNotificationChannelsTable.ForeignKeys[0].RefTable = MonitorsTable
+	MonitorNotificationChannelsTable.ForeignKeys[1].RefTable = NotificationChannelsTable
 }

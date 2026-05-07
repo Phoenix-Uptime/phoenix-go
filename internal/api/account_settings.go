@@ -2,6 +2,7 @@ package api
 
 import (
 	"github.com/Phoenix-Uptime/phoenix-go/ent"
+	entnotificationchannel "github.com/Phoenix-Uptime/phoenix-go/ent/notificationchannel"
 	"github.com/Phoenix-Uptime/phoenix-go/internal/database"
 	"github.com/Phoenix-Uptime/phoenix-go/internal/models"
 	"github.com/go-playground/validator/v10"
@@ -28,9 +29,18 @@ type SettingsResponse struct {
 func GetAccountSettings(c fiber.Ctx) error {
 	user := c.Locals("user").(*ent.User)
 
-	user, err := database.Client.User.Get(c, user.ID)
+	smtpChannel, err := defaultNotificationChannel(c, user.ID, entnotificationchannel.TypeSMTP)
 	if err != nil {
-		log.Error().Err(err).Msg("Failed to load user settings")
+		log.Error().Err(err).Msg("Failed to load SMTP settings")
+		return c.Status(fiber.StatusInternalServerError).JSON(ErrorResponse{
+			Status:  "error",
+			Message: "Failed to load user settings",
+		})
+	}
+
+	telegramChannel, err := defaultNotificationChannel(c, user.ID, entnotificationchannel.TypeTelegram)
+	if err != nil {
+		log.Error().Err(err).Msg("Failed to load Telegram bot settings")
 		return c.Status(fiber.StatusInternalServerError).JSON(ErrorResponse{
 			Status:  "error",
 			Message: "Failed to load user settings",
@@ -38,8 +48,8 @@ func GetAccountSettings(c fiber.Ctx) error {
 	}
 
 	response := SettingsResponse{
-		SMTPSettings: smtpSettingsFromUser(user),
-		TelegramBot:  telegramBotFromUser(user),
+		SMTPSettings: smtpSettingsFromNotificationChannel(smtpChannel),
+		TelegramBot:  telegramBotFromNotificationChannel(telegramChannel),
 	}
 
 	return c.Status(fiber.StatusOK).JSON(response)
@@ -86,14 +96,14 @@ func UpdateSMTPSettings(c fiber.Ctx) error {
 		})
 	}
 
-	if err := database.Client.User.UpdateOneID(user.ID).
-		SetSMTPSMTPServer(req.SMTPServer).
-		SetSMTPSMTPPort(req.SMTPPort).
-		SetSMTPFromAddress(req.FromAddress).
-		SetSMTPUsername(req.Username).
-		SetSMTPPassword(req.Password).
-		SetSMTPUseTLS(req.UseTLS).
-		Exec(c); err != nil {
+	if err := upsertDefaultNotificationChannel(c, user.ID, entnotificationchannel.TypeSMTP, "SMTP", map[string]interface{}{
+		"smtp_server":  req.SMTPServer,
+		"smtp_port":    req.SMTPPort,
+		"from_address": req.FromAddress,
+		"username":     req.Username,
+		"password":     req.Password,
+		"use_tls":      req.UseTLS,
+	}); err != nil {
 		log.Error().Err(err).Msg("Failed to update SMTP settings")
 		return c.Status(fiber.StatusInternalServerError).JSON(ErrorResponse{
 			Status:  "error",
@@ -143,9 +153,9 @@ func UpdateTelegramBotSettings(c fiber.Ctx) error {
 		})
 	}
 
-	if err := database.Client.User.UpdateOneID(user.ID).
-		SetTelegramBotToken(req.BotToken).
-		Exec(c); err != nil {
+	if err := upsertDefaultNotificationChannel(c, user.ID, entnotificationchannel.TypeTelegram, "Telegram", map[string]interface{}{
+		"bot_token": req.BotToken,
+	}); err != nil {
 		log.Error().Err(err).Msg("Failed to update Telegram bot settings")
 		return c.Status(fiber.StatusInternalServerError).JSON(ErrorResponse{
 			Status:  "error",
@@ -159,32 +169,103 @@ func UpdateTelegramBotSettings(c fiber.Ctx) error {
 	})
 }
 
-func smtpSettingsFromUser(user *ent.User) *models.SMTPSettings {
-	if user.SMTPSMTPServer == "" &&
-		user.SMTPSMTPPort == 0 &&
-		user.SMTPFromAddress == "" &&
-		user.SMTPUsername == "" &&
-		user.SMTPPassword == "" &&
-		!user.SMTPUseTLS {
+func defaultNotificationChannel(c fiber.Ctx, userID int, channelType entnotificationchannel.Type) (*ent.NotificationChannel, error) {
+	channel, err := database.Client.NotificationChannel.Query().
+		Where(
+			entnotificationchannel.UserID(userID),
+			entnotificationchannel.TypeEQ(channelType),
+			entnotificationchannel.IsDefault(true),
+		).
+		First(c)
+	if err != nil {
+		if ent.IsNotFound(err) {
+			return nil, nil
+		}
+		return nil, err
+	}
+
+	return channel, nil
+}
+
+func upsertDefaultNotificationChannel(c fiber.Ctx, userID int, channelType entnotificationchannel.Type, name string, config map[string]interface{}) error {
+	channel, err := defaultNotificationChannel(c, userID, channelType)
+	if err != nil {
+		return err
+	}
+	if channel == nil {
+		return database.Client.NotificationChannel.Create().
+			SetUserID(userID).
+			SetName(name).
+			SetType(channelType).
+			SetIsActive(true).
+			SetIsDefault(true).
+			SetConfig(config).
+			Exec(c)
+	}
+
+	return database.Client.NotificationChannel.UpdateOneID(channel.ID).
+		SetName(name).
+		SetIsActive(true).
+		SetIsDefault(true).
+		SetConfig(config).
+		Exec(c)
+}
+
+func smtpSettingsFromNotificationChannel(channel *ent.NotificationChannel) *models.SMTPSettings {
+	if channel == nil || len(channel.Config) == 0 {
 		return nil
 	}
 
+	config := channel.Config
 	return &models.SMTPSettings{
-		SMTPServer:  user.SMTPSMTPServer,
-		SMTPPort:    user.SMTPSMTPPort,
-		FromAddress: user.SMTPFromAddress,
-		Username:    user.SMTPUsername,
-		Password:    user.SMTPPassword,
-		UseTLS:      user.SMTPUseTLS,
+		SMTPServer:  stringConfig(config, "smtp_server"),
+		SMTPPort:    intConfig(config, "smtp_port"),
+		FromAddress: stringConfig(config, "from_address"),
+		Username:    stringConfig(config, "username"),
+		Password:    stringConfig(config, "password"),
+		UseTLS:      boolConfig(config, "use_tls"),
 	}
 }
 
-func telegramBotFromUser(user *ent.User) *models.TelegramBot {
-	if user.TelegramBotToken == "" {
+func telegramBotFromNotificationChannel(channel *ent.NotificationChannel) *models.TelegramBot {
+	if channel == nil || len(channel.Config) == 0 {
 		return nil
 	}
 
-	return &models.TelegramBot{
-		BotToken: user.TelegramBotToken,
+	botToken := stringConfig(channel.Config, "bot_token")
+	if botToken == "" {
+		return nil
 	}
+	return &models.TelegramBot{
+		BotToken: botToken,
+	}
+}
+
+func stringConfig(config map[string]interface{}, key string) string {
+	value, ok := config[key].(string)
+	if !ok {
+		return ""
+	}
+	return value
+}
+
+func intConfig(config map[string]interface{}, key string) int {
+	switch value := config[key].(type) {
+	case int:
+		return value
+	case int64:
+		return int(value)
+	case float64:
+		return int(value)
+	default:
+		return 0
+	}
+}
+
+func boolConfig(config map[string]interface{}, key string) bool {
+	value, ok := config[key].(bool)
+	if !ok {
+		return false
+	}
+	return value
 }

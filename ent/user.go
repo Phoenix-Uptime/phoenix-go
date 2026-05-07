@@ -25,20 +25,6 @@ type User struct {
 	Password string `json:"-"`
 	// APIKey holds the value of the "api_key" field.
 	APIKey string `json:"api_key,omitempty"`
-	// SMTPSMTPServer holds the value of the "smtp_smtp_server" field.
-	SMTPSMTPServer string `json:"smtp_smtp_server,omitempty"`
-	// SMTPSMTPPort holds the value of the "smtp_smtp_port" field.
-	SMTPSMTPPort int `json:"smtp_smtp_port,omitempty"`
-	// SMTPFromAddress holds the value of the "smtp_from_address" field.
-	SMTPFromAddress string `json:"smtp_from_address,omitempty"`
-	// SMTPUsername holds the value of the "smtp_username" field.
-	SMTPUsername string `json:"smtp_username,omitempty"`
-	// SMTPPassword holds the value of the "smtp_password" field.
-	SMTPPassword string `json:"-"`
-	// SMTPUseTLS holds the value of the "smtp_use_tls" field.
-	SMTPUseTLS bool `json:"smtp_use_tls,omitempty"`
-	// TelegramBotToken holds the value of the "telegram_bot_token" field.
-	TelegramBotToken string `json:"-"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
@@ -57,8 +43,8 @@ type UserEdges struct {
 	Tags []*Tag `json:"tags,omitempty"`
 	// APIKeys holds the value of the api_keys edge.
 	APIKeys []*APIKey `json:"api_keys,omitempty"`
-	// Notifications holds the value of the notifications edge.
-	Notifications []*Notification `json:"notifications,omitempty"`
+	// NotificationChannels holds the value of the notification_channels edge.
+	NotificationChannels []*NotificationChannel `json:"notification_channels,omitempty"`
 	// StatusPages holds the value of the status_pages edge.
 	StatusPages []*StatusPage `json:"status_pages,omitempty"`
 	// MaintenanceWindows holds the value of the maintenance_windows edge.
@@ -97,13 +83,13 @@ func (e UserEdges) APIKeysOrErr() ([]*APIKey, error) {
 	return nil, &NotLoadedError{edge: "api_keys"}
 }
 
-// NotificationsOrErr returns the Notifications value or an error if the edge
+// NotificationChannelsOrErr returns the NotificationChannels value or an error if the edge
 // was not loaded in eager-loading.
-func (e UserEdges) NotificationsOrErr() ([]*Notification, error) {
+func (e UserEdges) NotificationChannelsOrErr() ([]*NotificationChannel, error) {
 	if e.loadedTypes[3] {
-		return e.Notifications, nil
+		return e.NotificationChannels, nil
 	}
-	return nil, &NotLoadedError{edge: "notifications"}
+	return nil, &NotLoadedError{edge: "notification_channels"}
 }
 
 // StatusPagesOrErr returns the StatusPages value or an error if the edge
@@ -138,11 +124,9 @@ func (*User) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case user.FieldSMTPUseTLS:
-			values[i] = new(sql.NullBool)
-		case user.FieldID, user.FieldSMTPSMTPPort:
+		case user.FieldID:
 			values[i] = new(sql.NullInt64)
-		case user.FieldUsername, user.FieldEmail, user.FieldPassword, user.FieldAPIKey, user.FieldSMTPSMTPServer, user.FieldSMTPFromAddress, user.FieldSMTPUsername, user.FieldSMTPPassword, user.FieldTelegramBotToken:
+		case user.FieldUsername, user.FieldEmail, user.FieldPassword, user.FieldAPIKey:
 			values[i] = new(sql.NullString)
 		case user.FieldCreatedAt, user.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
@@ -191,48 +175,6 @@ func (_m *User) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.APIKey = value.String
 			}
-		case user.FieldSMTPSMTPServer:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field smtp_smtp_server", values[i])
-			} else if value.Valid {
-				_m.SMTPSMTPServer = value.String
-			}
-		case user.FieldSMTPSMTPPort:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field smtp_smtp_port", values[i])
-			} else if value.Valid {
-				_m.SMTPSMTPPort = int(value.Int64)
-			}
-		case user.FieldSMTPFromAddress:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field smtp_from_address", values[i])
-			} else if value.Valid {
-				_m.SMTPFromAddress = value.String
-			}
-		case user.FieldSMTPUsername:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field smtp_username", values[i])
-			} else if value.Valid {
-				_m.SMTPUsername = value.String
-			}
-		case user.FieldSMTPPassword:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field smtp_password", values[i])
-			} else if value.Valid {
-				_m.SMTPPassword = value.String
-			}
-		case user.FieldSMTPUseTLS:
-			if value, ok := values[i].(*sql.NullBool); !ok {
-				return fmt.Errorf("unexpected type %T for field smtp_use_tls", values[i])
-			} else if value.Valid {
-				_m.SMTPUseTLS = value.Bool
-			}
-		case user.FieldTelegramBotToken:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field telegram_bot_token", values[i])
-			} else if value.Valid {
-				_m.TelegramBotToken = value.String
-			}
 		case user.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field created_at", values[i])
@@ -273,9 +215,9 @@ func (_m *User) QueryAPIKeys() *APIKeyQuery {
 	return NewUserClient(_m.config).QueryAPIKeys(_m)
 }
 
-// QueryNotifications queries the "notifications" edge of the User entity.
-func (_m *User) QueryNotifications() *NotificationQuery {
-	return NewUserClient(_m.config).QueryNotifications(_m)
+// QueryNotificationChannels queries the "notification_channels" edge of the User entity.
+func (_m *User) QueryNotificationChannels() *NotificationChannelQuery {
+	return NewUserClient(_m.config).QueryNotificationChannels(_m)
 }
 
 // QueryStatusPages queries the "status_pages" edge of the User entity.
@@ -326,25 +268,6 @@ func (_m *User) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("api_key=")
 	builder.WriteString(_m.APIKey)
-	builder.WriteString(", ")
-	builder.WriteString("smtp_smtp_server=")
-	builder.WriteString(_m.SMTPSMTPServer)
-	builder.WriteString(", ")
-	builder.WriteString("smtp_smtp_port=")
-	builder.WriteString(fmt.Sprintf("%v", _m.SMTPSMTPPort))
-	builder.WriteString(", ")
-	builder.WriteString("smtp_from_address=")
-	builder.WriteString(_m.SMTPFromAddress)
-	builder.WriteString(", ")
-	builder.WriteString("smtp_username=")
-	builder.WriteString(_m.SMTPUsername)
-	builder.WriteString(", ")
-	builder.WriteString("smtp_password=<sensitive>")
-	builder.WriteString(", ")
-	builder.WriteString("smtp_use_tls=")
-	builder.WriteString(fmt.Sprintf("%v", _m.SMTPUseTLS))
-	builder.WriteString(", ")
-	builder.WriteString("telegram_bot_token=<sensitive>")
 	builder.WriteString(", ")
 	builder.WriteString("created_at=")
 	builder.WriteString(_m.CreatedAt.Format(time.ANSIC))

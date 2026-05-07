@@ -9,11 +9,11 @@ import (
 	"entgo.io/ent/schema/index"
 )
 
-type Notification struct {
+type NotificationChannel struct {
 	ent.Schema
 }
 
-func (Notification) Fields() []ent.Field {
+func (NotificationChannel) Fields() []ent.Field {
 	return []ent.Field{
 		field.Int("user_id"),
 		field.String("name").
@@ -36,19 +36,19 @@ func (Notification) Fields() []ent.Field {
 	}
 }
 
-func (Notification) Edges() []ent.Edge {
+func (NotificationChannel) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("user", User.Type).
-			Ref("notifications").
+			Ref("notification_channels").
 			Field("user_id").
 			Unique().
 			Required(),
 		edge.From("monitors", Monitor.Type).
-			Ref("notifications"),
+			Ref("notification_channels"),
 	}
 }
 
-func (Notification) Indexes() []ent.Index {
+func (NotificationChannel) Indexes() []ent.Index {
 	return []ent.Index{
 		index.Fields("user_id"),
 		index.Fields("user_id", "type"),

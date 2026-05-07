@@ -100,8 +100,8 @@ func (Monitor) Edges() []ent.Edge {
 			Annotations(entsql.OnDelete(entsql.Cascade)),
 		edge.To("tags", Tag.Type).
 			StorageKey(edge.Table("monitor_tags"), edge.Columns("monitor_id", "tag_id")),
-		edge.To("notifications", Notification.Type).
-			StorageKey(edge.Table("monitor_notifications"), edge.Columns("monitor_id", "notification_id")),
+		edge.To("notification_channels", NotificationChannel.Type).
+			StorageKey(edge.Table("monitor_notification_channels"), edge.Columns("monitor_id", "notification_channel_id")),
 		edge.To("status_page_monitors", StatusPageMonitor.Type).
 			Annotations(entsql.OnDelete(entsql.Cascade)),
 		edge.From("maintenance_windows", MaintenanceWindow.Type).

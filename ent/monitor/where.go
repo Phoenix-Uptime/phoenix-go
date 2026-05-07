@@ -1517,21 +1517,21 @@ func HasTagsWith(preds ...predicate.Tag) predicate.Monitor {
 	})
 }
 
-// HasNotifications applies the HasEdge predicate on the "notifications" edge.
-func HasNotifications() predicate.Monitor {
+// HasNotificationChannels applies the HasEdge predicate on the "notification_channels" edge.
+func HasNotificationChannels() predicate.Monitor {
 	return predicate.Monitor(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, false, NotificationsTable, NotificationsPrimaryKey...),
+			sqlgraph.Edge(sqlgraph.M2M, false, NotificationChannelsTable, NotificationChannelsPrimaryKey...),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
-// HasNotificationsWith applies the HasEdge predicate on the "notifications" edge with a given conditions (other predicates).
-func HasNotificationsWith(preds ...predicate.Notification) predicate.Monitor {
+// HasNotificationChannelsWith applies the HasEdge predicate on the "notification_channels" edge with a given conditions (other predicates).
+func HasNotificationChannelsWith(preds ...predicate.NotificationChannel) predicate.Monitor {
 	return predicate.Monitor(func(s *sql.Selector) {
-		step := newNotificationsStep()
+		step := newNotificationChannelsStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

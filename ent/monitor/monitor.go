@@ -77,8 +77,8 @@ const (
 	EdgeStats = "stats"
 	// EdgeTags holds the string denoting the tags edge name in mutations.
 	EdgeTags = "tags"
-	// EdgeNotifications holds the string denoting the notifications edge name in mutations.
-	EdgeNotifications = "notifications"
+	// EdgeNotificationChannels holds the string denoting the notification_channels edge name in mutations.
+	EdgeNotificationChannels = "notification_channels"
 	// EdgeStatusPageMonitors holds the string denoting the status_page_monitors edge name in mutations.
 	EdgeStatusPageMonitors = "status_page_monitors"
 	// EdgeMaintenanceWindows holds the string denoting the maintenance_windows edge name in mutations.
@@ -113,11 +113,11 @@ const (
 	// TagsInverseTable is the table name for the Tag entity.
 	// It exists in this package in order to avoid circular dependency with the "tag" package.
 	TagsInverseTable = "tags"
-	// NotificationsTable is the table that holds the notifications relation/edge. The primary key declared below.
-	NotificationsTable = "monitor_notifications"
-	// NotificationsInverseTable is the table name for the Notification entity.
-	// It exists in this package in order to avoid circular dependency with the "notification" package.
-	NotificationsInverseTable = "notifications"
+	// NotificationChannelsTable is the table that holds the notification_channels relation/edge. The primary key declared below.
+	NotificationChannelsTable = "monitor_notification_channels"
+	// NotificationChannelsInverseTable is the table name for the NotificationChannel entity.
+	// It exists in this package in order to avoid circular dependency with the "notificationchannel" package.
+	NotificationChannelsInverseTable = "notification_channels"
 	// StatusPageMonitorsTable is the table that holds the status_page_monitors relation/edge.
 	StatusPageMonitorsTable = "status_page_monitors"
 	// StatusPageMonitorsInverseTable is the table name for the StatusPageMonitor entity.
@@ -175,9 +175,9 @@ var (
 	// TagsPrimaryKey and TagsColumn2 are the table columns denoting the
 	// primary key for the tags relation (M2M).
 	TagsPrimaryKey = []string{"monitor_id", "tag_id"}
-	// NotificationsPrimaryKey and NotificationsColumn2 are the table columns denoting the
-	// primary key for the notifications relation (M2M).
-	NotificationsPrimaryKey = []string{"monitor_id", "notification_id"}
+	// NotificationChannelsPrimaryKey and NotificationChannelsColumn2 are the table columns denoting the
+	// primary key for the notification_channels relation (M2M).
+	NotificationChannelsPrimaryKey = []string{"monitor_id", "notification_channel_id"}
 	// MaintenanceWindowsPrimaryKey and MaintenanceWindowsColumn2 are the table columns denoting the
 	// primary key for the maintenance_windows relation (M2M).
 	MaintenanceWindowsPrimaryKey = []string{"maintenance_window_id", "monitor_id"}
@@ -459,17 +459,17 @@ func ByTags(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	}
 }
 
-// ByNotificationsCount orders the results by notifications count.
-func ByNotificationsCount(opts ...sql.OrderTermOption) OrderOption {
+// ByNotificationChannelsCount orders the results by notification_channels count.
+func ByNotificationChannelsCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newNotificationsStep(), opts...)
+		sqlgraph.OrderByNeighborsCount(s, newNotificationChannelsStep(), opts...)
 	}
 }
 
-// ByNotifications orders the results by notifications terms.
-func ByNotifications(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+// ByNotificationChannels orders the results by notification_channels terms.
+func ByNotificationChannels(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newNotificationsStep(), append([]sql.OrderTerm{term}, terms...)...)
+		sqlgraph.OrderByNeighborTerms(s, newNotificationChannelsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
 
@@ -542,11 +542,11 @@ func newTagsStep() *sqlgraph.Step {
 		sqlgraph.Edge(sqlgraph.M2M, false, TagsTable, TagsPrimaryKey...),
 	)
 }
-func newNotificationsStep() *sqlgraph.Step {
+func newNotificationChannelsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(NotificationsInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.M2M, false, NotificationsTable, NotificationsPrimaryKey...),
+		sqlgraph.To(NotificationChannelsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2M, false, NotificationChannelsTable, NotificationChannelsPrimaryKey...),
 	)
 }
 func newStatusPageMonitorsStep() *sqlgraph.Step {

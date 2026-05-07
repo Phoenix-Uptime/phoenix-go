@@ -17,7 +17,7 @@ import (
 	"github.com/Phoenix-Uptime/phoenix-go/ent/monitor"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/monitorcheck"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/monitorstat"
-	"github.com/Phoenix-Uptime/phoenix-go/ent/notification"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/notificationchannel"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/predicate"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/statuspagemonitor"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/tag"
@@ -27,18 +27,18 @@ import (
 // MonitorQuery is the builder for querying Monitor entities.
 type MonitorQuery struct {
 	config
-	ctx                    *QueryContext
-	order                  []monitor.OrderOption
-	inters                 []Interceptor
-	predicates             []predicate.Monitor
-	withUser               *UserQuery
-	withChecks             *MonitorCheckQuery
-	withStats              *MonitorStatQuery
-	withTags               *TagQuery
-	withNotifications      *NotificationQuery
-	withStatusPageMonitors *StatusPageMonitorQuery
-	withMaintenanceWindows *MaintenanceWindowQuery
-	withIncidents          *IncidentQuery
+	ctx                      *QueryContext
+	order                    []monitor.OrderOption
+	inters                   []Interceptor
+	predicates               []predicate.Monitor
+	withUser                 *UserQuery
+	withChecks               *MonitorCheckQuery
+	withStats                *MonitorStatQuery
+	withTags                 *TagQuery
+	withNotificationChannels *NotificationChannelQuery
+	withStatusPageMonitors   *StatusPageMonitorQuery
+	withMaintenanceWindows   *MaintenanceWindowQuery
+	withIncidents            *IncidentQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -163,9 +163,9 @@ func (_q *MonitorQuery) QueryTags() *TagQuery {
 	return query
 }
 
-// QueryNotifications chains the current query on the "notifications" edge.
-func (_q *MonitorQuery) QueryNotifications() *NotificationQuery {
-	query := (&NotificationClient{config: _q.config}).Query()
+// QueryNotificationChannels chains the current query on the "notification_channels" edge.
+func (_q *MonitorQuery) QueryNotificationChannels() *NotificationChannelQuery {
+	query := (&NotificationChannelClient{config: _q.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := _q.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -176,8 +176,8 @@ func (_q *MonitorQuery) QueryNotifications() *NotificationQuery {
 		}
 		step := sqlgraph.NewStep(
 			sqlgraph.From(monitor.Table, monitor.FieldID, selector),
-			sqlgraph.To(notification.Table, notification.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, false, monitor.NotificationsTable, monitor.NotificationsPrimaryKey...),
+			sqlgraph.To(notificationchannel.Table, notificationchannel.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, monitor.NotificationChannelsTable, monitor.NotificationChannelsPrimaryKey...),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -438,19 +438,19 @@ func (_q *MonitorQuery) Clone() *MonitorQuery {
 		return nil
 	}
 	return &MonitorQuery{
-		config:                 _q.config,
-		ctx:                    _q.ctx.Clone(),
-		order:                  append([]monitor.OrderOption{}, _q.order...),
-		inters:                 append([]Interceptor{}, _q.inters...),
-		predicates:             append([]predicate.Monitor{}, _q.predicates...),
-		withUser:               _q.withUser.Clone(),
-		withChecks:             _q.withChecks.Clone(),
-		withStats:              _q.withStats.Clone(),
-		withTags:               _q.withTags.Clone(),
-		withNotifications:      _q.withNotifications.Clone(),
-		withStatusPageMonitors: _q.withStatusPageMonitors.Clone(),
-		withMaintenanceWindows: _q.withMaintenanceWindows.Clone(),
-		withIncidents:          _q.withIncidents.Clone(),
+		config:                   _q.config,
+		ctx:                      _q.ctx.Clone(),
+		order:                    append([]monitor.OrderOption{}, _q.order...),
+		inters:                   append([]Interceptor{}, _q.inters...),
+		predicates:               append([]predicate.Monitor{}, _q.predicates...),
+		withUser:                 _q.withUser.Clone(),
+		withChecks:               _q.withChecks.Clone(),
+		withStats:                _q.withStats.Clone(),
+		withTags:                 _q.withTags.Clone(),
+		withNotificationChannels: _q.withNotificationChannels.Clone(),
+		withStatusPageMonitors:   _q.withStatusPageMonitors.Clone(),
+		withMaintenanceWindows:   _q.withMaintenanceWindows.Clone(),
+		withIncidents:            _q.withIncidents.Clone(),
 		// clone intermediate query.
 		sql:  _q.sql.Clone(),
 		path: _q.path,
@@ -501,14 +501,14 @@ func (_q *MonitorQuery) WithTags(opts ...func(*TagQuery)) *MonitorQuery {
 	return _q
 }
 
-// WithNotifications tells the query-builder to eager-load the nodes that are connected to
-// the "notifications" edge. The optional arguments are used to configure the query builder of the edge.
-func (_q *MonitorQuery) WithNotifications(opts ...func(*NotificationQuery)) *MonitorQuery {
-	query := (&NotificationClient{config: _q.config}).Query()
+// WithNotificationChannels tells the query-builder to eager-load the nodes that are connected to
+// the "notification_channels" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *MonitorQuery) WithNotificationChannels(opts ...func(*NotificationChannelQuery)) *MonitorQuery {
+	query := (&NotificationChannelClient{config: _q.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
-	_q.withNotifications = query
+	_q.withNotificationChannels = query
 	return _q
 }
 
@@ -628,7 +628,7 @@ func (_q *MonitorQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Moni
 			_q.withChecks != nil,
 			_q.withStats != nil,
 			_q.withTags != nil,
-			_q.withNotifications != nil,
+			_q.withNotificationChannels != nil,
 			_q.withStatusPageMonitors != nil,
 			_q.withMaintenanceWindows != nil,
 			_q.withIncidents != nil,
@@ -679,10 +679,12 @@ func (_q *MonitorQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Moni
 			return nil, err
 		}
 	}
-	if query := _q.withNotifications; query != nil {
-		if err := _q.loadNotifications(ctx, query, nodes,
-			func(n *Monitor) { n.Edges.Notifications = []*Notification{} },
-			func(n *Monitor, e *Notification) { n.Edges.Notifications = append(n.Edges.Notifications, e) }); err != nil {
+	if query := _q.withNotificationChannels; query != nil {
+		if err := _q.loadNotificationChannels(ctx, query, nodes,
+			func(n *Monitor) { n.Edges.NotificationChannels = []*NotificationChannel{} },
+			func(n *Monitor, e *NotificationChannel) {
+				n.Edges.NotificationChannels = append(n.Edges.NotificationChannels, e)
+			}); err != nil {
 			return nil, err
 		}
 	}
@@ -864,7 +866,7 @@ func (_q *MonitorQuery) loadTags(ctx context.Context, query *TagQuery, nodes []*
 	}
 	return nil
 }
-func (_q *MonitorQuery) loadNotifications(ctx context.Context, query *NotificationQuery, nodes []*Monitor, init func(*Monitor), assign func(*Monitor, *Notification)) error {
+func (_q *MonitorQuery) loadNotificationChannels(ctx context.Context, query *NotificationChannelQuery, nodes []*Monitor, init func(*Monitor), assign func(*Monitor, *NotificationChannel)) error {
 	edgeIDs := make([]driver.Value, len(nodes))
 	byID := make(map[int]*Monitor)
 	nids := make(map[int]map[*Monitor]struct{})
@@ -876,11 +878,11 @@ func (_q *MonitorQuery) loadNotifications(ctx context.Context, query *Notificati
 		}
 	}
 	query.Where(func(s *sql.Selector) {
-		joinT := sql.Table(monitor.NotificationsTable)
-		s.Join(joinT).On(s.C(notification.FieldID), joinT.C(monitor.NotificationsPrimaryKey[1]))
-		s.Where(sql.InValues(joinT.C(monitor.NotificationsPrimaryKey[0]), edgeIDs...))
+		joinT := sql.Table(monitor.NotificationChannelsTable)
+		s.Join(joinT).On(s.C(notificationchannel.FieldID), joinT.C(monitor.NotificationChannelsPrimaryKey[1]))
+		s.Where(sql.InValues(joinT.C(monitor.NotificationChannelsPrimaryKey[0]), edgeIDs...))
 		columns := s.SelectedColumns()
-		s.Select(joinT.C(monitor.NotificationsPrimaryKey[0]))
+		s.Select(joinT.C(monitor.NotificationChannelsPrimaryKey[0]))
 		s.AppendSelect(columns...)
 		s.SetDistinct(false)
 	})
@@ -910,14 +912,14 @@ func (_q *MonitorQuery) loadNotifications(ctx context.Context, query *Notificati
 			}
 		})
 	})
-	neighbors, err := withInterceptors[[]*Notification](ctx, query, qr, query.inters)
+	neighbors, err := withInterceptors[[]*NotificationChannel](ctx, query, qr, query.inters)
 	if err != nil {
 		return err
 	}
 	for _, n := range neighbors {
 		nodes, ok := nids[n.ID]
 		if !ok {
-			return fmt.Errorf(`unexpected "notifications" node returned %v`, n.ID)
+			return fmt.Errorf(`unexpected "notification_channels" node returned %v`, n.ID)
 		}
 		for kn := range nodes {
 			assign(kn, n)

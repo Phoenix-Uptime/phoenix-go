@@ -18,7 +18,7 @@ import (
 	"github.com/Phoenix-Uptime/phoenix-go/ent/monitor"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/monitorcheck"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/monitorstat"
-	"github.com/Phoenix-Uptime/phoenix-go/ent/notification"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/notificationchannel"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/statusmessage"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/statuspage"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/statuspagemonitor"
@@ -84,18 +84,18 @@ var (
 func checkColumn(t, c string) error {
 	initCheck.Do(func() {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{
-			apikey.Table:            apikey.ValidColumn,
-			incident.Table:          incident.ValidColumn,
-			maintenancewindow.Table: maintenancewindow.ValidColumn,
-			monitor.Table:           monitor.ValidColumn,
-			monitorcheck.Table:      monitorcheck.ValidColumn,
-			monitorstat.Table:       monitorstat.ValidColumn,
-			notification.Table:      notification.ValidColumn,
-			statusmessage.Table:     statusmessage.ValidColumn,
-			statuspage.Table:        statuspage.ValidColumn,
-			statuspagemonitor.Table: statuspagemonitor.ValidColumn,
-			tag.Table:               tag.ValidColumn,
-			user.Table:              user.ValidColumn,
+			apikey.Table:              apikey.ValidColumn,
+			incident.Table:            incident.ValidColumn,
+			maintenancewindow.Table:   maintenancewindow.ValidColumn,
+			monitor.Table:             monitor.ValidColumn,
+			monitorcheck.Table:        monitorcheck.ValidColumn,
+			monitorstat.Table:         monitorstat.ValidColumn,
+			notificationchannel.Table: notificationchannel.ValidColumn,
+			statusmessage.Table:       statusmessage.ValidColumn,
+			statuspage.Table:          statuspage.ValidColumn,
+			statuspagemonitor.Table:   statuspagemonitor.ValidColumn,
+			tag.Table:                 tag.ValidColumn,
+			user.Table:                user.ValidColumn,
 		})
 	})
 	return columnCheck(t, c)

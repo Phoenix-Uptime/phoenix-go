@@ -24,8 +24,8 @@ type MonitorCheck func(*sql.Selector)
 // MonitorStat is the predicate function for monitorstat builders.
 type MonitorStat func(*sql.Selector)
 
-// Notification is the predicate function for notification builders.
-type Notification func(*sql.Selector)
+// NotificationChannel is the predicate function for notificationchannel builders.
+type NotificationChannel func(*sql.Selector)
 
 // StatusMessage is the predicate function for statusmessage builders.
 type StatusMessage func(*sql.Selector)

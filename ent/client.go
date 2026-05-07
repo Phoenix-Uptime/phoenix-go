@@ -21,7 +21,7 @@ import (
 	"github.com/Phoenix-Uptime/phoenix-go/ent/monitor"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/monitorcheck"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/monitorstat"
-	"github.com/Phoenix-Uptime/phoenix-go/ent/notification"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/notificationchannel"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/statusmessage"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/statuspage"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/statuspagemonitor"
@@ -46,8 +46,8 @@ type Client struct {
 	MonitorCheck *MonitorCheckClient
 	// MonitorStat is the client for interacting with the MonitorStat builders.
 	MonitorStat *MonitorStatClient
-	// Notification is the client for interacting with the Notification builders.
-	Notification *NotificationClient
+	// NotificationChannel is the client for interacting with the NotificationChannel builders.
+	NotificationChannel *NotificationChannelClient
 	// StatusMessage is the client for interacting with the StatusMessage builders.
 	StatusMessage *StatusMessageClient
 	// StatusPage is the client for interacting with the StatusPage builders.
@@ -75,7 +75,7 @@ func (c *Client) init() {
 	c.Monitor = NewMonitorClient(c.config)
 	c.MonitorCheck = NewMonitorCheckClient(c.config)
 	c.MonitorStat = NewMonitorStatClient(c.config)
-	c.Notification = NewNotificationClient(c.config)
+	c.NotificationChannel = NewNotificationChannelClient(c.config)
 	c.StatusMessage = NewStatusMessageClient(c.config)
 	c.StatusPage = NewStatusPageClient(c.config)
 	c.StatusPageMonitor = NewStatusPageMonitorClient(c.config)
@@ -171,20 +171,20 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	cfg := c.config
 	cfg.driver = tx
 	return &Tx{
-		ctx:               ctx,
-		config:            cfg,
-		APIKey:            NewAPIKeyClient(cfg),
-		Incident:          NewIncidentClient(cfg),
-		MaintenanceWindow: NewMaintenanceWindowClient(cfg),
-		Monitor:           NewMonitorClient(cfg),
-		MonitorCheck:      NewMonitorCheckClient(cfg),
-		MonitorStat:       NewMonitorStatClient(cfg),
-		Notification:      NewNotificationClient(cfg),
-		StatusMessage:     NewStatusMessageClient(cfg),
-		StatusPage:        NewStatusPageClient(cfg),
-		StatusPageMonitor: NewStatusPageMonitorClient(cfg),
-		Tag:               NewTagClient(cfg),
-		User:              NewUserClient(cfg),
+		ctx:                 ctx,
+		config:              cfg,
+		APIKey:              NewAPIKeyClient(cfg),
+		Incident:            NewIncidentClient(cfg),
+		MaintenanceWindow:   NewMaintenanceWindowClient(cfg),
+		Monitor:             NewMonitorClient(cfg),
+		MonitorCheck:        NewMonitorCheckClient(cfg),
+		MonitorStat:         NewMonitorStatClient(cfg),
+		NotificationChannel: NewNotificationChannelClient(cfg),
+		StatusMessage:       NewStatusMessageClient(cfg),
+		StatusPage:          NewStatusPageClient(cfg),
+		StatusPageMonitor:   NewStatusPageMonitorClient(cfg),
+		Tag:                 NewTagClient(cfg),
+		User:                NewUserClient(cfg),
 	}, nil
 }
 
@@ -202,20 +202,20 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	cfg := c.config
 	cfg.driver = &txDriver{tx: tx, drv: c.driver}
 	return &Tx{
-		ctx:               ctx,
-		config:            cfg,
-		APIKey:            NewAPIKeyClient(cfg),
-		Incident:          NewIncidentClient(cfg),
-		MaintenanceWindow: NewMaintenanceWindowClient(cfg),
-		Monitor:           NewMonitorClient(cfg),
-		MonitorCheck:      NewMonitorCheckClient(cfg),
-		MonitorStat:       NewMonitorStatClient(cfg),
-		Notification:      NewNotificationClient(cfg),
-		StatusMessage:     NewStatusMessageClient(cfg),
-		StatusPage:        NewStatusPageClient(cfg),
-		StatusPageMonitor: NewStatusPageMonitorClient(cfg),
-		Tag:               NewTagClient(cfg),
-		User:              NewUserClient(cfg),
+		ctx:                 ctx,
+		config:              cfg,
+		APIKey:              NewAPIKeyClient(cfg),
+		Incident:            NewIncidentClient(cfg),
+		MaintenanceWindow:   NewMaintenanceWindowClient(cfg),
+		Monitor:             NewMonitorClient(cfg),
+		MonitorCheck:        NewMonitorCheckClient(cfg),
+		MonitorStat:         NewMonitorStatClient(cfg),
+		NotificationChannel: NewNotificationChannelClient(cfg),
+		StatusMessage:       NewStatusMessageClient(cfg),
+		StatusPage:          NewStatusPageClient(cfg),
+		StatusPageMonitor:   NewStatusPageMonitorClient(cfg),
+		Tag:                 NewTagClient(cfg),
+		User:                NewUserClient(cfg),
 	}, nil
 }
 
@@ -246,7 +246,7 @@ func (c *Client) Close() error {
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
 		c.APIKey, c.Incident, c.MaintenanceWindow, c.Monitor, c.MonitorCheck,
-		c.MonitorStat, c.Notification, c.StatusMessage, c.StatusPage,
+		c.MonitorStat, c.NotificationChannel, c.StatusMessage, c.StatusPage,
 		c.StatusPageMonitor, c.Tag, c.User,
 	} {
 		n.Use(hooks...)
@@ -258,7 +258,7 @@ func (c *Client) Use(hooks ...Hook) {
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
 		c.APIKey, c.Incident, c.MaintenanceWindow, c.Monitor, c.MonitorCheck,
-		c.MonitorStat, c.Notification, c.StatusMessage, c.StatusPage,
+		c.MonitorStat, c.NotificationChannel, c.StatusMessage, c.StatusPage,
 		c.StatusPageMonitor, c.Tag, c.User,
 	} {
 		n.Intercept(interceptors...)
@@ -280,8 +280,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.MonitorCheck.mutate(ctx, m)
 	case *MonitorStatMutation:
 		return c.MonitorStat.mutate(ctx, m)
-	case *NotificationMutation:
-		return c.Notification.mutate(ctx, m)
+	case *NotificationChannelMutation:
+		return c.NotificationChannel.mutate(ctx, m)
 	case *StatusMessageMutation:
 		return c.StatusMessage.mutate(ctx, m)
 	case *StatusPageMutation:
@@ -980,15 +980,15 @@ func (c *MonitorClient) QueryTags(_m *Monitor) *TagQuery {
 	return query
 }
 
-// QueryNotifications queries the notifications edge of a Monitor.
-func (c *MonitorClient) QueryNotifications(_m *Monitor) *NotificationQuery {
-	query := (&NotificationClient{config: c.config}).Query()
+// QueryNotificationChannels queries the notification_channels edge of a Monitor.
+func (c *MonitorClient) QueryNotificationChannels(_m *Monitor) *NotificationChannelQuery {
+	query := (&NotificationChannelClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := _m.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(monitor.Table, monitor.FieldID, id),
-			sqlgraph.To(notification.Table, notification.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, false, monitor.NotificationsTable, monitor.NotificationsPrimaryKey...),
+			sqlgraph.To(notificationchannel.Table, notificationchannel.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, monitor.NotificationChannelsTable, monitor.NotificationChannelsPrimaryKey...),
 		)
 		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
 		return fromV, nil
@@ -1367,107 +1367,107 @@ func (c *MonitorStatClient) mutate(ctx context.Context, m *MonitorStatMutation) 
 	}
 }
 
-// NotificationClient is a client for the Notification schema.
-type NotificationClient struct {
+// NotificationChannelClient is a client for the NotificationChannel schema.
+type NotificationChannelClient struct {
 	config
 }
 
-// NewNotificationClient returns a client for the Notification from the given config.
-func NewNotificationClient(c config) *NotificationClient {
-	return &NotificationClient{config: c}
+// NewNotificationChannelClient returns a client for the NotificationChannel from the given config.
+func NewNotificationChannelClient(c config) *NotificationChannelClient {
+	return &NotificationChannelClient{config: c}
 }
 
 // Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `notification.Hooks(f(g(h())))`.
-func (c *NotificationClient) Use(hooks ...Hook) {
-	c.hooks.Notification = append(c.hooks.Notification, hooks...)
+// A call to `Use(f, g, h)` equals to `notificationchannel.Hooks(f(g(h())))`.
+func (c *NotificationChannelClient) Use(hooks ...Hook) {
+	c.hooks.NotificationChannel = append(c.hooks.NotificationChannel, hooks...)
 }
 
 // Intercept adds a list of query interceptors to the interceptors stack.
-// A call to `Intercept(f, g, h)` equals to `notification.Intercept(f(g(h())))`.
-func (c *NotificationClient) Intercept(interceptors ...Interceptor) {
-	c.inters.Notification = append(c.inters.Notification, interceptors...)
+// A call to `Intercept(f, g, h)` equals to `notificationchannel.Intercept(f(g(h())))`.
+func (c *NotificationChannelClient) Intercept(interceptors ...Interceptor) {
+	c.inters.NotificationChannel = append(c.inters.NotificationChannel, interceptors...)
 }
 
-// Create returns a builder for creating a Notification entity.
-func (c *NotificationClient) Create() *NotificationCreate {
-	mutation := newNotificationMutation(c.config, OpCreate)
-	return &NotificationCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+// Create returns a builder for creating a NotificationChannel entity.
+func (c *NotificationChannelClient) Create() *NotificationChannelCreate {
+	mutation := newNotificationChannelMutation(c.config, OpCreate)
+	return &NotificationChannelCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// CreateBulk returns a builder for creating a bulk of Notification entities.
-func (c *NotificationClient) CreateBulk(builders ...*NotificationCreate) *NotificationCreateBulk {
-	return &NotificationCreateBulk{config: c.config, builders: builders}
+// CreateBulk returns a builder for creating a bulk of NotificationChannel entities.
+func (c *NotificationChannelClient) CreateBulk(builders ...*NotificationChannelCreate) *NotificationChannelCreateBulk {
+	return &NotificationChannelCreateBulk{config: c.config, builders: builders}
 }
 
 // MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
 // a builder and applies setFunc on it.
-func (c *NotificationClient) MapCreateBulk(slice any, setFunc func(*NotificationCreate, int)) *NotificationCreateBulk {
+func (c *NotificationChannelClient) MapCreateBulk(slice any, setFunc func(*NotificationChannelCreate, int)) *NotificationChannelCreateBulk {
 	rv := reflect.ValueOf(slice)
 	if rv.Kind() != reflect.Slice {
-		return &NotificationCreateBulk{err: fmt.Errorf("calling to NotificationClient.MapCreateBulk with wrong type %T, need slice", slice)}
+		return &NotificationChannelCreateBulk{err: fmt.Errorf("calling to NotificationChannelClient.MapCreateBulk with wrong type %T, need slice", slice)}
 	}
-	builders := make([]*NotificationCreate, rv.Len())
+	builders := make([]*NotificationChannelCreate, rv.Len())
 	for i := 0; i < rv.Len(); i++ {
 		builders[i] = c.Create()
 		setFunc(builders[i], i)
 	}
-	return &NotificationCreateBulk{config: c.config, builders: builders}
+	return &NotificationChannelCreateBulk{config: c.config, builders: builders}
 }
 
-// Update returns an update builder for Notification.
-func (c *NotificationClient) Update() *NotificationUpdate {
-	mutation := newNotificationMutation(c.config, OpUpdate)
-	return &NotificationUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+// Update returns an update builder for NotificationChannel.
+func (c *NotificationChannelClient) Update() *NotificationChannelUpdate {
+	mutation := newNotificationChannelMutation(c.config, OpUpdate)
+	return &NotificationChannelUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // UpdateOne returns an update builder for the given entity.
-func (c *NotificationClient) UpdateOne(_m *Notification) *NotificationUpdateOne {
-	mutation := newNotificationMutation(c.config, OpUpdateOne, withNotification(_m))
-	return &NotificationUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+func (c *NotificationChannelClient) UpdateOne(_m *NotificationChannel) *NotificationChannelUpdateOne {
+	mutation := newNotificationChannelMutation(c.config, OpUpdateOne, withNotificationChannel(_m))
+	return &NotificationChannelUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *NotificationClient) UpdateOneID(id int) *NotificationUpdateOne {
-	mutation := newNotificationMutation(c.config, OpUpdateOne, withNotificationID(id))
-	return &NotificationUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+func (c *NotificationChannelClient) UpdateOneID(id int) *NotificationChannelUpdateOne {
+	mutation := newNotificationChannelMutation(c.config, OpUpdateOne, withNotificationChannelID(id))
+	return &NotificationChannelUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// Delete returns a delete builder for Notification.
-func (c *NotificationClient) Delete() *NotificationDelete {
-	mutation := newNotificationMutation(c.config, OpDelete)
-	return &NotificationDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+// Delete returns a delete builder for NotificationChannel.
+func (c *NotificationChannelClient) Delete() *NotificationChannelDelete {
+	mutation := newNotificationChannelMutation(c.config, OpDelete)
+	return &NotificationChannelDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // DeleteOne returns a builder for deleting the given entity.
-func (c *NotificationClient) DeleteOne(_m *Notification) *NotificationDeleteOne {
+func (c *NotificationChannelClient) DeleteOne(_m *NotificationChannel) *NotificationChannelDeleteOne {
 	return c.DeleteOneID(_m.ID)
 }
 
 // DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *NotificationClient) DeleteOneID(id int) *NotificationDeleteOne {
-	builder := c.Delete().Where(notification.ID(id))
+func (c *NotificationChannelClient) DeleteOneID(id int) *NotificationChannelDeleteOne {
+	builder := c.Delete().Where(notificationchannel.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
-	return &NotificationDeleteOne{builder}
+	return &NotificationChannelDeleteOne{builder}
 }
 
-// Query returns a query builder for Notification.
-func (c *NotificationClient) Query() *NotificationQuery {
-	return &NotificationQuery{
+// Query returns a query builder for NotificationChannel.
+func (c *NotificationChannelClient) Query() *NotificationChannelQuery {
+	return &NotificationChannelQuery{
 		config: c.config,
-		ctx:    &QueryContext{Type: TypeNotification},
+		ctx:    &QueryContext{Type: TypeNotificationChannel},
 		inters: c.Interceptors(),
 	}
 }
 
-// Get returns a Notification entity by its id.
-func (c *NotificationClient) Get(ctx context.Context, id int) (*Notification, error) {
-	return c.Query().Where(notification.ID(id)).Only(ctx)
+// Get returns a NotificationChannel entity by its id.
+func (c *NotificationChannelClient) Get(ctx context.Context, id int) (*NotificationChannel, error) {
+	return c.Query().Where(notificationchannel.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *NotificationClient) GetX(ctx context.Context, id int) *Notification {
+func (c *NotificationChannelClient) GetX(ctx context.Context, id int) *NotificationChannel {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -1475,15 +1475,15 @@ func (c *NotificationClient) GetX(ctx context.Context, id int) *Notification {
 	return obj
 }
 
-// QueryUser queries the user edge of a Notification.
-func (c *NotificationClient) QueryUser(_m *Notification) *UserQuery {
+// QueryUser queries the user edge of a NotificationChannel.
+func (c *NotificationChannelClient) QueryUser(_m *NotificationChannel) *UserQuery {
 	query := (&UserClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := _m.ID
 		step := sqlgraph.NewStep(
-			sqlgraph.From(notification.Table, notification.FieldID, id),
+			sqlgraph.From(notificationchannel.Table, notificationchannel.FieldID, id),
 			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, notification.UserTable, notification.UserColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, notificationchannel.UserTable, notificationchannel.UserColumn),
 		)
 		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
 		return fromV, nil
@@ -1491,15 +1491,15 @@ func (c *NotificationClient) QueryUser(_m *Notification) *UserQuery {
 	return query
 }
 
-// QueryMonitors queries the monitors edge of a Notification.
-func (c *NotificationClient) QueryMonitors(_m *Notification) *MonitorQuery {
+// QueryMonitors queries the monitors edge of a NotificationChannel.
+func (c *NotificationChannelClient) QueryMonitors(_m *NotificationChannel) *MonitorQuery {
 	query := (&MonitorClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := _m.ID
 		step := sqlgraph.NewStep(
-			sqlgraph.From(notification.Table, notification.FieldID, id),
+			sqlgraph.From(notificationchannel.Table, notificationchannel.FieldID, id),
 			sqlgraph.To(monitor.Table, monitor.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, true, notification.MonitorsTable, notification.MonitorsPrimaryKey...),
+			sqlgraph.Edge(sqlgraph.M2M, true, notificationchannel.MonitorsTable, notificationchannel.MonitorsPrimaryKey...),
 		)
 		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
 		return fromV, nil
@@ -1508,27 +1508,27 @@ func (c *NotificationClient) QueryMonitors(_m *Notification) *MonitorQuery {
 }
 
 // Hooks returns the client hooks.
-func (c *NotificationClient) Hooks() []Hook {
-	return c.hooks.Notification
+func (c *NotificationChannelClient) Hooks() []Hook {
+	return c.hooks.NotificationChannel
 }
 
 // Interceptors returns the client interceptors.
-func (c *NotificationClient) Interceptors() []Interceptor {
-	return c.inters.Notification
+func (c *NotificationChannelClient) Interceptors() []Interceptor {
+	return c.inters.NotificationChannel
 }
 
-func (c *NotificationClient) mutate(ctx context.Context, m *NotificationMutation) (Value, error) {
+func (c *NotificationChannelClient) mutate(ctx context.Context, m *NotificationChannelMutation) (Value, error) {
 	switch m.Op() {
 	case OpCreate:
-		return (&NotificationCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+		return (&NotificationChannelCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
 	case OpUpdate:
-		return (&NotificationUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+		return (&NotificationChannelUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
 	case OpUpdateOne:
-		return (&NotificationUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+		return (&NotificationChannelUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
 	case OpDelete, OpDeleteOne:
-		return (&NotificationDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+		return (&NotificationChannelDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
-		return nil, fmt.Errorf("ent: unknown Notification mutation op: %q", m.Op())
+		return nil, fmt.Errorf("ent: unknown NotificationChannel mutation op: %q", m.Op())
 	}
 }
 
@@ -2412,15 +2412,15 @@ func (c *UserClient) QueryAPIKeys(_m *User) *APIKeyQuery {
 	return query
 }
 
-// QueryNotifications queries the notifications edge of a User.
-func (c *UserClient) QueryNotifications(_m *User) *NotificationQuery {
-	query := (&NotificationClient{config: c.config}).Query()
+// QueryNotificationChannels queries the notification_channels edge of a User.
+func (c *UserClient) QueryNotificationChannels(_m *User) *NotificationChannelQuery {
+	query := (&NotificationChannelClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := _m.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(user.Table, user.FieldID, id),
-			sqlgraph.To(notification.Table, notification.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, user.NotificationsTable, user.NotificationsColumn),
+			sqlgraph.To(notificationchannel.Table, notificationchannel.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.NotificationChannelsTable, user.NotificationChannelsColumn),
 		)
 		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
 		return fromV, nil
@@ -2505,12 +2505,12 @@ func (c *UserClient) mutate(ctx context.Context, m *UserMutation) (Value, error)
 type (
 	hooks struct {
 		APIKey, Incident, MaintenanceWindow, Monitor, MonitorCheck, MonitorStat,
-		Notification, StatusMessage, StatusPage, StatusPageMonitor, Tag,
+		NotificationChannel, StatusMessage, StatusPage, StatusPageMonitor, Tag,
 		User []ent.Hook
 	}
 	inters struct {
 		APIKey, Incident, MaintenanceWindow, Monitor, MonitorCheck, MonitorStat,
-		Notification, StatusMessage, StatusPage, StatusPageMonitor, Tag,
+		NotificationChannel, StatusMessage, StatusPage, StatusPageMonitor, Tag,
 		User []ent.Interceptor
 	}
 )

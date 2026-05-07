@@ -12,32 +12,32 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/monitor"
-	"github.com/Phoenix-Uptime/phoenix-go/ent/notification"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/notificationchannel"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/predicate"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/user"
 )
 
-// NotificationUpdate is the builder for updating Notification entities.
-type NotificationUpdate struct {
+// NotificationChannelUpdate is the builder for updating NotificationChannel entities.
+type NotificationChannelUpdate struct {
 	config
 	hooks    []Hook
-	mutation *NotificationMutation
+	mutation *NotificationChannelMutation
 }
 
-// Where appends a list predicates to the NotificationUpdate builder.
-func (_u *NotificationUpdate) Where(ps ...predicate.Notification) *NotificationUpdate {
+// Where appends a list predicates to the NotificationChannelUpdate builder.
+func (_u *NotificationChannelUpdate) Where(ps ...predicate.NotificationChannel) *NotificationChannelUpdate {
 	_u.mutation.Where(ps...)
 	return _u
 }
 
 // SetUserID sets the "user_id" field.
-func (_u *NotificationUpdate) SetUserID(v int) *NotificationUpdate {
+func (_u *NotificationChannelUpdate) SetUserID(v int) *NotificationChannelUpdate {
 	_u.mutation.SetUserID(v)
 	return _u
 }
 
 // SetNillableUserID sets the "user_id" field if the given value is not nil.
-func (_u *NotificationUpdate) SetNillableUserID(v *int) *NotificationUpdate {
+func (_u *NotificationChannelUpdate) SetNillableUserID(v *int) *NotificationChannelUpdate {
 	if v != nil {
 		_u.SetUserID(*v)
 	}
@@ -45,13 +45,13 @@ func (_u *NotificationUpdate) SetNillableUserID(v *int) *NotificationUpdate {
 }
 
 // SetName sets the "name" field.
-func (_u *NotificationUpdate) SetName(v string) *NotificationUpdate {
+func (_u *NotificationChannelUpdate) SetName(v string) *NotificationChannelUpdate {
 	_u.mutation.SetName(v)
 	return _u
 }
 
 // SetNillableName sets the "name" field if the given value is not nil.
-func (_u *NotificationUpdate) SetNillableName(v *string) *NotificationUpdate {
+func (_u *NotificationChannelUpdate) SetNillableName(v *string) *NotificationChannelUpdate {
 	if v != nil {
 		_u.SetName(*v)
 	}
@@ -59,13 +59,13 @@ func (_u *NotificationUpdate) SetNillableName(v *string) *NotificationUpdate {
 }
 
 // SetType sets the "type" field.
-func (_u *NotificationUpdate) SetType(v notification.Type) *NotificationUpdate {
+func (_u *NotificationChannelUpdate) SetType(v notificationchannel.Type) *NotificationChannelUpdate {
 	_u.mutation.SetType(v)
 	return _u
 }
 
 // SetNillableType sets the "type" field if the given value is not nil.
-func (_u *NotificationUpdate) SetNillableType(v *notification.Type) *NotificationUpdate {
+func (_u *NotificationChannelUpdate) SetNillableType(v *notificationchannel.Type) *NotificationChannelUpdate {
 	if v != nil {
 		_u.SetType(*v)
 	}
@@ -73,13 +73,13 @@ func (_u *NotificationUpdate) SetNillableType(v *notification.Type) *Notificatio
 }
 
 // SetIsActive sets the "is_active" field.
-func (_u *NotificationUpdate) SetIsActive(v bool) *NotificationUpdate {
+func (_u *NotificationChannelUpdate) SetIsActive(v bool) *NotificationChannelUpdate {
 	_u.mutation.SetIsActive(v)
 	return _u
 }
 
 // SetNillableIsActive sets the "is_active" field if the given value is not nil.
-func (_u *NotificationUpdate) SetNillableIsActive(v *bool) *NotificationUpdate {
+func (_u *NotificationChannelUpdate) SetNillableIsActive(v *bool) *NotificationChannelUpdate {
 	if v != nil {
 		_u.SetIsActive(*v)
 	}
@@ -87,13 +87,13 @@ func (_u *NotificationUpdate) SetNillableIsActive(v *bool) *NotificationUpdate {
 }
 
 // SetIsDefault sets the "is_default" field.
-func (_u *NotificationUpdate) SetIsDefault(v bool) *NotificationUpdate {
+func (_u *NotificationChannelUpdate) SetIsDefault(v bool) *NotificationChannelUpdate {
 	_u.mutation.SetIsDefault(v)
 	return _u
 }
 
 // SetNillableIsDefault sets the "is_default" field if the given value is not nil.
-func (_u *NotificationUpdate) SetNillableIsDefault(v *bool) *NotificationUpdate {
+func (_u *NotificationChannelUpdate) SetNillableIsDefault(v *bool) *NotificationChannelUpdate {
 	if v != nil {
 		_u.SetIsDefault(*v)
 	}
@@ -101,36 +101,36 @@ func (_u *NotificationUpdate) SetNillableIsDefault(v *bool) *NotificationUpdate 
 }
 
 // SetConfig sets the "config" field.
-func (_u *NotificationUpdate) SetConfig(v map[string]interface{}) *NotificationUpdate {
+func (_u *NotificationChannelUpdate) SetConfig(v map[string]interface{}) *NotificationChannelUpdate {
 	_u.mutation.SetConfig(v)
 	return _u
 }
 
 // ClearConfig clears the value of the "config" field.
-func (_u *NotificationUpdate) ClearConfig() *NotificationUpdate {
+func (_u *NotificationChannelUpdate) ClearConfig() *NotificationChannelUpdate {
 	_u.mutation.ClearConfig()
 	return _u
 }
 
 // SetUpdatedAt sets the "updated_at" field.
-func (_u *NotificationUpdate) SetUpdatedAt(v time.Time) *NotificationUpdate {
+func (_u *NotificationChannelUpdate) SetUpdatedAt(v time.Time) *NotificationChannelUpdate {
 	_u.mutation.SetUpdatedAt(v)
 	return _u
 }
 
 // SetUser sets the "user" edge to the User entity.
-func (_u *NotificationUpdate) SetUser(v *User) *NotificationUpdate {
+func (_u *NotificationChannelUpdate) SetUser(v *User) *NotificationChannelUpdate {
 	return _u.SetUserID(v.ID)
 }
 
 // AddMonitorIDs adds the "monitors" edge to the Monitor entity by IDs.
-func (_u *NotificationUpdate) AddMonitorIDs(ids ...int) *NotificationUpdate {
+func (_u *NotificationChannelUpdate) AddMonitorIDs(ids ...int) *NotificationChannelUpdate {
 	_u.mutation.AddMonitorIDs(ids...)
 	return _u
 }
 
 // AddMonitors adds the "monitors" edges to the Monitor entity.
-func (_u *NotificationUpdate) AddMonitors(v ...*Monitor) *NotificationUpdate {
+func (_u *NotificationChannelUpdate) AddMonitors(v ...*Monitor) *NotificationChannelUpdate {
 	ids := make([]int, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
@@ -138,31 +138,31 @@ func (_u *NotificationUpdate) AddMonitors(v ...*Monitor) *NotificationUpdate {
 	return _u.AddMonitorIDs(ids...)
 }
 
-// Mutation returns the NotificationMutation object of the builder.
-func (_u *NotificationUpdate) Mutation() *NotificationMutation {
+// Mutation returns the NotificationChannelMutation object of the builder.
+func (_u *NotificationChannelUpdate) Mutation() *NotificationChannelMutation {
 	return _u.mutation
 }
 
 // ClearUser clears the "user" edge to the User entity.
-func (_u *NotificationUpdate) ClearUser() *NotificationUpdate {
+func (_u *NotificationChannelUpdate) ClearUser() *NotificationChannelUpdate {
 	_u.mutation.ClearUser()
 	return _u
 }
 
 // ClearMonitors clears all "monitors" edges to the Monitor entity.
-func (_u *NotificationUpdate) ClearMonitors() *NotificationUpdate {
+func (_u *NotificationChannelUpdate) ClearMonitors() *NotificationChannelUpdate {
 	_u.mutation.ClearMonitors()
 	return _u
 }
 
 // RemoveMonitorIDs removes the "monitors" edge to Monitor entities by IDs.
-func (_u *NotificationUpdate) RemoveMonitorIDs(ids ...int) *NotificationUpdate {
+func (_u *NotificationChannelUpdate) RemoveMonitorIDs(ids ...int) *NotificationChannelUpdate {
 	_u.mutation.RemoveMonitorIDs(ids...)
 	return _u
 }
 
 // RemoveMonitors removes "monitors" edges to Monitor entities.
-func (_u *NotificationUpdate) RemoveMonitors(v ...*Monitor) *NotificationUpdate {
+func (_u *NotificationChannelUpdate) RemoveMonitors(v ...*Monitor) *NotificationChannelUpdate {
 	ids := make([]int, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
@@ -171,13 +171,13 @@ func (_u *NotificationUpdate) RemoveMonitors(v ...*Monitor) *NotificationUpdate 
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
-func (_u *NotificationUpdate) Save(ctx context.Context) (int, error) {
+func (_u *NotificationChannelUpdate) Save(ctx context.Context) (int, error) {
 	_u.defaults()
 	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (_u *NotificationUpdate) SaveX(ctx context.Context) int {
+func (_u *NotificationChannelUpdate) SaveX(ctx context.Context) int {
 	affected, err := _u.Save(ctx)
 	if err != nil {
 		panic(err)
@@ -186,49 +186,49 @@ func (_u *NotificationUpdate) SaveX(ctx context.Context) int {
 }
 
 // Exec executes the query.
-func (_u *NotificationUpdate) Exec(ctx context.Context) error {
+func (_u *NotificationChannelUpdate) Exec(ctx context.Context) error {
 	_, err := _u.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (_u *NotificationUpdate) ExecX(ctx context.Context) {
+func (_u *NotificationChannelUpdate) ExecX(ctx context.Context) {
 	if err := _u.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // defaults sets the default values of the builder before save.
-func (_u *NotificationUpdate) defaults() {
+func (_u *NotificationChannelUpdate) defaults() {
 	if _, ok := _u.mutation.UpdatedAt(); !ok {
-		v := notification.UpdateDefaultUpdatedAt()
+		v := notificationchannel.UpdateDefaultUpdatedAt()
 		_u.mutation.SetUpdatedAt(v)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (_u *NotificationUpdate) check() error {
+func (_u *NotificationChannelUpdate) check() error {
 	if v, ok := _u.mutation.Name(); ok {
-		if err := notification.NameValidator(v); err != nil {
-			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "Notification.name": %w`, err)}
+		if err := notificationchannel.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "NotificationChannel.name": %w`, err)}
 		}
 	}
 	if v, ok := _u.mutation.GetType(); ok {
-		if err := notification.TypeValidator(v); err != nil {
-			return &ValidationError{Name: "type", err: fmt.Errorf(`ent: validator failed for field "Notification.type": %w`, err)}
+		if err := notificationchannel.TypeValidator(v); err != nil {
+			return &ValidationError{Name: "type", err: fmt.Errorf(`ent: validator failed for field "NotificationChannel.type": %w`, err)}
 		}
 	}
 	if _u.mutation.UserCleared() && len(_u.mutation.UserIDs()) > 0 {
-		return errors.New(`ent: clearing a required unique edge "Notification.user"`)
+		return errors.New(`ent: clearing a required unique edge "NotificationChannel.user"`)
 	}
 	return nil
 }
 
-func (_u *NotificationUpdate) sqlSave(ctx context.Context) (_node int, err error) {
+func (_u *NotificationChannelUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(notification.Table, notification.Columns, sqlgraph.NewFieldSpec(notification.FieldID, field.TypeInt))
+	_spec := sqlgraph.NewUpdateSpec(notificationchannel.Table, notificationchannel.Columns, sqlgraph.NewFieldSpec(notificationchannel.FieldID, field.TypeInt))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -237,32 +237,32 @@ func (_u *NotificationUpdate) sqlSave(ctx context.Context) (_node int, err error
 		}
 	}
 	if value, ok := _u.mutation.Name(); ok {
-		_spec.SetField(notification.FieldName, field.TypeString, value)
+		_spec.SetField(notificationchannel.FieldName, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.GetType(); ok {
-		_spec.SetField(notification.FieldType, field.TypeEnum, value)
+		_spec.SetField(notificationchannel.FieldType, field.TypeEnum, value)
 	}
 	if value, ok := _u.mutation.IsActive(); ok {
-		_spec.SetField(notification.FieldIsActive, field.TypeBool, value)
+		_spec.SetField(notificationchannel.FieldIsActive, field.TypeBool, value)
 	}
 	if value, ok := _u.mutation.IsDefault(); ok {
-		_spec.SetField(notification.FieldIsDefault, field.TypeBool, value)
+		_spec.SetField(notificationchannel.FieldIsDefault, field.TypeBool, value)
 	}
 	if value, ok := _u.mutation.Config(); ok {
-		_spec.SetField(notification.FieldConfig, field.TypeJSON, value)
+		_spec.SetField(notificationchannel.FieldConfig, field.TypeJSON, value)
 	}
 	if _u.mutation.ConfigCleared() {
-		_spec.ClearField(notification.FieldConfig, field.TypeJSON)
+		_spec.ClearField(notificationchannel.FieldConfig, field.TypeJSON)
 	}
 	if value, ok := _u.mutation.UpdatedAt(); ok {
-		_spec.SetField(notification.FieldUpdatedAt, field.TypeTime, value)
+		_spec.SetField(notificationchannel.FieldUpdatedAt, field.TypeTime, value)
 	}
 	if _u.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   notification.UserTable,
-			Columns: []string{notification.UserColumn},
+			Table:   notificationchannel.UserTable,
+			Columns: []string{notificationchannel.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
@@ -274,8 +274,8 @@ func (_u *NotificationUpdate) sqlSave(ctx context.Context) (_node int, err error
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   notification.UserTable,
-			Columns: []string{notification.UserColumn},
+			Table:   notificationchannel.UserTable,
+			Columns: []string{notificationchannel.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
@@ -290,8 +290,8 @@ func (_u *NotificationUpdate) sqlSave(ctx context.Context) (_node int, err error
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: true,
-			Table:   notification.MonitorsTable,
-			Columns: notification.MonitorsPrimaryKey,
+			Table:   notificationchannel.MonitorsTable,
+			Columns: notificationchannel.MonitorsPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(monitor.FieldID, field.TypeInt),
@@ -303,8 +303,8 @@ func (_u *NotificationUpdate) sqlSave(ctx context.Context) (_node int, err error
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: true,
-			Table:   notification.MonitorsTable,
-			Columns: notification.MonitorsPrimaryKey,
+			Table:   notificationchannel.MonitorsTable,
+			Columns: notificationchannel.MonitorsPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(monitor.FieldID, field.TypeInt),
@@ -319,8 +319,8 @@ func (_u *NotificationUpdate) sqlSave(ctx context.Context) (_node int, err error
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: true,
-			Table:   notification.MonitorsTable,
-			Columns: notification.MonitorsPrimaryKey,
+			Table:   notificationchannel.MonitorsTable,
+			Columns: notificationchannel.MonitorsPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(monitor.FieldID, field.TypeInt),
@@ -333,7 +333,7 @@ func (_u *NotificationUpdate) sqlSave(ctx context.Context) (_node int, err error
 	}
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
-			err = &NotFoundError{notification.Label}
+			err = &NotFoundError{notificationchannel.Label}
 		} else if sqlgraph.IsConstraintError(err) {
 			err = &ConstraintError{msg: err.Error(), wrap: err}
 		}
@@ -343,22 +343,22 @@ func (_u *NotificationUpdate) sqlSave(ctx context.Context) (_node int, err error
 	return _node, nil
 }
 
-// NotificationUpdateOne is the builder for updating a single Notification entity.
-type NotificationUpdateOne struct {
+// NotificationChannelUpdateOne is the builder for updating a single NotificationChannel entity.
+type NotificationChannelUpdateOne struct {
 	config
 	fields   []string
 	hooks    []Hook
-	mutation *NotificationMutation
+	mutation *NotificationChannelMutation
 }
 
 // SetUserID sets the "user_id" field.
-func (_u *NotificationUpdateOne) SetUserID(v int) *NotificationUpdateOne {
+func (_u *NotificationChannelUpdateOne) SetUserID(v int) *NotificationChannelUpdateOne {
 	_u.mutation.SetUserID(v)
 	return _u
 }
 
 // SetNillableUserID sets the "user_id" field if the given value is not nil.
-func (_u *NotificationUpdateOne) SetNillableUserID(v *int) *NotificationUpdateOne {
+func (_u *NotificationChannelUpdateOne) SetNillableUserID(v *int) *NotificationChannelUpdateOne {
 	if v != nil {
 		_u.SetUserID(*v)
 	}
@@ -366,13 +366,13 @@ func (_u *NotificationUpdateOne) SetNillableUserID(v *int) *NotificationUpdateOn
 }
 
 // SetName sets the "name" field.
-func (_u *NotificationUpdateOne) SetName(v string) *NotificationUpdateOne {
+func (_u *NotificationChannelUpdateOne) SetName(v string) *NotificationChannelUpdateOne {
 	_u.mutation.SetName(v)
 	return _u
 }
 
 // SetNillableName sets the "name" field if the given value is not nil.
-func (_u *NotificationUpdateOne) SetNillableName(v *string) *NotificationUpdateOne {
+func (_u *NotificationChannelUpdateOne) SetNillableName(v *string) *NotificationChannelUpdateOne {
 	if v != nil {
 		_u.SetName(*v)
 	}
@@ -380,13 +380,13 @@ func (_u *NotificationUpdateOne) SetNillableName(v *string) *NotificationUpdateO
 }
 
 // SetType sets the "type" field.
-func (_u *NotificationUpdateOne) SetType(v notification.Type) *NotificationUpdateOne {
+func (_u *NotificationChannelUpdateOne) SetType(v notificationchannel.Type) *NotificationChannelUpdateOne {
 	_u.mutation.SetType(v)
 	return _u
 }
 
 // SetNillableType sets the "type" field if the given value is not nil.
-func (_u *NotificationUpdateOne) SetNillableType(v *notification.Type) *NotificationUpdateOne {
+func (_u *NotificationChannelUpdateOne) SetNillableType(v *notificationchannel.Type) *NotificationChannelUpdateOne {
 	if v != nil {
 		_u.SetType(*v)
 	}
@@ -394,13 +394,13 @@ func (_u *NotificationUpdateOne) SetNillableType(v *notification.Type) *Notifica
 }
 
 // SetIsActive sets the "is_active" field.
-func (_u *NotificationUpdateOne) SetIsActive(v bool) *NotificationUpdateOne {
+func (_u *NotificationChannelUpdateOne) SetIsActive(v bool) *NotificationChannelUpdateOne {
 	_u.mutation.SetIsActive(v)
 	return _u
 }
 
 // SetNillableIsActive sets the "is_active" field if the given value is not nil.
-func (_u *NotificationUpdateOne) SetNillableIsActive(v *bool) *NotificationUpdateOne {
+func (_u *NotificationChannelUpdateOne) SetNillableIsActive(v *bool) *NotificationChannelUpdateOne {
 	if v != nil {
 		_u.SetIsActive(*v)
 	}
@@ -408,13 +408,13 @@ func (_u *NotificationUpdateOne) SetNillableIsActive(v *bool) *NotificationUpdat
 }
 
 // SetIsDefault sets the "is_default" field.
-func (_u *NotificationUpdateOne) SetIsDefault(v bool) *NotificationUpdateOne {
+func (_u *NotificationChannelUpdateOne) SetIsDefault(v bool) *NotificationChannelUpdateOne {
 	_u.mutation.SetIsDefault(v)
 	return _u
 }
 
 // SetNillableIsDefault sets the "is_default" field if the given value is not nil.
-func (_u *NotificationUpdateOne) SetNillableIsDefault(v *bool) *NotificationUpdateOne {
+func (_u *NotificationChannelUpdateOne) SetNillableIsDefault(v *bool) *NotificationChannelUpdateOne {
 	if v != nil {
 		_u.SetIsDefault(*v)
 	}
@@ -422,36 +422,36 @@ func (_u *NotificationUpdateOne) SetNillableIsDefault(v *bool) *NotificationUpda
 }
 
 // SetConfig sets the "config" field.
-func (_u *NotificationUpdateOne) SetConfig(v map[string]interface{}) *NotificationUpdateOne {
+func (_u *NotificationChannelUpdateOne) SetConfig(v map[string]interface{}) *NotificationChannelUpdateOne {
 	_u.mutation.SetConfig(v)
 	return _u
 }
 
 // ClearConfig clears the value of the "config" field.
-func (_u *NotificationUpdateOne) ClearConfig() *NotificationUpdateOne {
+func (_u *NotificationChannelUpdateOne) ClearConfig() *NotificationChannelUpdateOne {
 	_u.mutation.ClearConfig()
 	return _u
 }
 
 // SetUpdatedAt sets the "updated_at" field.
-func (_u *NotificationUpdateOne) SetUpdatedAt(v time.Time) *NotificationUpdateOne {
+func (_u *NotificationChannelUpdateOne) SetUpdatedAt(v time.Time) *NotificationChannelUpdateOne {
 	_u.mutation.SetUpdatedAt(v)
 	return _u
 }
 
 // SetUser sets the "user" edge to the User entity.
-func (_u *NotificationUpdateOne) SetUser(v *User) *NotificationUpdateOne {
+func (_u *NotificationChannelUpdateOne) SetUser(v *User) *NotificationChannelUpdateOne {
 	return _u.SetUserID(v.ID)
 }
 
 // AddMonitorIDs adds the "monitors" edge to the Monitor entity by IDs.
-func (_u *NotificationUpdateOne) AddMonitorIDs(ids ...int) *NotificationUpdateOne {
+func (_u *NotificationChannelUpdateOne) AddMonitorIDs(ids ...int) *NotificationChannelUpdateOne {
 	_u.mutation.AddMonitorIDs(ids...)
 	return _u
 }
 
 // AddMonitors adds the "monitors" edges to the Monitor entity.
-func (_u *NotificationUpdateOne) AddMonitors(v ...*Monitor) *NotificationUpdateOne {
+func (_u *NotificationChannelUpdateOne) AddMonitors(v ...*Monitor) *NotificationChannelUpdateOne {
 	ids := make([]int, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
@@ -459,31 +459,31 @@ func (_u *NotificationUpdateOne) AddMonitors(v ...*Monitor) *NotificationUpdateO
 	return _u.AddMonitorIDs(ids...)
 }
 
-// Mutation returns the NotificationMutation object of the builder.
-func (_u *NotificationUpdateOne) Mutation() *NotificationMutation {
+// Mutation returns the NotificationChannelMutation object of the builder.
+func (_u *NotificationChannelUpdateOne) Mutation() *NotificationChannelMutation {
 	return _u.mutation
 }
 
 // ClearUser clears the "user" edge to the User entity.
-func (_u *NotificationUpdateOne) ClearUser() *NotificationUpdateOne {
+func (_u *NotificationChannelUpdateOne) ClearUser() *NotificationChannelUpdateOne {
 	_u.mutation.ClearUser()
 	return _u
 }
 
 // ClearMonitors clears all "monitors" edges to the Monitor entity.
-func (_u *NotificationUpdateOne) ClearMonitors() *NotificationUpdateOne {
+func (_u *NotificationChannelUpdateOne) ClearMonitors() *NotificationChannelUpdateOne {
 	_u.mutation.ClearMonitors()
 	return _u
 }
 
 // RemoveMonitorIDs removes the "monitors" edge to Monitor entities by IDs.
-func (_u *NotificationUpdateOne) RemoveMonitorIDs(ids ...int) *NotificationUpdateOne {
+func (_u *NotificationChannelUpdateOne) RemoveMonitorIDs(ids ...int) *NotificationChannelUpdateOne {
 	_u.mutation.RemoveMonitorIDs(ids...)
 	return _u
 }
 
 // RemoveMonitors removes "monitors" edges to Monitor entities.
-func (_u *NotificationUpdateOne) RemoveMonitors(v ...*Monitor) *NotificationUpdateOne {
+func (_u *NotificationChannelUpdateOne) RemoveMonitors(v ...*Monitor) *NotificationChannelUpdateOne {
 	ids := make([]int, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
@@ -491,27 +491,27 @@ func (_u *NotificationUpdateOne) RemoveMonitors(v ...*Monitor) *NotificationUpda
 	return _u.RemoveMonitorIDs(ids...)
 }
 
-// Where appends a list predicates to the NotificationUpdate builder.
-func (_u *NotificationUpdateOne) Where(ps ...predicate.Notification) *NotificationUpdateOne {
+// Where appends a list predicates to the NotificationChannelUpdate builder.
+func (_u *NotificationChannelUpdateOne) Where(ps ...predicate.NotificationChannel) *NotificationChannelUpdateOne {
 	_u.mutation.Where(ps...)
 	return _u
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
 // The default is selecting all fields defined in the entity schema.
-func (_u *NotificationUpdateOne) Select(field string, fields ...string) *NotificationUpdateOne {
+func (_u *NotificationChannelUpdateOne) Select(field string, fields ...string) *NotificationChannelUpdateOne {
 	_u.fields = append([]string{field}, fields...)
 	return _u
 }
 
-// Save executes the query and returns the updated Notification entity.
-func (_u *NotificationUpdateOne) Save(ctx context.Context) (*Notification, error) {
+// Save executes the query and returns the updated NotificationChannel entity.
+func (_u *NotificationChannelUpdateOne) Save(ctx context.Context) (*NotificationChannel, error) {
 	_u.defaults()
 	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (_u *NotificationUpdateOne) SaveX(ctx context.Context) *Notification {
+func (_u *NotificationChannelUpdateOne) SaveX(ctx context.Context) *NotificationChannel {
 	node, err := _u.Save(ctx)
 	if err != nil {
 		panic(err)
@@ -520,62 +520,62 @@ func (_u *NotificationUpdateOne) SaveX(ctx context.Context) *Notification {
 }
 
 // Exec executes the query on the entity.
-func (_u *NotificationUpdateOne) Exec(ctx context.Context) error {
+func (_u *NotificationChannelUpdateOne) Exec(ctx context.Context) error {
 	_, err := _u.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (_u *NotificationUpdateOne) ExecX(ctx context.Context) {
+func (_u *NotificationChannelUpdateOne) ExecX(ctx context.Context) {
 	if err := _u.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // defaults sets the default values of the builder before save.
-func (_u *NotificationUpdateOne) defaults() {
+func (_u *NotificationChannelUpdateOne) defaults() {
 	if _, ok := _u.mutation.UpdatedAt(); !ok {
-		v := notification.UpdateDefaultUpdatedAt()
+		v := notificationchannel.UpdateDefaultUpdatedAt()
 		_u.mutation.SetUpdatedAt(v)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (_u *NotificationUpdateOne) check() error {
+func (_u *NotificationChannelUpdateOne) check() error {
 	if v, ok := _u.mutation.Name(); ok {
-		if err := notification.NameValidator(v); err != nil {
-			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "Notification.name": %w`, err)}
+		if err := notificationchannel.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "NotificationChannel.name": %w`, err)}
 		}
 	}
 	if v, ok := _u.mutation.GetType(); ok {
-		if err := notification.TypeValidator(v); err != nil {
-			return &ValidationError{Name: "type", err: fmt.Errorf(`ent: validator failed for field "Notification.type": %w`, err)}
+		if err := notificationchannel.TypeValidator(v); err != nil {
+			return &ValidationError{Name: "type", err: fmt.Errorf(`ent: validator failed for field "NotificationChannel.type": %w`, err)}
 		}
 	}
 	if _u.mutation.UserCleared() && len(_u.mutation.UserIDs()) > 0 {
-		return errors.New(`ent: clearing a required unique edge "Notification.user"`)
+		return errors.New(`ent: clearing a required unique edge "NotificationChannel.user"`)
 	}
 	return nil
 }
 
-func (_u *NotificationUpdateOne) sqlSave(ctx context.Context) (_node *Notification, err error) {
+func (_u *NotificationChannelUpdateOne) sqlSave(ctx context.Context) (_node *NotificationChannel, err error) {
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(notification.Table, notification.Columns, sqlgraph.NewFieldSpec(notification.FieldID, field.TypeInt))
+	_spec := sqlgraph.NewUpdateSpec(notificationchannel.Table, notificationchannel.Columns, sqlgraph.NewFieldSpec(notificationchannel.FieldID, field.TypeInt))
 	id, ok := _u.mutation.ID()
 	if !ok {
-		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "Notification.id" for update`)}
+		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "NotificationChannel.id" for update`)}
 	}
 	_spec.Node.ID.Value = id
 	if fields := _u.fields; len(fields) > 0 {
 		_spec.Node.Columns = make([]string, 0, len(fields))
-		_spec.Node.Columns = append(_spec.Node.Columns, notification.FieldID)
+		_spec.Node.Columns = append(_spec.Node.Columns, notificationchannel.FieldID)
 		for _, f := range fields {
-			if !notification.ValidColumn(f) {
+			if !notificationchannel.ValidColumn(f) {
 				return nil, &ValidationError{Name: f, err: fmt.Errorf("ent: invalid field %q for query", f)}
 			}
-			if f != notification.FieldID {
+			if f != notificationchannel.FieldID {
 				_spec.Node.Columns = append(_spec.Node.Columns, f)
 			}
 		}
@@ -588,32 +588,32 @@ func (_u *NotificationUpdateOne) sqlSave(ctx context.Context) (_node *Notificati
 		}
 	}
 	if value, ok := _u.mutation.Name(); ok {
-		_spec.SetField(notification.FieldName, field.TypeString, value)
+		_spec.SetField(notificationchannel.FieldName, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.GetType(); ok {
-		_spec.SetField(notification.FieldType, field.TypeEnum, value)
+		_spec.SetField(notificationchannel.FieldType, field.TypeEnum, value)
 	}
 	if value, ok := _u.mutation.IsActive(); ok {
-		_spec.SetField(notification.FieldIsActive, field.TypeBool, value)
+		_spec.SetField(notificationchannel.FieldIsActive, field.TypeBool, value)
 	}
 	if value, ok := _u.mutation.IsDefault(); ok {
-		_spec.SetField(notification.FieldIsDefault, field.TypeBool, value)
+		_spec.SetField(notificationchannel.FieldIsDefault, field.TypeBool, value)
 	}
 	if value, ok := _u.mutation.Config(); ok {
-		_spec.SetField(notification.FieldConfig, field.TypeJSON, value)
+		_spec.SetField(notificationchannel.FieldConfig, field.TypeJSON, value)
 	}
 	if _u.mutation.ConfigCleared() {
-		_spec.ClearField(notification.FieldConfig, field.TypeJSON)
+		_spec.ClearField(notificationchannel.FieldConfig, field.TypeJSON)
 	}
 	if value, ok := _u.mutation.UpdatedAt(); ok {
-		_spec.SetField(notification.FieldUpdatedAt, field.TypeTime, value)
+		_spec.SetField(notificationchannel.FieldUpdatedAt, field.TypeTime, value)
 	}
 	if _u.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   notification.UserTable,
-			Columns: []string{notification.UserColumn},
+			Table:   notificationchannel.UserTable,
+			Columns: []string{notificationchannel.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
@@ -625,8 +625,8 @@ func (_u *NotificationUpdateOne) sqlSave(ctx context.Context) (_node *Notificati
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   notification.UserTable,
-			Columns: []string{notification.UserColumn},
+			Table:   notificationchannel.UserTable,
+			Columns: []string{notificationchannel.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
@@ -641,8 +641,8 @@ func (_u *NotificationUpdateOne) sqlSave(ctx context.Context) (_node *Notificati
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: true,
-			Table:   notification.MonitorsTable,
-			Columns: notification.MonitorsPrimaryKey,
+			Table:   notificationchannel.MonitorsTable,
+			Columns: notificationchannel.MonitorsPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(monitor.FieldID, field.TypeInt),
@@ -654,8 +654,8 @@ func (_u *NotificationUpdateOne) sqlSave(ctx context.Context) (_node *Notificati
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: true,
-			Table:   notification.MonitorsTable,
-			Columns: notification.MonitorsPrimaryKey,
+			Table:   notificationchannel.MonitorsTable,
+			Columns: notificationchannel.MonitorsPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(monitor.FieldID, field.TypeInt),
@@ -670,8 +670,8 @@ func (_u *NotificationUpdateOne) sqlSave(ctx context.Context) (_node *Notificati
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: true,
-			Table:   notification.MonitorsTable,
-			Columns: notification.MonitorsPrimaryKey,
+			Table:   notificationchannel.MonitorsTable,
+			Columns: notificationchannel.MonitorsPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(monitor.FieldID, field.TypeInt),
@@ -682,12 +682,12 @@ func (_u *NotificationUpdateOne) sqlSave(ctx context.Context) (_node *Notificati
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	_node = &Notification{config: _u.config}
+	_node = &NotificationChannel{config: _u.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues
 	if err = sqlgraph.UpdateNode(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
-			err = &NotFoundError{notification.Label}
+			err = &NotFoundError{notificationchannel.Label}
 		} else if sqlgraph.IsConstraintError(err) {
 			err = &ConstraintError{msg: err.Error(), wrap: err}
 		}

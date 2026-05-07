@@ -15,7 +15,7 @@ import (
 	"github.com/Phoenix-Uptime/phoenix-go/ent/incident"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/maintenancewindow"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/monitor"
-	"github.com/Phoenix-Uptime/phoenix-go/ent/notification"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/notificationchannel"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/predicate"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/statuspage"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/tag"
@@ -91,153 +91,6 @@ func (_u *UserUpdate) SetNillableAPIKey(v *string) *UserUpdate {
 	return _u
 }
 
-// SetSMTPSMTPServer sets the "smtp_smtp_server" field.
-func (_u *UserUpdate) SetSMTPSMTPServer(v string) *UserUpdate {
-	_u.mutation.SetSMTPSMTPServer(v)
-	return _u
-}
-
-// SetNillableSMTPSMTPServer sets the "smtp_smtp_server" field if the given value is not nil.
-func (_u *UserUpdate) SetNillableSMTPSMTPServer(v *string) *UserUpdate {
-	if v != nil {
-		_u.SetSMTPSMTPServer(*v)
-	}
-	return _u
-}
-
-// ClearSMTPSMTPServer clears the value of the "smtp_smtp_server" field.
-func (_u *UserUpdate) ClearSMTPSMTPServer() *UserUpdate {
-	_u.mutation.ClearSMTPSMTPServer()
-	return _u
-}
-
-// SetSMTPSMTPPort sets the "smtp_smtp_port" field.
-func (_u *UserUpdate) SetSMTPSMTPPort(v int) *UserUpdate {
-	_u.mutation.ResetSMTPSMTPPort()
-	_u.mutation.SetSMTPSMTPPort(v)
-	return _u
-}
-
-// SetNillableSMTPSMTPPort sets the "smtp_smtp_port" field if the given value is not nil.
-func (_u *UserUpdate) SetNillableSMTPSMTPPort(v *int) *UserUpdate {
-	if v != nil {
-		_u.SetSMTPSMTPPort(*v)
-	}
-	return _u
-}
-
-// AddSMTPSMTPPort adds value to the "smtp_smtp_port" field.
-func (_u *UserUpdate) AddSMTPSMTPPort(v int) *UserUpdate {
-	_u.mutation.AddSMTPSMTPPort(v)
-	return _u
-}
-
-// ClearSMTPSMTPPort clears the value of the "smtp_smtp_port" field.
-func (_u *UserUpdate) ClearSMTPSMTPPort() *UserUpdate {
-	_u.mutation.ClearSMTPSMTPPort()
-	return _u
-}
-
-// SetSMTPFromAddress sets the "smtp_from_address" field.
-func (_u *UserUpdate) SetSMTPFromAddress(v string) *UserUpdate {
-	_u.mutation.SetSMTPFromAddress(v)
-	return _u
-}
-
-// SetNillableSMTPFromAddress sets the "smtp_from_address" field if the given value is not nil.
-func (_u *UserUpdate) SetNillableSMTPFromAddress(v *string) *UserUpdate {
-	if v != nil {
-		_u.SetSMTPFromAddress(*v)
-	}
-	return _u
-}
-
-// ClearSMTPFromAddress clears the value of the "smtp_from_address" field.
-func (_u *UserUpdate) ClearSMTPFromAddress() *UserUpdate {
-	_u.mutation.ClearSMTPFromAddress()
-	return _u
-}
-
-// SetSMTPUsername sets the "smtp_username" field.
-func (_u *UserUpdate) SetSMTPUsername(v string) *UserUpdate {
-	_u.mutation.SetSMTPUsername(v)
-	return _u
-}
-
-// SetNillableSMTPUsername sets the "smtp_username" field if the given value is not nil.
-func (_u *UserUpdate) SetNillableSMTPUsername(v *string) *UserUpdate {
-	if v != nil {
-		_u.SetSMTPUsername(*v)
-	}
-	return _u
-}
-
-// ClearSMTPUsername clears the value of the "smtp_username" field.
-func (_u *UserUpdate) ClearSMTPUsername() *UserUpdate {
-	_u.mutation.ClearSMTPUsername()
-	return _u
-}
-
-// SetSMTPPassword sets the "smtp_password" field.
-func (_u *UserUpdate) SetSMTPPassword(v string) *UserUpdate {
-	_u.mutation.SetSMTPPassword(v)
-	return _u
-}
-
-// SetNillableSMTPPassword sets the "smtp_password" field if the given value is not nil.
-func (_u *UserUpdate) SetNillableSMTPPassword(v *string) *UserUpdate {
-	if v != nil {
-		_u.SetSMTPPassword(*v)
-	}
-	return _u
-}
-
-// ClearSMTPPassword clears the value of the "smtp_password" field.
-func (_u *UserUpdate) ClearSMTPPassword() *UserUpdate {
-	_u.mutation.ClearSMTPPassword()
-	return _u
-}
-
-// SetSMTPUseTLS sets the "smtp_use_tls" field.
-func (_u *UserUpdate) SetSMTPUseTLS(v bool) *UserUpdate {
-	_u.mutation.SetSMTPUseTLS(v)
-	return _u
-}
-
-// SetNillableSMTPUseTLS sets the "smtp_use_tls" field if the given value is not nil.
-func (_u *UserUpdate) SetNillableSMTPUseTLS(v *bool) *UserUpdate {
-	if v != nil {
-		_u.SetSMTPUseTLS(*v)
-	}
-	return _u
-}
-
-// ClearSMTPUseTLS clears the value of the "smtp_use_tls" field.
-func (_u *UserUpdate) ClearSMTPUseTLS() *UserUpdate {
-	_u.mutation.ClearSMTPUseTLS()
-	return _u
-}
-
-// SetTelegramBotToken sets the "telegram_bot_token" field.
-func (_u *UserUpdate) SetTelegramBotToken(v string) *UserUpdate {
-	_u.mutation.SetTelegramBotToken(v)
-	return _u
-}
-
-// SetNillableTelegramBotToken sets the "telegram_bot_token" field if the given value is not nil.
-func (_u *UserUpdate) SetNillableTelegramBotToken(v *string) *UserUpdate {
-	if v != nil {
-		_u.SetTelegramBotToken(*v)
-	}
-	return _u
-}
-
-// ClearTelegramBotToken clears the value of the "telegram_bot_token" field.
-func (_u *UserUpdate) ClearTelegramBotToken() *UserUpdate {
-	_u.mutation.ClearTelegramBotToken()
-	return _u
-}
-
 // SetUpdatedAt sets the "updated_at" field.
 func (_u *UserUpdate) SetUpdatedAt(v time.Time) *UserUpdate {
 	_u.mutation.SetUpdatedAt(v)
@@ -289,19 +142,19 @@ func (_u *UserUpdate) AddAPIKeys(v ...*APIKey) *UserUpdate {
 	return _u.AddAPIKeyIDs(ids...)
 }
 
-// AddNotificationIDs adds the "notifications" edge to the Notification entity by IDs.
-func (_u *UserUpdate) AddNotificationIDs(ids ...int) *UserUpdate {
-	_u.mutation.AddNotificationIDs(ids...)
+// AddNotificationChannelIDs adds the "notification_channels" edge to the NotificationChannel entity by IDs.
+func (_u *UserUpdate) AddNotificationChannelIDs(ids ...int) *UserUpdate {
+	_u.mutation.AddNotificationChannelIDs(ids...)
 	return _u
 }
 
-// AddNotifications adds the "notifications" edges to the Notification entity.
-func (_u *UserUpdate) AddNotifications(v ...*Notification) *UserUpdate {
+// AddNotificationChannels adds the "notification_channels" edges to the NotificationChannel entity.
+func (_u *UserUpdate) AddNotificationChannels(v ...*NotificationChannel) *UserUpdate {
 	ids := make([]int, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
-	return _u.AddNotificationIDs(ids...)
+	return _u.AddNotificationChannelIDs(ids...)
 }
 
 // AddStatusPageIDs adds the "status_pages" edge to the StatusPage entity by IDs.
@@ -417,25 +270,25 @@ func (_u *UserUpdate) RemoveAPIKeys(v ...*APIKey) *UserUpdate {
 	return _u.RemoveAPIKeyIDs(ids...)
 }
 
-// ClearNotifications clears all "notifications" edges to the Notification entity.
-func (_u *UserUpdate) ClearNotifications() *UserUpdate {
-	_u.mutation.ClearNotifications()
+// ClearNotificationChannels clears all "notification_channels" edges to the NotificationChannel entity.
+func (_u *UserUpdate) ClearNotificationChannels() *UserUpdate {
+	_u.mutation.ClearNotificationChannels()
 	return _u
 }
 
-// RemoveNotificationIDs removes the "notifications" edge to Notification entities by IDs.
-func (_u *UserUpdate) RemoveNotificationIDs(ids ...int) *UserUpdate {
-	_u.mutation.RemoveNotificationIDs(ids...)
+// RemoveNotificationChannelIDs removes the "notification_channels" edge to NotificationChannel entities by IDs.
+func (_u *UserUpdate) RemoveNotificationChannelIDs(ids ...int) *UserUpdate {
+	_u.mutation.RemoveNotificationChannelIDs(ids...)
 	return _u
 }
 
-// RemoveNotifications removes "notifications" edges to Notification entities.
-func (_u *UserUpdate) RemoveNotifications(v ...*Notification) *UserUpdate {
+// RemoveNotificationChannels removes "notification_channels" edges to NotificationChannel entities.
+func (_u *UserUpdate) RemoveNotificationChannels(v ...*NotificationChannel) *UserUpdate {
 	ids := make([]int, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
-	return _u.RemoveNotificationIDs(ids...)
+	return _u.RemoveNotificationChannelIDs(ids...)
 }
 
 // ClearStatusPages clears all "status_pages" edges to the StatusPage entity.
@@ -586,51 +439,6 @@ func (_u *UserUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if value, ok := _u.mutation.APIKey(); ok {
 		_spec.SetField(user.FieldAPIKey, field.TypeString, value)
 	}
-	if value, ok := _u.mutation.SMTPSMTPServer(); ok {
-		_spec.SetField(user.FieldSMTPSMTPServer, field.TypeString, value)
-	}
-	if _u.mutation.SMTPSMTPServerCleared() {
-		_spec.ClearField(user.FieldSMTPSMTPServer, field.TypeString)
-	}
-	if value, ok := _u.mutation.SMTPSMTPPort(); ok {
-		_spec.SetField(user.FieldSMTPSMTPPort, field.TypeInt, value)
-	}
-	if value, ok := _u.mutation.AddedSMTPSMTPPort(); ok {
-		_spec.AddField(user.FieldSMTPSMTPPort, field.TypeInt, value)
-	}
-	if _u.mutation.SMTPSMTPPortCleared() {
-		_spec.ClearField(user.FieldSMTPSMTPPort, field.TypeInt)
-	}
-	if value, ok := _u.mutation.SMTPFromAddress(); ok {
-		_spec.SetField(user.FieldSMTPFromAddress, field.TypeString, value)
-	}
-	if _u.mutation.SMTPFromAddressCleared() {
-		_spec.ClearField(user.FieldSMTPFromAddress, field.TypeString)
-	}
-	if value, ok := _u.mutation.SMTPUsername(); ok {
-		_spec.SetField(user.FieldSMTPUsername, field.TypeString, value)
-	}
-	if _u.mutation.SMTPUsernameCleared() {
-		_spec.ClearField(user.FieldSMTPUsername, field.TypeString)
-	}
-	if value, ok := _u.mutation.SMTPPassword(); ok {
-		_spec.SetField(user.FieldSMTPPassword, field.TypeString, value)
-	}
-	if _u.mutation.SMTPPasswordCleared() {
-		_spec.ClearField(user.FieldSMTPPassword, field.TypeString)
-	}
-	if value, ok := _u.mutation.SMTPUseTLS(); ok {
-		_spec.SetField(user.FieldSMTPUseTLS, field.TypeBool, value)
-	}
-	if _u.mutation.SMTPUseTLSCleared() {
-		_spec.ClearField(user.FieldSMTPUseTLS, field.TypeBool)
-	}
-	if value, ok := _u.mutation.TelegramBotToken(); ok {
-		_spec.SetField(user.FieldTelegramBotToken, field.TypeString, value)
-	}
-	if _u.mutation.TelegramBotTokenCleared() {
-		_spec.ClearField(user.FieldTelegramBotToken, field.TypeString)
-	}
 	if value, ok := _u.mutation.UpdatedAt(); ok {
 		_spec.SetField(user.FieldUpdatedAt, field.TypeTime, value)
 	}
@@ -769,28 +577,28 @@ func (_u *UserUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if _u.mutation.NotificationsCleared() {
+	if _u.mutation.NotificationChannelsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.NotificationsTable,
-			Columns: []string{user.NotificationsColumn},
+			Table:   user.NotificationChannelsTable,
+			Columns: []string{user.NotificationChannelsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(notification.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(notificationchannel.FieldID, field.TypeInt),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := _u.mutation.RemovedNotificationsIDs(); len(nodes) > 0 && !_u.mutation.NotificationsCleared() {
+	if nodes := _u.mutation.RemovedNotificationChannelsIDs(); len(nodes) > 0 && !_u.mutation.NotificationChannelsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.NotificationsTable,
-			Columns: []string{user.NotificationsColumn},
+			Table:   user.NotificationChannelsTable,
+			Columns: []string{user.NotificationChannelsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(notification.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(notificationchannel.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -798,15 +606,15 @@ func (_u *UserUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := _u.mutation.NotificationsIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.NotificationChannelsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.NotificationsTable,
-			Columns: []string{user.NotificationsColumn},
+			Table:   user.NotificationChannelsTable,
+			Columns: []string{user.NotificationChannelsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(notification.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(notificationchannel.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -1025,153 +833,6 @@ func (_u *UserUpdateOne) SetNillableAPIKey(v *string) *UserUpdateOne {
 	return _u
 }
 
-// SetSMTPSMTPServer sets the "smtp_smtp_server" field.
-func (_u *UserUpdateOne) SetSMTPSMTPServer(v string) *UserUpdateOne {
-	_u.mutation.SetSMTPSMTPServer(v)
-	return _u
-}
-
-// SetNillableSMTPSMTPServer sets the "smtp_smtp_server" field if the given value is not nil.
-func (_u *UserUpdateOne) SetNillableSMTPSMTPServer(v *string) *UserUpdateOne {
-	if v != nil {
-		_u.SetSMTPSMTPServer(*v)
-	}
-	return _u
-}
-
-// ClearSMTPSMTPServer clears the value of the "smtp_smtp_server" field.
-func (_u *UserUpdateOne) ClearSMTPSMTPServer() *UserUpdateOne {
-	_u.mutation.ClearSMTPSMTPServer()
-	return _u
-}
-
-// SetSMTPSMTPPort sets the "smtp_smtp_port" field.
-func (_u *UserUpdateOne) SetSMTPSMTPPort(v int) *UserUpdateOne {
-	_u.mutation.ResetSMTPSMTPPort()
-	_u.mutation.SetSMTPSMTPPort(v)
-	return _u
-}
-
-// SetNillableSMTPSMTPPort sets the "smtp_smtp_port" field if the given value is not nil.
-func (_u *UserUpdateOne) SetNillableSMTPSMTPPort(v *int) *UserUpdateOne {
-	if v != nil {
-		_u.SetSMTPSMTPPort(*v)
-	}
-	return _u
-}
-
-// AddSMTPSMTPPort adds value to the "smtp_smtp_port" field.
-func (_u *UserUpdateOne) AddSMTPSMTPPort(v int) *UserUpdateOne {
-	_u.mutation.AddSMTPSMTPPort(v)
-	return _u
-}
-
-// ClearSMTPSMTPPort clears the value of the "smtp_smtp_port" field.
-func (_u *UserUpdateOne) ClearSMTPSMTPPort() *UserUpdateOne {
-	_u.mutation.ClearSMTPSMTPPort()
-	return _u
-}
-
-// SetSMTPFromAddress sets the "smtp_from_address" field.
-func (_u *UserUpdateOne) SetSMTPFromAddress(v string) *UserUpdateOne {
-	_u.mutation.SetSMTPFromAddress(v)
-	return _u
-}
-
-// SetNillableSMTPFromAddress sets the "smtp_from_address" field if the given value is not nil.
-func (_u *UserUpdateOne) SetNillableSMTPFromAddress(v *string) *UserUpdateOne {
-	if v != nil {
-		_u.SetSMTPFromAddress(*v)
-	}
-	return _u
-}
-
-// ClearSMTPFromAddress clears the value of the "smtp_from_address" field.
-func (_u *UserUpdateOne) ClearSMTPFromAddress() *UserUpdateOne {
-	_u.mutation.ClearSMTPFromAddress()
-	return _u
-}
-
-// SetSMTPUsername sets the "smtp_username" field.
-func (_u *UserUpdateOne) SetSMTPUsername(v string) *UserUpdateOne {
-	_u.mutation.SetSMTPUsername(v)
-	return _u
-}
-
-// SetNillableSMTPUsername sets the "smtp_username" field if the given value is not nil.
-func (_u *UserUpdateOne) SetNillableSMTPUsername(v *string) *UserUpdateOne {
-	if v != nil {
-		_u.SetSMTPUsername(*v)
-	}
-	return _u
-}
-
-// ClearSMTPUsername clears the value of the "smtp_username" field.
-func (_u *UserUpdateOne) ClearSMTPUsername() *UserUpdateOne {
-	_u.mutation.ClearSMTPUsername()
-	return _u
-}
-
-// SetSMTPPassword sets the "smtp_password" field.
-func (_u *UserUpdateOne) SetSMTPPassword(v string) *UserUpdateOne {
-	_u.mutation.SetSMTPPassword(v)
-	return _u
-}
-
-// SetNillableSMTPPassword sets the "smtp_password" field if the given value is not nil.
-func (_u *UserUpdateOne) SetNillableSMTPPassword(v *string) *UserUpdateOne {
-	if v != nil {
-		_u.SetSMTPPassword(*v)
-	}
-	return _u
-}
-
-// ClearSMTPPassword clears the value of the "smtp_password" field.
-func (_u *UserUpdateOne) ClearSMTPPassword() *UserUpdateOne {
-	_u.mutation.ClearSMTPPassword()
-	return _u
-}
-
-// SetSMTPUseTLS sets the "smtp_use_tls" field.
-func (_u *UserUpdateOne) SetSMTPUseTLS(v bool) *UserUpdateOne {
-	_u.mutation.SetSMTPUseTLS(v)
-	return _u
-}
-
-// SetNillableSMTPUseTLS sets the "smtp_use_tls" field if the given value is not nil.
-func (_u *UserUpdateOne) SetNillableSMTPUseTLS(v *bool) *UserUpdateOne {
-	if v != nil {
-		_u.SetSMTPUseTLS(*v)
-	}
-	return _u
-}
-
-// ClearSMTPUseTLS clears the value of the "smtp_use_tls" field.
-func (_u *UserUpdateOne) ClearSMTPUseTLS() *UserUpdateOne {
-	_u.mutation.ClearSMTPUseTLS()
-	return _u
-}
-
-// SetTelegramBotToken sets the "telegram_bot_token" field.
-func (_u *UserUpdateOne) SetTelegramBotToken(v string) *UserUpdateOne {
-	_u.mutation.SetTelegramBotToken(v)
-	return _u
-}
-
-// SetNillableTelegramBotToken sets the "telegram_bot_token" field if the given value is not nil.
-func (_u *UserUpdateOne) SetNillableTelegramBotToken(v *string) *UserUpdateOne {
-	if v != nil {
-		_u.SetTelegramBotToken(*v)
-	}
-	return _u
-}
-
-// ClearTelegramBotToken clears the value of the "telegram_bot_token" field.
-func (_u *UserUpdateOne) ClearTelegramBotToken() *UserUpdateOne {
-	_u.mutation.ClearTelegramBotToken()
-	return _u
-}
-
 // SetUpdatedAt sets the "updated_at" field.
 func (_u *UserUpdateOne) SetUpdatedAt(v time.Time) *UserUpdateOne {
 	_u.mutation.SetUpdatedAt(v)
@@ -1223,19 +884,19 @@ func (_u *UserUpdateOne) AddAPIKeys(v ...*APIKey) *UserUpdateOne {
 	return _u.AddAPIKeyIDs(ids...)
 }
 
-// AddNotificationIDs adds the "notifications" edge to the Notification entity by IDs.
-func (_u *UserUpdateOne) AddNotificationIDs(ids ...int) *UserUpdateOne {
-	_u.mutation.AddNotificationIDs(ids...)
+// AddNotificationChannelIDs adds the "notification_channels" edge to the NotificationChannel entity by IDs.
+func (_u *UserUpdateOne) AddNotificationChannelIDs(ids ...int) *UserUpdateOne {
+	_u.mutation.AddNotificationChannelIDs(ids...)
 	return _u
 }
 
-// AddNotifications adds the "notifications" edges to the Notification entity.
-func (_u *UserUpdateOne) AddNotifications(v ...*Notification) *UserUpdateOne {
+// AddNotificationChannels adds the "notification_channels" edges to the NotificationChannel entity.
+func (_u *UserUpdateOne) AddNotificationChannels(v ...*NotificationChannel) *UserUpdateOne {
 	ids := make([]int, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
-	return _u.AddNotificationIDs(ids...)
+	return _u.AddNotificationChannelIDs(ids...)
 }
 
 // AddStatusPageIDs adds the "status_pages" edge to the StatusPage entity by IDs.
@@ -1351,25 +1012,25 @@ func (_u *UserUpdateOne) RemoveAPIKeys(v ...*APIKey) *UserUpdateOne {
 	return _u.RemoveAPIKeyIDs(ids...)
 }
 
-// ClearNotifications clears all "notifications" edges to the Notification entity.
-func (_u *UserUpdateOne) ClearNotifications() *UserUpdateOne {
-	_u.mutation.ClearNotifications()
+// ClearNotificationChannels clears all "notification_channels" edges to the NotificationChannel entity.
+func (_u *UserUpdateOne) ClearNotificationChannels() *UserUpdateOne {
+	_u.mutation.ClearNotificationChannels()
 	return _u
 }
 
-// RemoveNotificationIDs removes the "notifications" edge to Notification entities by IDs.
-func (_u *UserUpdateOne) RemoveNotificationIDs(ids ...int) *UserUpdateOne {
-	_u.mutation.RemoveNotificationIDs(ids...)
+// RemoveNotificationChannelIDs removes the "notification_channels" edge to NotificationChannel entities by IDs.
+func (_u *UserUpdateOne) RemoveNotificationChannelIDs(ids ...int) *UserUpdateOne {
+	_u.mutation.RemoveNotificationChannelIDs(ids...)
 	return _u
 }
 
-// RemoveNotifications removes "notifications" edges to Notification entities.
-func (_u *UserUpdateOne) RemoveNotifications(v ...*Notification) *UserUpdateOne {
+// RemoveNotificationChannels removes "notification_channels" edges to NotificationChannel entities.
+func (_u *UserUpdateOne) RemoveNotificationChannels(v ...*NotificationChannel) *UserUpdateOne {
 	ids := make([]int, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
-	return _u.RemoveNotificationIDs(ids...)
+	return _u.RemoveNotificationChannelIDs(ids...)
 }
 
 // ClearStatusPages clears all "status_pages" edges to the StatusPage entity.
@@ -1550,51 +1211,6 @@ func (_u *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) {
 	if value, ok := _u.mutation.APIKey(); ok {
 		_spec.SetField(user.FieldAPIKey, field.TypeString, value)
 	}
-	if value, ok := _u.mutation.SMTPSMTPServer(); ok {
-		_spec.SetField(user.FieldSMTPSMTPServer, field.TypeString, value)
-	}
-	if _u.mutation.SMTPSMTPServerCleared() {
-		_spec.ClearField(user.FieldSMTPSMTPServer, field.TypeString)
-	}
-	if value, ok := _u.mutation.SMTPSMTPPort(); ok {
-		_spec.SetField(user.FieldSMTPSMTPPort, field.TypeInt, value)
-	}
-	if value, ok := _u.mutation.AddedSMTPSMTPPort(); ok {
-		_spec.AddField(user.FieldSMTPSMTPPort, field.TypeInt, value)
-	}
-	if _u.mutation.SMTPSMTPPortCleared() {
-		_spec.ClearField(user.FieldSMTPSMTPPort, field.TypeInt)
-	}
-	if value, ok := _u.mutation.SMTPFromAddress(); ok {
-		_spec.SetField(user.FieldSMTPFromAddress, field.TypeString, value)
-	}
-	if _u.mutation.SMTPFromAddressCleared() {
-		_spec.ClearField(user.FieldSMTPFromAddress, field.TypeString)
-	}
-	if value, ok := _u.mutation.SMTPUsername(); ok {
-		_spec.SetField(user.FieldSMTPUsername, field.TypeString, value)
-	}
-	if _u.mutation.SMTPUsernameCleared() {
-		_spec.ClearField(user.FieldSMTPUsername, field.TypeString)
-	}
-	if value, ok := _u.mutation.SMTPPassword(); ok {
-		_spec.SetField(user.FieldSMTPPassword, field.TypeString, value)
-	}
-	if _u.mutation.SMTPPasswordCleared() {
-		_spec.ClearField(user.FieldSMTPPassword, field.TypeString)
-	}
-	if value, ok := _u.mutation.SMTPUseTLS(); ok {
-		_spec.SetField(user.FieldSMTPUseTLS, field.TypeBool, value)
-	}
-	if _u.mutation.SMTPUseTLSCleared() {
-		_spec.ClearField(user.FieldSMTPUseTLS, field.TypeBool)
-	}
-	if value, ok := _u.mutation.TelegramBotToken(); ok {
-		_spec.SetField(user.FieldTelegramBotToken, field.TypeString, value)
-	}
-	if _u.mutation.TelegramBotTokenCleared() {
-		_spec.ClearField(user.FieldTelegramBotToken, field.TypeString)
-	}
 	if value, ok := _u.mutation.UpdatedAt(); ok {
 		_spec.SetField(user.FieldUpdatedAt, field.TypeTime, value)
 	}
@@ -1733,28 +1349,28 @@ func (_u *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if _u.mutation.NotificationsCleared() {
+	if _u.mutation.NotificationChannelsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.NotificationsTable,
-			Columns: []string{user.NotificationsColumn},
+			Table:   user.NotificationChannelsTable,
+			Columns: []string{user.NotificationChannelsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(notification.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(notificationchannel.FieldID, field.TypeInt),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := _u.mutation.RemovedNotificationsIDs(); len(nodes) > 0 && !_u.mutation.NotificationsCleared() {
+	if nodes := _u.mutation.RemovedNotificationChannelsIDs(); len(nodes) > 0 && !_u.mutation.NotificationChannelsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.NotificationsTable,
-			Columns: []string{user.NotificationsColumn},
+			Table:   user.NotificationChannelsTable,
+			Columns: []string{user.NotificationChannelsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(notification.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(notificationchannel.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -1762,15 +1378,15 @@ func (_u *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := _u.mutation.NotificationsIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.NotificationChannelsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.NotificationsTable,
-			Columns: []string{user.NotificationsColumn},
+			Table:   user.NotificationChannelsTable,
+			Columns: []string{user.NotificationChannelsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(notification.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(notificationchannel.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

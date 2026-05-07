@@ -89,8 +89,8 @@ type MonitorEdges struct {
 	Stats []*MonitorStat `json:"stats,omitempty"`
 	// Tags holds the value of the tags edge.
 	Tags []*Tag `json:"tags,omitempty"`
-	// Notifications holds the value of the notifications edge.
-	Notifications []*Notification `json:"notifications,omitempty"`
+	// NotificationChannels holds the value of the notification_channels edge.
+	NotificationChannels []*NotificationChannel `json:"notification_channels,omitempty"`
 	// StatusPageMonitors holds the value of the status_page_monitors edge.
 	StatusPageMonitors []*StatusPageMonitor `json:"status_page_monitors,omitempty"`
 	// MaintenanceWindows holds the value of the maintenance_windows edge.
@@ -140,13 +140,13 @@ func (e MonitorEdges) TagsOrErr() ([]*Tag, error) {
 	return nil, &NotLoadedError{edge: "tags"}
 }
 
-// NotificationsOrErr returns the Notifications value or an error if the edge
+// NotificationChannelsOrErr returns the NotificationChannels value or an error if the edge
 // was not loaded in eager-loading.
-func (e MonitorEdges) NotificationsOrErr() ([]*Notification, error) {
+func (e MonitorEdges) NotificationChannelsOrErr() ([]*NotificationChannel, error) {
 	if e.loadedTypes[4] {
-		return e.Notifications, nil
+		return e.NotificationChannels, nil
 	}
-	return nil, &NotLoadedError{edge: "notifications"}
+	return nil, &NotLoadedError{edge: "notification_channels"}
 }
 
 // StatusPageMonitorsOrErr returns the StatusPageMonitors value or an error if the edge
@@ -422,9 +422,9 @@ func (_m *Monitor) QueryTags() *TagQuery {
 	return NewMonitorClient(_m.config).QueryTags(_m)
 }
 
-// QueryNotifications queries the "notifications" edge of the Monitor entity.
-func (_m *Monitor) QueryNotifications() *NotificationQuery {
-	return NewMonitorClient(_m.config).QueryNotifications(_m)
+// QueryNotificationChannels queries the "notification_channels" edge of the Monitor entity.
+func (_m *Monitor) QueryNotificationChannels() *NotificationChannelQuery {
+	return NewMonitorClient(_m.config).QueryNotificationChannels(_m)
 }
 
 // QueryStatusPageMonitors queries the "status_page_monitors" edge of the Monitor entity.

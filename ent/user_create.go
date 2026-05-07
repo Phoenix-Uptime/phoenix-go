@@ -14,7 +14,7 @@ import (
 	"github.com/Phoenix-Uptime/phoenix-go/ent/incident"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/maintenancewindow"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/monitor"
-	"github.com/Phoenix-Uptime/phoenix-go/ent/notification"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/notificationchannel"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/statuspage"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/tag"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/user"
@@ -48,104 +48,6 @@ func (_c *UserCreate) SetPassword(v string) *UserCreate {
 // SetAPIKey sets the "api_key" field.
 func (_c *UserCreate) SetAPIKey(v string) *UserCreate {
 	_c.mutation.SetAPIKey(v)
-	return _c
-}
-
-// SetSMTPSMTPServer sets the "smtp_smtp_server" field.
-func (_c *UserCreate) SetSMTPSMTPServer(v string) *UserCreate {
-	_c.mutation.SetSMTPSMTPServer(v)
-	return _c
-}
-
-// SetNillableSMTPSMTPServer sets the "smtp_smtp_server" field if the given value is not nil.
-func (_c *UserCreate) SetNillableSMTPSMTPServer(v *string) *UserCreate {
-	if v != nil {
-		_c.SetSMTPSMTPServer(*v)
-	}
-	return _c
-}
-
-// SetSMTPSMTPPort sets the "smtp_smtp_port" field.
-func (_c *UserCreate) SetSMTPSMTPPort(v int) *UserCreate {
-	_c.mutation.SetSMTPSMTPPort(v)
-	return _c
-}
-
-// SetNillableSMTPSMTPPort sets the "smtp_smtp_port" field if the given value is not nil.
-func (_c *UserCreate) SetNillableSMTPSMTPPort(v *int) *UserCreate {
-	if v != nil {
-		_c.SetSMTPSMTPPort(*v)
-	}
-	return _c
-}
-
-// SetSMTPFromAddress sets the "smtp_from_address" field.
-func (_c *UserCreate) SetSMTPFromAddress(v string) *UserCreate {
-	_c.mutation.SetSMTPFromAddress(v)
-	return _c
-}
-
-// SetNillableSMTPFromAddress sets the "smtp_from_address" field if the given value is not nil.
-func (_c *UserCreate) SetNillableSMTPFromAddress(v *string) *UserCreate {
-	if v != nil {
-		_c.SetSMTPFromAddress(*v)
-	}
-	return _c
-}
-
-// SetSMTPUsername sets the "smtp_username" field.
-func (_c *UserCreate) SetSMTPUsername(v string) *UserCreate {
-	_c.mutation.SetSMTPUsername(v)
-	return _c
-}
-
-// SetNillableSMTPUsername sets the "smtp_username" field if the given value is not nil.
-func (_c *UserCreate) SetNillableSMTPUsername(v *string) *UserCreate {
-	if v != nil {
-		_c.SetSMTPUsername(*v)
-	}
-	return _c
-}
-
-// SetSMTPPassword sets the "smtp_password" field.
-func (_c *UserCreate) SetSMTPPassword(v string) *UserCreate {
-	_c.mutation.SetSMTPPassword(v)
-	return _c
-}
-
-// SetNillableSMTPPassword sets the "smtp_password" field if the given value is not nil.
-func (_c *UserCreate) SetNillableSMTPPassword(v *string) *UserCreate {
-	if v != nil {
-		_c.SetSMTPPassword(*v)
-	}
-	return _c
-}
-
-// SetSMTPUseTLS sets the "smtp_use_tls" field.
-func (_c *UserCreate) SetSMTPUseTLS(v bool) *UserCreate {
-	_c.mutation.SetSMTPUseTLS(v)
-	return _c
-}
-
-// SetNillableSMTPUseTLS sets the "smtp_use_tls" field if the given value is not nil.
-func (_c *UserCreate) SetNillableSMTPUseTLS(v *bool) *UserCreate {
-	if v != nil {
-		_c.SetSMTPUseTLS(*v)
-	}
-	return _c
-}
-
-// SetTelegramBotToken sets the "telegram_bot_token" field.
-func (_c *UserCreate) SetTelegramBotToken(v string) *UserCreate {
-	_c.mutation.SetTelegramBotToken(v)
-	return _c
-}
-
-// SetNillableTelegramBotToken sets the "telegram_bot_token" field if the given value is not nil.
-func (_c *UserCreate) SetNillableTelegramBotToken(v *string) *UserCreate {
-	if v != nil {
-		_c.SetTelegramBotToken(*v)
-	}
 	return _c
 }
 
@@ -222,19 +124,19 @@ func (_c *UserCreate) AddAPIKeys(v ...*APIKey) *UserCreate {
 	return _c.AddAPIKeyIDs(ids...)
 }
 
-// AddNotificationIDs adds the "notifications" edge to the Notification entity by IDs.
-func (_c *UserCreate) AddNotificationIDs(ids ...int) *UserCreate {
-	_c.mutation.AddNotificationIDs(ids...)
+// AddNotificationChannelIDs adds the "notification_channels" edge to the NotificationChannel entity by IDs.
+func (_c *UserCreate) AddNotificationChannelIDs(ids ...int) *UserCreate {
+	_c.mutation.AddNotificationChannelIDs(ids...)
 	return _c
 }
 
-// AddNotifications adds the "notifications" edges to the Notification entity.
-func (_c *UserCreate) AddNotifications(v ...*Notification) *UserCreate {
+// AddNotificationChannels adds the "notification_channels" edges to the NotificationChannel entity.
+func (_c *UserCreate) AddNotificationChannels(v ...*NotificationChannel) *UserCreate {
 	ids := make([]int, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
-	return _c.AddNotificationIDs(ids...)
+	return _c.AddNotificationChannelIDs(ids...)
 }
 
 // AddStatusPageIDs adds the "status_pages" edge to the StatusPage entity by IDs.
@@ -409,34 +311,6 @@ func (_c *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		_spec.SetField(user.FieldAPIKey, field.TypeString, value)
 		_node.APIKey = value
 	}
-	if value, ok := _c.mutation.SMTPSMTPServer(); ok {
-		_spec.SetField(user.FieldSMTPSMTPServer, field.TypeString, value)
-		_node.SMTPSMTPServer = value
-	}
-	if value, ok := _c.mutation.SMTPSMTPPort(); ok {
-		_spec.SetField(user.FieldSMTPSMTPPort, field.TypeInt, value)
-		_node.SMTPSMTPPort = value
-	}
-	if value, ok := _c.mutation.SMTPFromAddress(); ok {
-		_spec.SetField(user.FieldSMTPFromAddress, field.TypeString, value)
-		_node.SMTPFromAddress = value
-	}
-	if value, ok := _c.mutation.SMTPUsername(); ok {
-		_spec.SetField(user.FieldSMTPUsername, field.TypeString, value)
-		_node.SMTPUsername = value
-	}
-	if value, ok := _c.mutation.SMTPPassword(); ok {
-		_spec.SetField(user.FieldSMTPPassword, field.TypeString, value)
-		_node.SMTPPassword = value
-	}
-	if value, ok := _c.mutation.SMTPUseTLS(); ok {
-		_spec.SetField(user.FieldSMTPUseTLS, field.TypeBool, value)
-		_node.SMTPUseTLS = value
-	}
-	if value, ok := _c.mutation.TelegramBotToken(); ok {
-		_spec.SetField(user.FieldTelegramBotToken, field.TypeString, value)
-		_node.TelegramBotToken = value
-	}
 	if value, ok := _c.mutation.CreatedAt(); ok {
 		_spec.SetField(user.FieldCreatedAt, field.TypeTime, value)
 		_node.CreatedAt = value
@@ -493,15 +367,15 @@ func (_c *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := _c.mutation.NotificationsIDs(); len(nodes) > 0 {
+	if nodes := _c.mutation.NotificationChannelsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.NotificationsTable,
-			Columns: []string{user.NotificationsColumn},
+			Table:   user.NotificationChannelsTable,
+			Columns: []string{user.NotificationChannelsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(notification.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(notificationchannel.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

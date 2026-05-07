@@ -15,7 +15,7 @@ import (
 	"github.com/Phoenix-Uptime/phoenix-go/ent/monitor"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/monitorcheck"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/monitorstat"
-	"github.com/Phoenix-Uptime/phoenix-go/ent/notification"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/notificationchannel"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/statuspagemonitor"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/tag"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/user"
@@ -400,19 +400,19 @@ func (_c *MonitorCreate) AddTags(v ...*Tag) *MonitorCreate {
 	return _c.AddTagIDs(ids...)
 }
 
-// AddNotificationIDs adds the "notifications" edge to the Notification entity by IDs.
-func (_c *MonitorCreate) AddNotificationIDs(ids ...int) *MonitorCreate {
-	_c.mutation.AddNotificationIDs(ids...)
+// AddNotificationChannelIDs adds the "notification_channels" edge to the NotificationChannel entity by IDs.
+func (_c *MonitorCreate) AddNotificationChannelIDs(ids ...int) *MonitorCreate {
+	_c.mutation.AddNotificationChannelIDs(ids...)
 	return _c
 }
 
-// AddNotifications adds the "notifications" edges to the Notification entity.
-func (_c *MonitorCreate) AddNotifications(v ...*Notification) *MonitorCreate {
+// AddNotificationChannels adds the "notification_channels" edges to the NotificationChannel entity.
+func (_c *MonitorCreate) AddNotificationChannels(v ...*NotificationChannel) *MonitorCreate {
 	ids := make([]int, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
-	return _c.AddNotificationIDs(ids...)
+	return _c.AddNotificationChannelIDs(ids...)
 }
 
 // AddStatusPageMonitorIDs adds the "status_page_monitors" edge to the StatusPageMonitor entity by IDs.
@@ -806,15 +806,15 @@ func (_c *MonitorCreate) createSpec() (*Monitor, *sqlgraph.CreateSpec) {
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := _c.mutation.NotificationsIDs(); len(nodes) > 0 {
+	if nodes := _c.mutation.NotificationChannelsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: false,
-			Table:   monitor.NotificationsTable,
-			Columns: monitor.NotificationsPrimaryKey,
+			Table:   monitor.NotificationChannelsTable,
+			Columns: monitor.NotificationChannelsPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(notification.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(notificationchannel.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

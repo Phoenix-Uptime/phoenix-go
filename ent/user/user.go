@@ -22,20 +22,6 @@ const (
 	FieldPassword = "password"
 	// FieldAPIKey holds the string denoting the api_key field in the database.
 	FieldAPIKey = "api_key"
-	// FieldSMTPSMTPServer holds the string denoting the smtp_smtp_server field in the database.
-	FieldSMTPSMTPServer = "smtp_smtp_server"
-	// FieldSMTPSMTPPort holds the string denoting the smtp_smtp_port field in the database.
-	FieldSMTPSMTPPort = "smtp_smtp_port"
-	// FieldSMTPFromAddress holds the string denoting the smtp_from_address field in the database.
-	FieldSMTPFromAddress = "smtp_from_address"
-	// FieldSMTPUsername holds the string denoting the smtp_username field in the database.
-	FieldSMTPUsername = "smtp_username"
-	// FieldSMTPPassword holds the string denoting the smtp_password field in the database.
-	FieldSMTPPassword = "smtp_password"
-	// FieldSMTPUseTLS holds the string denoting the smtp_use_tls field in the database.
-	FieldSMTPUseTLS = "smtp_use_tls"
-	// FieldTelegramBotToken holds the string denoting the telegram_bot_token field in the database.
-	FieldTelegramBotToken = "telegram_bot_token"
 	// FieldCreatedAt holds the string denoting the created_at field in the database.
 	FieldCreatedAt = "created_at"
 	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
@@ -46,8 +32,8 @@ const (
 	EdgeTags = "tags"
 	// EdgeAPIKeys holds the string denoting the api_keys edge name in mutations.
 	EdgeAPIKeys = "api_keys"
-	// EdgeNotifications holds the string denoting the notifications edge name in mutations.
-	EdgeNotifications = "notifications"
+	// EdgeNotificationChannels holds the string denoting the notification_channels edge name in mutations.
+	EdgeNotificationChannels = "notification_channels"
 	// EdgeStatusPages holds the string denoting the status_pages edge name in mutations.
 	EdgeStatusPages = "status_pages"
 	// EdgeMaintenanceWindows holds the string denoting the maintenance_windows edge name in mutations.
@@ -77,13 +63,13 @@ const (
 	APIKeysInverseTable = "api_keys"
 	// APIKeysColumn is the table column denoting the api_keys relation/edge.
 	APIKeysColumn = "user_id"
-	// NotificationsTable is the table that holds the notifications relation/edge.
-	NotificationsTable = "notifications"
-	// NotificationsInverseTable is the table name for the Notification entity.
-	// It exists in this package in order to avoid circular dependency with the "notification" package.
-	NotificationsInverseTable = "notifications"
-	// NotificationsColumn is the table column denoting the notifications relation/edge.
-	NotificationsColumn = "user_id"
+	// NotificationChannelsTable is the table that holds the notification_channels relation/edge.
+	NotificationChannelsTable = "notification_channels"
+	// NotificationChannelsInverseTable is the table name for the NotificationChannel entity.
+	// It exists in this package in order to avoid circular dependency with the "notificationchannel" package.
+	NotificationChannelsInverseTable = "notification_channels"
+	// NotificationChannelsColumn is the table column denoting the notification_channels relation/edge.
+	NotificationChannelsColumn = "user_id"
 	// StatusPagesTable is the table that holds the status_pages relation/edge.
 	StatusPagesTable = "status_pages"
 	// StatusPagesInverseTable is the table name for the StatusPage entity.
@@ -114,13 +100,6 @@ var Columns = []string{
 	FieldEmail,
 	FieldPassword,
 	FieldAPIKey,
-	FieldSMTPSMTPServer,
-	FieldSMTPSMTPPort,
-	FieldSMTPFromAddress,
-	FieldSMTPUsername,
-	FieldSMTPPassword,
-	FieldSMTPUseTLS,
-	FieldTelegramBotToken,
 	FieldCreatedAt,
 	FieldUpdatedAt,
 }
@@ -180,41 +159,6 @@ func ByAPIKey(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldAPIKey, opts...).ToFunc()
 }
 
-// BySMTPSMTPServer orders the results by the smtp_smtp_server field.
-func BySMTPSMTPServer(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldSMTPSMTPServer, opts...).ToFunc()
-}
-
-// BySMTPSMTPPort orders the results by the smtp_smtp_port field.
-func BySMTPSMTPPort(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldSMTPSMTPPort, opts...).ToFunc()
-}
-
-// BySMTPFromAddress orders the results by the smtp_from_address field.
-func BySMTPFromAddress(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldSMTPFromAddress, opts...).ToFunc()
-}
-
-// BySMTPUsername orders the results by the smtp_username field.
-func BySMTPUsername(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldSMTPUsername, opts...).ToFunc()
-}
-
-// BySMTPPassword orders the results by the smtp_password field.
-func BySMTPPassword(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldSMTPPassword, opts...).ToFunc()
-}
-
-// BySMTPUseTLS orders the results by the smtp_use_tls field.
-func BySMTPUseTLS(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldSMTPUseTLS, opts...).ToFunc()
-}
-
-// ByTelegramBotToken orders the results by the telegram_bot_token field.
-func ByTelegramBotToken(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldTelegramBotToken, opts...).ToFunc()
-}
-
 // ByCreatedAt orders the results by the created_at field.
 func ByCreatedAt(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldCreatedAt, opts...).ToFunc()
@@ -267,17 +211,17 @@ func ByAPIKeys(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	}
 }
 
-// ByNotificationsCount orders the results by notifications count.
-func ByNotificationsCount(opts ...sql.OrderTermOption) OrderOption {
+// ByNotificationChannelsCount orders the results by notification_channels count.
+func ByNotificationChannelsCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newNotificationsStep(), opts...)
+		sqlgraph.OrderByNeighborsCount(s, newNotificationChannelsStep(), opts...)
 	}
 }
 
-// ByNotifications orders the results by notifications terms.
-func ByNotifications(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+// ByNotificationChannels orders the results by notification_channels terms.
+func ByNotificationChannels(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newNotificationsStep(), append([]sql.OrderTerm{term}, terms...)...)
+		sqlgraph.OrderByNeighborTerms(s, newNotificationChannelsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
 
@@ -343,11 +287,11 @@ func newAPIKeysStep() *sqlgraph.Step {
 		sqlgraph.Edge(sqlgraph.O2M, false, APIKeysTable, APIKeysColumn),
 	)
 }
-func newNotificationsStep() *sqlgraph.Step {
+func newNotificationChannelsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(NotificationsInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2M, false, NotificationsTable, NotificationsColumn),
+		sqlgraph.To(NotificationChannelsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, NotificationChannelsTable, NotificationChannelsColumn),
 	)
 }
 func newStatusPagesStep() *sqlgraph.Step {

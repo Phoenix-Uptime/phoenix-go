@@ -13,18 +13,18 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/monitor"
-	"github.com/Phoenix-Uptime/phoenix-go/ent/notification"
+	"github.com/Phoenix-Uptime/phoenix-go/ent/notificationchannel"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/predicate"
 	"github.com/Phoenix-Uptime/phoenix-go/ent/user"
 )
 
-// NotificationQuery is the builder for querying Notification entities.
-type NotificationQuery struct {
+// NotificationChannelQuery is the builder for querying NotificationChannel entities.
+type NotificationChannelQuery struct {
 	config
 	ctx          *QueryContext
-	order        []notification.OrderOption
+	order        []notificationchannel.OrderOption
 	inters       []Interceptor
-	predicates   []predicate.Notification
+	predicates   []predicate.NotificationChannel
 	withUser     *UserQuery
 	withMonitors *MonitorQuery
 	// intermediate query (i.e. traversal path).
@@ -32,39 +32,39 @@ type NotificationQuery struct {
 	path func(context.Context) (*sql.Selector, error)
 }
 
-// Where adds a new predicate for the NotificationQuery builder.
-func (_q *NotificationQuery) Where(ps ...predicate.Notification) *NotificationQuery {
+// Where adds a new predicate for the NotificationChannelQuery builder.
+func (_q *NotificationChannelQuery) Where(ps ...predicate.NotificationChannel) *NotificationChannelQuery {
 	_q.predicates = append(_q.predicates, ps...)
 	return _q
 }
 
 // Limit the number of records to be returned by this query.
-func (_q *NotificationQuery) Limit(limit int) *NotificationQuery {
+func (_q *NotificationChannelQuery) Limit(limit int) *NotificationChannelQuery {
 	_q.ctx.Limit = &limit
 	return _q
 }
 
 // Offset to start from.
-func (_q *NotificationQuery) Offset(offset int) *NotificationQuery {
+func (_q *NotificationChannelQuery) Offset(offset int) *NotificationChannelQuery {
 	_q.ctx.Offset = &offset
 	return _q
 }
 
 // Unique configures the query builder to filter duplicate records on query.
 // By default, unique is set to true, and can be disabled using this method.
-func (_q *NotificationQuery) Unique(unique bool) *NotificationQuery {
+func (_q *NotificationChannelQuery) Unique(unique bool) *NotificationChannelQuery {
 	_q.ctx.Unique = &unique
 	return _q
 }
 
 // Order specifies how the records should be ordered.
-func (_q *NotificationQuery) Order(o ...notification.OrderOption) *NotificationQuery {
+func (_q *NotificationChannelQuery) Order(o ...notificationchannel.OrderOption) *NotificationChannelQuery {
 	_q.order = append(_q.order, o...)
 	return _q
 }
 
 // QueryUser chains the current query on the "user" edge.
-func (_q *NotificationQuery) QueryUser() *UserQuery {
+func (_q *NotificationChannelQuery) QueryUser() *UserQuery {
 	query := (&UserClient{config: _q.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := _q.prepareQuery(ctx); err != nil {
@@ -75,9 +75,9 @@ func (_q *NotificationQuery) QueryUser() *UserQuery {
 			return nil, err
 		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(notification.Table, notification.FieldID, selector),
+			sqlgraph.From(notificationchannel.Table, notificationchannel.FieldID, selector),
 			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, notification.UserTable, notification.UserColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, notificationchannel.UserTable, notificationchannel.UserColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -86,7 +86,7 @@ func (_q *NotificationQuery) QueryUser() *UserQuery {
 }
 
 // QueryMonitors chains the current query on the "monitors" edge.
-func (_q *NotificationQuery) QueryMonitors() *MonitorQuery {
+func (_q *NotificationChannelQuery) QueryMonitors() *MonitorQuery {
 	query := (&MonitorClient{config: _q.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := _q.prepareQuery(ctx); err != nil {
@@ -97,9 +97,9 @@ func (_q *NotificationQuery) QueryMonitors() *MonitorQuery {
 			return nil, err
 		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(notification.Table, notification.FieldID, selector),
+			sqlgraph.From(notificationchannel.Table, notificationchannel.FieldID, selector),
 			sqlgraph.To(monitor.Table, monitor.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, true, notification.MonitorsTable, notification.MonitorsPrimaryKey...),
+			sqlgraph.Edge(sqlgraph.M2M, true, notificationchannel.MonitorsTable, notificationchannel.MonitorsPrimaryKey...),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -107,21 +107,21 @@ func (_q *NotificationQuery) QueryMonitors() *MonitorQuery {
 	return query
 }
 
-// First returns the first Notification entity from the query.
-// Returns a *NotFoundError when no Notification was found.
-func (_q *NotificationQuery) First(ctx context.Context) (*Notification, error) {
+// First returns the first NotificationChannel entity from the query.
+// Returns a *NotFoundError when no NotificationChannel was found.
+func (_q *NotificationChannelQuery) First(ctx context.Context) (*NotificationChannel, error) {
 	nodes, err := _q.Limit(1).All(setContextOp(ctx, _q.ctx, ent.OpQueryFirst))
 	if err != nil {
 		return nil, err
 	}
 	if len(nodes) == 0 {
-		return nil, &NotFoundError{notification.Label}
+		return nil, &NotFoundError{notificationchannel.Label}
 	}
 	return nodes[0], nil
 }
 
 // FirstX is like First, but panics if an error occurs.
-func (_q *NotificationQuery) FirstX(ctx context.Context) *Notification {
+func (_q *NotificationChannelQuery) FirstX(ctx context.Context) *NotificationChannel {
 	node, err := _q.First(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -129,22 +129,22 @@ func (_q *NotificationQuery) FirstX(ctx context.Context) *Notification {
 	return node
 }
 
-// FirstID returns the first Notification ID from the query.
-// Returns a *NotFoundError when no Notification ID was found.
-func (_q *NotificationQuery) FirstID(ctx context.Context) (id int, err error) {
+// FirstID returns the first NotificationChannel ID from the query.
+// Returns a *NotFoundError when no NotificationChannel ID was found.
+func (_q *NotificationChannelQuery) FirstID(ctx context.Context) (id int, err error) {
 	var ids []int
 	if ids, err = _q.Limit(1).IDs(setContextOp(ctx, _q.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
 	if len(ids) == 0 {
-		err = &NotFoundError{notification.Label}
+		err = &NotFoundError{notificationchannel.Label}
 		return
 	}
 	return ids[0], nil
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (_q *NotificationQuery) FirstIDX(ctx context.Context) int {
+func (_q *NotificationChannelQuery) FirstIDX(ctx context.Context) int {
 	id, err := _q.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -152,10 +152,10 @@ func (_q *NotificationQuery) FirstIDX(ctx context.Context) int {
 	return id
 }
 
-// Only returns a single Notification entity found by the query, ensuring it only returns one.
-// Returns a *NotSingularError when more than one Notification entity is found.
-// Returns a *NotFoundError when no Notification entities are found.
-func (_q *NotificationQuery) Only(ctx context.Context) (*Notification, error) {
+// Only returns a single NotificationChannel entity found by the query, ensuring it only returns one.
+// Returns a *NotSingularError when more than one NotificationChannel entity is found.
+// Returns a *NotFoundError when no NotificationChannel entities are found.
+func (_q *NotificationChannelQuery) Only(ctx context.Context) (*NotificationChannel, error) {
 	nodes, err := _q.Limit(2).All(setContextOp(ctx, _q.ctx, ent.OpQueryOnly))
 	if err != nil {
 		return nil, err
@@ -164,14 +164,14 @@ func (_q *NotificationQuery) Only(ctx context.Context) (*Notification, error) {
 	case 1:
 		return nodes[0], nil
 	case 0:
-		return nil, &NotFoundError{notification.Label}
+		return nil, &NotFoundError{notificationchannel.Label}
 	default:
-		return nil, &NotSingularError{notification.Label}
+		return nil, &NotSingularError{notificationchannel.Label}
 	}
 }
 
 // OnlyX is like Only, but panics if an error occurs.
-func (_q *NotificationQuery) OnlyX(ctx context.Context) *Notification {
+func (_q *NotificationChannelQuery) OnlyX(ctx context.Context) *NotificationChannel {
 	node, err := _q.Only(ctx)
 	if err != nil {
 		panic(err)
@@ -179,10 +179,10 @@ func (_q *NotificationQuery) OnlyX(ctx context.Context) *Notification {
 	return node
 }
 
-// OnlyID is like Only, but returns the only Notification ID in the query.
-// Returns a *NotSingularError when more than one Notification ID is found.
+// OnlyID is like Only, but returns the only NotificationChannel ID in the query.
+// Returns a *NotSingularError when more than one NotificationChannel ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (_q *NotificationQuery) OnlyID(ctx context.Context) (id int, err error) {
+func (_q *NotificationChannelQuery) OnlyID(ctx context.Context) (id int, err error) {
 	var ids []int
 	if ids, err = _q.Limit(2).IDs(setContextOp(ctx, _q.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
@@ -191,15 +191,15 @@ func (_q *NotificationQuery) OnlyID(ctx context.Context) (id int, err error) {
 	case 1:
 		id = ids[0]
 	case 0:
-		err = &NotFoundError{notification.Label}
+		err = &NotFoundError{notificationchannel.Label}
 	default:
-		err = &NotSingularError{notification.Label}
+		err = &NotSingularError{notificationchannel.Label}
 	}
 	return
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (_q *NotificationQuery) OnlyIDX(ctx context.Context) int {
+func (_q *NotificationChannelQuery) OnlyIDX(ctx context.Context) int {
 	id, err := _q.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -207,18 +207,18 @@ func (_q *NotificationQuery) OnlyIDX(ctx context.Context) int {
 	return id
 }
 
-// All executes the query and returns a list of Notifications.
-func (_q *NotificationQuery) All(ctx context.Context) ([]*Notification, error) {
+// All executes the query and returns a list of NotificationChannels.
+func (_q *NotificationChannelQuery) All(ctx context.Context) ([]*NotificationChannel, error) {
 	ctx = setContextOp(ctx, _q.ctx, ent.OpQueryAll)
 	if err := _q.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
-	qr := querierAll[[]*Notification, *NotificationQuery]()
-	return withInterceptors[[]*Notification](ctx, _q, qr, _q.inters)
+	qr := querierAll[[]*NotificationChannel, *NotificationChannelQuery]()
+	return withInterceptors[[]*NotificationChannel](ctx, _q, qr, _q.inters)
 }
 
 // AllX is like All, but panics if an error occurs.
-func (_q *NotificationQuery) AllX(ctx context.Context) []*Notification {
+func (_q *NotificationChannelQuery) AllX(ctx context.Context) []*NotificationChannel {
 	nodes, err := _q.All(ctx)
 	if err != nil {
 		panic(err)
@@ -226,20 +226,20 @@ func (_q *NotificationQuery) AllX(ctx context.Context) []*Notification {
 	return nodes
 }
 
-// IDs executes the query and returns a list of Notification IDs.
-func (_q *NotificationQuery) IDs(ctx context.Context) (ids []int, err error) {
+// IDs executes the query and returns a list of NotificationChannel IDs.
+func (_q *NotificationChannelQuery) IDs(ctx context.Context) (ids []int, err error) {
 	if _q.ctx.Unique == nil && _q.path != nil {
 		_q.Unique(true)
 	}
 	ctx = setContextOp(ctx, _q.ctx, ent.OpQueryIDs)
-	if err = _q.Select(notification.FieldID).Scan(ctx, &ids); err != nil {
+	if err = _q.Select(notificationchannel.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
 	return ids, nil
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (_q *NotificationQuery) IDsX(ctx context.Context) []int {
+func (_q *NotificationChannelQuery) IDsX(ctx context.Context) []int {
 	ids, err := _q.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -248,16 +248,16 @@ func (_q *NotificationQuery) IDsX(ctx context.Context) []int {
 }
 
 // Count returns the count of the given query.
-func (_q *NotificationQuery) Count(ctx context.Context) (int, error) {
+func (_q *NotificationChannelQuery) Count(ctx context.Context) (int, error) {
 	ctx = setContextOp(ctx, _q.ctx, ent.OpQueryCount)
 	if err := _q.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
-	return withInterceptors[int](ctx, _q, querierCount[*NotificationQuery](), _q.inters)
+	return withInterceptors[int](ctx, _q, querierCount[*NotificationChannelQuery](), _q.inters)
 }
 
 // CountX is like Count, but panics if an error occurs.
-func (_q *NotificationQuery) CountX(ctx context.Context) int {
+func (_q *NotificationChannelQuery) CountX(ctx context.Context) int {
 	count, err := _q.Count(ctx)
 	if err != nil {
 		panic(err)
@@ -266,7 +266,7 @@ func (_q *NotificationQuery) CountX(ctx context.Context) int {
 }
 
 // Exist returns true if the query has elements in the graph.
-func (_q *NotificationQuery) Exist(ctx context.Context) (bool, error) {
+func (_q *NotificationChannelQuery) Exist(ctx context.Context) (bool, error) {
 	ctx = setContextOp(ctx, _q.ctx, ent.OpQueryExist)
 	switch _, err := _q.FirstID(ctx); {
 	case IsNotFound(err):
@@ -279,7 +279,7 @@ func (_q *NotificationQuery) Exist(ctx context.Context) (bool, error) {
 }
 
 // ExistX is like Exist, but panics if an error occurs.
-func (_q *NotificationQuery) ExistX(ctx context.Context) bool {
+func (_q *NotificationChannelQuery) ExistX(ctx context.Context) bool {
 	exist, err := _q.Exist(ctx)
 	if err != nil {
 		panic(err)
@@ -287,18 +287,18 @@ func (_q *NotificationQuery) ExistX(ctx context.Context) bool {
 	return exist
 }
 
-// Clone returns a duplicate of the NotificationQuery builder, including all associated steps. It can be
+// Clone returns a duplicate of the NotificationChannelQuery builder, including all associated steps. It can be
 // used to prepare common query builders and use them differently after the clone is made.
-func (_q *NotificationQuery) Clone() *NotificationQuery {
+func (_q *NotificationChannelQuery) Clone() *NotificationChannelQuery {
 	if _q == nil {
 		return nil
 	}
-	return &NotificationQuery{
+	return &NotificationChannelQuery{
 		config:       _q.config,
 		ctx:          _q.ctx.Clone(),
-		order:        append([]notification.OrderOption{}, _q.order...),
+		order:        append([]notificationchannel.OrderOption{}, _q.order...),
 		inters:       append([]Interceptor{}, _q.inters...),
-		predicates:   append([]predicate.Notification{}, _q.predicates...),
+		predicates:   append([]predicate.NotificationChannel{}, _q.predicates...),
 		withUser:     _q.withUser.Clone(),
 		withMonitors: _q.withMonitors.Clone(),
 		// clone intermediate query.
@@ -309,7 +309,7 @@ func (_q *NotificationQuery) Clone() *NotificationQuery {
 
 // WithUser tells the query-builder to eager-load the nodes that are connected to
 // the "user" edge. The optional arguments are used to configure the query builder of the edge.
-func (_q *NotificationQuery) WithUser(opts ...func(*UserQuery)) *NotificationQuery {
+func (_q *NotificationChannelQuery) WithUser(opts ...func(*UserQuery)) *NotificationChannelQuery {
 	query := (&UserClient{config: _q.config}).Query()
 	for _, opt := range opts {
 		opt(query)
@@ -320,7 +320,7 @@ func (_q *NotificationQuery) WithUser(opts ...func(*UserQuery)) *NotificationQue
 
 // WithMonitors tells the query-builder to eager-load the nodes that are connected to
 // the "monitors" edge. The optional arguments are used to configure the query builder of the edge.
-func (_q *NotificationQuery) WithMonitors(opts ...func(*MonitorQuery)) *NotificationQuery {
+func (_q *NotificationChannelQuery) WithMonitors(opts ...func(*MonitorQuery)) *NotificationChannelQuery {
 	query := (&MonitorClient{config: _q.config}).Query()
 	for _, opt := range opts {
 		opt(query)
@@ -339,15 +339,15 @@ func (_q *NotificationQuery) WithMonitors(opts ...func(*MonitorQuery)) *Notifica
 //		Count int `json:"count,omitempty"`
 //	}
 //
-//	client.Notification.Query().
-//		GroupBy(notification.FieldUserID).
+//	client.NotificationChannel.Query().
+//		GroupBy(notificationchannel.FieldUserID).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
-func (_q *NotificationQuery) GroupBy(field string, fields ...string) *NotificationGroupBy {
+func (_q *NotificationChannelQuery) GroupBy(field string, fields ...string) *NotificationChannelGroupBy {
 	_q.ctx.Fields = append([]string{field}, fields...)
-	grbuild := &NotificationGroupBy{build: _q}
+	grbuild := &NotificationChannelGroupBy{build: _q}
 	grbuild.flds = &_q.ctx.Fields
-	grbuild.label = notification.Label
+	grbuild.label = notificationchannel.Label
 	grbuild.scan = grbuild.Scan
 	return grbuild
 }
@@ -361,23 +361,23 @@ func (_q *NotificationQuery) GroupBy(field string, fields ...string) *Notificati
 //		UserID int `json:"user_id,omitempty"`
 //	}
 //
-//	client.Notification.Query().
-//		Select(notification.FieldUserID).
+//	client.NotificationChannel.Query().
+//		Select(notificationchannel.FieldUserID).
 //		Scan(ctx, &v)
-func (_q *NotificationQuery) Select(fields ...string) *NotificationSelect {
+func (_q *NotificationChannelQuery) Select(fields ...string) *NotificationChannelSelect {
 	_q.ctx.Fields = append(_q.ctx.Fields, fields...)
-	sbuild := &NotificationSelect{NotificationQuery: _q}
-	sbuild.label = notification.Label
+	sbuild := &NotificationChannelSelect{NotificationChannelQuery: _q}
+	sbuild.label = notificationchannel.Label
 	sbuild.flds, sbuild.scan = &_q.ctx.Fields, sbuild.Scan
 	return sbuild
 }
 
-// Aggregate returns a NotificationSelect configured with the given aggregations.
-func (_q *NotificationQuery) Aggregate(fns ...AggregateFunc) *NotificationSelect {
+// Aggregate returns a NotificationChannelSelect configured with the given aggregations.
+func (_q *NotificationChannelQuery) Aggregate(fns ...AggregateFunc) *NotificationChannelSelect {
 	return _q.Select().Aggregate(fns...)
 }
 
-func (_q *NotificationQuery) prepareQuery(ctx context.Context) error {
+func (_q *NotificationChannelQuery) prepareQuery(ctx context.Context) error {
 	for _, inter := range _q.inters {
 		if inter == nil {
 			return fmt.Errorf("ent: uninitialized interceptor (forgotten import ent/runtime?)")
@@ -389,7 +389,7 @@ func (_q *NotificationQuery) prepareQuery(ctx context.Context) error {
 		}
 	}
 	for _, f := range _q.ctx.Fields {
-		if !notification.ValidColumn(f) {
+		if !notificationchannel.ValidColumn(f) {
 			return &ValidationError{Name: f, err: fmt.Errorf("ent: invalid field %q for query", f)}
 		}
 	}
@@ -403,9 +403,9 @@ func (_q *NotificationQuery) prepareQuery(ctx context.Context) error {
 	return nil
 }
 
-func (_q *NotificationQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Notification, error) {
+func (_q *NotificationChannelQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*NotificationChannel, error) {
 	var (
-		nodes       = []*Notification{}
+		nodes       = []*NotificationChannel{}
 		_spec       = _q.querySpec()
 		loadedTypes = [2]bool{
 			_q.withUser != nil,
@@ -413,10 +413,10 @@ func (_q *NotificationQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
-		return (*Notification).scanValues(nil, columns)
+		return (*NotificationChannel).scanValues(nil, columns)
 	}
 	_spec.Assign = func(columns []string, values []any) error {
-		node := &Notification{config: _q.config}
+		node := &NotificationChannel{config: _q.config}
 		nodes = append(nodes, node)
 		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
@@ -432,23 +432,23 @@ func (_q *NotificationQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]
 	}
 	if query := _q.withUser; query != nil {
 		if err := _q.loadUser(ctx, query, nodes, nil,
-			func(n *Notification, e *User) { n.Edges.User = e }); err != nil {
+			func(n *NotificationChannel, e *User) { n.Edges.User = e }); err != nil {
 			return nil, err
 		}
 	}
 	if query := _q.withMonitors; query != nil {
 		if err := _q.loadMonitors(ctx, query, nodes,
-			func(n *Notification) { n.Edges.Monitors = []*Monitor{} },
-			func(n *Notification, e *Monitor) { n.Edges.Monitors = append(n.Edges.Monitors, e) }); err != nil {
+			func(n *NotificationChannel) { n.Edges.Monitors = []*Monitor{} },
+			func(n *NotificationChannel, e *Monitor) { n.Edges.Monitors = append(n.Edges.Monitors, e) }); err != nil {
 			return nil, err
 		}
 	}
 	return nodes, nil
 }
 
-func (_q *NotificationQuery) loadUser(ctx context.Context, query *UserQuery, nodes []*Notification, init func(*Notification), assign func(*Notification, *User)) error {
+func (_q *NotificationChannelQuery) loadUser(ctx context.Context, query *UserQuery, nodes []*NotificationChannel, init func(*NotificationChannel), assign func(*NotificationChannel, *User)) error {
 	ids := make([]int, 0, len(nodes))
-	nodeids := make(map[int][]*Notification)
+	nodeids := make(map[int][]*NotificationChannel)
 	for i := range nodes {
 		fk := nodes[i].UserID
 		if _, ok := nodeids[fk]; !ok {
@@ -475,10 +475,10 @@ func (_q *NotificationQuery) loadUser(ctx context.Context, query *UserQuery, nod
 	}
 	return nil
 }
-func (_q *NotificationQuery) loadMonitors(ctx context.Context, query *MonitorQuery, nodes []*Notification, init func(*Notification), assign func(*Notification, *Monitor)) error {
+func (_q *NotificationChannelQuery) loadMonitors(ctx context.Context, query *MonitorQuery, nodes []*NotificationChannel, init func(*NotificationChannel), assign func(*NotificationChannel, *Monitor)) error {
 	edgeIDs := make([]driver.Value, len(nodes))
-	byID := make(map[int]*Notification)
-	nids := make(map[int]map[*Notification]struct{})
+	byID := make(map[int]*NotificationChannel)
+	nids := make(map[int]map[*NotificationChannel]struct{})
 	for i, node := range nodes {
 		edgeIDs[i] = node.ID
 		byID[node.ID] = node
@@ -487,11 +487,11 @@ func (_q *NotificationQuery) loadMonitors(ctx context.Context, query *MonitorQue
 		}
 	}
 	query.Where(func(s *sql.Selector) {
-		joinT := sql.Table(notification.MonitorsTable)
-		s.Join(joinT).On(s.C(monitor.FieldID), joinT.C(notification.MonitorsPrimaryKey[0]))
-		s.Where(sql.InValues(joinT.C(notification.MonitorsPrimaryKey[1]), edgeIDs...))
+		joinT := sql.Table(notificationchannel.MonitorsTable)
+		s.Join(joinT).On(s.C(monitor.FieldID), joinT.C(notificationchannel.MonitorsPrimaryKey[0]))
+		s.Where(sql.InValues(joinT.C(notificationchannel.MonitorsPrimaryKey[1]), edgeIDs...))
 		columns := s.SelectedColumns()
-		s.Select(joinT.C(notification.MonitorsPrimaryKey[1]))
+		s.Select(joinT.C(notificationchannel.MonitorsPrimaryKey[1]))
 		s.AppendSelect(columns...)
 		s.SetDistinct(false)
 	})
@@ -513,7 +513,7 @@ func (_q *NotificationQuery) loadMonitors(ctx context.Context, query *MonitorQue
 				outValue := int(values[0].(*sql.NullInt64).Int64)
 				inValue := int(values[1].(*sql.NullInt64).Int64)
 				if nids[inValue] == nil {
-					nids[inValue] = map[*Notification]struct{}{byID[outValue]: {}}
+					nids[inValue] = map[*NotificationChannel]struct{}{byID[outValue]: {}}
 					return assign(columns[1:], values[1:])
 				}
 				nids[inValue][byID[outValue]] = struct{}{}
@@ -537,7 +537,7 @@ func (_q *NotificationQuery) loadMonitors(ctx context.Context, query *MonitorQue
 	return nil
 }
 
-func (_q *NotificationQuery) sqlCount(ctx context.Context) (int, error) {
+func (_q *NotificationChannelQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := _q.querySpec()
 	_spec.Node.Columns = _q.ctx.Fields
 	if len(_q.ctx.Fields) > 0 {
@@ -546,8 +546,8 @@ func (_q *NotificationQuery) sqlCount(ctx context.Context) (int, error) {
 	return sqlgraph.CountNodes(ctx, _q.driver, _spec)
 }
 
-func (_q *NotificationQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := sqlgraph.NewQuerySpec(notification.Table, notification.Columns, sqlgraph.NewFieldSpec(notification.FieldID, field.TypeInt))
+func (_q *NotificationChannelQuery) querySpec() *sqlgraph.QuerySpec {
+	_spec := sqlgraph.NewQuerySpec(notificationchannel.Table, notificationchannel.Columns, sqlgraph.NewFieldSpec(notificationchannel.FieldID, field.TypeInt))
 	_spec.From = _q.sql
 	if unique := _q.ctx.Unique; unique != nil {
 		_spec.Unique = *unique
@@ -556,14 +556,14 @@ func (_q *NotificationQuery) querySpec() *sqlgraph.QuerySpec {
 	}
 	if fields := _q.ctx.Fields; len(fields) > 0 {
 		_spec.Node.Columns = make([]string, 0, len(fields))
-		_spec.Node.Columns = append(_spec.Node.Columns, notification.FieldID)
+		_spec.Node.Columns = append(_spec.Node.Columns, notificationchannel.FieldID)
 		for i := range fields {
-			if fields[i] != notification.FieldID {
+			if fields[i] != notificationchannel.FieldID {
 				_spec.Node.Columns = append(_spec.Node.Columns, fields[i])
 			}
 		}
 		if _q.withUser != nil {
-			_spec.Node.AddColumnOnce(notification.FieldUserID)
+			_spec.Node.AddColumnOnce(notificationchannel.FieldUserID)
 		}
 	}
 	if ps := _q.predicates; len(ps) > 0 {
@@ -589,12 +589,12 @@ func (_q *NotificationQuery) querySpec() *sqlgraph.QuerySpec {
 	return _spec
 }
 
-func (_q *NotificationQuery) sqlQuery(ctx context.Context) *sql.Selector {
+func (_q *NotificationChannelQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	builder := sql.Dialect(_q.driver.Dialect())
-	t1 := builder.Table(notification.Table)
+	t1 := builder.Table(notificationchannel.Table)
 	columns := _q.ctx.Fields
 	if len(columns) == 0 {
-		columns = notification.Columns
+		columns = notificationchannel.Columns
 	}
 	selector := builder.Select(t1.Columns(columns...)...).From(t1)
 	if _q.sql != nil {
@@ -621,28 +621,28 @@ func (_q *NotificationQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	return selector
 }
 
-// NotificationGroupBy is the group-by builder for Notification entities.
-type NotificationGroupBy struct {
+// NotificationChannelGroupBy is the group-by builder for NotificationChannel entities.
+type NotificationChannelGroupBy struct {
 	selector
-	build *NotificationQuery
+	build *NotificationChannelQuery
 }
 
 // Aggregate adds the given aggregation functions to the group-by query.
-func (_g *NotificationGroupBy) Aggregate(fns ...AggregateFunc) *NotificationGroupBy {
+func (_g *NotificationChannelGroupBy) Aggregate(fns ...AggregateFunc) *NotificationChannelGroupBy {
 	_g.fns = append(_g.fns, fns...)
 	return _g
 }
 
 // Scan applies the selector query and scans the result into the given value.
-func (_g *NotificationGroupBy) Scan(ctx context.Context, v any) error {
+func (_g *NotificationChannelGroupBy) Scan(ctx context.Context, v any) error {
 	ctx = setContextOp(ctx, _g.build.ctx, ent.OpQueryGroupBy)
 	if err := _g.build.prepareQuery(ctx); err != nil {
 		return err
 	}
-	return scanWithInterceptors[*NotificationQuery, *NotificationGroupBy](ctx, _g.build, _g, _g.build.inters, v)
+	return scanWithInterceptors[*NotificationChannelQuery, *NotificationChannelGroupBy](ctx, _g.build, _g, _g.build.inters, v)
 }
 
-func (_g *NotificationGroupBy) sqlScan(ctx context.Context, root *NotificationQuery, v any) error {
+func (_g *NotificationChannelGroupBy) sqlScan(ctx context.Context, root *NotificationChannelQuery, v any) error {
 	selector := root.sqlQuery(ctx).Select()
 	aggregation := make([]string, 0, len(_g.fns))
 	for _, fn := range _g.fns {
@@ -669,28 +669,28 @@ func (_g *NotificationGroupBy) sqlScan(ctx context.Context, root *NotificationQu
 	return sql.ScanSlice(rows, v)
 }
 
-// NotificationSelect is the builder for selecting fields of Notification entities.
-type NotificationSelect struct {
-	*NotificationQuery
+// NotificationChannelSelect is the builder for selecting fields of NotificationChannel entities.
+type NotificationChannelSelect struct {
+	*NotificationChannelQuery
 	selector
 }
 
 // Aggregate adds the given aggregation functions to the selector query.
-func (_s *NotificationSelect) Aggregate(fns ...AggregateFunc) *NotificationSelect {
+func (_s *NotificationChannelSelect) Aggregate(fns ...AggregateFunc) *NotificationChannelSelect {
 	_s.fns = append(_s.fns, fns...)
 	return _s
 }
 
 // Scan applies the selector query and scans the result into the given value.
-func (_s *NotificationSelect) Scan(ctx context.Context, v any) error {
+func (_s *NotificationChannelSelect) Scan(ctx context.Context, v any) error {
 	ctx = setContextOp(ctx, _s.ctx, ent.OpQuerySelect)
 	if err := _s.prepareQuery(ctx); err != nil {
 		return err
 	}
-	return scanWithInterceptors[*NotificationQuery, *NotificationSelect](ctx, _s.NotificationQuery, _s, _s.inters, v)
+	return scanWithInterceptors[*NotificationChannelQuery, *NotificationChannelSelect](ctx, _s.NotificationChannelQuery, _s, _s.inters, v)
 }
 
-func (_s *NotificationSelect) sqlScan(ctx context.Context, root *NotificationQuery, v any) error {
+func (_s *NotificationChannelSelect) sqlScan(ctx context.Context, root *NotificationChannelQuery, v any) error {
 	selector := root.sqlQuery(ctx)
 	aggregation := make([]string, 0, len(_s.fns))
 	for _, fn := range _s.fns {
