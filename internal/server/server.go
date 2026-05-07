@@ -4,6 +4,7 @@ import (
 	"time"
 
 	accountroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/account"
+	alertruleroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/alert_rules"
 	authroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/auth"
 	healthroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/health"
 	monitorroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/monitors"
@@ -87,6 +88,15 @@ func New() *fiber.App {
 	notificationChannels.Get("/:id", notificationchannelroutes.GetNotificationChannel)
 	notificationChannels.Patch("/:id", notificationchannelroutes.UpdateNotificationChannel)
 	notificationChannels.Delete("/:id", notificationchannelroutes.DeleteNotificationChannel)
+
+	// Alert rule routes
+	alertRules := app.Group("/alert-rules")
+	alertRules.Use(middleware.AuthMiddleware)
+	alertRules.Get("", alertruleroutes.ListAlertRules)
+	alertRules.Post("", alertruleroutes.CreateAlertRule)
+	alertRules.Get("/:id", alertruleroutes.GetAlertRule)
+	alertRules.Patch("/:id", alertruleroutes.UpdateAlertRule)
+	alertRules.Delete("/:id", alertruleroutes.DeleteAlertRule)
 
 	// Monitor routes
 	monitors := app.Group("/monitors")

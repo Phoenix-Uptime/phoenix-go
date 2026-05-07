@@ -324,6 +324,324 @@ const docTemplate = `{
                 }
             }
         },
+        "/alert-rules": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyHeader": []
+                    },
+                    {
+                        "ApiKeyQuery": []
+                    }
+                ],
+                "description": "Returns alert rules owned by the authenticated user.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Alert Rules"
+                ],
+                "summary": "List Alert Rules",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "down, recovered, degraded, or certificate_expiring",
+                        "name": "event",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "all, tags, or monitors",
+                        "name": "scope",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "alert rule list",
+                        "schema": {
+                            "$ref": "#/definitions/alert_rules.AlertRuleListResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "invalid input",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "unauthorized - invalid or missing API key",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyHeader": []
+                    },
+                    {
+                        "ApiKeyQuery": []
+                    }
+                ],
+                "description": "Creates an alert rule owned by the authenticated user.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Alert Rules"
+                ],
+                "summary": "Create Alert Rule",
+                "parameters": [
+                    {
+                        "description": "alert rule payload",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/alert_rules.CreateAlertRuleRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "created alert rule",
+                        "schema": {
+                            "$ref": "#/definitions/alert_rules.AlertRuleResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "invalid input",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "unauthorized - invalid or missing API key",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/alert-rules/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyHeader": []
+                    },
+                    {
+                        "ApiKeyQuery": []
+                    }
+                ],
+                "description": "Returns one alert rule owned by the authenticated user.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Alert Rules"
+                ],
+                "summary": "Get Alert Rule",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Alert Rule ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "alert rule",
+                        "schema": {
+                            "$ref": "#/definitions/alert_rules.AlertRuleResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "invalid alert rule id",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "unauthorized - invalid or missing API key",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "alert rule not found",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyHeader": []
+                    },
+                    {
+                        "ApiKeyQuery": []
+                    }
+                ],
+                "description": "Deletes one alert rule owned by the authenticated user.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Alert Rules"
+                ],
+                "summary": "Delete Alert Rule",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Alert Rule ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "alert rule deleted",
+                        "schema": {
+                            "$ref": "#/definitions/routes.SuccessResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "invalid alert rule id",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "unauthorized - invalid or missing API key",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "alert rule not found",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "security": [
+                    {
+                        "ApiKeyHeader": []
+                    },
+                    {
+                        "ApiKeyQuery": []
+                    }
+                ],
+                "description": "Updates one alert rule owned by the authenticated user.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Alert Rules"
+                ],
+                "summary": "Update Alert Rule",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Alert Rule ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "alert rule payload",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/alert_rules.UpdateAlertRuleRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "updated alert rule",
+                        "schema": {
+                            "$ref": "#/definitions/alert_rules.AlertRuleResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "invalid input",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "unauthorized - invalid or missing API key",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "alert rule not found",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/health": {
             "get": {
                 "description": "Check if the API is healthy",
@@ -1878,6 +2196,184 @@ const docTemplate = `{
                 },
                 "username": {
                     "type": "string"
+                }
+            }
+        },
+        "alert_rules.AlertRuleListResponse": {
+            "type": "object",
+            "properties": {
+                "alert_rules": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/alert_rules.AlertRuleResponse"
+                    }
+                }
+            }
+        },
+        "alert_rules.AlertRuleResponse": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "event": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "is_active": {
+                    "type": "boolean"
+                },
+                "monitor_ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "name": {
+                    "type": "string"
+                },
+                "notification_channel_ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "resend_interval_seconds": {
+                    "type": "integer"
+                },
+                "scope": {
+                    "type": "string"
+                },
+                "tag_ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "alert_rules.CreateAlertRuleRequest": {
+            "type": "object",
+            "required": [
+                "event",
+                "name",
+                "notification_channel_ids"
+            ],
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "event": {
+                    "type": "string",
+                    "enum": [
+                        "down",
+                        "recovered",
+                        "degraded",
+                        "certificate_expiring"
+                    ]
+                },
+                "is_active": {
+                    "type": "boolean"
+                },
+                "monitor_ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "name": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "notification_channel_ids": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "resend_interval_seconds": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "scope": {
+                    "type": "string",
+                    "enum": [
+                        "all",
+                        "tags",
+                        "monitors"
+                    ]
+                },
+                "tag_ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                }
+            }
+        },
+        "alert_rules.UpdateAlertRuleRequest": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "event": {
+                    "type": "string",
+                    "enum": [
+                        "down",
+                        "recovered",
+                        "degraded",
+                        "certificate_expiring"
+                    ]
+                },
+                "is_active": {
+                    "type": "boolean"
+                },
+                "monitor_ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "name": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "notification_channel_ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "resend_interval_seconds": {
+                    "type": "integer",
+                    "minimum": 0
+                },
+                "scope": {
+                    "type": "string",
+                    "enum": [
+                        "all",
+                        "tags",
+                        "monitors"
+                    ]
+                },
+                "tag_ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
                 }
             }
         },

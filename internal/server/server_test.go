@@ -18,6 +18,7 @@ import (
 	entnotificationchannel "github.com/Phoenix-Uptime/phoenix-go/ent/notificationchannel"
 	"github.com/Phoenix-Uptime/phoenix-go/internal/database"
 	accountroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/account"
+	alertruleroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/alert_rules"
 	authroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/auth"
 	monitorroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/monitors"
 	notificationchannelroutes "github.com/Phoenix-Uptime/phoenix-go/internal/routes/notification_channels"
@@ -838,6 +839,127 @@ func TestNotificationChannelRoutesCRUD(t *testing.T) {
 	}
 }
 
+func TestAlertRuleRoutesCRUD(t *testing.T) {
+	cleanup := useTestDatabase(t)
+	defer cleanup()
+
+	app := New()
+	apiKey := signupAndLogin(t, app, "alertuser", "alert@example.com", "examplepassword")
+
+	tagID := createTestTag(t, app, apiKey, "production")
+	monitorID := createTestMonitor(t, app, apiKey, "Alert Website")
+	channelID := createTestNotificationChannel(t, app, apiKey)
+
+	createBody, err := json.Marshal(map[string]any{
+		"name":                     "Production down",
+		"description":              "Notify when production tag goes down",
+		"event":                    "down",
+		"scope":                    "tags",
+		"tag_ids":                  []int{tagID},
+		"notification_channel_ids": []int{channelID},
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	createReq, err := http.NewRequest(http.MethodPost, "/alert-rules", bytes.NewReader(createBody))
+	if err != nil {
+		t.Fatal(err)
+	}
+	createReq.Header.Set("Content-Type", "application/json")
+	createReq.Header.Set("x-api-key", apiKey)
+
+	createResp, err := app.Test(createReq, fiber.TestConfig{Timeout: 0})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if createResp.StatusCode != http.StatusCreated {
+		t.Fatalf("expected create alert rule status %d, got %d", http.StatusCreated, createResp.StatusCode)
+	}
+	defer createResp.Body.Close()
+
+	var created alertruleroutes.AlertRuleResponse
+	if err := json.NewDecoder(createResp.Body).Decode(&created); err != nil {
+		t.Fatal(err)
+	}
+	if created.ID == 0 || created.Scope != "tags" || len(created.TagIDs) != 1 || len(created.NotificationChannelIDs) != 1 {
+		t.Fatalf("unexpected created alert rule response: %+v", created)
+	}
+
+	listReq, err := http.NewRequest(http.MethodGet, "/alert-rules?scope=tags", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	listReq.Header.Set("x-api-key", apiKey)
+
+	listResp, err := app.Test(listReq, fiber.TestConfig{Timeout: 0})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if listResp.StatusCode != http.StatusOK {
+		t.Fatalf("expected list alert rules status %d, got %d", http.StatusOK, listResp.StatusCode)
+	}
+	defer listResp.Body.Close()
+
+	var list alertruleroutes.AlertRuleListResponse
+	if err := json.NewDecoder(listResp.Body).Decode(&list); err != nil {
+		t.Fatal(err)
+	}
+	if len(list.AlertRules) != 1 || list.AlertRules[0].ID != created.ID {
+		t.Fatalf("expected created alert rule in list, got %+v", list.AlertRules)
+	}
+
+	updateBody, err := json.Marshal(map[string]any{
+		"name":                    "Website recovered",
+		"event":                   "recovered",
+		"scope":                   "monitors",
+		"monitor_ids":             []int{monitorID},
+		"resend_interval_seconds": 300,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	updateReq, err := http.NewRequest(http.MethodPatch, "/alert-rules/"+strconv.Itoa(created.ID), bytes.NewReader(updateBody))
+	if err != nil {
+		t.Fatal(err)
+	}
+	updateReq.Header.Set("Content-Type", "application/json")
+	updateReq.Header.Set("x-api-key", apiKey)
+
+	updateResp, err := app.Test(updateReq, fiber.TestConfig{Timeout: 0})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if updateResp.StatusCode != http.StatusOK {
+		t.Fatalf("expected update alert rule status %d, got %d", http.StatusOK, updateResp.StatusCode)
+	}
+	defer updateResp.Body.Close()
+
+	var updated alertruleroutes.AlertRuleResponse
+	if err := json.NewDecoder(updateResp.Body).Decode(&updated); err != nil {
+		t.Fatal(err)
+	}
+	if updated.Name != "Website recovered" || updated.Event != "recovered" || updated.Scope != "monitors" || len(updated.MonitorIDs) != 1 || len(updated.TagIDs) != 0 {
+		t.Fatalf("unexpected updated alert rule response: %+v", updated)
+	}
+	if updated.ResendIntervalSeconds == nil || *updated.ResendIntervalSeconds != 300 {
+		t.Fatalf("expected resend interval to be set, got %+v", updated.ResendIntervalSeconds)
+	}
+
+	deleteReq, err := http.NewRequest(http.MethodDelete, "/alert-rules/"+strconv.Itoa(created.ID), nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	deleteReq.Header.Set("x-api-key", apiKey)
+
+	deleteResp, err := app.Test(deleteReq, fiber.TestConfig{Timeout: 0})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if deleteResp.StatusCode != http.StatusOK {
+		t.Fatalf("expected delete alert rule status %d, got %d", http.StatusOK, deleteResp.StatusCode)
+	}
+}
+
 func useTestDatabase(t *testing.T) func() {
 	t.Helper()
 
@@ -921,4 +1043,107 @@ func signupAndLogin(t *testing.T, app *fiber.App, username string, email string,
 	}
 
 	return login.ApiKey
+}
+
+func createTestTag(t *testing.T, app *fiber.App, apiKey string, name string) int {
+	t.Helper()
+
+	body, err := json.Marshal(map[string]any{
+		"name":  name,
+		"color": "#ff0000",
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	req, err := http.NewRequest(http.MethodPost, "/tags", bytes.NewReader(body))
+	if err != nil {
+		t.Fatal(err)
+	}
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("x-api-key", apiKey)
+
+	resp, err := app.Test(req, fiber.TestConfig{Timeout: 0})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if resp.StatusCode != http.StatusCreated {
+		t.Fatalf("expected create tag status %d, got %d", http.StatusCreated, resp.StatusCode)
+	}
+	defer resp.Body.Close()
+
+	var created tagroutes.TagResponse
+	if err := json.NewDecoder(resp.Body).Decode(&created); err != nil {
+		t.Fatal(err)
+	}
+	return created.ID
+}
+
+func createTestMonitor(t *testing.T, app *fiber.App, apiKey string, name string) int {
+	t.Helper()
+
+	body, err := json.Marshal(map[string]any{
+		"name": name,
+		"type": "http",
+		"url":  "https://example.com",
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	req, err := http.NewRequest(http.MethodPost, "/monitors", bytes.NewReader(body))
+	if err != nil {
+		t.Fatal(err)
+	}
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("x-api-key", apiKey)
+
+	resp, err := app.Test(req, fiber.TestConfig{Timeout: 0})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if resp.StatusCode != http.StatusCreated {
+		t.Fatalf("expected create monitor status %d, got %d", http.StatusCreated, resp.StatusCode)
+	}
+	defer resp.Body.Close()
+
+	var created monitorroutes.MonitorResponse
+	if err := json.NewDecoder(resp.Body).Decode(&created); err != nil {
+		t.Fatal(err)
+	}
+	return created.ID
+}
+
+func createTestNotificationChannel(t *testing.T, app *fiber.App, apiKey string) int {
+	t.Helper()
+
+	body, err := json.Marshal(map[string]any{
+		"name":               "Alert Webhook",
+		"type":               "webhook",
+		"webhook_url":        "https://example.com/webhook",
+		"webhook_method":     "POST",
+		"notification_token": "ignored",
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	req, err := http.NewRequest(http.MethodPost, "/notification-channels", bytes.NewReader(body))
+	if err != nil {
+		t.Fatal(err)
+	}
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("x-api-key", apiKey)
+
+	resp, err := app.Test(req, fiber.TestConfig{Timeout: 0})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if resp.StatusCode != http.StatusCreated {
+		t.Fatalf("expected create notification channel status %d, got %d", http.StatusCreated, resp.StatusCode)
+	}
+	defer resp.Body.Close()
+
+	var created notificationchannelroutes.NotificationChannelResponse
+	if err := json.NewDecoder(resp.Body).Decode(&created); err != nil {
+		t.Fatal(err)
+	}
+	return created.ID
 }
